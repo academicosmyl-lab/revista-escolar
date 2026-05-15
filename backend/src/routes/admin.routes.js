@@ -151,28 +151,3 @@ router.get('/usuarios', async (req, res, next) => {
 });
 
 module.exports = router;
-
-
-/**
- * routes/agentes.routes.js — Endpoints de los agentes IA
- */
-const routerAgentes = Router();
-routerAgentes.use(require('../middlewares/auth.middleware').autenticar);
-
-// POST /api/v1/agentes/mejorar-noticia
-routerAgentes.post('/mejorar-noticia', async (req, res, next) => {
-  try {
-    const { titulo, contenido, categoria } = req.body;
-    if (!titulo || !contenido) throw crearError('titulo y contenido son requeridos', 400);
-
-    const { coordinador } = require('../agents/coordinator.agent');
-    const resultado = await coordinador({
-      tipo: 'noticia',
-      datos: { titulo, contenido, categoria, docente_nombre: req.usuario.nombre },
-      usuario: req.usuario,
-    });
-    res.json({ resultado });
-  } catch (err) { next(err); }
-});
-
-module.exports = { adminRouter: router, agentesRouter: routerAgentes };
