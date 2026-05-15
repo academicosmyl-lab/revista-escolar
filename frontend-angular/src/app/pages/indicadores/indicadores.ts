@@ -1,9 +1,8 @@
 import { Component } from '@angular/core';
-import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-indicadores',
-  imports: [RouterLink],
+  imports: [],
   templateUrl: './indicadores.html',
   styleUrl: './indicadores.scss',
 })
