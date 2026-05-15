@@ -98,9 +98,10 @@ async function iniciar() {
     }
     console.log('✅ Base de datos sincronizada');
 
-    // Verificar email
-    const emailOk = await emailService.verificar();
-    console.log(emailOk.ok ? '✅ Email configurado' : `⚠️  Email: ${emailOk.error}`);
+    // Verificar email (no bloqueante — no retrasa el arranque del servidor)
+    emailService.verificar().then(emailOk => {
+      console.log(emailOk.ok ? '✅ Email configurado' : `⚠️  Email: ${emailOk.error}`);
+    }).catch(() => console.log('⚠️  Email: no se pudo verificar'));
 
     app.listen(PORT, () => {
       console.log(`
