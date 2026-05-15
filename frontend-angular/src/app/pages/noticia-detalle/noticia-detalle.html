@@ -1,0 +1,205 @@
+<!-- BREADCRUMB -->
+<div class="det-nav">
+  <div class="det-nav-inner">
+    <div class="det-breadcrumb">
+      <a routerLink="/">Inicio</a>
+      <span class="det-sep">/</span>
+      <a routerLink="/noticias">Revista</a>
+      @if (noticia) {
+        <span class="det-sep">/</span>
+        <span class="det-bc-titulo">{{ noticia.titulo }}</span>
+      }
+    </div>
+    <a routerLink="/noticias" class="det-btn-volver">← Volver</a>
+  </div>
+</div>
+
+<!-- ── ESTADO CARGANDO ───────────────────────────────────── -->
+@if (cargando) {
+  <div class="det-header">
+    <div class="det-header-inner">
+      <div class="det-sk-eyebrow"></div>
+      <div class="det-sk-titulo"></div>
+      <div class="det-sk-titulo2"></div>
+      <div class="det-sk-meta-bar">
+        <div class="det-sk-meta"></div>
+        <div class="det-sk-meta"></div>
+        <div class="det-sk-meta"></div>
+      </div>
+    </div>
+  </div>
+  <div class="det-sk-imagen"></div>
+  <div class="det-layout">
+    <div class="det-contenido-wrap">
+      @for (sk of skeletons; track $index) {
+        <div class="det-sk-parrafo"></div>
+      }
+    </div>
+  </div>
+}
+
+<!-- ── ESTADO ERROR ─────────────────────────────────────── -->
+@if (!cargando && error) {
+  <div class="det-error">
+    <div class="det-error-linea"></div>
+    <h1 class="det-error-titulo">Artículo no encontrado</h1>
+    <p class="det-error-texto">{{ error }}</p>
+    <a routerLink="/noticias" class="its-btn-primario">Ver todas las noticias</a>
+  </div>
+}
+
+<!-- ── CONTENIDO REAL ─────────────────────────────────────── -->
+@if (!cargando && !error && noticia) {
+
+  <!-- HEADER EDITORIAL -->
+  <section class="det-header">
+    <div class="det-header-inner">
+      <div class="det-eyebrow">
+        @if (noticia.categoria) {
+          <span class="det-badge-categoria" [style.background]="colorCategoria(noticia)">
+            {{ noticia.categoria.nombre }}
+          </span>
+        }
+        @if (noticia.sede) {
+          <span class="det-sede-eyebrow">{{ noticia.sede.nombre }}</span>
+        }
+      </div>
+      <h1 class="det-titulo">{{ noticia.titulo }}</h1>
+      <div class="det-metadata">
+        @if (noticia.autor) {
+          <div class="det-meta-item">
+            <span class="det-meta-label">Autor</span>
+            <span class="det-meta-valor">{{ noticia.autor.nombre }}</span>
+          </div>
+          <div class="det-meta-dot"></div>
+        }
+        <div class="det-meta-item">
+          <span class="det-meta-label">Publicado</span>
+          <span class="det-meta-valor">{{ formatFecha(noticia.fechaPublicacion ?? noticia.createdAt) }}</span>
+        </div>
+        <div class="det-meta-dot"></div>
+        <div class="det-meta-item">
+          <span class="det-meta-label">Visitas</span>
+          <span class="det-meta-valor">{{ noticia.visitas }}</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- IMAGEN PRINCIPAL -->
+  @if (imagenPrincipal) {
+    <div class="det-imagen-hero-wrap">
+      <img class="det-imagen-hero" [src]="imagenPrincipal"
+           [alt]="noticia.imagenes![0].altText ?? noticia.titulo">
+    </div>
+    @if (noticia.imagenes![0].altText) {
+      <p class="det-imagen-alt">{{ noticia.imagenes![0].altText }}</p>
+    }
+  } @else {
+    <div class="det-imagen-hero-wrap">
+      <div class="det-imagen-hero-placeholder"><span>{{ noticia.titulo }}</span></div>
+    </div>
+  }
+
+  <!-- ARTÍCULO + ASIDE -->
+  <div class="det-layout">
+
+    <!-- Contenido editorial (HTML del backend) -->
+    <div class="det-contenido-wrap">
+      <div class="det-contenido-editorial" [innerHTML]="noticia.contenido"></div>
+    </div>
+
+    <!-- Aside sticky -->
+    <aside class="det-aside">
+
+      <!-- Compartir -->
+      <div class="det-aside-bloque">
+        <div class="det-aside-titulo">Compartir artículo</div>
+        <div class="det-compartir-opciones">
+          <button class="det-compartir-btn" (click)="compartir('copiar')">Copiar enlace</button>
+          <button class="det-compartir-btn" (click)="compartir('whatsapp')">Enviar por WhatsApp</button>
+        </div>
+      </div>
+
+      <!-- Ficha del artículo -->
+      <div class="det-aside-bloque">
+        <div class="det-aside-titulo">Ficha</div>
+        @if (noticia.autor) {
+          <div class="det-ficha-item">
+            <span class="det-ficha-label">Autor</span>
+            <span class="det-ficha-valor">{{ noticia.autor.nombre }}</span>
+          </div>
+        }
+        @if (noticia.categoria) {
+          <div class="det-ficha-item">
+            <span class="det-ficha-label">Categoría</span>
+            <span class="det-ficha-valor">{{ noticia.categoria.nombre }}</span>
+          </div>
+        }
+        @if (noticia.sede) {
+          <div class="det-ficha-item">
+            <span class="det-ficha-label">Sede</span>
+            <span class="det-ficha-valor">{{ noticia.sede.nombre }}</span>
+          </div>
+        }
+        <div class="det-ficha-item">
+          <span class="det-ficha-label">Visitas</span>
+          <span class="det-ficha-valor">{{ noticia.visitas }}</span>
+        </div>
+      </div>
+
+    </aside>
+  </div>
+
+  <!-- GALERÍA DE IMÁGENES ADICIONALES -->
+  @if (imagenesExtra && imagenesExtra.length > 0) {
+    <section class="det-galeria-seccion">
+      <div class="det-galeria-inner">
+        <div class="det-galeria-eyebrow">Galería</div>
+        <h2 class="det-galeria-titulo">Más imágenes del artículo</h2>
+        <div class="det-galeria-grid">
+          @for (img of imagenesExtra; track img.id) {
+            <div class="det-galeria-item">
+              <img class="det-galeria-img" [src]="img.url" [alt]="img.altText ?? noticia.titulo">
+              @if (img.altText) {
+                <div class="det-galeria-alt">{{ img.altText }}</div>
+              }
+            </div>
+          }
+        </div>
+      </div>
+    </section>
+  }
+
+  <!-- ARTÍCULOS RELACIONADOS -->
+  @if (relacionadas.length > 0) {
+    <section class="det-relacionadas">
+      <div class="det-rel-header">
+        <div class="linea-dorada"></div>
+        <h2 class="det-rel-titulo">También te puede interesar</h2>
+        <a routerLink="/noticias" class="det-rel-ver-todas">Ver todas</a>
+      </div>
+      <div class="det-rel-grid">
+        @for (n of relacionadas; track n.id; let i = $index) {
+          <a class="det-rel-card" [routerLink]="['/noticias', n.id]" [style.--i]="i">
+            @if (n.imagenes?.[0]?.url) {
+              <img class="det-rel-img" [src]="n.imagenes![0].url" [alt]="n.titulo">
+            } @else {
+              <div class="det-rel-img-placeholder"></div>
+            }
+            <div class="det-rel-cuerpo">
+              @if (n.categoria) {
+                <span class="det-rel-badge" [style.background]="colorCategoria(n)">
+                  {{ n.categoria.nombre }}
+                </span>
+              }
+              <h3 class="det-rel-card-titulo">{{ n.titulo }}</h3>
+              <div class="det-rel-fecha">{{ formatFecha(n.fechaPublicacion ?? n.createdAt) }}</div>
+            </div>
+          </a>
+        }
+      </div>
+    </section>
+  }
+
+}

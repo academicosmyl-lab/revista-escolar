@@ -1,8 +1,223 @@
-<section class="pagina-construccion">
-  <div class="construccion-inner">
-    <div class="linea-dorada"></div>
-    <h1>Revista · Últimas Noticias</h1>
-    <p class="sub">Contenido completo disponible en la siguiente fase de desarrollo.</p>
-    <a routerLink="/" class="its-btn-primario">← Volver al inicio</a>
+<!-- BADGE SSE — aparece cuando hay nueva noticia -->
+<div class="not-badge-sse" [class.visible]="nuevaNoticia()" (click)="recargarConNueva()">
+  Nueva noticia disponible — ver ahora
+</div>
+
+<!-- HERO -->
+<section class="not-hero">
+  <div class="not-hero-inner">
+    <div>
+      <div class="not-hero-eyebrow">Revista Digital Institucional</div>
+      <h1 class="not-hero-titulo">Últimas <em>Noticias</em></h1>
+      <p class="not-hero-meta">{{ total > 0 ? total + ' artículos publicados' : '' }}</p>
+    </div>
   </div>
 </section>
+
+<!-- CONTROLES -->
+<div class="not-controles">
+  <div class="not-controles-inner">
+
+    <!-- Búsqueda -->
+    <div class="not-busqueda-wrap">
+      <input class="not-busqueda" type="search" placeholder="Buscar artículo..."
+             [(ngModel)]="busqueda" (input)="onBusqueda()">
+    </div>
+
+    <!-- Tabs de sede -->
+    <div class="not-sedes-tabs">
+      <button class="not-sede-tab" [class.activo]="sedeActiva === null"
+              (click)="filtrarSede(null)">Todas</button>
+      @for (s of sedes; track s.id) {
+        <button class="not-sede-tab" [class.activo]="sedeActiva === s.id"
+                (click)="filtrarSede(s.id)">{{ s.nombre }}</button>
+      }
+    </div>
+
+    <!-- Pills de categoría -->
+    <div class="not-categorias-scroll">
+      <button class="not-pill pill-todos" [class.activo]="categoriaActiva === null"
+              (click)="filtrarCategoria(null)">Todas</button>
+      @for (c of categorias; track c.id) {
+        <button class="not-pill" [class.activo]="categoriaActiva === c.id"
+                [style.background]="categoriaActiva === c.id ? (c.color || '#7B1D2C') : ''"
+                (click)="filtrarCategoria(c.id)">{{ c.nombre }}</button>
+      }
+    </div>
+
+  </div>
+</div>
+
+<!-- CUERPO PRINCIPAL -->
+<div class="not-cuerpo">
+
+  <!-- ── ESTADO CARGANDO (skeleton) ───────────────────── -->
+  @if (cargando()) {
+    <div class="not-grid-asimetrico">
+      <!-- Skeleton destacado -->
+      <div class="not-destacado">
+        <div class="not-sk-img-grande"></div>
+        <div class="not-sk-cuerpo">
+          <div class="not-sk-badge"></div>
+          <div class="not-sk-titulo-lg"></div>
+          <div class="not-sk-titulo-lg2"></div>
+          <div class="not-sk-parrafo"></div>
+          <div class="not-sk-parrafo"></div>
+          <div class="not-sk-parrafo"></div>
+        </div>
+      </div>
+      <!-- Skeleton lateral -->
+      <div class="not-lateral">
+        @for (sk of skeletons.slice(0,2); track $index) {
+          <div class="not-card">
+            <div class="not-sk-img-small"></div>
+            <div class="not-sk-cuerpo">
+              <div class="not-sk-badge"></div>
+              <div class="not-sk-titulo-sm"></div>
+              <div class="not-sk-titulo-sm2"></div>
+              <div class="not-sk-fecha"></div>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  }
+
+  <!-- ── ESTADO ERROR ──────────────────────────────────── -->
+  @if (!cargando() && error()) {
+    <div class="not-error">
+      <div class="not-error-titulo">No se pudieron cargar las noticias</div>
+      {{ error() }}
+    </div>
+  }
+
+  <!-- ── ESTADO VACÍO ──────────────────────────────────── -->
+  @if (!cargando() && !error() && noticias.length === 0) {
+    <div class="not-vacio">
+      <div class="not-vacio-linea"></div>
+      <h2 class="not-vacio-titulo">No hay noticias aquí</h2>
+      <p class="not-vacio-texto">Prueba cambiando los filtros o la búsqueda.</p>
+      <button class="its-btn-primario" (click)="filtrarCategoria(null); filtrarSede(null)">
+        Ver todas las noticias
+      </button>
+    </div>
+  }
+
+  <!-- ── CONTENIDO REAL ─────────────────────────────────── -->
+  @if (!cargando() && !error() && noticias.length > 0) {
+
+    <!-- Grid asimétrico: destacado + lateral -->
+    <div class="not-grid-asimetrico">
+
+      <!-- ARTÍCULO DESTACADO -->
+      <a class="not-destacado" [routerLink]="['/noticias', destacado!.id]">
+        @if (imagen(destacado!)) {
+          <img class="not-destacado-img" [src]="imagen(destacado!)" [alt]="altText(destacado!)">
+        } @else {
+          <div class="not-destacado-img-placeholder">
+            <span>{{ destacado!.titulo }}</span>
+          </div>
+        }
+        <div class="not-destacado-cuerpo">
+          <div class="not-destacado-eyebrow">
+            @if (destacado!.categoria) {
+              <span class="not-badge-categoria"
+                    [style.background]="colorCategoria(destacado!)">
+                {{ destacado!.categoria.nombre }}
+              </span>
+            }
+            @if (destacado!.sede) {
+              <span class="not-sede-label">{{ destacado!.sede.nombre }}</span>
+            }
+          </div>
+          <h2 class="not-destacado-titulo">{{ destacado!.titulo }}</h2>
+          <p class="not-destacado-resumen">{{ destacado!.resumen || destacado!.contenido }}</p>
+          <div class="not-destacado-footer">
+            <div class="not-meta-texto">
+              @if (destacado!.autor) { Por {{ destacado!.autor.nombre }}<br> }
+              {{ formatFecha(destacado!.fechaPublicacion ?? destacado!.createdAt) }}
+            </div>
+            <span class="not-meta-visitas">{{ destacado!.visitas }} visitas</span>
+          </div>
+        </div>
+      </a>
+
+      <!-- LATERAL: cards 2 y 3 -->
+      <div class="not-lateral">
+        @for (n of lateral; track n.id) {
+          <a class="not-card" [routerLink]="['/noticias', n.id]">
+            @if (imagen(n)) {
+              <img class="not-card-img" [src]="imagen(n)" [alt]="altText(n)">
+            } @else {
+              <div class="not-card-img-placeholder"></div>
+            }
+            <div class="not-card-cuerpo">
+              <div class="not-card-eyebrow">
+                @if (n.categoria) {
+                  <span class="not-badge-categoria" [style.background]="colorCategoria(n)">
+                    {{ n.categoria.nombre }}
+                  </span>
+                }
+              </div>
+              <h3 class="not-card-titulo">{{ n.titulo }}</h3>
+              <div class="not-card-fecha">{{ formatFecha(n.fechaPublicacion ?? n.createdAt) }}</div>
+            </div>
+          </a>
+        }
+      </div>
+    </div>
+
+    <!-- Separador antes de grid secundario -->
+    @if (secundarias.length > 0) {
+      <div class="not-separador">
+        <div class="not-separador-linea"></div>
+        <span class="not-separador-titulo">Más noticias</span>
+        <div class="not-separador-linea"></div>
+      </div>
+
+      <!-- GRID SECUNDARIO: noticias 4 en adelante -->
+      <div class="not-grid-secundario">
+        @for (n of secundarias; track n.id; let i = $index) {
+          <a class="not-card not-card-animated" [routerLink]="['/noticias', n.id]"
+             [style.--i]="i">
+            @if (imagen(n)) {
+              <img class="not-card-img" [src]="imagen(n)" [alt]="altText(n)">
+            } @else {
+              <div class="not-card-img-placeholder"></div>
+            }
+            <div class="not-card-cuerpo">
+              <div class="not-card-eyebrow">
+                @if (n.categoria) {
+                  <span class="not-badge-categoria" [style.background]="colorCategoria(n)">
+                    {{ n.categoria.nombre }}
+                  </span>
+                }
+                @if (n.sede) {
+                  <span class="not-sede-label">{{ n.sede.nombre }}</span>
+                }
+              </div>
+              <h3 class="not-card-titulo">{{ n.titulo }}</h3>
+              <p class="not-card-resumen">{{ n.resumen || n.contenido }}</p>
+              <div class="not-card-fecha">{{ formatFecha(n.fechaPublicacion ?? n.createdAt) }}</div>
+            </div>
+          </a>
+        }
+      </div>
+    }
+
+    <!-- PAGINACIÓN -->
+    @if (totalPaginas > 1) {
+      <div class="not-paginacion">
+        <button class="not-pag-btn" (click)="irAPagina(paginaActual - 1)"
+                [disabled]="paginaActual === 1">‹</button>
+        @for (p of paginas; track p) {
+          <button class="not-pag-btn" [class.activo]="p === paginaActual"
+                  (click)="irAPagina(p)">{{ p }}</button>
+        }
+        <button class="not-pag-btn" (click)="irAPagina(paginaActual + 1)"
+                [disabled]="paginaActual === totalPaginas">›</button>
+      </div>
+    }
+
+  }
+</div>
