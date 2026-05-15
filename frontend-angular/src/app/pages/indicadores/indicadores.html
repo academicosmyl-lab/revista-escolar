@@ -1,0 +1,111 @@
+<!-- HERO INDICADORES -->
+<section class="ind-hero">
+  <div class="ind-hero-inner">
+    <div class="ind-hero-texto">
+      <div class="ind-etiqueta">📊 Panel de Indicadores</div>
+      <h1 class="ind-titulo">Dashboards Institucionales</h1>
+      <p class="ind-desc">
+        Métricas en tiempo real del Instituto Técnico Industrial Santander.
+        Datos de publicaciones, participación docente, galería y visitas.
+      </p>
+    </div>
+    <div class="ind-hero-acciones">
+      <a href="/api/v1/admin/exportar" target="_blank" class="ind-btn-excel">
+        ⬇ Exportar a Excel / Power BI
+      </a>
+      <span class="ind-actualizado">Actualización en tiempo real · SSE</span>
+    </div>
+  </div>
+</section>
+
+<!-- TARJETAS RESUMEN -->
+<section class="ind-resumen">
+  <div class="ind-resumen-inner">
+    @for (t of tarjetas; track t.label) {
+      <div class="ind-tarjeta ind-tarjeta-{{ t.color }}">
+        <span class="ind-tarjeta-icono">{{ t.icono }}</span>
+        <div class="ind-tarjeta-valor">{{ t.valor }}</div>
+        <div class="ind-tarjeta-label">{{ t.label }}</div>
+      </div>
+    }
+  </div>
+</section>
+
+<!-- DASHBOARDS POWER BI -->
+<section class="ind-dashboards">
+  <div class="ind-dashboards-inner">
+    <div class="linea-dorada"></div>
+    <h2 class="ind-seccion-titulo">Dashboards Power BI</h2>
+    <p class="ind-seccion-desc">
+      Conecta tus reportes de Power BI pegando la URL de publicación de cada informe.
+      Los reportes se muestran en iframe embebido con acceso público o con cuenta institucional.
+    </p>
+
+    <div class="ind-grid">
+      @for (d of dashboards; track d.titulo) {
+        <div class="ind-card">
+          @if (d.embedUrl) {
+            <iframe [src]="d.embedUrl" class="ind-iframe" frameborder="0" allowFullScreen="true"></iframe>
+          } @else {
+            <div class="ind-placeholder">
+              <span class="ind-placeholder-icono">{{ d.icono }}</span>
+              <strong>{{ d.titulo }}</strong>
+              <span class="ind-placeholder-hint">Pega la URL de publicación de Power BI</span>
+              <code class="ind-placeholder-code">app.powerbi.com/reportEmbed?...</code>
+            </div>
+          }
+          <div class="ind-card-info">
+            <h3 class="ind-card-titulo">{{ d.titulo }}</h3>
+            <p class="ind-card-desc">{{ d.descripcion }}</p>
+          </div>
+        </div>
+      }
+    </div>
+
+    <!-- Instrucciones Power BI -->
+    <div class="ind-instrucciones">
+      <h3 class="ind-inst-titulo">¿Cómo conectar un reporte de Power BI?</h3>
+      <ol class="ind-inst-lista">
+        <li>Abre tu reporte en <strong>Power BI Service</strong> (app.powerbi.com)</li>
+        <li>Clic en <strong>Archivo → Publicar en web</strong></li>
+        <li>Copia la URL del iframe generado</li>
+        <li>Dásela a Ronald para configurarla en el sistema</li>
+      </ol>
+      <div class="ind-inst-nota">
+        💡 <strong>Alternativa sin Power BI:</strong> La plataforma genera sus propias gráficas
+        con Chart.js usando los datos reales de la base de datos del instituto. Se implementará en FASE 10.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ACCESO DATOS RAW -->
+<section class="ind-datos">
+  <div class="ind-datos-inner">
+    <div class="linea-vinotinto"></div>
+    <h2 class="ind-seccion-titulo">Exportar Datos</h2>
+    <p class="ind-seccion-desc">Descarga los datos en Excel para análisis en Power BI Desktop, Google Sheets o cualquier herramienta.</p>
+    <div class="ind-export-grid">
+      <a href="/api/v1/admin/exportar?tipo=noticias" target="_blank" class="ind-export-card">
+        <span>📰</span>
+        <strong>Noticias</strong>
+        <span class="ind-export-formato">Excel · .xlsx</span>
+      </a>
+      <a href="/api/v1/admin/exportar?tipo=docentes" target="_blank" class="ind-export-card">
+        <span>👩‍🏫</span>
+        <strong>Docentes</strong>
+        <span class="ind-export-formato">Excel · .xlsx</span>
+      </a>
+      <a href="/api/v1/admin/exportar?tipo=galeria" target="_blank" class="ind-export-card">
+        <span>🖼️</span>
+        <strong>Galería</strong>
+        <span class="ind-export-formato">Excel · .xlsx</span>
+      </a>
+      <a href="/api/v1/admin/exportar?tipo=estadisticas" target="_blank" class="ind-export-card">
+        <span>📊</span>
+        <strong>Estadísticas completas</strong>
+        <span class="ind-export-formato">Excel · .xlsx</span>
+      </a>
+    </div>
+  </div>
+</section>

@@ -22,6 +22,10 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/sedes/sedes').then(m => m.Sedes),
   },
   {
+    path: 'indicadores',
+    loadComponent: () => import('./pages/indicadores/indicadores').then(m => m.Indicadores),
+  },
+  {
     path: 'login',
     loadComponent: () => import('./pages/login/login').then(m => m.Login),
   },

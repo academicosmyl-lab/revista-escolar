@@ -1,0 +1,144 @@
+/* ── HERO ──────────────────────────────────────────────── */
+.ind-hero {
+  background: linear-gradient(135deg, #1A5C3A 0%, #0f3d25 100%);
+  padding: 3.5rem 2rem;
+  border-bottom: 4px solid #C9A84C;
+  @media (max-width: 640px) { padding: 2.5rem 1rem; }
+}
+.ind-hero-inner {
+  max-width: 1200px; margin: 0 auto;
+  display: flex; justify-content: space-between; align-items: flex-end; gap: 2rem;
+  @media (max-width: 768px) { flex-direction: column; align-items: flex-start; gap: 1.5rem; }
+}
+.ind-etiqueta {
+  font-family: 'Source Sans 3', sans-serif; font-size: 0.72rem; letter-spacing: 0.15em;
+  text-transform: uppercase; color: #C9A84C; font-weight: 700; margin-bottom: 0.75rem;
+}
+.ind-titulo {
+  font-family: 'Playfair Display', serif; color: white;
+  font-size: clamp(1.8rem, 4vw, 2.6rem); font-weight: 900; line-height: 1.15; margin-bottom: 0.75rem;
+}
+.ind-desc {
+  font-family: 'Source Sans 3', sans-serif; color: rgba(255,255,255,0.82);
+  font-size: 0.95rem; line-height: 1.65; max-width: 520px;
+}
+.ind-hero-acciones { display: flex; flex-direction: column; gap: 0.6rem; align-items: flex-end;
+  @media (max-width: 768px) { align-items: flex-start; }
+}
+.ind-btn-excel {
+  background: #C9A84C; color: #1A5C3A; font-family: 'Source Sans 3', sans-serif;
+  font-weight: 700; font-size: 0.82rem; letter-spacing: 0.06em; text-transform: uppercase;
+  padding: 0.75rem 1.5rem; text-decoration: none; white-space: nowrap;
+  transition: background 0.2s, transform 0.15s;
+  &:hover { background: #e0bc5a; transform: translateY(-2px); }
+}
+.ind-actualizado {
+  font-family: 'Source Sans 3', sans-serif; font-size: 0.7rem; color: rgba(255,255,255,0.5);
+  letter-spacing: 0.06em; text-align: right;
+}
+
+/* ── TARJETAS RESUMEN ──────────────────────────────────── */
+.ind-resumen { background: #F8F5F0; padding: 2.5rem 2rem; }
+.ind-resumen-inner {
+  max-width: 1200px; margin: 0 auto;
+  display: grid; grid-template-columns: repeat(4,1fr); gap: 1.25rem;
+  @media (max-width: 900px) { grid-template-columns: repeat(2,1fr); }
+  @media (max-width: 480px) { grid-template-columns: 1fr; }
+}
+.ind-tarjeta {
+  background: white; padding: 1.5rem; text-align: center;
+  border-bottom: 4px solid transparent;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  &-vinotinto { border-bottom-color: #7B1D2C; }
+  &-verde     { border-bottom-color: #1A5C3A; }
+  &-dorado    { border-bottom-color: #C9A84C; }
+}
+.ind-tarjeta-icono { font-size: 2rem; display: block; margin-bottom: 0.5rem; }
+.ind-tarjeta-valor {
+  font-family: 'Playfair Display', serif; font-size: 2.2rem; font-weight: 700;
+  color: #7B1D2C; line-height: 1;
+}
+.ind-tarjeta-label {
+  font-family: 'Source Sans 3', sans-serif; font-size: 0.72rem; letter-spacing: 0.08em;
+  text-transform: uppercase; color: #5a5a5a; margin-top: 0.5rem;
+}
+
+/* ── DASHBOARDS ────────────────────────────────────────── */
+.ind-dashboards { padding: 3.5rem 2rem; background: white;
+  @media (max-width: 640px) { padding: 2.5rem 1rem; }
+}
+.ind-dashboards-inner { max-width: 1200px; margin: 0 auto; }
+.ind-seccion-titulo { font-size: clamp(1.4rem, 3vw, 1.8rem); margin-bottom: 0.5rem; }
+.ind-seccion-desc {
+  font-family: 'Source Sans 3', sans-serif; font-size: 0.9rem; color: #5a5a5a;
+  max-width: 680px; margin-bottom: 2rem; line-height: 1.6;
+}
+.ind-grid {
+  display: grid; grid-template-columns: repeat(2,1fr); gap: 1.5rem;
+  @media (max-width: 768px) { grid-template-columns: 1fr; }
+}
+.ind-card {
+  border: 1px solid #e8e8e8; overflow: hidden;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+  transition: box-shadow 0.2s;
+  &:hover { box-shadow: 0 6px 24px rgba(26,92,58,0.1); }
+}
+.ind-iframe { width: 100%; height: 400px; display: block; }
+.ind-placeholder {
+  height: 300px; background: linear-gradient(135deg, #EDF0ED 0%, #dde5dd 100%);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 0.5rem; padding: 2rem; text-align: center;
+  border-bottom: 2px dashed #a0b8a0;
+}
+.ind-placeholder-icono { font-size: 2.5rem; }
+.ind-placeholder strong { font-family: 'Playfair Display', serif; color: #1A5C3A; font-size: 1.1rem; }
+.ind-placeholder-hint {
+  font-family: 'Source Sans 3', sans-serif; font-size: 0.78rem; color: #5a5a5a; margin-top: 0.25rem;
+}
+.ind-placeholder-code {
+  font-family: monospace; font-size: 0.72rem; background: white; padding: 0.3rem 0.6rem;
+  color: #7B1D2C; border: 1px solid #e0e0e0; margin-top: 0.25rem;
+}
+.ind-card-info { padding: 1rem 1.25rem; border-top: 1px solid #f0f0f0; }
+.ind-card-titulo { font-size: 1rem; margin-bottom: 0.25rem; }
+.ind-card-desc { font-family: 'Source Sans 3', sans-serif; font-size: 0.82rem; color: #5a5a5a; }
+
+/* ── INSTRUCCIONES ─────────────────────────────────────── */
+.ind-instrucciones {
+  margin-top: 2.5rem; background: #F8F5F0; padding: 1.75rem 2rem;
+  border-left: 4px solid #C9A84C;
+}
+.ind-inst-titulo { font-size: 1.1rem; margin-bottom: 1rem; }
+.ind-inst-lista {
+  font-family: 'Source Sans 3', sans-serif; font-size: 0.9rem; color: #3D3D3D;
+  padding-left: 1.25rem; line-height: 2.2;
+}
+.ind-inst-nota {
+  margin-top: 1.25rem; background: #e8f5ee; padding: 0.875rem 1rem;
+  font-family: 'Source Sans 3', sans-serif; font-size: 0.85rem; color: #1A5C3A;
+  border-left: 3px solid #1A5C3A;
+}
+
+/* ── EXPORTAR DATOS ────────────────────────────────────── */
+.ind-datos { background: #F8F5F0; padding: 3rem 2rem;
+  @media (max-width: 640px) { padding: 2rem 1rem; }
+}
+.ind-datos-inner { max-width: 1200px; margin: 0 auto; }
+.ind-export-grid {
+  display: grid; grid-template-columns: repeat(4,1fr); gap: 1rem; margin-top: 1.75rem;
+  @media (max-width: 900px) { grid-template-columns: repeat(2,1fr); }
+  @media (max-width: 480px) { grid-template-columns: 1fr; }
+}
+.ind-export-card {
+  background: white; padding: 1.5rem; text-align: center; text-decoration: none;
+  border: 1px solid #e8e8e8; display: flex; flex-direction: column; gap: 0.5rem;
+  font-family: 'Source Sans 3', sans-serif; color: #3D3D3D;
+  transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+  font-size: 1.8rem;
+  strong { font-size: 0.85rem; color: #1A5C3A; }
+  &:hover { border-color: #C9A84C; transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,0.08); }
+}
+.ind-export-formato {
+  font-size: 0.68rem !important; letter-spacing: 0.06em; text-transform: uppercase;
+  color: #999 !important; font-weight: 600;
+}
