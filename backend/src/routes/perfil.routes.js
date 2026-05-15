@@ -2,7 +2,7 @@
  * routes/perfil.routes.js — Perfil público y edición del docente
  */
 const { Router } = require('express');
-const { Usuario, PerfilDocente, Noticia, Imagen } = require('../models');
+const { Usuario, PerfilDocente, Noticia, Imagen, Sede, DocenteSede } = require('../models');
 const { autenticar } = require('../middlewares/auth.middleware');
 const { upload } = require('../middlewares/upload.middleware');
 const { galleryAgent } = require('../agents/gallery.agent');
@@ -13,21 +13,45 @@ const router = Router();
 // GET /api/v1/perfil/docentes — lista pública de docentes con perfil
 router.get('/docentes', async (req, res, next) => {
   try {
-    const { sede_id } = req.query;
+    const { sede_id, sedeId } = req.query;
+    const filtroSede = sede_id || sedeId;
     const whereUsuario = { rol: 'DOCENTE', activo: true };
-    if (sede_id) whereUsuario.sede_principal_id = sede_id;
+    if (filtroSede) whereUsuario.sede_principal_id = filtroSede;
 
-    const docentes = await Usuario.findAll({
+    const rows = await Usuario.findAll({
       where: whereUsuario,
       attributes: ['id', 'nombre', 'email'],
-      include: [{
-        model: PerfilDocente, as: 'perfil',
-        where: { perfil_publico: true },
-        required: false,
-        attributes: ['foto_url','titulo_profesional','bio','logros','proyectos','url_blog','url_linkedin'],
-      }],
+      include: [
+        {
+          model: PerfilDocente, as: 'perfil',
+          where: { perfil_publico: true },
+          required: false,
+          attributes: ['foto_url','titulo_profesional','cargo','bio','estudios','logros','proyectos','url_blog','url_linkedin'],
+        },
+        {
+          model: Sede, as: 'sedes',
+          through: { attributes: [] },
+          attributes: ['id','nombre','slug'],
+          required: false,
+        },
+      ],
       order: [['nombre', 'ASC']],
     });
+
+    // Normalizar al contrato del frontend Angular (PerfilDocente interface)
+    const docentes = rows.map(d => ({
+      id:        d.id,
+      usuario:   { id: d.id, nombre: d.nombre, email: d.email, rol: 'DOCENTE' },
+      bio:       d.perfil?.bio        ?? null,
+      cargo:     d.perfil?.cargo      ?? null,
+      fotoUrl:   d.perfil?.foto_url   ?? null,
+      titulo:    d.perfil?.titulo_profesional ?? null,
+      areas:     d.perfil?.estudios   ?? [],
+      logros:    d.perfil?.logros     ?? [],
+      urlBlog:   d.perfil?.url_blog   ?? null,
+      urlLinkedin: d.perfil?.url_linkedin ?? null,
+      sedes:     d.sedes ?? [],
+    }));
 
     res.json({ docentes });
   } catch (err) { next(err); }

@@ -10,7 +10,7 @@ const router = Router();
 router.get('/', async (req, res, next) => {
   try {
     const categorias = await Categoria.findAll({ where: { activa: true }, order: [['nombre', 'ASC']] });
-    res.json({ categorias });
+    res.json({ data: categorias });
   } catch (err) { next(err); }
 });
 

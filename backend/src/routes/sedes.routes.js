@@ -15,7 +15,7 @@ router.get('/', async (req, res, next) => {
       where: { activa: true },
       order: [['nombre', 'ASC']],
     });
-    res.json({ sedes });
+    res.json({ data: sedes });
   } catch (err) { next(err); }
 });
 

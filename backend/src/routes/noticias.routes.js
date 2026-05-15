@@ -26,6 +26,10 @@ router.get('/', async (req, res, next) => {
     const where = { estado: 'publicada' };
     if (categoria) where.categoria_id = categoria;
 
+    const { page, limit: limitQ } = req.query;
+    const paginaFinal = parseInt(pagina || page || 1);
+    const limiteFinal = parseInt(limite || limitQ || 10);
+
     const { count, rows } = await Noticia.findAndCountAll({
       where,
       include: [
@@ -34,11 +38,22 @@ router.get('/', async (req, res, next) => {
         { model: Imagen, as: 'imagenes', attributes: ['url', 'alt_text', 'es_portada'] },
       ],
       order: [['fecha_publicacion', 'DESC']],
-      limit: parseInt(limite),
-      offset: (parseInt(pagina) - 1) * parseInt(limite),
+      limit: limiteFinal,
+      offset: (paginaFinal - 1) * limiteFinal,
     });
 
-    res.json({ total: count, pagina: parseInt(pagina), noticias: rows });
+    // Normalizar campos al contrato camelCase del frontend
+    const noticias = rows.map(n => ({
+      ...n.toJSON(),
+      fechaPublicacion: n.fecha_publicacion,
+      imagenes: n.imagenes?.map(img => ({
+        ...img.toJSON(),
+        altText: img.alt_text,
+        esPortada: img.es_portada,
+      })),
+    }));
+
+    res.json({ total: count, pagina: paginaFinal, totalPages: Math.ceil(count / limiteFinal), noticias });
   } catch (err) { next(err); }
 });
 
