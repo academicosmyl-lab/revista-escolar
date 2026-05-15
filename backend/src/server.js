@@ -93,11 +93,10 @@ async function iniciar() {
     // Sincronizar base de datos
     if (process.env.NODE_ENV !== 'production') {
       await sequelize.sync({ alter: true });
-      console.log('✅ Base de datos sincronizada');
     } else {
-      await sequelize.authenticate();
-      console.log('✅ Conexión a base de datos verificada');
+      await sequelize.sync({ force: false }); // crea tablas si no existen, nunca las borra
     }
+    console.log('✅ Base de datos sincronizada');
 
     // Verificar email
     const emailOk = await emailService.verificar();
@@ -123,8 +122,10 @@ async function iniciar() {
     // Cron en producción: noticias externas de Colombia cada hora
     if (process.env.NODE_ENV === 'production') {
       console.log('⏰ Iniciando cron de noticias externas...');
-      await sincronizarNoticiasExternas();
-      setInterval(sincronizarNoticiasExternas, 60 * 60 * 1000);
+      setTimeout(() => {
+        sincronizarNoticiasExternas().catch(e => console.error('Error noticias externas:', e.message));
+        setInterval(sincronizarNoticiasExternas, 60 * 60 * 1000);
+      }, 5000);
     }
 
   } catch (error) {
