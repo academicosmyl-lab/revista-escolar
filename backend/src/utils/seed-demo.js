@@ -25,8 +25,25 @@ const BACKEND = process.env.BACKEND_URL ||
     : 'http://localhost:3000');
 const IMG_NEWS = (seed, w = 800, h = 500) =>
   `https://picsum.photos/seed/${seed}/${w}/${h}`;
-const AVATAR = (slug) =>
-  `${BACKEND}/public/demo/docentes/${slug}.svg`;
+
+// Fotos reales de randomuser.me para el demo (se reemplazan con fotos reales en producción)
+const AVATARS = {
+  'patricia-diaz':    'https://randomuser.me/api/portraits/women/44.jpg',
+  'roberto-suarez':   'https://randomuser.me/api/portraits/men/32.jpg',
+  'elena-pacheco':    'https://randomuser.me/api/portraits/women/68.jpg',
+  'diana-solano':     'https://randomuser.me/api/portraits/women/55.jpg',
+  'luz-rios':         'https://randomuser.me/api/portraits/women/76.jpg',
+  'maria-gomez':      'https://randomuser.me/api/portraits/women/12.jpg',
+  'carlos-rodriguez': 'https://randomuser.me/api/portraits/men/14.jpg',
+  'andres-torres':    'https://randomuser.me/api/portraits/men/47.jpg',
+  'liliana-mosquera': 'https://randomuser.me/api/portraits/women/33.jpg',
+  'jorge-perez':      'https://randomuser.me/api/portraits/men/62.jpg',
+  'sandra-rivas':     'https://randomuser.me/api/portraits/women/81.jpg',
+  'hernando-castillo':'https://randomuser.me/api/portraits/men/78.jpg',
+  'rosa-vargas':      'https://randomuser.me/api/portraits/women/27.jpg',
+  'felipe-mantilla':  'https://randomuser.me/api/portraits/men/91.jpg',
+};
+const AVATAR = (slug) => AVATARS[slug] || `${BACKEND}/public/demo/docentes/${slug}.svg`;
 
 // ═══════════════════════════════════════════════════════════
 async function seedDemo() {
