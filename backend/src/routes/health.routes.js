@@ -3,6 +3,7 @@
  */
 const { Router } = require('express');
 const { sequelize } = require('../config/database');
+const { autenticar, requiereRol } = require('../middlewares/auth.middleware');
 const router = Router();
 
 router.get('/health', async (req, res) => {
@@ -18,6 +19,17 @@ router.get('/health', async (req, res) => {
     });
   } catch (error) {
     res.status(503).json({ status: 'error', database: 'disconnected', error: error.message });
+  }
+});
+
+// POST /api/v1/run-demo — re-ejecuta seed demo (ADMIN o RECTOR, para actualizar datos)
+router.post('/run-demo', autenticar, requiereRol('ADMIN', 'RECTOR'), async (req, res) => {
+  try {
+    const { seedDemo } = require('../utils/seed-demo');
+    await seedDemo();
+    res.json({ ok: true, mensaje: 'Seed demo re-ejecutado. Datos actualizados.' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
 });
 
