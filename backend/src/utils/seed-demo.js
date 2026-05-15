@@ -26,24 +26,24 @@ const BACKEND = process.env.BACKEND_URL ||
 const IMG_NEWS = (seed, w = 800, h = 500) =>
   `https://picsum.photos/seed/${seed}/${w}/${h}`;
 
-// Fotos reales de randomuser.me para el demo (se reemplazan con fotos reales en producción)
+// Fotos demo con pravatar.cc — caras reales, siempre disponibles (se reemplazan en producción)
 const AVATARS = {
-  'patricia-diaz':    'https://randomuser.me/api/portraits/women/44.jpg',
-  'roberto-suarez':   'https://randomuser.me/api/portraits/men/32.jpg',
-  'elena-pacheco':    'https://randomuser.me/api/portraits/women/68.jpg',
-  'diana-solano':     'https://randomuser.me/api/portraits/women/55.jpg',
-  'luz-rios':         'https://randomuser.me/api/portraits/women/76.jpg',
-  'maria-gomez':      'https://randomuser.me/api/portraits/women/12.jpg',
-  'carlos-rodriguez': 'https://randomuser.me/api/portraits/men/14.jpg',
-  'andres-torres':    'https://randomuser.me/api/portraits/men/47.jpg',
-  'liliana-mosquera': 'https://randomuser.me/api/portraits/women/33.jpg',
-  'jorge-perez':      'https://randomuser.me/api/portraits/men/62.jpg',
-  'sandra-rivas':     'https://randomuser.me/api/portraits/women/81.jpg',
-  'hernando-castillo':'https://randomuser.me/api/portraits/men/78.jpg',
-  'rosa-vargas':      'https://randomuser.me/api/portraits/women/27.jpg',
-  'felipe-mantilla':  'https://randomuser.me/api/portraits/men/91.jpg',
+  'patricia-diaz':    'https://i.pravatar.cc/200?img=5',
+  'roberto-suarez':   'https://i.pravatar.cc/200?img=12',
+  'elena-pacheco':    'https://i.pravatar.cc/200?img=9',
+  'diana-solano':     'https://i.pravatar.cc/200?img=23',
+  'luz-rios':         'https://i.pravatar.cc/200?img=47',
+  'maria-gomez':      'https://i.pravatar.cc/200?img=44',
+  'carlos-rodriguez': 'https://i.pravatar.cc/200?img=15',
+  'andres-torres':    'https://i.pravatar.cc/200?img=33',
+  'liliana-mosquera': 'https://i.pravatar.cc/200?img=56',
+  'jorge-perez':      'https://i.pravatar.cc/200?img=61',
+  'sandra-rivas':     'https://i.pravatar.cc/200?img=38',
+  'hernando-castillo':'https://i.pravatar.cc/200?img=68',
+  'rosa-vargas':      'https://i.pravatar.cc/200?img=25',
+  'felipe-mantilla':  'https://i.pravatar.cc/200?img=52',
 };
-const AVATAR = (slug) => AVATARS[slug] || `${BACKEND}/public/demo/docentes/${slug}.svg`;
+const AVATAR = (slug) => AVATARS[slug] || `https://i.pravatar.cc/200?img=1`;
 
 // ═══════════════════════════════════════════════════════════
 async function seedDemo() {
