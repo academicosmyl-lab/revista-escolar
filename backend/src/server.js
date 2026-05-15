@@ -1,124 +1,29 @@
 /**
  * server.js — Instituto Técnico Industrial Santander
- * Revista Digital v3.0 — VERSIÓN FINAL
+ * Revista Digital v3.0 — Punto de entrada
  *
- * Stack: Express · Sequelize · Cloudinary · Nodemailer · SSE
- * Agentes: Noticias · Imágenes · Galería · Estadísticas · Externas
- * Roles: ADMIN · RECTOR · COORDINADOR · ORIENTADORA · DOCENTE · PERSONAL
+ * Responsabilidad: DB sync + seed + app.listen
+ * La configuración de Express está en app.js
  */
 require('dotenv').config();
-const express   = require('express');
-const helmet    = require('helmet');
-const cors      = require('cors');
-const rateLimit = require('express-rate-limit');
-
+const app = require('./app');
 const { sequelize } = require('./config/database');
-const { errorHandler } = require('./middlewares/error.middleware');
 const { emailService } = require('./services/email.service');
 const { sincronizarNoticiasExternas } = require('./jobs/noticias-externas.job');
 
-// ── Rutas ─────────────────────────────────────────────────
-const healthRoutes           = require('./routes/health.routes');
-const authRoutes             = require('./routes/auth.routes');
-const noticiasRoutes         = require('./routes/noticias.routes');
-const categoriasRoutes       = require('./routes/categorias.routes');
-const adminRoutes            = require('./routes/admin.routes');
-const agentesRoutes          = require('./routes/agentes.routes');
-const sedesRoutes            = require('./routes/sedes.routes');
-const cursosRoutes           = require('./routes/cursos.routes');
-const perfilRoutes           = require('./routes/perfil.routes');
-const galeriaRoutes          = require('./routes/galeria.routes');
-const noticiasExternasRoutes = require('./routes/noticias-externas.routes');
-const inclusionRoutes        = require('./routes/inclusion.routes');
-const panelDocenteRoutes     = require('./routes/panel-docente.routes');
-const sseRoutes              = require('./routes/sse.routes');
-
-const path = require('path');
-const app  = express();
 const PORT = process.env.PORT || 3000;
 
-// ── Seguridad ─────────────────────────────────────────────
-app.use(helmet({
-  contentSecurityPolicy: false, // Angular maneja su propio CSP
-  crossOriginEmbedderPolicy: false,
-}));
-
-app.use(cors({
-  origin: (origin, callback) => {
-    // Sin origin (curl, mobile) → permitir
-    if (!origin) return callback(null, true);
-    const allowed = [
-      process.env.FRONTEND_URL,
-      'http://localhost:4200',
-      'http://localhost:4000',
-    ].filter(Boolean);
-    // Cualquier subdominio de vercel.app (preview + producción)
-    if (allowed.includes(origin) || origin.endsWith('.vercel.app')) {
-      return callback(null, true);
-    }
-    callback(null, false);
-  },
-  methods: ['GET','POST','PUT','PATCH','DELETE','OPTIONS'],
-  allowedHeaders: ['Content-Type','Authorization','Cache-Control'],
-  credentials: true,
-}));
-
-// Rate limiting
-app.use('/api/', rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 150,
-  message: { error: 'Demasiadas solicitudes. Intenta más tarde.' },
-}));
-app.use('/api/v1/auth', rateLimit({
-  windowMs: 60 * 1000,
-  max: 10,
-  message: { error: 'Demasiados intentos de login.' },
-}));
-
-// ── Parsers ───────────────────────────────────────────────
-app.use(express.json({ limit: '10mb' }));
-app.use(express.urlencoded({ extended: true, limit: '10mb' }));
-
-// ── Archivos estáticos (avatares demo, assets públicos) ───
-app.use('/public', (req, res, next) => {
-  res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
-  next();
-}, express.static(path.join(__dirname, '../public')));
-
-// ── Rutas ─────────────────────────────────────────────────
-app.use('/api/v1',                   healthRoutes);
-app.use('/api/v1/auth',              authRoutes);
-app.use('/api/v1/noticias',          noticiasRoutes);
-app.use('/api/v1/categorias',        categoriasRoutes);
-app.use('/api/v1/admin',             adminRoutes);
-app.use('/api/v1/agentes',           agentesRoutes);
-app.use('/api/v1/sedes',             sedesRoutes);
-app.use('/api/v1/cursos',            cursosRoutes);
-app.use('/api/v1/perfil',            perfilRoutes);
-app.use('/api/v1/galeria',           galeriaRoutes);
-app.use('/api/v1/noticias-externas', noticiasExternasRoutes);
-app.use('/api/v1/inclusion',         inclusionRoutes);
-app.use('/api/v1/panel',             panelDocenteRoutes);
-app.use('/api/v1/sse',               sseRoutes);  // tiempo real
-
-// ── Errores ───────────────────────────────────────────────
-app.use(errorHandler);
-app.use((req, res) => {
-  res.status(404).json({ error: 'Ruta no encontrada', path: req.originalUrl });
-});
-
-// ── Iniciar ───────────────────────────────────────────────
 async function iniciar() {
   try {
     // Sincronizar base de datos
     if (process.env.NODE_ENV !== 'production') {
       await sequelize.sync({ alter: true });
     } else {
-      await sequelize.sync({ force: false }); // crea tablas si no existen, nunca las borra
+      await sequelize.sync({ force: false });
     }
     console.log('✅ Base de datos sincronizada');
 
-    // Auto-seed demo si la BD está vacía (SQLite sin persistencia en Railway)
+    // Auto-seed demo si la BD está vacía
     try {
       const { Usuario } = require('./models');
       const total = await Usuario.count();
@@ -132,7 +37,7 @@ async function iniciar() {
       console.error('⚠️  Auto-seed falló (no crítico):', seedErr.message);
     }
 
-    // Verificar email (no bloqueante — no retrasa el arranque del servidor)
+    // Verificar email (no bloqueante)
     emailService.verificar().then(emailOk => {
       console.log(emailOk.ok ? '✅ Email configurado' : `⚠️  Email: ${emailOk.error}`);
     }).catch(() => console.log('⚠️  Email: no se pudo verificar'));
@@ -146,15 +51,10 @@ async function iniciar() {
 🚀  Servidor: http://localhost:${PORT}
 🔗  Health:   http://localhost:${PORT}/api/v1/health
 📡  SSE:      http://localhost:${PORT}/api/v1/sse/noticias
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-🏫  Sedes:    Bachillerato · Básica Primaria · Los Sauces
-👥  Roles:    ADMIN · RECTOR · COORDINADOR · ORIENTADORA · DOCENTE · PERSONAL
-🤖  Agentes:  Noticias · Imágenes · Galería · Estadísticas · Externas
-♿  Inclusión: Panel de condiciones especiales activo
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`);
     });
 
-    // Cron en producción: noticias externas de Colombia cada hora
+    // Cron en producción: noticias externas cada hora
     if (process.env.NODE_ENV === 'production') {
       console.log('⏰ Iniciando cron de noticias externas...');
       setTimeout(() => {
