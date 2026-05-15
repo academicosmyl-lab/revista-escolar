@@ -8,7 +8,8 @@
     "dev": "nodemon src/server.js",
     "lint": "eslint src/",
     "test": "jest --forceExit --testTimeout=10000",
-    "seed": "node src/utils/seed.js"
+    "seed": "node src/utils/seed.js",
+    "seed:demo": "node src/utils/seed-demo.js"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.39.0",

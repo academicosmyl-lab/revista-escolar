@@ -33,6 +33,7 @@ const inclusionRoutes        = require('./routes/inclusion.routes');
 const panelDocenteRoutes     = require('./routes/panel-docente.routes');
 const sseRoutes              = require('./routes/sse.routes');
 
+const path = require('path');
 const app  = express();
 const PORT = process.env.PORT || 3000;
 
@@ -64,6 +65,12 @@ app.use('/api/v1/auth', rateLimit({
 // ── Parsers ───────────────────────────────────────────────
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+
+// ── Archivos estáticos (avatares demo, assets públicos) ───
+app.use('/public', (req, res, next) => {
+  res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
+  next();
+}, express.static(path.join(__dirname, '../public')));
 
 // ── Rutas ─────────────────────────────────────────────────
 app.use('/api/v1',                   healthRoutes);
