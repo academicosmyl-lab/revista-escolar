@@ -12,6 +12,9 @@
       </p>
       <div class="hero-botones">
         <a routerLink="/noticias" class="its-btn-primario hero-btn-dorado">Ver Revista</a>
+        <button class="its-btn-primario hero-btn-certificado" (click)="abrirCertificado()">
+          📄 Certificado Estudiantil
+        </button>
         <a routerLink="/sedes" class="hero-link-sedes">Nuestras Sedes</a>
       </div>
     </div>
@@ -101,6 +104,44 @@
     </div>
   </div>
 </section>
+
+<!-- MODAL CERTIFICADO ESTUDIANTIL -->
+@if (modalCertificado) {
+  <div class="modal-overlay" (click)="cerrarCertificado($event)">
+    <div class="modal-caja">
+      <button class="modal-cerrar" (click)="modalCertificado = false">✕</button>
+      <span class="modal-icono">📄</span>
+      <h2 class="modal-titulo">Certificado Estudiantil</h2>
+      <p class="modal-sub">Ingresa tus datos para generar y descargar tu certificado de matrícula o estudio.</p>
+
+      <div class="modal-campo">
+        <label>Número de documento</label>
+        <input class="input-cert" type="text" placeholder="Ej: 1234567890"
+               [(ngModel)]="certDocumento" maxlength="12">
+      </div>
+      <div class="modal-campo">
+        <label>Tipo de certificado</label>
+        <select class="modal-select" [(ngModel)]="certTipo">
+          <option value="matricula">Certificado de Matrícula</option>
+          <option value="estudio">Certificado de Estudio</option>
+          <option value="notas">Certificado de Calificaciones</option>
+        </select>
+      </div>
+
+      @if (certError) {
+        <div class="modal-error">{{ certError }}</div>
+      }
+      @if (certExito) {
+        <div class="modal-exito">✓ {{ certExito }}</div>
+      }
+
+      <button class="its-btn-primario modal-btn" (click)="buscarCertificado()" [disabled]="certCargando">
+        {{ certCargando ? 'Generando...' : 'Generar Certificado' }}
+      </button>
+      <p class="modal-aviso">Solo para estudiantes matriculados. El certificado se descarga en PDF.</p>
+    </div>
+  </div>
+}
 
 <!-- FOOTER -->
 <footer class="footer">
