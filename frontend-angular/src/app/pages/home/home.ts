@@ -20,16 +20,16 @@ export class Home implements AfterViewInit {
 
   /* ── Datos de ejemplo ───────────────────────────────── */
   noticiasEjemplo = [
-    { id: 1, imgKey: 'NOTICIA_02', categoria: 'Deportes',   titulo: 'Campeones departamentales de atletismo 2026',       fecha: '12 de mayo, 2026' },
-    { id: 2, imgKey: 'NOTICIA_03', categoria: 'Ciencia',    titulo: 'Estudiantes ganan olimpiada de matemáticas',         fecha: '8 de mayo, 2026'  },
-    { id: 3, imgKey: 'NOTICIA_04', categoria: 'Cultura',    titulo: 'Festival artístico intercolegial sede Bachillerato', fecha: '5 de mayo, 2026'  },
-    { id: 4, imgKey: 'NOTICIA_05', categoria: 'Tecnología', titulo: 'Feria de ciencias e innovación técnica 2026',        fecha: '2 de mayo, 2026'  },
+    { id: 1, img: 'https://picsum.photos/seed/its-dep/800/450',  categoria: 'Deportes',   titulo: 'Campeones departamentales de atletismo 2026',       fecha: '12 de mayo, 2026' },
+    { id: 2, img: 'https://picsum.photos/seed/its-mat/800/450',  categoria: 'Ciencia',    titulo: 'Estudiantes ganan olimpiada de matemáticas',         fecha: '8 de mayo, 2026'  },
+    { id: 3, img: 'https://picsum.photos/seed/its-art/800/450',  categoria: 'Cultura',    titulo: 'Festival artístico intercolegial sede Bachillerato', fecha: '5 de mayo, 2026'  },
+    { id: 4, img: 'https://picsum.photos/seed/its-tec/800/450',  categoria: 'Tecnología', titulo: 'Feria de ciencias e innovación técnica 2026',        fecha: '2 de mayo, 2026'  },
   ];
 
   sedes = [
-    { nombre: 'Sede Bachillerato',    tipo: 'Bachillerato Técnico', imgKey: 'SEDE_BACHILLERATO' },
-    { nombre: 'Sede Básica Primaria', tipo: 'Básica Primaria',      imgKey: 'SEDE_PRIMARIA'     },
-    { nombre: 'Sede Los Sauces',      tipo: 'Rural',                imgKey: 'SEDE_LOS_SAUCES'   },
+    { nombre: 'Sede Bachillerato',    tipo: 'Bachillerato Técnico', img: 'https://picsum.photos/seed/its-sede1/800/500' },
+    { nombre: 'Sede Básica Primaria', tipo: 'Básica Primaria',      img: 'https://picsum.photos/seed/its-sede2/800/500' },
+    { nombre: 'Sede Los Sauces',      tipo: 'Rural',                img: 'https://picsum.photos/seed/its-sede3/800/500' },
   ];
 
   linksFooter = [

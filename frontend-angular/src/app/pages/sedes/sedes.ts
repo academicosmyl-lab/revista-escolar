@@ -24,7 +24,11 @@ export class Sedes implements OnInit {
     this.api.get<any>('/sedes').subscribe({
       next: r => {
         const data = r.data ?? r;
-        this.sedes = Array.isArray(data) ? data : (data.rows ?? data.sedes ?? []);
+        const raw: any[] = Array.isArray(data) ? data : (data.rows ?? data.sedes ?? []);
+        this.sedes = raw.map((s: any) => ({
+          ...s,
+          imagenUrl: s.imagen_portada ?? s.imagenUrl,
+        }));
         this.cargando = false;
       },
       error: e => {

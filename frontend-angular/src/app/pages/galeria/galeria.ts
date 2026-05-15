@@ -33,15 +33,23 @@ export class Galeria implements OnInit {
 
     this.api.get<any>('/galeria').subscribe({
       next: r => {
-        const data = r.data ?? r;
+        const data = r.galeria ?? r.data ?? r;
         if (Array.isArray(data)) {
           this.imagenes = data;
         } else {
-          const portada    = (data.portada    ?? []).map((img: Imagen) => ({ ...img, tipo: 'portada' }));
-          const destacados = (data.destacados ?? []).map((img: Imagen) => ({ ...img, tipo: 'destacados' }));
-          const recientes  = (data.recientes  ?? []).map((img: Imagen) => ({ ...img, tipo: 'recientes' }));
-          this.imagenes = [...portada, ...destacados, ...recientes];
-          this.videos   = data.videos ?? [];
+          const mapItem = (item: any, tipo: string): ImagenConTipo => ({
+            id:      item.imagen?.id    ?? item.id,
+            url:     item.imagen?.url   ?? item.url   ?? '',
+            altText: item.imagen?.alt_text ?? item.imagen?.altText ?? item.altText,
+            score:   item.imagen?.score_visual ?? item.score,
+            tipo,
+          });
+          this.imagenes = [
+            ...(data.portada    ?? []).map((i: any) => mapItem(i, 'portada')),
+            ...(data.destacados ?? []).map((i: any) => mapItem(i, 'destacados')),
+            ...(data.recientes  ?? []).map((i: any) => mapItem(i, 'recientes')),
+          ];
+          this.videos = data.videos ?? [];
         }
         this.cargando = false;
       },

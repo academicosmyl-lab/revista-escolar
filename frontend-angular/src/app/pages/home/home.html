@@ -18,9 +18,8 @@
         <a routerLink="/sedes" class="hero-link-sedes">Nuestras Sedes</a>
       </div>
     </div>
-    <div class="img-placeholder hero-img-placeholder">
-      <strong>HERO_PORTADA</strong>
-      <span>1920 × 900 px · Foto institucional del colegio</span>
+    <div class="hero-img-wrap">
+      <img class="hero-img" src="https://picsum.photos/seed/its-hero/1200/600" alt="Instituto Técnico Industrial Santander">
     </div>
   </div>
 </section>
@@ -50,10 +49,7 @@
   <!-- Grid desktop / Slider móvil -->
   <div class="noticias-grid reveal">
     <div class="card-noticia noticia-principal">
-      <div class="img-placeholder" style="height:260px;">
-        <strong>NOTICIA_PRINCIPAL</strong>
-        <span>800 × 450 px</span>
-      </div>
+      <img class="card-img" src="https://picsum.photos/seed/its-principal/800/450" alt="Logros académicos 2026" style="height:260px;width:100%;object-fit:cover;">
       <div class="card-body">
         <span class="badge badge-vinotinto">Destacada</span>
         <h3 class="card-titulo-grande">Logros académicos del año lectivo 2026</h3>
@@ -64,10 +60,7 @@
 
     @for (n of noticiasEjemplo; track n.id) {
       <div class="card-noticia">
-        <div class="img-placeholder" style="height:130px;">
-          <strong>{{ n.imgKey }}</strong>
-          <span>800 × 450 px</span>
-        </div>
+        <img class="card-img" [src]="n.img" [alt]="n.titulo" style="height:130px;width:100%;object-fit:cover;">
         <div class="card-body card-body-sm">
           <span class="badge badge-verde">{{ n.categoria }}</span>
           <h4 class="card-titulo-sm">{{ n.titulo }}</h4>
@@ -91,10 +84,7 @@
     <div class="sedes-grid">
       @for (sede of sedes; track sede.nombre) {
         <div class="sede-card">
-          <div class="img-placeholder sede-img">
-            <strong>{{ sede.imgKey }}</strong>
-            <span>800 × 500 px · Foto fachada {{ sede.nombre }}</span>
-          </div>
+          <img class="sede-img" [src]="sede.img" [alt]="sede.nombre" style="width:100%;object-fit:cover;">
           <div class="sede-info">
             <h3 class="sede-nombre">{{ sede.nombre }}</h3>
             <p class="sede-tipo">{{ sede.tipo }}</p>
