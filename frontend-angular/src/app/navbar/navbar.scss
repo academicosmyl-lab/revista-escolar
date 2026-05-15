@@ -1,6 +1,127 @@
+/* ── Barra superior ─────────────────────────────────── */
+.its-topbar {
+  background: #7B1D2C;
+  color: white;
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.7rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 0.35rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  .its-topbar-lema { display: block; }
+
+  @media (max-width: 640px) {
+    justify-content: center;
+    .its-topbar-lema { display: none; }
+  }
+}
+
+/* ── Navbar ─────────────────────────────────────────── */
+.its-nav {
+  background: white;
+  border-bottom: 3px solid #C9A84C;
+  padding: 0.75rem 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+
+  @media (max-width: 768px) {
+    padding: 0.75rem 1rem;
+    flex-wrap: wrap;
+  }
+}
+
+/* ── Brand ──────────────────────────────────────────── */
+.its-nav-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  text-decoration: none;
+  flex-shrink: 0;
+}
+
+.its-nav-logo {
+  height: 56px;
+  width: auto;
+
+  @media (max-width: 640px) { height: 44px; }
+}
+
+.its-nav-titulo {
+  display: flex;
+  flex-direction: column;
+}
+
+.its-nav-nombre {
+  font-family: 'Playfair Display', serif;
+  font-size: 1rem;
+  color: #7B1D2C;
+  font-weight: 700;
+  line-height: 1.2;
+
+  @media (max-width: 640px) { font-size: 0.85rem; }
+}
+
+.its-nav-sede {
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.68rem;
+  color: #1A5C3A;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* ── Hamburguesa ────────────────────────────────────── */
+.its-hamburger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+
+  span {
+    display: block;
+    width: 24px;
+    height: 2px;
+    background: #7B1D2C;
+    transition: all 0.2s;
+  }
+
+  @media (max-width: 768px) { display: flex; }
+}
+
+/* ── Links ──────────────────────────────────────────── */
+.its-nav-links {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+
+  @media (max-width: 768px) {
+    display: none;
+    width: 100%;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 1rem 0;
+    gap: 0.25rem;
+    border-top: 1px solid #eee;
+    margin-top: 0.75rem;
+
+    &.abierto { display: flex; }
+  }
+}
+
 .nav-link {
   font-family: 'Source Sans 3', sans-serif;
-  font-size: 0.85rem;
+  font-size: 0.82rem;
   font-weight: 600;
   color: #3D3D3D;
   text-decoration: none;
@@ -9,9 +130,27 @@
   padding: 0.25rem 0;
   border-bottom: 2px solid transparent;
   transition: all 0.2s;
+  white-space: nowrap;
 
   &:hover, &.nav-activo {
     color: #7B1D2C;
     border-bottom-color: #C9A84C;
+  }
+
+  @media (max-width: 768px) {
+    padding: 0.6rem 0;
+    width: 100%;
+    border-bottom: 1px solid #f0f0f0;
+    font-size: 0.9rem;
+  }
+}
+
+.its-btn-nav {
+  font-size: 0.72rem !important;
+
+  @media (max-width: 768px) {
+    margin-top: 0.5rem;
+    width: 100%;
+    text-align: center;
   }
 }

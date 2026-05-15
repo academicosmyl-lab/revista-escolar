@@ -1,27 +1,34 @@
-<!-- Barra superior institucional -->
-<div style="background:#7B1D2C; color:white; font-size:0.72rem; letter-spacing:0.06em; text-transform:uppercase; padding:0.35rem 2rem; display:flex; justify-content:space-between; align-items:center;">
+<!-- Barra superior institucional — oculta en móvil -->
+<div class="its-topbar">
   <span>Institución Educativa Municipal — Fusagasugá, Cundinamarca</span>
-  <span>Lealtad · Ciencia · Técnica</span>
+  <span class="its-topbar-lema">Lealtad · Ciencia · Técnica</span>
 </div>
 
 <!-- Navbar principal -->
-<nav style="background:white; border-bottom:3px solid #C9A84C; padding:0.75rem 2rem; display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; z-index:100; box-shadow:0 2px 12px rgba(0,0,0,0.08);">
+<nav class="its-nav">
 
-  <a routerLink="/" style="display:flex; align-items:center; gap:1rem; text-decoration:none;">
-    <img src="assets/images/logo-its.png" alt="Escudo ITS Santander" style="height:64px; width:auto;">
-    <div>
-      <div style="font-family:'Playfair Display',serif; font-size:1.05rem; color:#7B1D2C; font-weight:700; line-height:1.2;">Instituto Técnico Industrial</div>
-      <div style="font-family:'Source Sans 3',sans-serif; font-size:0.72rem; color:#1A5C3A; font-weight:600; letter-spacing:0.08em; text-transform:uppercase;">Santander · Fusagasugá</div>
+  <!-- Logo + Nombre -->
+  <a routerLink="/" class="its-nav-brand">
+    <img src="assets/images/logo-its.png" alt="Escudo ITS Santander" class="its-nav-logo">
+    <div class="its-nav-titulo">
+      <span class="its-nav-nombre">Instituto Técnico Industrial</span>
+      <span class="its-nav-sede">Santander · Fusagasugá</span>
     </div>
   </a>
 
-  <div style="display:flex; align-items:center; gap:1.75rem;">
-    <a routerLink="/" [routerLinkActiveOptions]="{exact:true}" routerLinkActive="nav-activo" class="nav-link">Inicio</a>
-    <a routerLink="/noticias" routerLinkActive="nav-activo" class="nav-link">Revista</a>
-    <a routerLink="/galeria" routerLinkActive="nav-activo" class="nav-link">Galería</a>
-    <a routerLink="/docentes" routerLinkActive="nav-activo" class="nav-link">Docentes</a>
-    <a routerLink="/sedes" routerLinkActive="nav-activo" class="nav-link">Sedes</a>
-    <a routerLink="/login" class="its-btn-primario" style="font-size:0.75rem;">Ingresar</a>
+  <!-- Botón hamburguesa móvil -->
+  <button class="its-hamburger" (click)="toggleMenu()" [attr.aria-expanded]="menuAbierto">
+    <span></span><span></span><span></span>
+  </button>
+
+  <!-- Links de navegación -->
+  <div class="its-nav-links" [class.abierto]="menuAbierto">
+    <a routerLink="/" [routerLinkActiveOptions]="{exact:true}" routerLinkActive="nav-activo" class="nav-link" (click)="cerrarMenu()">Inicio</a>
+    <a routerLink="/noticias" routerLinkActive="nav-activo" class="nav-link" (click)="cerrarMenu()">Revista</a>
+    <a routerLink="/galeria" routerLinkActive="nav-activo" class="nav-link" (click)="cerrarMenu()">Galería</a>
+    <a routerLink="/docentes" routerLinkActive="nav-activo" class="nav-link" (click)="cerrarMenu()">Docentes</a>
+    <a routerLink="/sedes" routerLinkActive="nav-activo" class="nav-link" (click)="cerrarMenu()">Sedes</a>
+    <a routerLink="/login" class="its-btn-primario its-btn-nav" (click)="cerrarMenu()">Ingresar</a>
   </div>
 
 </nav>
