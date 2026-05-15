@@ -1,0 +1,41 @@
+# Dependencias
+node_modules/
+.pnp
+.pnp.js
+
+# Variables de entorno — NUNCA al repositorio
+.env
+.env.local
+.env.production
+*.local
+
+# Base de datos local
+*.sqlite
+*.sqlite3
+
+# Archivos subidos (se manejan en el servidor)
+backend/uploads/*
+!backend/uploads/.gitkeep
+
+# Builds
+dist/
+build/
+.next/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Tests
+coverage/
