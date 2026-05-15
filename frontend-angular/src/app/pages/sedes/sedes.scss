@@ -1,10 +1,513 @@
-.pagina-construccion {
-  min-height: 60vh; display: flex; align-items: center; justify-content: center;
-  background: #F8F5F0;
+/* ═══════════════════════════════════════════════════════════
+   NUESTRAS SEDES — Prefijo: .sed-
+   ═══════════════════════════════════════════════════════════ */
+
+@keyframes sed-shimmer {
+  0%   { background-position: -600px 0; }
+  100% { background-position:  600px 0; }
 }
-.construccion-inner {
-  text-align: center; padding: 3rem 2rem; max-width: 480px;
-  .linea-dorada { margin: 0 auto 1.25rem; }
-  h1 { font-size: clamp(1.4rem, 4vw, 2rem); margin-bottom: 0.75rem; }
-  .sub { font-family: 'Source Sans 3', sans-serif; color: #5a5a5a; margin-bottom: 2rem; }
+
+@keyframes sed-fade-up {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+%sed-shimmer {
+  background: linear-gradient(90deg, #eeeeee 25%, #f5f5f5 37%, #eeeeee 63%);
+  background-size: 600px 100%;
+  animation: sed-shimmer 1.4s ease infinite;
+}
+
+/* ── HERO VERDE ───────────────────────────────────────────── */
+
+.sed-hero {
+  background: #1A5C3A;
+  height: 45vh;
+  min-height: 280px;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  border-bottom: 4px solid #C9A84C;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    opacity: 0.05;
+    background-image:
+      repeating-linear-gradient(0deg,  #C9A84C 0, #C9A84C 1px, transparent 0, transparent 28px),
+      repeating-linear-gradient(90deg, #C9A84C 0, #C9A84C 1px, transparent 0, transparent 28px);
+    background-size: 28px 28px;
+    pointer-events: none;
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 40%;
+    height: 100%;
+    background: linear-gradient(135deg, transparent 50%, rgba(201,168,76,.06) 50%);
+    pointer-events: none;
+  }
+
+  @media (max-width: 600px) { height: 38vh; min-height: 240px; }
+}
+
+.sed-hero-inner {
+  position: relative;
+  z-index: 2;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  width: 100%;
+
+  @media (max-width: 600px) { padding: 0 1.5rem; }
+}
+
+.sed-hero-eyebrow {
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: #C9A84C;
+  margin-bottom: 10px;
+}
+
+.sed-hero-titulo {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(2rem, 4.5vw, 3rem);
+  font-weight: 900;
+  color: white;
+  line-height: 1.08;
+  margin: 0 0 10px;
+}
+
+.sed-hero-subtitulo {
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.95rem;
+  color: rgba(255,255,255,.7);
+  margin: 0;
+}
+
+/* ── INTRO TEXTO ──────────────────────────────────────────── */
+
+.sed-intro {
+  background: #FAF8F5;
+  padding: 56px 2rem;
+
+  @media (max-width: 600px) { padding: 40px 1.5rem; }
+}
+
+.sed-intro-inner {
+  max-width: 700px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.sed-intro-linea {
+  width: 48px;
+  height: 3px;
+  background: #1A5C3A;
+  margin: 0 auto 24px;
+}
+
+.sed-intro-texto {
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 1.05rem;
+  color: #4A4A4A;
+  line-height: 1.8;
+  margin: 0;
+}
+
+/* ── SECCIÓN DE CARDS ─────────────────────────────────────── */
+
+.sed-cards-seccion {
+  background: #F0ECE6;
+  padding: 56px 2rem 64px;
+
+  @media (max-width: 600px) { padding: 40px 1.5rem 48px; }
+}
+
+.sed-cards-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* ── CARD PRINCIPAL (horizontal) ──────────────────────────── */
+
+.sed-card-principal {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,.08);
+  overflow: hidden;
+  display: flex;
+  flex-direction: row;
+  min-height: 350px;
+  opacity: 0;
+  animation: sed-fade-up 400ms ease forwards;
+
+  @media (max-width: 900px) { flex-direction: column; min-height: auto; }
+}
+
+.sed-card-principal-img-wrap {
+  width: 40%;
+  flex-shrink: 0;
+  position: relative;
+  overflow: hidden;
+
+  @media (max-width: 900px) { width: 100%; height: 220px; }
+}
+
+.sed-card-principal-img {
+  width: 100%;
+  height: 350px;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.4s ease;
+
+  .sed-card-principal:hover & { transform: scale(1.03); }
+
+  @media (max-width: 900px) { height: 220px; }
+}
+
+.sed-card-principal-img-placeholder {
+  width: 100%;
+  height: 350px;
+  background: linear-gradient(135deg, #5C1520 0%, #7B1D2C 100%);
+
+  @media (max-width: 900px) { height: 220px; }
+}
+
+.sed-card-principal-body {
+  flex: 1;
+  padding: 36px;
+  display: flex;
+  flex-direction: column;
+
+  @media (max-width: 900px) { padding: 24px; }
+  @media (max-width: 600px) { padding: 20px 16px 24px; }
+}
+
+/* ── CARDS SECUNDARIAS (2 columnas) ───────────────────────── */
+
+.sed-cards-secundarias {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+
+  @media (max-width: 900px) { grid-template-columns: 1fr; gap: 20px; }
+}
+
+.sed-card-secundaria {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,.08);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  opacity: 0;
+  animation: sed-fade-up 400ms ease forwards;
+  animation-delay: calc(var(--i, 0) * 80ms);
+}
+
+.sed-card-secundaria-img-wrap {
+  width: 100%;
+  height: 220px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.sed-card-secundaria-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.4s ease;
+
+  .sed-card-secundaria:hover & { transform: scale(1.03); }
+}
+
+.sed-card-secundaria-img-placeholder {
+  width: 100%;
+  height: 220px;
+  background: linear-gradient(135deg, #5C1520 0%, #7B1D2C 100%);
+}
+
+.sed-card-secundaria-body {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+
+  @media (max-width: 600px) { padding: 18px 16px 22px; }
+}
+
+/* ── CONTENIDO COMPARTIDO DE CARDS ────────────────────────── */
+
+.sed-card-nombre {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #7B1D2C;
+  line-height: 1.2;
+  margin-bottom: 10px;
+
+  .sed-card-secundaria & { font-size: 1.2rem; }
+}
+
+.sed-badge-tipo {
+  display: inline-block;
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: white;
+  background: #1A5C3A;
+  border-radius: 4px;
+  padding: 4px 10px;
+  margin-bottom: 14px;
+  align-self: flex-start;
+}
+
+.sed-card-descripcion {
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.95rem;
+  color: #4A4A4A;
+  line-height: 1.7;
+  margin-bottom: 18px;
+}
+
+.sed-card-datos {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+
+.sed-card-dato {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.88rem;
+  color: #4A4A4A;
+  line-height: 1.5;
+}
+
+.sed-dato-bullet {
+  flex-shrink: 0;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #C9A84C;
+  margin-top: 6px;
+}
+
+.sed-dato-texto { flex: 1; }
+
+.sed-btn-ver-mas {
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: #7B1D2C;
+  background: transparent;
+  border: 2px solid #7B1D2C;
+  border-radius: 6px;
+  padding: 9px 20px;
+  cursor: default;
+  text-decoration: none;
+  display: inline-block;
+  align-self: flex-start;
+  margin-top: auto;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+/* ── MAPA PLACEHOLDER ─────────────────────────────────────── */
+
+.sed-mapa-seccion {
+  background: #FAF8F5;
+  padding: 56px 2rem 64px;
+
+  @media (max-width: 600px) { padding: 40px 1.5rem 48px; }
+}
+
+.sed-mapa-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.sed-mapa-eyebrow {
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #C9A84C;
+  margin-bottom: 8px;
+}
+
+.sed-mapa-titulo {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(1.2rem, 3vw, 1.6rem);
+  color: #7B1D2C;
+  margin-bottom: 24px;
+}
+
+.sed-mapa-contenedor {
+  width: 100%;
+  height: 300px;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.sed-mapa-placeholder {
+  width: 100%;
+  height: 100%;
+  background: #e8e8e8;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+.sed-mapa-placeholder-linea {
+  width: 40px;
+  height: 3px;
+  background: #bbb;
+}
+
+.sed-mapa-placeholder-texto {
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.88rem;
+  color: #999;
+  letter-spacing: 0.04em;
+  margin: 0;
+}
+
+/* ── SKELETON SCREENS ─────────────────────────────────────── */
+
+.sed-sk-principal {
+  border-radius: 12px;
+  overflow: hidden;
+  display: flex;
+  min-height: 350px;
+  background: white;
+
+  @media (max-width: 900px) { flex-direction: column; min-height: auto; }
+}
+
+.sed-sk-img-principal {
+  @extend %sed-shimmer;
+  width: 40%;
+  flex-shrink: 0;
+  height: 350px;
+
+  @media (max-width: 900px) { width: 100%; height: 220px; }
+}
+
+.sed-sk-body {
+  flex: 1;
+  padding: 36px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  @media (max-width: 600px) { padding: 20px 16px; }
+}
+
+.sed-sk-nombre {
+  @extend %sed-shimmer;
+  width: 65%;
+  height: 24px;
+  border-radius: 3px;
+}
+
+.sed-sk-badge {
+  @extend %sed-shimmer;
+  width: 80px;
+  height: 20px;
+  border-radius: 4px;
+}
+
+.sed-sk-parrafo {
+  @extend %sed-shimmer;
+  width: 100%;
+  height: 14px;
+  border-radius: 3px;
+
+  &:last-of-type { width: 75%; }
+}
+
+.sed-sk-btn {
+  @extend %sed-shimmer;
+  width: 96px;
+  height: 36px;
+  border-radius: 6px;
+  margin-top: 8px;
+}
+
+.sed-sk-secundarias {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+
+  @media (max-width: 900px) { grid-template-columns: 1fr; gap: 20px; }
+}
+
+.sed-sk-card-sec {
+  border-radius: 12px;
+  overflow: hidden;
+  background: white;
+}
+
+.sed-sk-img-sec {
+  @extend %sed-shimmer;
+  width: 100%;
+  height: 220px;
+}
+
+.sed-sk-body-sec {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* ── ESTADO VACÍO ─────────────────────────────────────────── */
+
+.sed-vacio {
+  text-align: center;
+  padding: 80px 32px;
+}
+
+.sed-vacio-linea {
+  width: 48px;
+  height: 3px;
+  background: #C9A84C;
+  margin: 0 auto 24px;
+}
+
+.sed-vacio-titulo {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.3rem;
+  color: #7B1D2C;
+  margin-bottom: 10px;
+}
+
+.sed-vacio-texto {
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.9rem;
+  color: #767676;
+  margin: 0;
 }

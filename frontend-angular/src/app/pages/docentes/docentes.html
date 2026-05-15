@@ -1,8 +1,113 @@
-<section class="pagina-construccion">
-  <div class="construccion-inner">
-    <div class="linea-dorada"></div>
-    <h1>Directorio de Docentes</h1>
-    <p class="sub">Perfiles del cuerpo docente — disponible en la siguiente fase.</p>
-    <a routerLink="/" class="its-btn-primario">← Volver al inicio</a>
+<!-- HERO EDITORIAL -->
+<div class="doc-hero">
+  <div class="doc-hero-inner">
+    <div class="doc-hero-eyebrow">Instituto Técnico Industrial Santander</div>
+    <h1 class="doc-hero-titulo">Nuestros Docentes</h1>
+    <p class="doc-hero-subtitulo">Conoce el talento humano que forma a nuestra comunidad institucional</p>
   </div>
-</section>
+</div>
+
+<!-- BARRA DE CONTROLES -->
+<div class="doc-controles">
+  <div class="doc-controles-inner">
+    <div class="doc-busqueda-wrap">
+      <input class="doc-busqueda"
+             type="text"
+             [(ngModel)]="busqueda"
+             placeholder="Buscar docente...">
+    </div>
+    <div class="doc-sedes-pills">
+      <button class="doc-pill-sede"
+              [class.activo]="sedeActiva === null"
+              (click)="filtrarSede(null)">Todas las sedes</button>
+      @for (s of sedes; track s.id) {
+        <button class="doc-pill-sede"
+                [class.activo]="sedeActiva === s.id"
+                (click)="filtrarSede(s.id)">{{ s.nombre }}</button>
+      }
+    </div>
+    <span class="doc-contador">
+      {{ docentesFiltrados.length }}
+      docente{{ docentesFiltrados.length !== 1 ? 's' : '' }}
+    </span>
+  </div>
+</div>
+
+<!-- CUERPO PRINCIPAL -->
+<div class="doc-cuerpo">
+
+  <!-- CARGANDO -->
+  @if (cargando) {
+    <div class="doc-sk-grid">
+      @for (sk of skeletons; track $index) {
+        <div class="doc-sk-card">
+          <div class="doc-sk-foto"></div>
+          <div class="doc-sk-body">
+            <div class="doc-sk-nombre"></div>
+            <div class="doc-sk-cargo"></div>
+            <div class="doc-sk-chips">
+              <div class="doc-sk-chip"></div>
+              <div class="doc-sk-chip"></div>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  }
+
+  <!-- ERROR -->
+  @if (!cargando && error) {
+    <div class="doc-vacio">
+      <div class="doc-vacio-linea"></div>
+      <h2 class="doc-vacio-titulo">No se pudo cargar el directorio</h2>
+      <p class="doc-vacio-texto">{{ error }}</p>
+    </div>
+  }
+
+  <!-- CONTENIDO -->
+  @if (!cargando && !error) {
+    @if (docentesFiltrados.length > 0) {
+      <div class="doc-grid">
+        @for (d of docentesFiltrados; track d.id; let i = $index) {
+          <div class="doc-card" [style.--i]="i">
+
+            <!-- Foto o inicial -->
+            <div class="doc-card-foto-wrap">
+              @if (d.fotoUrl) {
+                <img class="doc-card-foto" [src]="d.fotoUrl" [alt]="d.usuario.nombre">
+              } @else {
+                <div class="doc-card-inicial">{{ inicial(d.usuario.nombre) }}</div>
+              }
+            </div>
+
+            <!-- Datos del docente -->
+            <div class="doc-card-body">
+              <div class="doc-card-nombre">{{ d.usuario.nombre }}</div>
+              @if (d.cargo) {
+                <div class="doc-card-cargo">{{ d.cargo }}</div>
+              }
+              @if (d.areas && d.areas.length > 0) {
+                <div class="doc-card-areas">
+                  @for (area of d.areas.slice(0, 3); track area) {
+                    <span class="doc-chip-area">{{ area }}</span>
+                  }
+                </div>
+              }
+              @if (sedeNombres(d)) {
+                <div class="doc-card-sedes">{{ sedeNombres(d) }}</div>
+              }
+            </div>
+
+          </div>
+        }
+      </div>
+    } @else {
+      <div class="doc-vacio">
+        <div class="doc-vacio-linea"></div>
+        <h2 class="doc-vacio-titulo">No se encontraron docentes</h2>
+        <p class="doc-vacio-texto">Intenta con otro nombre o cambia el filtro de sede.</p>
+      </div>
+    }
+  }
+
+</div>

@@ -98,6 +98,16 @@ export interface Estadisticas {
   visitasMes?: number;
 }
 
+/* ── Videos YouTube ────────────────────────────────────── */
+export interface VideoYoutube {
+  id: number;
+  videoId: string;
+  titulo?: string;
+  descripcion?: string;
+  estado: 'pendiente' | 'aprobado' | 'rechazado';
+  createdAt: string;
+}
+
 /* ── Paginación ─────────────────────────────────────────── */
 export interface PaginatedResponse<T> {
   data: T[];

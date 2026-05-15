@@ -1,8 +1,168 @@
-<section class="pagina-construccion">
-  <div class="construccion-inner">
-    <div class="linea-dorada"></div>
-    <h1>Nuestras Sedes</h1>
-    <p class="sub">Información completa de las 3 sedes — disponible en la siguiente fase.</p>
-    <a routerLink="/" class="its-btn-primario">← Volver al inicio</a>
+<!-- HERO VERDE -->
+<div class="sed-hero">
+  <div class="sed-hero-inner">
+    <div class="sed-hero-eyebrow">Instituto Técnico Industrial Santander</div>
+    <h1 class="sed-hero-titulo">Nuestras Sedes</h1>
+    <p class="sed-hero-subtitulo">Tres sedes comprometidas con la educación técnica de calidad</p>
   </div>
-</section>
+</div>
+
+<!-- TEXTO INTRODUCTORIO -->
+<div class="sed-intro">
+  <div class="sed-intro-inner">
+    <div class="sed-intro-linea"></div>
+    <p class="sed-intro-texto">
+      El Instituto Técnico Industrial Santander cuenta con tres sedes en Fusagasugá,
+      cada una con infraestructura especializada para ofrecer una educación técnica integral
+      a nuestra comunidad.
+    </p>
+  </div>
+</div>
+
+<!-- CARDS DE SEDES -->
+<div class="sed-cards-seccion">
+  <div class="sed-cards-inner">
+
+    <!-- CARGANDO -->
+    @if (cargando) {
+      <div class="sed-sk-principal">
+        <div class="sed-sk-img-principal"></div>
+        <div class="sed-sk-body">
+          <div class="sed-sk-nombre"></div>
+          <div class="sed-sk-badge"></div>
+          <div class="sed-sk-parrafo"></div>
+          <div class="sed-sk-parrafo"></div>
+          <div class="sed-sk-btn"></div>
+        </div>
+      </div>
+      <div class="sed-sk-secundarias">
+        @for (n of [1, 2]; track n) {
+          <div class="sed-sk-card-sec">
+            <div class="sed-sk-img-sec"></div>
+            <div class="sed-sk-body-sec">
+              <div class="sed-sk-nombre"></div>
+              <div class="sed-sk-badge"></div>
+              <div class="sed-sk-parrafo"></div>
+              <div class="sed-sk-parrafo"></div>
+            </div>
+          </div>
+        }
+      </div>
+    }
+
+    <!-- ERROR -->
+    @if (!cargando && error) {
+      <div class="sed-vacio">
+        <div class="sed-vacio-linea"></div>
+        <h2 class="sed-vacio-titulo">No se pudo cargar la información</h2>
+        <p class="sed-vacio-texto">{{ error }}</p>
+      </div>
+    }
+
+    <!-- CONTENIDO -->
+    @if (!cargando && !error && sedePrincipal) {
+
+      <!-- Card principal: layout horizontal -->
+      <div class="sed-card-principal">
+        <div class="sed-card-principal-img-wrap">
+          @if (sedePrincipal.imagenUrl) {
+            <img class="sed-card-principal-img"
+                 [src]="sedePrincipal.imagenUrl"
+                 [alt]="sedePrincipal.nombre">
+          } @else {
+            <div class="sed-card-principal-img-placeholder"></div>
+          }
+        </div>
+        <div class="sed-card-principal-body">
+          <h2 class="sed-card-nombre">{{ sedePrincipal.nombre }}</h2>
+          @if (sedePrincipal.tipo) {
+            <span class="sed-badge-tipo">{{ sedePrincipal.tipo }}</span>
+          }
+          @if (sedePrincipal.descripcion) {
+            <p class="sed-card-descripcion">{{ sedePrincipal.descripcion }}</p>
+          }
+          <div class="sed-card-datos">
+            @if (sedePrincipal.direccion) {
+              <div class="sed-card-dato">
+                <div class="sed-dato-bullet"></div>
+                <span class="sed-dato-texto">{{ sedePrincipal.direccion }}</span>
+              </div>
+            }
+            @if (sedePrincipal.telefono) {
+              <div class="sed-card-dato">
+                <div class="sed-dato-bullet"></div>
+                <span class="sed-dato-texto">{{ sedePrincipal.telefono }}</span>
+              </div>
+            }
+          </div>
+          <span class="sed-btn-ver-mas">Ver más</span>
+        </div>
+      </div>
+
+      <!-- Cards secundarias: 2 columnas -->
+      @if (sedesSecundarias.length > 0) {
+        <div class="sed-cards-secundarias">
+          @for (s of sedesSecundarias; track s.id; let i = $index) {
+            <div class="sed-card-secundaria" [style.--i]="i + 1">
+              <div class="sed-card-secundaria-img-wrap">
+                @if (s.imagenUrl) {
+                  <img class="sed-card-secundaria-img" [src]="s.imagenUrl" [alt]="s.nombre">
+                } @else {
+                  <div class="sed-card-secundaria-img-placeholder"></div>
+                }
+              </div>
+              <div class="sed-card-secundaria-body">
+                <h2 class="sed-card-nombre">{{ s.nombre }}</h2>
+                @if (s.tipo) {
+                  <span class="sed-badge-tipo">{{ s.tipo }}</span>
+                }
+                @if (s.descripcion) {
+                  <p class="sed-card-descripcion">{{ s.descripcion }}</p>
+                }
+                <div class="sed-card-datos">
+                  @if (s.direccion) {
+                    <div class="sed-card-dato">
+                      <div class="sed-dato-bullet"></div>
+                      <span class="sed-dato-texto">{{ s.direccion }}</span>
+                    </div>
+                  }
+                  @if (s.telefono) {
+                    <div class="sed-card-dato">
+                      <div class="sed-dato-bullet"></div>
+                      <span class="sed-dato-texto">{{ s.telefono }}</span>
+                    </div>
+                  }
+                </div>
+                <span class="sed-btn-ver-mas">Ver más</span>
+              </div>
+            </div>
+          }
+        </div>
+      }
+
+    }
+
+    @if (!cargando && !error && !sedePrincipal) {
+      <div class="sed-vacio">
+        <div class="sed-vacio-linea"></div>
+        <h2 class="sed-vacio-titulo">Sin información de sedes</h2>
+        <p class="sed-vacio-texto">La información de sedes estará disponible pronto.</p>
+      </div>
+    }
+
+  </div>
+</div>
+
+<!-- MAPA PLACEHOLDER -->
+<div class="sed-mapa-seccion">
+  <div class="sed-mapa-inner">
+    <div class="sed-mapa-eyebrow">Ubicación</div>
+    <h2 class="sed-mapa-titulo">Dónde estamos</h2>
+    <div class="sed-mapa-contenedor">
+      <div class="sed-mapa-placeholder">
+        <div class="sed-mapa-placeholder-linea"></div>
+        <p class="sed-mapa-placeholder-texto">Mapa disponible próximamente</p>
+      </div>
+    </div>
+  </div>
+</div>

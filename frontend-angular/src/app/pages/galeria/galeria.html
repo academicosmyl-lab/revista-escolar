@@ -1,8 +1,150 @@
-<section class="pagina-construccion">
-  <div class="construccion-inner">
-    <div class="linea-dorada"></div>
-    <h1>Galería Institucional</h1>
-    <p class="sub">Fotos y videos del instituto — disponible en la siguiente fase.</p>
-    <a routerLink="/" class="its-btn-primario">← Volver al inicio</a>
+<!-- HERO -->
+<div class="gal-hero">
+  @if (!cargando && imagenHero) {
+    <img class="gal-hero-img" [src]="imagenHero.url" [alt]="imagenHero.altText ?? 'Galería ITS Santander'">
+  } @else {
+    <div class="gal-hero-img-placeholder"></div>
+  }
+  <div class="gal-hero-overlay"></div>
+  <div class="gal-hero-content">
+    <div class="gal-hero-eyebrow">Instituto Técnico Industrial Santander</div>
+    <h1 class="gal-hero-titulo">Galería Institucional</h1>
+    <p class="gal-hero-subtitulo">Fotos y videos de nuestra comunidad educativa</p>
   </div>
-</section>
+</div>
+
+<!-- TABS DE FILTRO -->
+<div class="gal-tabs-wrap">
+  <div class="gal-tabs-inner">
+    <button class="gal-tab" [class.activo]="tabActiva === 'todas'"  (click)="cambiarTab('todas')">Todas</button>
+    <button class="gal-tab" [class.activo]="tabActiva === 'fotos'"  (click)="cambiarTab('fotos')">Fotos</button>
+    <button class="gal-tab" [class.activo]="tabActiva === 'videos'" (click)="cambiarTab('videos')">Videos</button>
+  </div>
+</div>
+
+<!-- CUERPO PRINCIPAL -->
+<div class="gal-cuerpo">
+
+  <!-- CARGANDO -->
+  @if (cargando) {
+    <div class="gal-skeleton-grid">
+      @for (sk of skeletons; track $index) {
+        <div class="gal-sk-item"></div>
+      }
+    </div>
+  }
+
+  <!-- ERROR -->
+  @if (!cargando && error) {
+    <div class="gal-vacio">
+      <div class="gal-vacio-linea"></div>
+      <h2 class="gal-vacio-titulo">No se pudo cargar la galería</h2>
+      <p class="gal-vacio-texto">{{ error }}</p>
+    </div>
+  }
+
+  <!-- CONTENIDO -->
+  @if (!cargando && !error) {
+
+    <!-- GRID DE FOTOS -->
+    @if (tabActiva !== 'videos') {
+      @if (imagenesVisibles.length > 0) {
+        <div class="gal-grid">
+          @for (img of imagenesVisibles; track img.id; let i = $index) {
+            <button class="gal-item"
+                    [class.gal-item--portada]="esPortada(img)"
+                    [style.--i]="i"
+                    (click)="abrirLightbox(i)">
+              <img class="gal-item-img" [src]="img.url" [alt]="img.altText ?? 'Imagen galería'">
+              <div class="gal-item-overlay">
+                @if (img.altText) {
+                  <p class="gal-item-alt">{{ img.altText }}</p>
+                }
+              </div>
+            </button>
+          }
+        </div>
+      } @else if (tabActiva === 'fotos') {
+        <div class="gal-vacio">
+          <div class="gal-vacio-linea"></div>
+          <h2 class="gal-vacio-titulo">Sin fotos disponibles</h2>
+          <p class="gal-vacio-texto">Aún no hay imágenes publicadas en la galería.</p>
+        </div>
+      }
+    }
+
+    <!-- SECCIÓN DE VIDEOS -->
+    @if (tabActiva !== 'fotos') {
+      @if (videosVisibles.length > 0) {
+        <section class="gal-videos-seccion">
+          @if (tabActiva === 'todas') {
+            <div class="gal-seccion-eyebrow">Multimedia</div>
+            <h2 class="gal-seccion-titulo">Videos institucionales</h2>
+          }
+          <div class="gal-videos-grid">
+            @for (v of videosVisibles; track v.id; let i = $index) {
+              <div class="gal-video-card" [style.--i]="i">
+                <div class="gal-video-thumb-wrap">
+                  <img class="gal-video-thumb"
+                       [src]="thumbnailYoutube(v.videoId)"
+                       [alt]="v.titulo ?? 'Video institucional'">
+                  <div class="gal-video-play-icon"></div>
+                </div>
+                <div class="gal-video-body">
+                  @if (v.titulo) {
+                    <div class="gal-video-titulo">{{ v.titulo }}</div>
+                  }
+                  <a class="gal-video-btn"
+                     [href]="urlYoutube(v.videoId)"
+                     target="_blank"
+                     rel="noopener noreferrer">Ver video</a>
+                </div>
+              </div>
+            }
+          </div>
+        </section>
+      } @else if (tabActiva === 'videos') {
+        <div class="gal-vacio">
+          <div class="gal-vacio-linea"></div>
+          <h2 class="gal-vacio-titulo">Sin videos disponibles</h2>
+          <p class="gal-vacio-texto">Aún no hay videos publicados.</p>
+        </div>
+      }
+    }
+
+    <!-- VACÍO GLOBAL (tab = todas sin contenido) -->
+    @if (tabActiva === 'todas' && imagenesVisibles.length === 0 && videosVisibles.length === 0) {
+      <div class="gal-vacio">
+        <div class="gal-vacio-linea"></div>
+        <h2 class="gal-vacio-titulo">Galería sin contenido</h2>
+        <p class="gal-vacio-texto">Aún no hay fotos ni videos publicados.</p>
+      </div>
+    }
+
+  }
+
+</div>
+
+<!-- LIGHTBOX -->
+@if (lightboxVisible && imagenLightbox) {
+  <div class="gal-lightbox" (click)="onLightboxClick($event)">
+    <div class="gal-lightbox-inner">
+      <button class="gal-lightbox-cerrar" (click)="cerrarLightbox()">&#x2715;</button>
+      <img class="gal-lightbox-img"
+           [src]="imagenLightbox.url"
+           [alt]="imagenLightbox.altText ?? 'Imagen galería'">
+      @if (imagenLightbox.altText) {
+        <p class="gal-lightbox-caption">{{ imagenLightbox.altText }}</p>
+      }
+      <div class="gal-lightbox-nav">
+        <button class="gal-lightbox-nav-btn"
+                (click)="anterior()"
+                [disabled]="lightboxIndex === 0">&#x2190; Anterior</button>
+        <span class="gal-lightbox-counter">{{ lightboxIndex + 1 }} / {{ imagenes.length }}</span>
+        <button class="gal-lightbox-nav-btn"
+                (click)="siguiente()"
+                [disabled]="lightboxIndex === imagenes.length - 1">Siguiente &#x2192;</button>
+      </div>
+    </div>
+  </div>
+}
