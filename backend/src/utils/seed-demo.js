@@ -19,7 +19,10 @@ const {
 } = require('../models');
 
 // ── Helpers ───────────────────────────────────────────────
-const BACKEND = process.env.BACKEND_URL || 'http://localhost:3000';
+const BACKEND = process.env.BACKEND_URL ||
+  (process.env.RAILWAY_PUBLIC_DOMAIN
+    ? `https://${process.env.RAILWAY_PUBLIC_DOMAIN}`
+    : 'http://localhost:3000');
 const IMG_NEWS = (seed, w = 800, h = 500) =>
   `https://picsum.photos/seed/${seed}/${w}/${h}`;
 const AVATAR = (slug) =>
