@@ -49,7 +49,7 @@
 | Auth JWT (6 roles) | ✅ | `src/middlewares/auth.middleware.js` |
 | CI/CD GitHub Actions | ✅ | `.github/workflows/ci.yml` |
 | Script instalación PowerShell | ✅ | `instalar.ps1` |
-| Frontend Angular | ⏳ | Pendiente — Ronald trae los diseños |
+| Frontend Angular (FASES 1-4) | ✅ | `frontend-angular/src/app/` |
 
 ---
 
@@ -230,6 +230,7 @@ POST /api/v1/galeria/video               → registrar video YouTube
 GET  /api/v1/perfil/mio/datos            → ver mi perfil
 PUT  /api/v1/perfil/mio/datos            → editar mi perfil
 POST /api/v1/perfil/mio/foto             → foto de perfil → Cloudinary
+GET  /api/v1/panel/noticias              → mis noticias (todos los estados)
 GET  /api/v1/panel/seguimiento           → mis seguimientos por materia
 POST /api/v1/panel/seguimiento           → crear seguimiento semanal
 POST /api/v1/panel/seguimiento/:id/imagenes → subir fotos de clase
