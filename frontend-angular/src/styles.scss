@@ -1,0 +1,116 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400;1,600&family=Source+Sans+3:wght@300;400;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Colores del escudo oficial ITS Santander Fusagasugá */
+:root {
+  --vinotinto: #7B1D2C;
+  --verde:     #1A5C3A;
+  --dorado:    #C9A84C;
+  --crema:     #F8F5F0;
+  --gris:      #3D3D3D;
+  --claro:     #EDF0ED;
+  --blanco:    #FFFFFF;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Source Sans 3', sans-serif;
+  background: var(--crema);
+  color: var(--gris);
+  font-size: 16px;
+  line-height: 1.65;
+}
+
+h1, h2, h3, h4, h5 {
+  font-family: 'Playfair Display', Georgia, serif;
+  color: var(--vinotinto);
+  line-height: 1.2;
+}
+
+/* Botones */
+.its-btn-primario {
+  background: var(--vinotinto);
+  color: white;
+  padding: 0.65rem 1.75rem;
+  font-family: 'Source Sans 3', sans-serif;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-size: 0.78rem;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.15s;
+  display: inline-block;
+  text-decoration: none;
+}
+.its-btn-primario:hover { background: var(--dorado); transform: translateY(-1px); }
+
+.its-btn-verde {
+  background: var(--verde);
+  color: white;
+  padding: 0.65rem 1.75rem;
+  font-family: 'Source Sans 3', sans-serif;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-size: 0.78rem;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s;
+  display: inline-block;
+  text-decoration: none;
+}
+.its-btn-verde:hover { background: #144d30; }
+
+/* Líneas decorativas */
+.linea-dorada { width: 48px; height: 3px; background: var(--dorado); margin-bottom: 1rem; }
+.linea-vinotinto { width: 48px; height: 3px; background: var(--vinotinto); margin-bottom: 1rem; }
+
+/* Cards */
+.card-noticia {
+  background: white;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.card-noticia:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 32px rgba(123,29,44,0.12);
+}
+
+/* Placeholder de imagen */
+.img-placeholder {
+  background: linear-gradient(135deg, var(--claro) 0%, #dde5dd 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: var(--verde);
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-align: center;
+  padding: 1.5rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  border: 2px dashed #a0b8a0;
+  gap: 0.5rem;
+}
+.img-placeholder span { font-size: 0.65rem; font-weight: 400; color: var(--gris); letter-spacing: 0.03em; text-transform: none; }
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--crema); }
+::-webkit-scrollbar-thumb { background: var(--vinotinto); border-radius: 3px; }
+
+/* Animaciones */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.fade-in-up { animation: fadeInUp 0.5s ease forwards; }
+
+/* Borde dorado decorativo */
+.borde-dorado-izq { border-left: 4px solid var(--dorado); padding-left: 1rem; }

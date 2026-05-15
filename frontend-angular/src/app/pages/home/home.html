@@ -1,0 +1,127 @@
+<!-- HERO con placeholder -->
+<section style="position:relative; height:520px; background:linear-gradient(135deg, #7B1D2C 0%, #1A5C3A 100%); display:flex; align-items:center; overflow:hidden;">
+  <div style="position:absolute; inset:0; opacity:0.08; background-image:repeating-linear-gradient(45deg, #C9A84C 0, #C9A84C 1px, transparent 0, transparent 50%); background-size:20px 20px;"></div>
+
+  <div style="position:relative; z-index:2; max-width:1200px; margin:0 auto; padding:0 2rem; display:grid; grid-template-columns:1fr 1fr; gap:3rem; align-items:center;">
+    <div class="fade-in-up">
+      <div style="font-family:'Source Sans 3',sans-serif; font-size:0.75rem; letter-spacing:0.15em; text-transform:uppercase; color:#C9A84C; margin-bottom:1rem; font-weight:700;">
+        Revista Digital Institucional
+      </div>
+      <h1 style="font-family:'Playfair Display',serif; font-size:3rem; color:white; font-weight:900; line-height:1.1; margin-bottom:1.5rem;">
+        Educación con<br><em style="color:#C9A84C;">Lealtad, Ciencia</em><br>y Técnica
+      </h1>
+      <p style="font-family:'Source Sans 3',sans-serif; color:rgba(255,255,255,0.85); font-size:1.05rem; line-height:1.7; margin-bottom:2rem; max-width:440px;">
+        Noticias, logros y vida académica del Instituto Técnico Industrial Santander de Fusagasugá.
+      </p>
+      <div style="display:flex; gap:1rem; flex-wrap:wrap;">
+        <a routerLink="/noticias" class="its-btn-primario" style="background:#C9A84C; color:#7B1D2C;">Ver Revista</a>
+        <a routerLink="/sedes" style="color:white; font-family:'Source Sans 3',sans-serif; font-size:0.8rem; font-weight:600; letter-spacing:0.06em; text-transform:uppercase; text-decoration:none; display:flex; align-items:center; gap:0.5rem; border-bottom:1px solid rgba(255,255,255,0.4); padding-bottom:2px;">
+          Nuestras Sedes
+        </a>
+      </div>
+    </div>
+
+    <!-- Placeholder foto hero -->
+    <div class="img-placeholder" style="height:380px; border-radius:4px;">
+      <strong>HERO_PORTADA</strong>
+      <span>1920 × 900 px · Foto institucional del colegio</span>
+    </div>
+  </div>
+</section>
+
+<!-- Banda de estadísticas -->
+<div style="background:#1A5C3A; color:white; padding:1.25rem 2rem;">
+  <div style="max-width:1200px; margin:0 auto; display:grid; grid-template-columns:repeat(4,1fr); gap:1rem; text-align:center;">
+    <div>
+      <div style="font-family:'Playfair Display',serif; font-size:2rem; font-weight:700; color:#C9A84C;">3</div>
+      <div style="font-family:'Source Sans 3',sans-serif; font-size:0.78rem; letter-spacing:0.06em; text-transform:uppercase; opacity:0.85;">Sedes</div>
+    </div>
+    <div>
+      <div style="font-family:'Playfair Display',serif; font-size:2rem; font-weight:700; color:#C9A84C;">+50</div>
+      <div style="font-family:'Source Sans 3',sans-serif; font-size:0.78rem; letter-spacing:0.06em; text-transform:uppercase; opacity:0.85;">Docentes</div>
+    </div>
+    <div>
+      <div style="font-family:'Playfair Display',serif; font-size:2rem; font-weight:700; color:#C9A84C;">14</div>
+      <div style="font-family:'Source Sans 3',sans-serif; font-size:0.78rem; letter-spacing:0.06em; text-transform:uppercase; opacity:0.85;">Áreas académicas</div>
+    </div>
+    <div>
+      <div style="font-family:'Playfair Display',serif; font-size:2rem; font-weight:700; color:#C9A84C;">+1000</div>
+      <div style="font-family:'Source Sans 3',sans-serif; font-size:0.78rem; letter-spacing:0.06em; text-transform:uppercase; opacity:0.85;">Estudiantes</div>
+    </div>
+  </div>
+</div>
+
+<!-- Sección noticias recientes -->
+<section style="max-width:1200px; margin:4rem auto; padding:0 2rem;">
+  <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:2rem;">
+    <div>
+      <div class="linea-dorada"></div>
+      <h2 style="font-size:2rem;">Últimas Noticias</h2>
+    </div>
+    <a routerLink="/noticias" style="font-family:'Source Sans 3',sans-serif; font-size:0.8rem; font-weight:600; color:#7B1D2C; text-decoration:none; letter-spacing:0.05em; text-transform:uppercase; border-bottom:1px solid #C9A84C; padding-bottom:2px;">
+      Ver todas
+    </a>
+  </div>
+
+  <div style="display:grid; grid-template-columns:2fr 1fr 1fr; gap:1.5rem;">
+    <!-- Noticia principal -->
+    <div class="card-noticia" style="grid-row:span 2;">
+      <div class="img-placeholder" style="height:320px;">
+        <strong>NOTICIA_PRINCIPAL</strong>
+        <span>800 × 450 px · Foto de la noticia destacada</span>
+      </div>
+      <div style="padding:1.5rem;">
+        <span style="background:#7B1D2C; color:white; font-size:0.65rem; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; padding:0.25rem 0.6rem;">Destacada</span>
+        <h3 style="margin-top:0.75rem; font-size:1.4rem; line-height:1.3;">Logros académicos del año lectivo 2026</h3>
+        <p style="margin-top:0.5rem; font-family:'Source Sans 3',sans-serif; font-size:0.9rem; color:#5a5a5a; line-height:1.6;">Nuestros estudiantes destacaron en olimpiadas de matemáticas, ciencias y tecnología a nivel departamental...</p>
+        <div style="margin-top:1rem; font-family:'Source Sans 3',sans-serif; font-size:0.75rem; color:#999; letter-spacing:0.04em;">15 de mayo, 2026</div>
+      </div>
+    </div>
+
+    <!-- Noticias secundarias -->
+    @for (n of noticiasEjemplo; track n.id) {
+      <div class="card-noticia">
+        <div class="img-placeholder" style="height:140px;">
+          <strong>{{ n.imgKey }}</strong>
+          <span>800 × 450 px</span>
+        </div>
+        <div style="padding:1rem;">
+          <span style="font-family:'Source Sans 3',sans-serif; font-size:0.65rem; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:#1A5C3A;">{{ n.categoria }}</span>
+          <h4 style="margin-top:0.4rem; font-size:0.95rem; line-height:1.3;">{{ n.titulo }}</h4>
+          <div style="margin-top:0.5rem; font-family:'Source Sans 3',sans-serif; font-size:0.72rem; color:#999;">{{ n.fecha }}</div>
+        </div>
+      </div>
+    }
+  </div>
+</section>
+
+<!-- Pie de página -->
+<footer style="background:#7B1D2C; color:white; padding:3rem 2rem 1.5rem; margin-top:4rem;">
+  <div style="max-width:1200px; margin:0 auto; display:grid; grid-template-columns:2fr 1fr 1fr; gap:3rem; margin-bottom:2rem;">
+    <div>
+      <img src="assets/images/logo-its.png" alt="Escudo ITS" style="height:80px; margin-bottom:1rem; filter:brightness(0) invert(1);">
+      <p style="font-family:'Source Sans 3',sans-serif; font-size:0.85rem; opacity:0.8; line-height:1.7; max-width:320px;">
+        Instituto Técnico Industrial Santander — Formando ciudadanos con lealtad, ciencia y técnica para el desarrollo de Fusagasugá y Colombia.
+      </p>
+    </div>
+    <div>
+      <h4 style="font-family:'Source Sans 3',sans-serif; font-size:0.75rem; letter-spacing:0.1em; text-transform:uppercase; color:#C9A84C; margin-bottom:1rem;">Navegación</h4>
+      <div style="display:flex; flex-direction:column; gap:0.5rem;">
+        @for (link of linksFooter; track link.path) {
+          <a [routerLink]="link.path" style="font-family:'Source Sans 3',sans-serif; font-size:0.85rem; color:rgba(255,255,255,0.8); text-decoration:none;">{{ link.label }}</a>
+        }
+      </div>
+    </div>
+    <div>
+      <h4 style="font-family:'Source Sans 3',sans-serif; font-size:0.75rem; letter-spacing:0.1em; text-transform:uppercase; color:#C9A84C; margin-bottom:1rem;">Contacto</h4>
+      <p style="font-family:'Source Sans 3',sans-serif; font-size:0.85rem; opacity:0.8; line-height:1.8;">
+        Fusagasugá, Cundinamarca<br>
+        Colombia<br>
+        institutotecnicosantander.com.co
+      </p>
+    </div>
+  </div>
+  <div style="border-top:1px solid rgba(255,255,255,0.15); padding-top:1rem; text-align:center; font-family:'Source Sans 3',sans-serif; font-size:0.75rem; opacity:0.6;">
+    © 2026 Instituto Técnico Industrial Santander · Todos los derechos reservados
+  </div>
+</footer>

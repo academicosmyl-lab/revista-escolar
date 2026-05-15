@@ -1,0 +1,17 @@
+.nav-link {
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #3D3D3D;
+  text-decoration: none;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0.25rem 0;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s;
+
+  &:hover, &.nav-activo {
+    color: #7B1D2C;
+    border-bottom-color: #C9A84C;
+  }
+}
