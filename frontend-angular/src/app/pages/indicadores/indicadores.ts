@@ -11,33 +11,36 @@ export class Indicadores {
     {
       titulo: 'Noticias Publicadas',
       descripcion: 'Volumen de publicaciones por mes, sede y categoría',
-      icono: '📰',
       embedUrl: '',
     },
     {
       titulo: 'Participación Docente',
       descripcion: 'Actividad por docente: noticias, fotos y seguimiento semanal',
-      icono: '👩‍🏫',
       embedUrl: '',
     },
     {
       titulo: 'Galería e Imágenes',
       descripcion: 'Imágenes subidas, scores de IA y distribución por sección',
-      icono: '🖼️',
       embedUrl: '',
     },
     {
       titulo: 'Visitas a la Revista',
       descripcion: 'Visitas por noticia, sede y período de tiempo',
-      icono: '👁️',
       embedUrl: '',
     },
   ];
 
   tarjetas = [
-    { label: 'Noticias publicadas', valor: '—', icono: '📰', color: 'vinotinto' },
-    { label: 'Docentes activos',    valor: '—', icono: '👩‍🏫', color: 'verde'    },
-    { label: 'Fotos en galería',    valor: '—', icono: '🖼️', color: 'dorado'   },
-    { label: 'Visitas este mes',    valor: '—', icono: '👁️', color: 'vinotinto' },
+    { label: 'Noticias publicadas', valor: '—', color: 'vinotinto' },
+    { label: 'Docentes activos',    valor: '—', color: 'verde'     },
+    { label: 'Fotos en galería',    valor: '—', color: 'dorado'    },
+    { label: 'Visitas este mes',    valor: '—', color: 'vinotinto'  },
+  ];
+
+  exportar = [
+    { label: 'Noticias',             tipo: 'noticias'     },
+    { label: 'Docentes',             tipo: 'docentes'     },
+    { label: 'Galería',              tipo: 'galeria'      },
+    { label: 'Estadísticas completas', tipo: 'estadisticas' },
   ];
 }

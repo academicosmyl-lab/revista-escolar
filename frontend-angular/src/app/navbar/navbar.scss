@@ -148,7 +148,6 @@
 .nav-link-indicadores {
   color: #1A5C3A !important;
   font-weight: 700 !important;
-  &::before { content: '📊 '; font-size: 0.85em; }
   &:hover, &.nav-activo {
     color: #1A5C3A !important;
     border-bottom-color: #1A5C3A !important;
