@@ -27,7 +27,7 @@
   <div class="estadisticas-grid">
     @for (c of contadores; track c.label) {
       <div class="stat-item">
-        <div class="stat-num">{{ c.sufijo === '+' && c.actual === c.valor ? '+' : '' }}{{ c.actual }}{{ c.sufijo !== '+' ? c.sufijo : '' }}</div>
+        <div class="stat-num">{{ c.actual }}{{ c.sufijo }}</div>
         <div class="stat-label">{{ c.label }}</div>
       </div>
     }
