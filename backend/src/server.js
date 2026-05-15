@@ -105,6 +105,20 @@ async function iniciar() {
     }
     console.log('✅ Base de datos sincronizada');
 
+    // Auto-seed demo si la BD está vacía (SQLite sin persistencia en Railway)
+    try {
+      const { Usuario } = require('./models');
+      const total = await Usuario.count();
+      if (total === 0) {
+        console.log('⚡ BD vacía — ejecutando seed demo automático...');
+        const { seedDemo } = require('./utils/seed-demo');
+        await seedDemo();
+        console.log('✅ Seed demo completado automáticamente');
+      }
+    } catch (seedErr) {
+      console.error('⚠️  Auto-seed falló (no crítico):', seedErr.message);
+    }
+
     // Verificar email (no bloqueante — no retrasa el arranque del servidor)
     emailService.verificar().then(emailOk => {
       console.log(emailOk.ok ? '✅ Email configurado' : `⚠️  Email: ${emailOk.error}`);
