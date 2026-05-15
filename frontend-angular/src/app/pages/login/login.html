@@ -3,17 +3,27 @@
     <img src="assets/images/logo-its.png" alt="Escudo ITS Santander" class="login-logo">
     <h1 class="login-titulo">Acceso Institucional</h1>
     <p class="login-sub">Panel de docentes y administrativos</p>
-    <form class="login-form">
+
+    @if (error()) {
+      <div class="login-error">{{ error() }}</div>
+    }
+
+    <form class="login-form" (ngSubmit)="ingresar()">
       <div class="campo">
-        <label>Correo institucional</label>
-        <input type="email" placeholder="usuario@its.edu.co" class="input-its">
+        <label for="email">Correo institucional</label>
+        <input id="email" type="email" [(ngModel)]="email" name="email"
+               placeholder="usuario@its.edu.co" class="input-its" autocomplete="email">
       </div>
       <div class="campo">
-        <label>Contraseña</label>
-        <input type="password" placeholder="••••••••" class="input-its">
+        <label for="password">Contraseña</label>
+        <input id="password" type="password" [(ngModel)]="password" name="password"
+               placeholder="••••••••" class="input-its" autocomplete="current-password">
       </div>
-      <button type="submit" class="its-btn-primario w-full">Ingresar</button>
+      <button type="submit" class="its-btn-primario w-full" [disabled]="cargando()">
+        {{ cargando() ? 'Verificando...' : 'Ingresar' }}
+      </button>
     </form>
+
     <a routerLink="/" class="login-volver">← Volver a la revista</a>
   </div>
 </section>

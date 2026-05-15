@@ -26,6 +26,12 @@
   &:focus { border-color: #C9A84C; }
 }
 .w-full { width: 100%; text-align: center; margin-top: 0.5rem; }
+.login-error {
+  background: #fff0f0; border: 1px solid #f5c0c0; color: #7B1D2C;
+  padding: 0.75rem 1rem; margin-bottom: 1.25rem;
+  font-family: 'Source Sans 3', sans-serif; font-size: 0.85rem;
+}
+button:disabled { opacity: 0.65; cursor: not-allowed; }
 .login-volver {
   display: block; margin-top: 1.5rem; font-family: 'Source Sans 3', sans-serif;
   font-size: 0.8rem; color: #7B1D2C; text-decoration: none;
