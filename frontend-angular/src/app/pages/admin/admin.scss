@@ -1,0 +1,340 @@
+/* ── Admin panel ─────────────────────────────────────────── */
+.adm-header {
+  background: var(--vinotinto);
+  color: white;
+  padding: 1.25rem 0;
+}
+.adm-header-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+.adm-eyebrow {
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.7);
+  margin-bottom: 0.2rem;
+}
+.adm-titulo {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 1.6rem;
+  color: white;
+  margin: 0;
+}
+.adm-header-acciones {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+.adm-user-badge {
+  font-size: 0.82rem;
+  background: rgba(255,255,255,0.15);
+  padding: 0.35rem 0.85rem;
+  letter-spacing: 0.04em;
+}
+.adm-btn-revista {
+  background: var(--dorado);
+  color: var(--vinotinto);
+  padding: 0.45rem 1rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: opacity 0.2s;
+  &:hover { opacity: 0.85; }
+}
+.adm-btn-salir {
+  background: transparent;
+  color: rgba(255,255,255,0.7);
+  border: 1px solid rgba(255,255,255,0.3);
+  padding: 0.45rem 1rem;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  &:hover { color: white; border-color: white; }
+}
+
+/* Alertas */
+.adm-alerta-exito {
+  background: #d1fae5; color: #065f46;
+  padding: 0.85rem 2rem;
+  font-weight: 600;
+  font-size: 0.9rem;
+  border-left: 4px solid var(--verde);
+}
+.adm-alerta-error {
+  background: #fee2e2; color: #991b1b;
+  padding: 0.85rem 2rem;
+  font-weight: 600;
+  font-size: 0.9rem;
+  border-left: 4px solid var(--vinotinto);
+}
+
+/* Main */
+.adm-main {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+/* Stats */
+.adm-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2.5rem;
+}
+.adm-stat {
+  padding: 1.5rem;
+  text-align: center;
+  background: white;
+  border-top: 4px solid transparent;
+}
+.adm-stat-ambar { border-top-color: #d97706; }
+.adm-stat-verde { border-top-color: var(--verde); }
+.adm-stat-vino  { border-top-color: var(--vinotinto); }
+.adm-stat-dorado { border-top-color: var(--dorado); }
+.adm-stat-num {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--gris);
+  line-height: 1;
+}
+.adm-stat-label {
+  font-size: 0.82rem;
+  color: #6b7280;
+  margin-top: 0.4rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+/* Sección */
+.adm-seccion {
+  margin-bottom: 2.5rem;
+}
+.adm-seccion-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+  flex-wrap: wrap;
+}
+.adm-seccion-titulo {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 1.25rem;
+  color: var(--vinotinto);
+  margin: 0;
+  flex: 1;
+}
+.adm-btn-toggle {
+  background: transparent;
+  border: 1px solid var(--vinotinto);
+  color: var(--vinotinto);
+  padding: 0.4rem 1rem;
+  font-size: 0.8rem;
+  cursor: pointer;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  transition: all 0.2s;
+  &:hover { background: var(--vinotinto); color: white; }
+}
+
+/* Noticia fila (pendientes) */
+.adm-noticia-fila {
+  background: white;
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 0.75rem;
+  display: flex;
+  gap: 1.5rem;
+  align-items: flex-start;
+  border-left: 3px solid #d97706;
+}
+.adm-noticia-info { flex: 1; }
+.adm-noticia-titulo {
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--gris);
+  margin-bottom: 0.3rem;
+}
+.adm-noticia-meta {
+  font-size: 0.82rem;
+  color: #6b7280;
+  margin-bottom: 0.5rem;
+}
+.adm-noticia-resumen {
+  font-size: 0.88rem;
+  color: #4b5563;
+  line-height: 1.5;
+}
+.adm-noticia-acciones {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+.adm-btn-aprobar {
+  background: var(--verde);
+  color: white;
+  border: none;
+  padding: 0.5rem 1.25rem;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.2s;
+  &:hover:not(:disabled) { background: #144d30; }
+  &:disabled { opacity: 0.5; cursor: not-allowed; }
+}
+.adm-btn-rechazar {
+  background: transparent;
+  color: var(--vinotinto);
+  border: 2px solid var(--vinotinto);
+  padding: 0.5rem 1.25rem;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.2s;
+  &:hover:not(:disabled) { background: var(--vinotinto); color: white; }
+  &:disabled { opacity: 0.5; cursor: not-allowed; }
+}
+.adm-badge-categoria {
+  color: white;
+  font-size: 0.72rem;
+  padding: 0.15rem 0.5rem;
+  font-weight: 600;
+}
+
+/* Lista compact (publicadas) */
+.adm-lista-compact { display: flex; flex-direction: column; gap: 0.6rem; }
+.adm-item-compact {
+  background: white;
+  padding: 0.85rem 1.25rem;
+  border-left: 3px solid var(--verde);
+}
+.adm-item-titulo {
+  font-weight: 600;
+  color: var(--vinotinto);
+  text-decoration: none;
+  font-size: 0.95rem;
+  display: block;
+  margin-bottom: 0.2rem;
+  &:hover { text-decoration: underline; }
+}
+.adm-item-meta { font-size: 0.8rem; color: #6b7280; }
+
+/* Formulario usuario */
+.adm-form-usuario {
+  background: white;
+  padding: 1.5rem;
+}
+.adm-form-fila {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  @media (max-width: 600px) { grid-template-columns: 1fr; }
+}
+.adm-campo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  label { font-size: 0.82rem; font-weight: 600; color: var(--gris); text-transform: uppercase; letter-spacing: 0.06em; }
+}
+.input-its {
+  border: 1.5px solid #d1d5db;
+  padding: 0.6rem 0.85rem;
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.95rem;
+  background: #fafafa;
+  width: 100%;
+  transition: border-color 0.2s;
+  &:focus { outline: none; border-color: var(--vinotinto); }
+}
+
+/* Modal rechazo */
+.adm-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.55);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+}
+.adm-modal {
+  background: white;
+  padding: 2rem;
+  max-width: 520px;
+  width: 100%;
+}
+.adm-modal-titulo {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 1.3rem;
+  color: var(--vinotinto);
+  margin-bottom: 0.35rem;
+}
+.adm-modal-sub { font-size: 0.9rem; color: #6b7280; margin-bottom: 1.25rem; }
+.adm-textarea {
+  width: 100%;
+  border: 1.5px solid #d1d5db;
+  padding: 0.75rem;
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.95rem;
+  resize: vertical;
+  margin-bottom: 1.25rem;
+  &:focus { outline: none; border-color: var(--vinotinto); }
+}
+.adm-modal-acciones { display: flex; gap: 0.75rem; flex-wrap: wrap; }
+.adm-btn-cancelar {
+  background: transparent;
+  border: 1.5px solid #d1d5db;
+  padding: 0.6rem 1.25rem;
+  font-size: 0.82rem;
+  cursor: pointer;
+  transition: border-color 0.2s;
+  &:hover { border-color: #9ca3af; }
+}
+
+/* Skeleton cargando */
+.adm-cargando { padding: 1rem 0; }
+.adm-sk-stats {
+  height: 100px;
+  background: linear-gradient(90deg, #e5e7eb 25%, #f3f4f6 50%, #e5e7eb 75%);
+  background-size: 400px;
+  animation: sk-shimmer 1.4s infinite;
+  margin-bottom: 1.5rem;
+}
+.adm-sk-tabla {
+  height: 250px;
+  background: linear-gradient(90deg, #e5e7eb 25%, #f3f4f6 50%, #e5e7eb 75%);
+  background-size: 400px;
+  animation: sk-shimmer 1.4s infinite;
+}
+@keyframes sk-shimmer {
+  0% { background-position: -400px 0; }
+  100% { background-position: 400px 0; }
+}
+
+/* Vacio */
+.adm-vacio {
+  background: var(--crema);
+  padding: 1.5rem;
+  color: #6b7280;
+  font-style: italic;
+  border-left: 3px solid var(--dorado);
+}
+
+/* Badges */
+.adm-badge-verde { background: var(--verde); color: white; padding: 0.2rem 0.6rem; font-size: 0.72rem; font-weight: 700; }
+.adm-badge-ambar { background: #d97706; color: white; padding: 0.2rem 0.6rem; font-size: 0.72rem; font-weight: 700; }
+.adm-badge-rojo  { background: var(--vinotinto); color: white; padding: 0.2rem 0.6rem; font-size: 0.72rem; font-weight: 700; }

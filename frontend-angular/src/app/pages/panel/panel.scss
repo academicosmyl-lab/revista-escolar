@@ -1,0 +1,276 @@
+/* ── Panel docente ───────────────────────────────────────── */
+.pan-header {
+  background: var(--verde);
+  color: white;
+  padding: 1.25rem 0;
+}
+.pan-header-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+.pan-eyebrow {
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.7);
+  margin-bottom: 0.2rem;
+}
+.pan-titulo {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 1.6rem;
+  color: white;
+  margin: 0;
+}
+.pan-header-acciones {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  flex-wrap: wrap;
+}
+.pan-user-info {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+.pan-avatar {
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid rgba(255,255,255,0.5);
+}
+.pan-avatar-inicial {
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.2);
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 700; font-size: 1.1rem; color: white;
+  border: 2px solid rgba(255,255,255,0.5);
+}
+.pan-user-nombre { font-weight: 700; font-size: 0.9rem; line-height: 1.2; }
+.pan-user-rol { font-size: 0.72rem; color: rgba(255,255,255,0.7); letter-spacing: 0.06em; }
+
+.pan-btn-revista {
+  background: var(--dorado);
+  color: var(--vinotinto);
+  padding: 0.45rem 1rem;
+  font-size: 0.8rem; font-weight: 600;
+  letter-spacing: 0.05em; text-transform: uppercase;
+  text-decoration: none;
+  transition: opacity 0.2s;
+  &:hover { opacity: 0.85; }
+}
+.pan-btn-salir {
+  background: transparent;
+  color: rgba(255,255,255,0.7);
+  border: 1px solid rgba(255,255,255,0.3);
+  padding: 0.45rem 1rem;
+  font-size: 0.8rem; cursor: pointer;
+  transition: all 0.2s;
+  &:hover { color: white; border-color: white; }
+}
+
+/* Alertas */
+.pan-alerta-exito {
+  background: #d1fae5; color: #065f46;
+  padding: 0.85rem 2rem; font-weight: 600; font-size: 0.9rem;
+  border-left: 4px solid var(--verde);
+}
+.pan-alerta-error {
+  background: #fee2e2; color: #991b1b;
+  padding: 0.85rem 2rem; font-weight: 600; font-size: 0.9rem;
+  border-left: 4px solid var(--vinotinto);
+}
+
+/* Main */
+.pan-main {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+/* Stats */
+.pan-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.75rem;
+}
+.pan-stat {
+  padding: 1.25rem;
+  text-align: center;
+  background: white;
+  border-top: 4px solid transparent;
+}
+.pan-stat-verde  { border-top-color: var(--verde); }
+.pan-stat-ambar  { border-top-color: #d97706; }
+.pan-stat-rojo   { border-top-color: var(--vinotinto); }
+.pan-stat-vino   { border-top-color: #9333ea; }
+.pan-stat-num {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 2.2rem; font-weight: 700;
+  color: var(--gris); line-height: 1;
+}
+.pan-stat-label {
+  font-size: 0.78rem; color: #6b7280; margin-top: 0.3rem;
+  text-transform: uppercase; letter-spacing: 0.06em;
+}
+
+/* Acciones rápidas */
+.pan-acciones {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+}
+.pan-link-perfil {
+  color: var(--verde); font-size: 0.9rem; font-weight: 600;
+  text-decoration: none; border-bottom: 1px solid var(--verde);
+  &:hover { color: #144d30; }
+}
+
+/* Formulario noticia */
+.pan-form-seccion {
+  background: white;
+  padding: 1.75rem;
+  margin-bottom: 2.5rem;
+  border-top: 3px solid var(--vinotinto);
+}
+.pan-form-header {
+  display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem;
+}
+.pan-form-titulo {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 1.2rem; color: var(--vinotinto); margin: 0;
+}
+.pan-form { display: flex; flex-direction: column; gap: 1.25rem; }
+.pan-campo {
+  display: flex; flex-direction: column; gap: 0.35rem;
+  label { font-size: 0.82rem; font-weight: 600; color: var(--gris); text-transform: uppercase; letter-spacing: 0.06em; }
+}
+.pan-req { color: var(--vinotinto); }
+.pan-hint { font-size: 0.78rem; color: #9ca3af; }
+.pan-textarea { min-height: 160px; resize: vertical; }
+.input-its {
+  border: 1.5px solid #d1d5db;
+  padding: 0.6rem 0.85rem;
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.95rem;
+  background: #fafafa;
+  width: 100%;
+  transition: border-color 0.2s;
+  &:focus { outline: none; border-color: var(--vinotinto); }
+}
+.pan-form-fila {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;
+  @media (max-width: 640px) { grid-template-columns: 1fr; }
+}
+.pan-campo-ia { justify-content: flex-end; }
+
+/* Toggle IA */
+.pan-label-toggle {
+  display: flex; align-items: flex-start; gap: 0.85rem; cursor: pointer;
+}
+.pan-toggle-wrap { position: relative; flex-shrink: 0; width: 44px; height: 24px; margin-top: 2px; }
+.pan-checkbox { opacity: 0; width: 0; height: 0; position: absolute; }
+.pan-toggle-slider {
+  position: absolute; inset: 0;
+  background: #d1d5db;
+  border-radius: 24px;
+  transition: background 0.2s;
+  &::before {
+    content: '';
+    position: absolute;
+    width: 18px; height: 18px;
+    left: 3px; top: 3px;
+    background: white;
+    border-radius: 50%;
+    transition: transform 0.2s;
+  }
+}
+.pan-checkbox:checked + .pan-toggle-slider {
+  background: var(--verde);
+  &::before { transform: translateX(20px); }
+}
+.pan-toggle-label { font-size: 0.9rem; font-weight: 600; color: var(--gris); display: block; }
+.pan-toggle-desc { font-size: 0.78rem; color: #6b7280; display: block; margin-top: 0.15rem; }
+
+.pan-form-footer { display: flex; flex-direction: column; gap: 0.6rem; }
+.pan-aviso-revision { font-size: 0.8rem; color: #9ca3af; font-style: italic; }
+
+/* Lista noticias */
+.pan-seccion { margin-bottom: 2rem; }
+.pan-seccion-header { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.25rem; }
+.pan-seccion-titulo {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 1.25rem; color: var(--vinotinto); margin: 0;
+}
+
+.pan-lista-noticias { display: flex; flex-direction: column; gap: 0.75rem; }
+.pan-noticia {
+  background: white;
+  display: flex; gap: 1rem;
+  padding: 1rem 1.25rem;
+  border-left: 3px solid var(--verde);
+  align-items: flex-start;
+}
+.pan-noticia-rechazada { border-left-color: var(--vinotinto); opacity: 0.85; }
+.pan-noticia-img {
+  width: 80px; height: 60px;
+  object-fit: cover; flex-shrink: 0;
+}
+.pan-noticia-img-placeholder {
+  width: 80px; height: 60px;
+  background: var(--claro); flex-shrink: 0;
+}
+.pan-noticia-cuerpo { flex: 1; }
+.pan-noticia-header { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.35rem; flex-wrap: wrap; }
+.pan-noticia-titulo {
+  font-weight: 700; font-size: 0.95rem; color: var(--gris);
+  margin-bottom: 0.3rem;
+  a { color: var(--vinotinto); text-decoration: none; &:hover { text-decoration: underline; } }
+}
+.pan-noticia-resumen { font-size: 0.85rem; color: #4b5563; line-height: 1.5; margin-bottom: 0.3rem; }
+.pan-noticia-meta { font-size: 0.78rem; color: #9ca3af; }
+.pan-motivo { color: var(--vinotinto); }
+
+/* Badges */
+.pan-badge { padding: 0.18rem 0.55rem; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.04em; }
+.pan-badge-verde { background: var(--verde); color: white; }
+.pan-badge-ambar { background: #d97706; color: white; }
+.pan-badge-rojo  { background: var(--vinotinto); color: white; }
+.pan-badge-cat { color: white; padding: 0.18rem 0.55rem; font-size: 0.72rem; font-weight: 700; }
+
+/* Skeleton */
+.pan-sk-noticia {
+  height: 80px;
+  background: linear-gradient(90deg, #e5e7eb 25%, #f3f4f6 50%, #e5e7eb 75%);
+  background-size: 400px;
+  animation: pan-shimmer 1.4s infinite;
+  margin-bottom: 0.75rem;
+}
+@keyframes pan-shimmer {
+  0% { background-position: -400px 0; }
+  100% { background-position: 400px 0; }
+}
+
+/* Vacio */
+.pan-vacio {
+  background: var(--crema); padding: 1.5rem;
+  color: #6b7280; font-style: italic;
+  border-left: 3px solid var(--dorado);
+  display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;
+}
+.pan-link-accion {
+  background: transparent; border: none;
+  color: var(--vinotinto); font-weight: 700;
+  cursor: pointer; font-size: 0.9rem;
+  text-decoration: underline;
+  &:hover { color: #5a0f1f; }
+}

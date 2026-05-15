@@ -1,0 +1,194 @@
+<!-- HEADER -->
+<header class="pan-header">
+  <div class="pan-header-inner">
+    <div>
+      <div class="pan-eyebrow">Instituto Técnico Industrial Santander</div>
+      <h1 class="pan-titulo">Mi Panel</h1>
+    </div>
+    <div class="pan-header-acciones">
+      <div class="pan-user-info">
+        @if (perfilFotoUrl) {
+          <img class="pan-avatar" [src]="perfilFotoUrl" [alt]="auth.usuario()?.nombre">
+        } @else {
+          <div class="pan-avatar-inicial">{{ (auth.usuario()?.nombre || '?').charAt(0) }}</div>
+        }
+        <div>
+          <div class="pan-user-nombre">{{ auth.usuario()?.nombre }}</div>
+          <div class="pan-user-rol">{{ auth.usuario()?.rol }}</div>
+        </div>
+      </div>
+      <a routerLink="/" class="pan-btn-revista">Ir a la Revista</a>
+      <button class="pan-btn-salir" (click)="auth.logout()">Salir</button>
+    </div>
+  </div>
+</header>
+
+<!-- MENSAJES -->
+@if (exito()) {
+  <div class="pan-alerta-exito">{{ exito() }}</div>
+}
+@if (error()) {
+  <div class="pan-alerta-error">{{ error() }}</div>
+}
+
+<!-- MAIN -->
+<main class="pan-main">
+
+  <!-- STATS -->
+  @if (!cargando()) {
+    <div class="pan-stats">
+      <div class="pan-stat pan-stat-verde">
+        <div class="pan-stat-num">{{ publicadas.length }}</div>
+        <div class="pan-stat-label">Publicadas</div>
+      </div>
+      <div class="pan-stat pan-stat-ambar">
+        <div class="pan-stat-num">{{ pendientes.length }}</div>
+        <div class="pan-stat-label">En revisión</div>
+      </div>
+      <div class="pan-stat pan-stat-rojo">
+        <div class="pan-stat-num">{{ rechazadas.length }}</div>
+        <div class="pan-stat-label">Rechazadas</div>
+      </div>
+      <div class="pan-stat pan-stat-vino">
+        <div class="pan-stat-num">{{ noticias.length }}</div>
+        <div class="pan-stat-label">Total escritas</div>
+      </div>
+    </div>
+  }
+
+  <!-- ACCIONES RÁPIDAS -->
+  <div class="pan-acciones">
+    <button class="its-btn-primario" (click)="mostrarFormNoticia = !mostrarFormNoticia">
+      {{ mostrarFormNoticia ? 'Cancelar' : 'Escribir nueva noticia' }}
+    </button>
+    <a routerLink="/docentes" class="pan-link-perfil">Ver mi perfil público</a>
+  </div>
+
+  <!-- FORMULARIO NUEVA NOTICIA -->
+  @if (mostrarFormNoticia) {
+    <section class="pan-form-seccion">
+      <div class="pan-form-header">
+        <div class="linea-vinotinto"></div>
+        <h2 class="pan-form-titulo">Nueva noticia para la revista</h2>
+      </div>
+
+      <form class="pan-form" (ngSubmit)="crearNoticia()">
+        <div class="pan-campo">
+          <label for="titulo">Título de la noticia <span class="pan-req">*</span></label>
+          <input id="titulo" class="input-its" type="text" [(ngModel)]="nueva.titulo"
+                 name="titulo" placeholder="Ej: Estudiantes del ITS ganan olimpiada de matemáticas"
+                 maxlength="200">
+          <span class="pan-hint">{{ nueva.titulo.length }}/200 caracteres (mín. 5)</span>
+        </div>
+
+        <div class="pan-campo">
+          <label for="contenido">Contenido <span class="pan-req">*</span></label>
+          <textarea id="contenido" class="input-its pan-textarea" rows="8"
+                    [(ngModel)]="nueva.contenido" name="contenido"
+                    placeholder="Escribe tu noticia aquí. Si activas la IA, Claude la mejorará antes de enviarla a revisión. Escribe al menos lo esencial: qué pasó, quiénes participaron, qué logros se obtuvieron..."></textarea>
+          <span class="pan-hint">{{ nueva.contenido.length }} caracteres (mín. 50)</span>
+        </div>
+
+        <div class="pan-form-fila">
+          <div class="pan-campo">
+            <label for="categoria">Categoría (opcional)</label>
+            <select id="categoria" class="input-its" [(ngModel)]="nueva.categoria_id" name="categoria">
+              <option value="">Sin categoría</option>
+              @for (c of categorias; track c.id) {
+                <option [value]="c.id">{{ c.nombre }}</option>
+              }
+            </select>
+          </div>
+
+          <div class="pan-campo pan-campo-ia">
+            <label class="pan-label-toggle">
+              <div class="pan-toggle-wrap">
+                <input type="checkbox" [(ngModel)]="nueva.usar_ia" name="usar_ia" class="pan-checkbox">
+                <div class="pan-toggle-slider"></div>
+              </div>
+              <div>
+                <span class="pan-toggle-label">Mejorar con inteligencia artificial</span>
+                <span class="pan-toggle-desc">Claude (Anthropic) mejorará el título y redacción antes de enviar a revisión</span>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <div class="pan-form-footer">
+          <button type="submit" class="its-btn-primario"
+                  [disabled]="guardando() || nueva.titulo.length < 5 || nueva.contenido.length < 50">
+            {{ guardando() ? 'Procesando...' : (nueva.usar_ia ? 'Mejorar con IA y enviar a revisión' : 'Enviar a revisión') }}
+          </button>
+          <p class="pan-aviso-revision">La noticia no se publica directamente — queda pendiente de revisión por el administrador.</p>
+        </div>
+      </form>
+    </section>
+  }
+
+  <!-- MIS NOTICIAS -->
+  <section class="pan-seccion">
+    <div class="pan-seccion-header">
+      <div class="linea-dorada"></div>
+      <h2 class="pan-seccion-titulo">Mis noticias</h2>
+    </div>
+
+    @if (cargando()) {
+      @for (sk of [1,2,3]; track sk) {
+        <div class="pan-sk-noticia"></div>
+      }
+    }
+
+    @if (!cargando() && noticias.length === 0) {
+      <div class="pan-vacio">
+        Aún no has escrito ninguna noticia.
+        <button class="pan-link-accion" (click)="mostrarFormNoticia = true">
+          Escribe tu primera noticia
+        </button>
+      </div>
+    }
+
+    @if (!cargando() && noticias.length > 0) {
+      <div class="pan-lista-noticias">
+        @for (n of noticias; track n.id) {
+          <div class="pan-noticia" [class.pan-noticia-rechazada]="n.estado === 'rechazada'">
+            @if (imagen(n)) {
+              <img class="pan-noticia-img" [src]="imagen(n)" [alt]="n.titulo">
+            } @else {
+              <div class="pan-noticia-img-placeholder"></div>
+            }
+            <div class="pan-noticia-cuerpo">
+              <div class="pan-noticia-header">
+                <span [class]="estadoClass(n.estado)" class="pan-badge">
+                  {{ estadoLabel(n.estado) }}
+                </span>
+                @if (n.categoria) {
+                  <span class="pan-badge-cat" [style.background]="categoriaColor(n)">
+                    {{ categoriaNombre(n) }}
+                  </span>
+                }
+              </div>
+              <h3 class="pan-noticia-titulo">
+                @if (n.estado === 'publicada') {
+                  <a [routerLink]="['/noticias', n.id]">{{ n.titulo }}</a>
+                } @else {
+                  {{ n.titulo }}
+                }
+              </h3>
+              <p class="pan-noticia-resumen">{{ n.resumen || n.contenido | slice:0:150 }}...</p>
+              <div class="pan-noticia-meta">
+                {{ formatFecha(n.fechaPublicacion ?? n.createdAt) }}
+                @if (n.estado === 'publicada') {
+                  · <strong>{{ n.visitas }}</strong> visitas
+                }
+                @if (n.estado === 'rechazada' && motivoRechazoDe(n)) {
+                  · <span class="pan-motivo">Motivo: {{ motivoRechazoDe(n) }}</span>
+                }
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    }
+  </section>
+
+</main>

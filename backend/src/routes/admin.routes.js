@@ -12,7 +12,7 @@ const { crearError } = require('../middlewares/error.middleware');
 const Joi = require('joi');
 
 const router = Router();
-router.use(autenticar, requiereRol('ADMIN'));
+router.use(autenticar, requiereRol('ADMIN', 'RECTOR'));
 
 // GET /api/v1/admin/noticias — todas las noticias (con pendientes)
 router.get('/noticias', async (req, res, next) => {

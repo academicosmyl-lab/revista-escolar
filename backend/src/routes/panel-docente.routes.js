@@ -3,7 +3,7 @@
  * Panel personal del docente: seguimiento por materia, documentos, imágenes, reportes
  */
 const { Router } = require('express');
-const { SeguimientoMateria, DocumentoDocente, Imagen, Curso, Area, Usuario } = require('../models');
+const { SeguimientoMateria, DocumentoDocente, Imagen, Curso, Area, Usuario, Noticia, Categoria } = require('../models');
 const { autenticar, requiereRol } = require('../middlewares/auth.middleware');
 const { upload } = require('../middlewares/upload.middleware');
 const { galleryAgent } = require('../agents/gallery.agent');
@@ -13,6 +13,21 @@ const Joi = require('joi');
 
 const router = Router();
 router.use(autenticar);
+
+// GET /api/v1/panel/noticias — mis noticias (todos los estados)
+router.get('/noticias', async (req, res, next) => {
+  try {
+    const noticias = await Noticia.findAll({
+      where: { autor_id: req.usuario.id },
+      include: [
+        { model: Categoria, as: 'categoria', attributes: ['nombre', 'color'] },
+        { model: Imagen, as: 'imagenes', attributes: ['url', 'alt_text', 'es_portada'] },
+      ],
+      order: [['created_at', 'DESC']],
+    });
+    res.json({ noticias });
+  } catch (err) { next(err); }
+});
 
 // GET /api/v1/panel/seguimiento — ver mis seguimientos por materia
 router.get('/seguimiento', async (req, res, next) => {

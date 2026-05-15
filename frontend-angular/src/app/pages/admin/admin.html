@@ -1,0 +1,192 @@
+<!-- MODAL RECHAZO -->
+@if (noticiaRechazar) {
+  <div class="adm-overlay" (click)="noticiaRechazar = null">
+    <div class="adm-modal" (click)="$event.stopPropagation()">
+      <h3 class="adm-modal-titulo">Rechazar noticia</h3>
+      <p class="adm-modal-sub">"{{ noticiaRechazar.titulo }}"</p>
+      <textarea class="adm-textarea" rows="4" placeholder="Motivo del rechazo (el docente lo recibirá por correo)..."
+                [(ngModel)]="motivoRechazo"></textarea>
+      <div class="adm-modal-acciones">
+        <button class="its-btn-primario" (click)="confirmarRechazo()"
+                [disabled]="!motivoRechazo.trim() || guardando()">
+          {{ guardando() ? 'Enviando...' : 'Confirmar rechazo' }}
+        </button>
+        <button class="adm-btn-cancelar" (click)="noticiaRechazar = null">Cancelar</button>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- HEADER DEL PANEL -->
+<header class="adm-header">
+  <div class="adm-header-inner">
+    <div>
+      <div class="adm-eyebrow">Instituto Técnico Industrial Santander</div>
+      <h1 class="adm-titulo">Panel Administrativo</h1>
+    </div>
+    <div class="adm-header-acciones">
+      <span class="adm-user-badge">
+        {{ auth.usuario()?.nombre }} — {{ auth.usuario()?.rol }}
+      </span>
+      <a routerLink="/" class="adm-btn-revista">Ir a la Revista</a>
+      <button class="adm-btn-salir" (click)="auth.logout()">Salir</button>
+    </div>
+  </div>
+</header>
+
+<!-- MENSAJES -->
+@if (exito()) {
+  <div class="adm-alerta-exito">{{ exito() }}</div>
+}
+@if (error()) {
+  <div class="adm-alerta-error">{{ error() }}</div>
+}
+
+<!-- CONTENIDO -->
+<main class="adm-main">
+
+  <!-- STATS -->
+  @if (!cargando()) {
+    <div class="adm-stats">
+      <div class="adm-stat adm-stat-ambar">
+        <div class="adm-stat-num">{{ pendientes.length }}</div>
+        <div class="adm-stat-label">Pendientes de revisión</div>
+      </div>
+      <div class="adm-stat adm-stat-verde">
+        <div class="adm-stat-num">{{ estadisticas.noticiasPublicadas ?? publicadas.length }}</div>
+        <div class="adm-stat-label">Noticias publicadas</div>
+      </div>
+      <div class="adm-stat adm-stat-vino">
+        <div class="adm-stat-num">{{ estadisticas.totalDocentes ?? '—' }}</div>
+        <div class="adm-stat-label">Docentes activos</div>
+      </div>
+      <div class="adm-stat adm-stat-dorado">
+        <div class="adm-stat-num">{{ estadisticas.visitasTotales ?? '—' }}</div>
+        <div class="adm-stat-label">Visitas totales</div>
+      </div>
+    </div>
+  }
+
+  <!-- CARGANDO -->
+  @if (cargando()) {
+    <div class="adm-cargando">
+      <div class="adm-sk-stats"></div>
+      <div class="adm-sk-tabla"></div>
+    </div>
+  }
+
+  @if (!cargando()) {
+
+    <!-- PENDIENTES DE REVISIÓN -->
+    <section class="adm-seccion">
+      <div class="adm-seccion-header">
+        <div class="linea-vinotinto"></div>
+        <h2 class="adm-seccion-titulo">Noticias pendientes de revisión</h2>
+      </div>
+
+      @if (pendientes.length === 0) {
+        <div class="adm-vacio">No hay noticias pendientes. Todo al día.</div>
+      }
+
+      @for (n of pendientes; track n.id) {
+        <div class="adm-noticia-fila">
+          <div class="adm-noticia-info">
+            <div class="adm-noticia-titulo">{{ n.titulo }}</div>
+            <div class="adm-noticia-meta">
+              Por <strong>{{ n.autor?.nombre ?? '—' }}</strong>
+              · {{ formatFecha(n.createdAt) }}
+              @if (n.categoria) {
+                · <span class="adm-badge-categoria" [style.background]="n.categoria.color ?? '#7B1D2C'">
+                    {{ n.categoria.nombre }}
+                  </span>
+              }
+            </div>
+            <p class="adm-noticia-resumen">{{ n.resumen || n.contenido | slice:0:180 }}...</p>
+          </div>
+          <div class="adm-noticia-acciones">
+            <button class="adm-btn-aprobar" (click)="aprobar(n)" [disabled]="guardando()">
+              Aprobar
+            </button>
+            <button class="adm-btn-rechazar" (click)="abrirRechazar(n)" [disabled]="guardando()">
+              Rechazar
+            </button>
+          </div>
+        </div>
+      }
+    </section>
+
+    <!-- PUBLICADAS RECIENTES -->
+    <section class="adm-seccion">
+      <div class="adm-seccion-header">
+        <div class="linea-dorada"></div>
+        <h2 class="adm-seccion-titulo">Noticias recientes publicadas</h2>
+      </div>
+
+      <div class="adm-lista-compact">
+        @for (n of publicadas; track n.id) {
+          <div class="adm-item-compact">
+            <a [routerLink]="['/noticias', n.id]" class="adm-item-titulo">{{ n.titulo }}</a>
+            <div class="adm-item-meta">
+              {{ n.autor?.nombre }}
+              · {{ n.visitas }} visitas
+              · {{ formatFecha(n.fechaPublicacion ?? n.createdAt) }}
+            </div>
+          </div>
+        }
+      </div>
+    </section>
+
+    <!-- CREAR USUARIO (solo ADMIN) -->
+    @if (auth.esAdmin()) {
+      <section class="adm-seccion">
+        <div class="adm-seccion-header">
+          <div class="linea-vinotinto"></div>
+          <h2 class="adm-seccion-titulo">Gestión de usuarios</h2>
+          <button class="adm-btn-toggle" (click)="mostrarFormUsuario = !mostrarFormUsuario">
+            {{ mostrarFormUsuario ? 'Cerrar' : 'Crear nuevo usuario' }}
+          </button>
+        </div>
+
+        @if (mostrarFormUsuario) {
+          <form class="adm-form-usuario" (ngSubmit)="crearUsuario()">
+            <div class="adm-form-fila">
+              <div class="adm-campo">
+                <label>Nombre completo</label>
+                <input class="input-its" type="text" [(ngModel)]="nuevoUsuario.nombre"
+                       name="nombre" placeholder="Ej: María García López">
+              </div>
+              <div class="adm-campo">
+                <label>Correo institucional</label>
+                <input class="input-its" type="email" [(ngModel)]="nuevoUsuario.email"
+                       name="email" placeholder="usuario@its.edu.co">
+              </div>
+            </div>
+            <div class="adm-form-fila">
+              <div class="adm-campo">
+                <label>Contraseña inicial</label>
+                <input class="input-its" type="text" [(ngModel)]="nuevoUsuario.password"
+                       name="password" placeholder="Mínimo 8 caracteres">
+              </div>
+              <div class="adm-campo">
+                <label>Rol</label>
+                <select class="input-its" [(ngModel)]="nuevoUsuario.rol" name="rol">
+                  <option value="DOCENTE">Docente</option>
+                  <option value="RECTOR">Rector</option>
+                  <option value="COORDINADOR">Coordinador</option>
+                  <option value="ORIENTADORA">Orientadora</option>
+                  <option value="PERSONAL">Personal</option>
+                  <option value="ADMIN">Administrador</option>
+                </select>
+              </div>
+            </div>
+            <button type="submit" class="its-btn-primario" [disabled]="guardando()">
+              {{ guardando() ? 'Creando...' : 'Crear usuario' }}
+            </button>
+          </form>
+        }
+      </section>
+    }
+
+  }
+
+</main>
