@@ -22,31 +22,21 @@
   </div>
 </section>
 
-<!-- ESTADÍSTICAS -->
+<!-- ESTADÍSTICAS con contadores animados -->
 <div class="estadisticas-banda">
   <div class="estadisticas-grid">
-    <div class="stat-item">
-      <div class="stat-num">3</div>
-      <div class="stat-label">Sedes</div>
-    </div>
-    <div class="stat-item">
-      <div class="stat-num">+50</div>
-      <div class="stat-label">Docentes</div>
-    </div>
-    <div class="stat-item">
-      <div class="stat-num">14</div>
-      <div class="stat-label">Áreas académicas</div>
-    </div>
-    <div class="stat-item">
-      <div class="stat-num">+1000</div>
-      <div class="stat-label">Estudiantes</div>
-    </div>
+    @for (c of contadores; track c.label) {
+      <div class="stat-item">
+        <div class="stat-num">{{ c.sufijo === '+' && c.actual === c.valor ? '+' : '' }}{{ c.actual }}{{ c.sufijo !== '+' ? c.sufijo : '' }}</div>
+        <div class="stat-label">{{ c.label }}</div>
+      </div>
+    }
   </div>
 </div>
 
-<!-- NOTICIAS RECIENTES -->
+<!-- NOTICIAS RECIENTES con scroll reveal -->
 <section class="noticias-seccion">
-  <div class="seccion-header">
+  <div class="seccion-header reveal">
     <div>
       <div class="linea-dorada"></div>
       <h2 class="seccion-titulo">Últimas Noticias</h2>
@@ -54,8 +44,8 @@
     <a routerLink="/noticias" class="ver-todas-link">Ver todas</a>
   </div>
 
-  <div class="noticias-grid">
-    <!-- Noticia principal -->
+  <!-- Grid desktop / Slider móvil -->
+  <div class="noticias-grid reveal">
     <div class="card-noticia noticia-principal">
       <div class="img-placeholder" style="height:260px;">
         <strong>NOTICIA_PRINCIPAL</strong>
@@ -69,7 +59,6 @@
       </div>
     </div>
 
-    <!-- Noticias secundarias -->
     @for (n of noticiasEjemplo; track n.id) {
       <div class="card-noticia">
         <div class="img-placeholder" style="height:130px;">
@@ -83,6 +72,33 @@
         </div>
       </div>
     }
+  </div>
+</section>
+
+<!-- SECCIÓN SEDES con scroll reveal -->
+<section class="sedes-seccion reveal">
+  <div class="sedes-inner">
+    <div class="seccion-header">
+      <div>
+        <div class="linea-dorada"></div>
+        <h2 class="seccion-titulo" style="color:white;">Nuestras Sedes</h2>
+      </div>
+      <a routerLink="/sedes" class="ver-todas-link" style="color:rgba(255,255,255,0.7); border-bottom-color:rgba(201,168,76,0.5);">Ver todas</a>
+    </div>
+    <div class="sedes-grid">
+      @for (sede of sedes; track sede.nombre) {
+        <div class="sede-card">
+          <div class="img-placeholder sede-img">
+            <strong>{{ sede.imgKey }}</strong>
+            <span>800 × 500 px · Foto fachada {{ sede.nombre }}</span>
+          </div>
+          <div class="sede-info">
+            <h3 class="sede-nombre">{{ sede.nombre }}</h3>
+            <p class="sede-tipo">{{ sede.tipo }}</p>
+          </div>
+        </div>
+      }
+    </div>
   </div>
 </section>
 
@@ -106,8 +122,7 @@
     <div>
       <h4 class="footer-titulo-seccion">Contacto</h4>
       <p class="footer-contacto">
-        Fusagasugá, Cundinamarca<br>
-        Colombia<br>
+        Fusagasugá, Cundinamarca<br>Colombia<br>
         institutotecnicosantander.com.co
       </p>
     </div>
