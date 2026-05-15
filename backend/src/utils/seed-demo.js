@@ -30,6 +30,38 @@ async function seedDemo() {
   await sequelize.authenticate();
   console.log('✅ Conectado a la base de datos\n');
 
+  // ── 0. BASE SEED (crea lo que falte, no sobrescribe) ─────
+  const sedesBase = [
+    { nombre: 'Técnico Industrial Bachillerato',        slug: 'tecnico-industrial-bachillerato',        tipo: 'bachillerato',    color_institucional: '#7B1D2C' },
+    { nombre: 'Técnico Industrial Básica Primaria',     slug: 'tecnico-industrial-basica-primaria',     tipo: 'basica_primaria', color_institucional: '#1A5C3A' },
+    { nombre: 'Técnico Industrial Rural Los Sauces',    slug: 'tecnico-industrial-rural-los-sauces',    tipo: 'rural',           color_institucional: '#92400E' },
+  ];
+  for (const s of sedesBase) await Sede.findOrCreate({ where: { slug: s.slug }, defaults: s });
+
+  const areasBase = [
+    { nombre: 'Matemáticas',           color: '#3B82F6' },
+    { nombre: 'Ciencias Naturales',    color: '#10B981' },
+    { nombre: 'Lenguaje',              color: '#8B5CF6' },
+    { nombre: 'Ciencias Sociales',     color: '#F59E0B' },
+    { nombre: 'Tecnología e Informática', color: '#06B6D4' },
+    { nombre: 'Inglés',                color: '#EC4899' },
+    { nombre: 'Educación Física',      color: '#EF4444' },
+    { nombre: 'Artes',                 color: '#F97316' },
+    { nombre: 'Ética y Valores',       color: '#64748B' },
+    { nombre: 'Técnica Industrial',    color: '#78716C' },
+  ];
+  for (const a of areasBase) await Area.findOrCreate({ where: { nombre: a.nombre }, defaults: a });
+
+  const adminPass = await bcrypt.hash(process.env.ADMIN_PASSWORD || 'Admin2024*', 12);
+  await Usuario.findOrCreate({
+    where: { email: process.env.ADMIN_EMAIL || 'admin@revista.edu.co' },
+    defaults: {
+      nombre: 'Administrador', email: process.env.ADMIN_EMAIL || 'admin@revista.edu.co',
+      password_hash: adminPass, rol: 'ADMIN', activo: true, es_raiz: true,
+    },
+  });
+  console.log('✅ Base seed verificada (sedes · áreas · admin)\n');
+
   // ── 1. SEDES (actualizar descripciones) ──────────────────
   const sedesMap = {
     'tecnico-industrial-bachillerato': {
@@ -58,7 +90,6 @@ async function seedDemo() {
   const sedes = {};
   for (const [slug, data] of Object.entries(sedesMap)) {
     const sede = await Sede.findOne({ where: { slug } });
-    if (!sede) throw new Error(`Sede "${slug}" no existe. Ejecuta primero: npm run seed`);
     await sede.update(data);
     sedes[slug] = sede;
     console.log(`  🏫 ${sede.nombre}`);
@@ -68,7 +99,7 @@ async function seedDemo() {
   const s3 = sedes['tecnico-industrial-rural-los-sauces'];
   console.log('✅ 3 sedes actualizadas\n');
 
-  // ── 2. ÁREAS (buscar las existentes) ─────────────────────
+  // ── 2. ÁREAS ──────────────────────────────────────────────
   const areaNames = [
     'Matemáticas', 'Ciencias Naturales', 'Lenguaje', 'Ciencias Sociales',
     'Tecnología e Informática', 'Inglés', 'Educación Física',

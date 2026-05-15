@@ -150,4 +150,20 @@ router.get('/usuarios', async (req, res, next) => {
   } catch (err) { next(err); }
 });
 
+// POST /api/v1/admin/seed-demo — poblar base de datos con datos de demostración
+router.post('/seed-demo', async (req, res, next) => {
+  try {
+    const { seedDemo } = require('../utils/seed-demo');
+    await seedDemo();
+    res.json({
+      ok: true,
+      mensaje: 'Seed demo ejecutado correctamente.',
+      datos: {
+        sedes: 3, usuarios: 14, cursos: 19,
+        noticias: 15, galeria: 15, videos: 3,
+      },
+    });
+  } catch (err) { next(err); }
+});
+
 module.exports = router;
