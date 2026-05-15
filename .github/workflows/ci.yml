@@ -11,7 +11,7 @@ on:
     branches: [main]
 
 jobs:
-  # ─── Job 1: Lint y validación ──────────────────────────
+  # ─── Job 1: Lint ───────────────────────────────────────────
   lint:
     name: Lint Backend
     runs-on: ubuntu-latest
@@ -27,7 +27,7 @@ jobs:
       - run: npm run lint
         working-directory: backend
 
-  # ─── Job 2: Tests ──────────────────────────────────────
+  # ─── Job 2: Tests ──────────────────────────────────────────
   test:
     name: Tests
     runs-on: ubuntu-latest
@@ -50,7 +50,7 @@ jobs:
           DB_STORAGE: ':memory:'
           ANTHROPIC_API_KEY: test-key
 
-  # ─── Job 3: Build Docker ───────────────────────────────
+  # ─── Job 3: Build Docker (validación, sin push) ────────────
   build:
     name: Build Docker Image
     runs-on: ubuntu-latest
@@ -58,27 +58,29 @@ jobs:
     if: github.ref == 'refs/heads/main'
     steps:
       - uses: actions/checkout@v4
-      - name: Login GHCR
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Build y Push Backend
+      - name: Build Backend
         uses: docker/build-push-action@v5
         with:
           context: ./backend
-          push: true
-          tags: ghcr.io/${{ github.repository_owner }}/revista-escolar-backend:latest
+          push: false
+          tags: revista-escolar-backend:latest
 
-  # ─── Job 4: Deploy (Render / Railway) ─────────────────
+  # ─── Job 4: Deploy ────────────────────────────────────────
+  # Railway auto-despliega en cada push a main.
+  # Este job llama el webhook solo si el secret está configurado.
   deploy:
     name: Deploy Producción
     runs-on: ubuntu-latest
     needs: build
     if: github.ref == 'refs/heads/main'
     steps:
-      - name: Deploy a Render
+      - name: Notificar Railway
         run: |
-          curl -X POST "${{ secrets.RENDER_DEPLOY_HOOK }}"
-        # Para Railway: curl -X POST "${{ secrets.RAILWAY_DEPLOY_HOOK }}"
+          if [ -n "$RAILWAY_HOOK" ]; then
+            curl -f -X POST "$RAILWAY_HOOK"
+            echo "Deploy webhook enviado."
+          else
+            echo "Railway auto-despliega en cada push. Sin webhook configurado."
+          fi
+        env:
+          RAILWAY_HOOK: ${{ secrets.RAILWAY_DEPLOY_HOOK }}
