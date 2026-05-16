@@ -15,7 +15,7 @@ export class Home implements AfterViewInit {
   /* ── Videos institucionales ─────────────────────────── */
   videos: { url: string; safeUrl: SafeResourceUrl | null; titulo: string; colorA: string; colorB: string; hovered: boolean; }[] = [
     {
-      url: 'https://www.facebook.com/plugins/video.php?href=https%3A%2F%2Fwww.facebook.com%2Freel%2F909732821901936&show_text=false',
+      url: 'https://www.facebook.com/plugins/video.php?href=https%3A%2F%2Fwww.facebook.com%2Freel%2F1194470712637926&show_text=false',
       safeUrl: null, titulo: 'Salida pedagógica Tierra Alta',
       colorA: '#7B1D2C', colorB: '#2a0a10', hovered: false,
     },
