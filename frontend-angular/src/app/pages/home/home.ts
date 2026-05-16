@@ -45,9 +45,9 @@ export class Home implements AfterViewInit {
   ];
 
   sedes = [
-    { nombre: 'Sede Bachillerato',    tipo: 'Bachillerato Técnico', img: 'https://picsum.photos/seed/its-sede1/800/500' },
-    { nombre: 'Sede Básica Primaria', tipo: 'Básica Primaria',      img: 'https://picsum.photos/seed/its-sede2/800/500' },
-    { nombre: 'Sede Los Sauces',      tipo: 'Rural',                img: 'https://picsum.photos/seed/its-sede3/800/500' },
+    { nombre: 'Sede Bachillerato',    tipo: 'Bachillerato Técnico', img: '/inicio/sede-bachillerato.jpg' },
+    { nombre: 'Sede Básica Primaria', tipo: 'Básica Primaria',      img: '/inicio/sede-primaria.jpg'     },
+    { nombre: 'Sede Los Sauces',      tipo: 'Rural',                img: '/inicio/sede-rural.jpg'        },
   ];
 
   linksFooter = [
