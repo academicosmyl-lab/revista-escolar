@@ -957,11 +957,29 @@
 .modal-exito { background: #f0fff6; border: 1px solid #a0d8b0; color: #3A7D5C; padding: 0.75rem 1rem; margin-top: 1rem; font-family: 'Source Sans 3', sans-serif; font-size: 0.85rem; }
 
 /* ── FOOTER ─────────────────────────────────────────── */
+@keyframes footerGradiente {
+  0%, 100% { background-position: 0% 50%; }
+  50%       { background-position: 100% 50%; }
+}
+
 .footer {
-  background: #0d0608;
+  background: linear-gradient(-45deg, #1c060f, #0c1828, #1a0a1e, #0d1e35, #1c060f);
+  background-size: 400% 400%;
+  animation: footerGradiente 14s ease infinite;
   color: white;
   border-top: 3px solid #A94455;
   padding: 3.5rem 2rem 1.5rem;
+  position: relative;
+
+  /* Línea decorativa dorada sutil en el borde superior */
+  &::before {
+    content: '';
+    position: absolute;
+    top: 3px; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(212,168,83,0.5) 30%, rgba(212,168,83,0.5) 70%, transparent);
+    pointer-events: none;
+  }
 }
 
 .footer-inner {
