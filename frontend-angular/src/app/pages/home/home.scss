@@ -203,55 +203,95 @@
   &.visible { opacity: 1; transform: translateY(0); }
 }
 
-/* ── SECCIÓN VIDEOS INSTITUCIONALES ────────────────────── */
-.videos-seccion {
-  background: #F5F7FA;
-  padding: 3.5rem 2rem;
-}
-
-.videos-grid {
+/* ── SECCIÓN DIVIDIDA: VIDEOS + QUIÉNES SOMOS ───────────── */
+.vida-seccion {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 1.5rem;
-  max-width: 680px;
-  margin: 0 auto;
 
-  @media (max-width: 560px) {
-    grid-template-columns: 1fr;
-    max-width: 320px;
-  }
+  @media (max-width: 900px) { grid-template-columns: 1fr; }
 }
 
+/* Columna izquierda — oscura */
+.vida-videos {
+  background: #1a0a0e;
+  padding: 4rem 3rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+
+  @media (max-width: 900px) { padding: 3rem 2rem; }
+}
+
+.vida-titulo-videos {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(1.5rem, 2.5vw, 2rem);
+  font-weight: 900;
+  color: white;
+  margin: 0.5rem 0 0.25rem;
+  letter-spacing: -0.01em;
+}
+
+.videos-dupla {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  flex: 1;
+}
+
+/* Columna derecha — crema cálida */
+.vida-quienes {
+  background: #F5EDE0;
+  padding: 4rem 3rem;
+  display: flex;
+  align-items: center;
+
+  @media (max-width: 900px) { padding: 3rem 2rem; }
+}
+
+/* Tarjeta de video preview */
 .video-preview-card {
   cursor: pointer;
-  border-radius: 4px;
+  border-radius: 3px;
   overflow: hidden;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.10);
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 
   &:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 12px 32px rgba(0,0,0,0.18);
+    transform: scale(1.05);
+    box-shadow: 0 16px 40px rgba(0,0,0,0.5);
+    z-index: 2;
 
-    .video-play-btn { transform: scale(1.12); border-color: #D4A853; }
+    .video-play-btn { transform: scale(1.15); border-color: #D4A853; }
     .video-play-triangle { border-left-color: #D4A853; }
   }
 }
 
 .video-preview-bg {
-  position: relative;
   aspect-ratio: 4 / 3;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
+.video-hover-iframe {
+  aspect-ratio: 4 / 3;
+  position: relative;
+  overflow: hidden;
+
+  iframe {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    border: none;
+  }
+}
+
 .video-play-btn {
-  width: 64px;
-  height: 64px;
+  width: 56px; height: 56px;
   border-radius: 50%;
-  border: 2.5px solid rgba(255,255,255,0.75);
-  background: rgba(255,255,255,0.1);
+  border: 2px solid rgba(255,255,255,0.75);
+  background: rgba(255,255,255,0.08);
   backdrop-filter: blur(4px);
   display: flex;
   align-items: center;
@@ -262,26 +302,34 @@
 .video-play-triangle {
   width: 0; height: 0;
   border-style: solid;
-  border-width: 10px 0 10px 20px;
+  border-width: 9px 0 9px 18px;
   border-color: transparent transparent transparent white;
   margin-left: 4px;
   transition: border-left-color 0.2s ease;
 }
 
 .video-card-footer {
-  background: white;
-  padding: 0.9rem 1rem;
-  border-top: 3px solid #D4A853;
+  background: #0d0406;
+  padding: 0.65rem 0.75rem;
+  border-top: 2px solid #D4A853;
 }
 
 .video-card-titulo {
   font-family: 'Source Sans 3', sans-serif;
-  font-size: 0.8rem;
+  font-size: 0.7rem;
   font-weight: 700;
   letter-spacing: 0.04em;
-  color: #2C3E50;
+  color: rgba(255,255,255,0.82);
   display: block;
-  line-height: 1.45;
+  line-height: 1.4;
+}
+
+/* Quiénes somos — columna derecha */
+.quienes-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin: 1rem 0 1.25rem;
 }
 
 /* ── Modal video ──────────────────────────────────────── */

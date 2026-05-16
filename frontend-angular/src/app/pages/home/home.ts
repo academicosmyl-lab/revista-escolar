@@ -12,16 +12,16 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 export class Home implements AfterViewInit {
 
   /* ── Videos institucionales ─────────────────────────── */
-  videos = [
+  videos: { url: string; safeUrl: SafeResourceUrl | null; titulo: string; colorA: string; colorB: string; hovered: boolean; }[] = [
     {
       url: 'https://www.facebook.com/plugins/video.php?href=https%3A%2F%2Fwww.facebook.com%2Freel%2F909732821901936&show_text=false',
-      titulo: 'Salida pedagógica Tierra Alta',
-      colorA: '#7B1D2C', colorB: '#2a0a10',
+      safeUrl: null, titulo: 'Salida pedagógica Tierra Alta',
+      colorA: '#7B1D2C', colorB: '#2a0a10', hovered: false,
     },
     {
       url: 'https://www.facebook.com/plugins/video.php?href=https%3A%2F%2Fwww.facebook.com%2Freel%2F909732821901936&show_text=false',
-      titulo: 'Conmemoración del Día del Síndrome de Down',
-      colorA: '#1A5C3A', colorB: '#0a1f14',
+      safeUrl: null, titulo: 'Conmemoración del Día del Síndrome de Down',
+      colorA: '#1A5C3A', colorB: '#0a1f14', hovered: false,
     },
   ];
 
@@ -65,7 +65,11 @@ export class Home implements AfterViewInit {
   certError        = '';
   certExito        = '';
 
-  constructor(private cdr: ChangeDetectorRef, private sanitizer: DomSanitizer) {}
+  constructor(private cdr: ChangeDetectorRef, private sanitizer: DomSanitizer) {
+    this.videos.forEach(v => {
+      v.safeUrl = this.sanitizer.bypassSecurityTrustResourceUrl(v.url + '&autoplay=1');
+    });
+  }
 
   abrirVideo(url: string) {
     this.videoModalUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url);

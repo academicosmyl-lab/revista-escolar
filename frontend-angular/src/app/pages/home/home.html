@@ -29,23 +29,34 @@
   <div class="hero-linea-base"></div>
 </section>
 
-<!-- SECCIÓN VIDEOS INSTITUCIONALES -->
-<section class="videos-seccion">
-  <div class="seccion-container">
-    <div class="seccion-header reveal">
-      <div>
-        <div class="linea-dorada"></div>
-        <h2 class="seccion-titulo">Vida Institucional</h2>
-      </div>
-    </div>
-    <div class="videos-grid reveal">
+<!-- SECCIÓN DIVIDIDA: VIDEOS (izquierda) + QUIÉNES SOMOS (derecha) -->
+<section class="vida-seccion">
+
+  <!-- Columna izquierda — oscura — videos -->
+  <div class="vida-videos">
+    <div class="linea-dorada" style="background:rgba(212,168,83,0.65);"></div>
+    <h2 class="vida-titulo-videos">Vida Institucional</h2>
+    <div class="videos-dupla">
       @for (v of videos; track v.titulo) {
-        <div class="video-preview-card" (click)="abrirVideo(v.url)">
-          <div class="video-preview-bg" [style.background]="'linear-gradient(145deg,' + v.colorA + ',' + v.colorB + ')'">
-            <div class="video-play-btn">
-              <span class="video-play-triangle"></span>
+        <div class="video-preview-card"
+             (mouseenter)="v.hovered = true"
+             (mouseleave)="v.hovered = false"
+             (click)="abrirVideo(v.url)">
+          @if (!v.hovered) {
+            <div class="video-preview-bg"
+                 [style.background]="'linear-gradient(145deg,' + v.colorA + ',' + v.colorB + ')'">
+              <div class="video-play-btn">
+                <span class="video-play-triangle"></span>
+              </div>
             </div>
-          </div>
+          } @else {
+            <div class="video-hover-iframe">
+              <iframe [src]="v.safeUrl"
+                scrolling="no" frameborder="0" allowfullscreen="true"
+                allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share">
+              </iframe>
+            </div>
+          }
           <div class="video-card-footer">
             <span class="video-card-titulo">{{ v.titulo }}</span>
           </div>
@@ -53,6 +64,35 @@
       }
     </div>
   </div>
+
+  <!-- Columna derecha — crema cálida — quiénes somos -->
+  <div class="vida-quienes">
+    <div class="quienes-texto-col reveal">
+      <div class="linea-dorada"></div>
+      <h2 class="quienes-titulo">¿Quiénes <em>somos?</em></h2>
+      <div class="quienes-badges">
+        <span class="quienes-badge">Oficial</span>
+        <span class="quienes-badge">Técnico Industrial</span>
+        <span class="quienes-badge">Mixto</span>
+      </div>
+      <p class="quienes-texto">
+        Somos una institución educativa pública ubicada en <strong>Fusagasugá, Cundinamarca</strong>,
+        comprometida con la formación de bachilleres técnicos industriales con competencias
+        tecnológicas, científicas y humanas.
+      </p>
+      <p class="quienes-texto">
+        Nuestras áreas técnicas: <strong>Electrónica, Corte y Confección, Diseño Digital,
+        Medios Audiovisuales e Inglés Comunicativo</strong>.
+      </p>
+      <div class="quienes-stats">
+        <div class="quienes-stat"><span class="stat-num">3</span><span class="stat-label">Sedes</span></div>
+        <div class="quienes-stat"><span class="stat-num">50+</span><span class="stat-label">Docentes</span></div>
+        <div class="quienes-stat"><span class="stat-num">1.000+</span><span class="stat-label">Estudiantes</span></div>
+      </div>
+      <a routerLink="/docentes" class="its-btn-outline">Conocer nuestro equipo</a>
+    </div>
+  </div>
+
 </section>
 
 <!-- MODAL VIDEO -->
@@ -67,42 +107,6 @@
     </div>
   </div>
 }
-
-<!-- SECCIÓN QUIÉNES SOMOS -->
-<section class="quienes-seccion">
-  <div class="seccion-container">
-    <div class="quienes-grid reveal">
-      <div class="quienes-imagen-col">
-        <img src="assets/images/logo-its.png" alt="Instituto Técnico Industrial Santander" class="quienes-escudo">
-        <div class="quienes-badges">
-          <span class="quienes-badge">Oficial</span>
-          <span class="quienes-badge">Técnico Industrial</span>
-          <span class="quienes-badge">Mixto</span>
-        </div>
-      </div>
-      <div class="quienes-texto-col">
-        <div class="linea-dorada"></div>
-        <h2 class="quienes-titulo">¿Quiénes <em>somos?</em></h2>
-        <p class="quienes-texto">
-          Somos una institución educativa pública ubicada en <strong>Fusagasugá, Cundinamarca</strong>,
-          comprometida con la formación de bachilleres técnicos industriales con competencias tecnológicas,
-          científicas y humanas para enfrentar los retos del mundo actual.
-        </p>
-        <p class="quienes-texto">
-          Nuestras áreas técnicas incluyen <strong>Electrónica, Corte y Confección, Diseño Digital,
-          Medios Audiovisuales e Inglés Comunicativo</strong>. Contamos con tres sedes, más de
-          50 docentes y cerca de 1.000 estudiantes preparándose para la universidad y el campo laboral.
-        </p>
-        <div class="quienes-stats">
-          <div class="quienes-stat"><span class="stat-num">3</span><span class="stat-label">Sedes</span></div>
-          <div class="quienes-stat"><span class="stat-num">50+</span><span class="stat-label">Docentes</span></div>
-          <div class="quienes-stat"><span class="stat-num">1.000+</span><span class="stat-label">Estudiantes</span></div>
-        </div>
-        <a routerLink="/docentes" class="its-btn-outline">Conocer nuestro equipo</a>
-      </div>
-    </div>
-  </div>
-</section>
 
 <!-- SECCIÓN MISIÓN Y VISIÓN -->
 <section class="mivision-seccion">
