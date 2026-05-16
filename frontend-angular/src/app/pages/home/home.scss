@@ -599,18 +599,6 @@
 }
 
 /* ── HORIZONTE INSTITUCIONAL — PÁRAMO DE SUMAPAZ ─────── */
-@keyframes condorVuelo {
-  0%   { transform: translateX(-340px) translateY(0px); }
-  25%  { transform: translateX(25vw)   translateY(-18px); }
-  50%  { transform: translateX(50vw)   translateY(4px); }
-  75%  { transform: translateX(75vw)   translateY(-12px); }
-  100% { transform: translateX(calc(100vw + 340px)) translateY(0px); }
-}
-
-@keyframes venadoRespira {
-  0%, 100% { transform: scale(1) translateY(0); }
-  50%       { transform: scale(1.018) translateY(-3px); }
-}
 
 .horizonte-seccion {
   position: relative;
@@ -618,45 +606,6 @@
     linear-gradient(175deg, rgba(6,14,8,0.82) 0%, rgba(10,3,6,0.78) 50%, rgba(6,14,8,0.82) 100%),
     url('/inicio/paramo-sumapaz.jpg') center center / cover no-repeat;
   overflow: hidden;
-}
-
-/* Cóndor volando */
-.condor-wrap {
-  position: absolute;
-  top: 22%;
-  left: 0;
-  width: 100%;
-  pointer-events: none;
-  z-index: 1;
-}
-
-.condor-svg {
-  width: 260px;
-  height: auto;
-  opacity: 0.13;
-  animation: condorVuelo 28s linear infinite;
-  display: block;
-
-  @media (max-width: 640px) { width: 160px; }
-}
-
-/* Venado — esquina inferior derecha */
-.venado-wrap {
-  position: absolute;
-  bottom: -10px;
-  right: -18px;
-  pointer-events: none;
-  z-index: 1;
-}
-
-.venado-svg {
-  width: 110px;
-  height: auto;
-  opacity: 0.14;
-  animation: venadoRespira 5s ease-in-out infinite;
-  display: block;
-
-  @media (max-width: 640px) { width: 70px; }
 }
 
 /* Encabezado centrado */
