@@ -1030,10 +1030,10 @@
 }
 
 .footer {
-  background: linear-gradient(-45deg, #1c060f, #0c1828, #1a0a1e, #0d1e35, #1c060f);
+  background: linear-gradient(-45deg, #f4c5cb, #c8e6f0, #d4ecd8, #f9d0d5, #c5dff4, #f4c5cb);
   background-size: 400% 400%;
   animation: footerGradiente 14s ease infinite;
-  color: white;
+  color: #1a1a2e;
   border-top: 3px solid #A94455;
   padding: 3.5rem 2rem 1.5rem;
   position: relative;
@@ -1069,7 +1069,7 @@
 
 .footer-nombre {
   font-family: 'Playfair Display', serif;
-  font-size: 1rem; font-weight: 700; color: white; margin: 0 0 0.2rem;
+  font-size: 1rem; font-weight: 700; color: #1a1a2e; margin: 0 0 0.2rem;
 }
 
 .footer-lema {
@@ -1080,7 +1080,7 @@
 
 .footer-desc {
   font-family: 'Source Sans 3', sans-serif;
-  font-size: 0.83rem; color: rgba(255,255,255,0.6); line-height: 1.75; max-width: 300px; margin: 0;
+  font-size: 0.83rem; color: rgba(26,26,46,0.65); line-height: 1.75; max-width: 300px; margin: 0;
 }
 
 .footer-col-titulo {
@@ -1095,7 +1095,7 @@
 
 .footer-link {
   font-family: 'Source Sans 3', sans-serif;
-  font-size: 0.88rem; color: rgba(255,255,255,0.7); text-decoration: none; transition: color 0.2s;
+  font-size: 0.88rem; color: rgba(26,26,46,0.7); text-decoration: none; transition: color 0.2s;
   &:hover { color: #D4A853; }
 }
 
@@ -1113,7 +1113,7 @@
 }
 
 .footer-email {
-  color: rgba(255,255,255,0.65); text-decoration: none; font-size: 0.8rem;
+  color: #A94455; text-decoration: none; font-size: 0.8rem;
   transition: color 0.2s; word-break: break-all;
   &:hover { color: #D4A853; }
 }
@@ -1137,9 +1137,9 @@
 
 .footer-copy {
   max-width: 1280px; margin: 0 auto;
-  border-top: 1px solid rgba(255,255,255,0.08); padding-top: 1.2rem;
+  border-top: 1px solid rgba(26,26,46,0.15); padding-top: 1.2rem;
   display: flex; justify-content: space-between; flex-wrap: wrap; gap: 0.4rem;
   font-family: 'Source Sans 3', sans-serif; font-size: 0.7rem; color: rgba(255,255,255,0.4);
 }
 
-.footer-web { color: rgba(212,168,83,0.5); }
+.footer-web { color: rgba(26,26,46,0.45); }
