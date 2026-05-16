@@ -23,16 +23,11 @@ const BACKEND = process.env.BACKEND_URL ||
   (process.env.RAILWAY_PUBLIC_DOMAIN
     ? `https://${process.env.RAILWAY_PUBLIC_DOMAIN}`
     : 'http://localhost:3000');
-// URL del frontend en Vercel — ajustar con el dominio real cuando se configure
-const FRONTEND = process.env.FRONTEND_URL || 'https://revista-escolar-zeta.vercel.app';
 const IMG_NEWS = (seed, w = 800, h = 500) =>
   `https://picsum.photos/seed/${seed}/${w}/${h}`;
 
-// Fotos de docentes — SVG de iniciales en el repo hasta que Ronald suba fotos reales.
-// Para reemplazar: poner la foto en frontend-angular/public/docentes/<slug>.jpg
-// y cambiar la extensión aquí de .svg a .jpg
-// Cuando pongas la foto: nombrarla <slug>.jpg en frontend-angular/public/docentes/
-const AVATAR = (slug) => `${FRONTEND}/docentes/${slug}.jpg`;
+// Fotos de docentes servidas desde Vercel — poner foto en frontend-angular/public/docentes/<slug>.jpg
+const AVATAR = (slug) => `https://revista-escolar-zeta.vercel.app/docentes/${slug}.jpg`;
 
 // ═══════════════════════════════════════════════════════════
 async function seedDemo() {
