@@ -73,6 +73,7 @@ export class Home implements AfterViewInit {
   certExito        = signal('');
 
   readonly mapaSrc: SafeResourceUrl;
+  readonly fbSrc:   SafeResourceUrl;
 
   constructor(private sanitizer: DomSanitizer) {
     this.videos.forEach(v => {
@@ -80,6 +81,9 @@ export class Home implements AfterViewInit {
     });
     this.mapaSrc = this.sanitizer.bypassSecurityTrustResourceUrl(
       'https://www.openstreetmap.org/export/embed.html?bbox=-74.3637479%2C4.3449812%2C-74.3597479%2C4.3489812&layer=mapnik&marker=4.3469812%2C-74.3617479'
+    );
+    this.fbSrc = this.sanitizer.bypassSecurityTrustResourceUrl(
+      'https://www.facebook.com/plugins/page.php?href=https%3A%2F%2Fwww.facebook.com%2Fitifusagasugaoficial&tabs=timeline&width=500&height=680&small_header=true&adapt_container_width=true&hide_cover=false&show_facepile=false'
     );
   }
 

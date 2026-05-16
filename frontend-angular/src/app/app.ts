@@ -24,6 +24,8 @@ export class App implements OnInit, AfterViewInit {
     let rafId = 0;
 
     const onMove = (e: MouseEvent) => {
+      dot.style.opacity  = '1';
+      ring.style.opacity = '1';
       dot.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`;
       cancelAnimationFrame(rafId);
       rafId = requestAnimationFrame(() => {

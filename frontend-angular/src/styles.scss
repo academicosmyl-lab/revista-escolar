@@ -18,46 +18,46 @@
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
-/* ── Cursor personalizado awwwards-style ──────────────── */
+/* ── Cursor personalizado ─────────────────────────────── */
 .cursor-dot,
 .cursor-ring {
-  opacity: 0;        /* ocultos hasta que el mouse se mueva */
+  opacity: 0;
   pointer-events: none;
   position: fixed;
-  border-radius: 50% !important;
-  z-index: 9999;
+  top: 0; left: 0;
+  border-radius: 50%;
+  z-index: 99999;
   will-change: transform;
+  transition: opacity 0.15s;
 }
 
 @media (pointer: fine) {
   * { cursor: none !important; }
 
   .cursor-dot {
-    top: -4px; left: -4px;
     width: 8px; height: 8px;
-    background: var(--dorado);
-    transition: opacity 0.2s;
+    background: #111;
+    margin-top: -4px; margin-left: -4px;
   }
 
   .cursor-ring {
-    top: -20px; left: -20px;
-    width: 40px; height: 40px;
-    border: 1.5px solid rgba(212,168,83,0.7);
+    width: 38px; height: 38px;
+    border: 1.5px solid rgba(0,0,0,0.45);
     background: transparent;
-    z-index: 9998;
-    transition: width 0.22s ease, height 0.22s ease,
-                border-color 0.2s ease, opacity 0.2s;
+    z-index: 99998;
+    margin-top: -19px; margin-left: -19px;
+    transition: width 0.2s ease, height 0.2s ease,
+                margin 0.2s ease, border-color 0.2s ease, opacity 0.15s;
 
     &.cursor-hover {
-      width: 56px; height: 56px;
-      top: -28px; left: -28px;
-      border-color: var(--dorado);
-      background: rgba(212,168,83,0.07);
+      width: 54px; height: 54px;
+      margin-top: -27px; margin-left: -27px;
+      border-color: #111;
+      background: rgba(0,0,0,0.05);
     }
   }
 }
 
-/* En táctil/móvil — ocultar completamente */
 @media (pointer: coarse) {
   .cursor-dot, .cursor-ring { display: none; }
 }
