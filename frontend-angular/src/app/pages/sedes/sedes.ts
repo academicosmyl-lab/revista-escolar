@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
 import { ApiService } from '../../services/api.service';
 import { Sede } from '../../models';
 
@@ -7,9 +7,11 @@ import { Sede } from '../../models';
   imports: [],
   templateUrl: './sedes.html',
   styleUrl: './sedes.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Sedes implements OnInit {
   private api = inject(ApiService);
+  private cdr = inject(ChangeDetectorRef);
 
   cargando = true;
   error    = '';
@@ -30,10 +32,12 @@ export class Sedes implements OnInit {
           imagenUrl: s.imagen_portada ?? s.imagenUrl,
         }));
         this.cargando = false;
+        this.cdr.markForCheck();
       },
       error: e => {
         this.error    = e.mensaje || 'No se pudo cargar la información de sedes.';
         this.cargando = false;
+        this.cdr.markForCheck();
       },
     });
   }

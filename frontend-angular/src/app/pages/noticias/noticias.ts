@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, inject, signal, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { ApiService } from '../../services/api.service';
@@ -10,11 +10,10 @@ import { environment } from '../../../environments/environment';
   imports: [RouterLink, FormsModule],
   templateUrl: './noticias.html',
   styleUrl: './noticias.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Noticias implements OnInit, OnDestroy {
   private api = inject(ApiService);
-  private cdr = inject(ChangeDetectorRef);
-
   cargando   = signal(true);
   error      = signal('');
   nuevaNoticia = signal(false);
@@ -123,7 +122,6 @@ export class Noticias implements OnInit, OnDestroy {
       this.sse = new EventSource(`${environment.apiUrl}/sse/noticias`);
       this.sse.addEventListener('noticia_publicada', () => {
         this.nuevaNoticia.set(true);
-        this.cdr.detectChanges();
       });
       this.sse.onerror = () => this.sse?.close();
     } catch { /* SSE no soportado */ }

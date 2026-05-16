@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ApiService } from '../../services/api.service';
 import { PerfilDocente, Sede } from '../../models';
@@ -8,9 +8,11 @@ import { PerfilDocente, Sede } from '../../models';
   imports: [FormsModule],
   templateUrl: './docentes.html',
   styleUrl: './docentes.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Docentes implements OnInit {
   private api = inject(ApiService);
+  private cdr = inject(ChangeDetectorRef);
 
   cargando  = true;
   error     = '';
@@ -29,7 +31,7 @@ export class Docentes implements OnInit {
 
   private cargarSedes() {
     this.api.get<any>('/sedes').subscribe({
-      next:  r => { this.sedes = r.data ?? (Array.isArray(r) ? r : []); },
+      next:  r => { this.sedes = r.data ?? (Array.isArray(r) ? r : []); this.cdr.markForCheck(); },
       error: () => {},
     });
   }
@@ -46,10 +48,12 @@ export class Docentes implements OnInit {
         const data = r.data ?? r;
         this.docentes = Array.isArray(data) ? data : (data.rows ?? data.docentes ?? []);
         this.cargando = false;
+        this.cdr.markForCheck();
       },
       error: e => {
         this.error    = e.mensaje || 'No se pudo cargar el directorio de docentes.';
         this.cargando = false;
+        this.cdr.markForCheck();
       },
     });
   }

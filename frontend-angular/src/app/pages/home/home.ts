@@ -1,4 +1,4 @@
-import { Component, AfterViewInit, ChangeDetectorRef } from '@angular/core';
+import { Component, AfterViewInit, signal, ChangeDetectionStrategy } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
@@ -8,6 +8,7 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
   imports: [RouterLink, FormsModule],
   templateUrl: './home.html',
   styleUrl: './home.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Home implements AfterViewInit {
 
@@ -25,8 +26,8 @@ export class Home implements AfterViewInit {
     },
   ];
 
-  modalVideoActivo = false;
-  videoModalUrl: SafeResourceUrl | null = null;
+  modalVideoActivo = signal(false);
+  videoModalUrl    = signal<SafeResourceUrl | null>(null);
 
   /* ── Franja docentes B&W ────────────────────────────── */
   docentesSlugs = [
@@ -50,66 +51,64 @@ export class Home implements AfterViewInit {
   ];
 
   linksFooter = [
-    { label: 'Inicio',   path: '/'          },
-    { label: 'Revista',  path: '/noticias'  },
-    { label: 'Galería',  path: '/galeria'   },
-    { label: 'Docentes', path: '/docentes'  },
-    { label: 'Sedes',    path: '/sedes'     },
+    { label: 'Inicio',   path: '/'         },
+    { label: 'Revista',  path: '/noticias' },
+    { label: 'Galería',  path: '/galeria'  },
+    { label: 'Docentes', path: '/docentes' },
+    { label: 'Sedes',    path: '/sedes'    },
   ];
 
   /* ── Modal Certificado ──────────────────────────────── */
-  modalCertificado = false;
+  modalCertificado = signal(false);
   certDocumento    = '';
   certTipo         = 'matricula';
-  certCargando     = false;
-  certError        = '';
-  certExito        = '';
+  certCargando     = signal(false);
+  certError        = signal('');
+  certExito        = signal('');
 
-  constructor(private cdr: ChangeDetectorRef, private sanitizer: DomSanitizer) {
+  constructor(private sanitizer: DomSanitizer) {
     this.videos.forEach(v => {
       v.safeUrl = this.sanitizer.bypassSecurityTrustResourceUrl(v.url + '&autoplay=1');
     });
   }
 
   abrirVideo(url: string) {
-    this.videoModalUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url);
-    this.modalVideoActivo = true;
+    this.videoModalUrl.set(this.sanitizer.bypassSecurityTrustResourceUrl(url));
+    this.modalVideoActivo.set(true);
   }
 
   cerrarModalVideo(e: MouseEvent) {
     if ((e.target as HTMLElement).classList.contains('video-modal-overlay')) {
-      this.modalVideoActivo = false;
-      this.videoModalUrl = null;
+      this.modalVideoActivo.set(false);
+      this.videoModalUrl.set(null);
     }
   }
 
   abrirCertificado() {
     this.certDocumento = '';
-    this.certError     = '';
-    this.certExito     = '';
-    this.certCargando  = false;
-    this.modalCertificado = true;
+    this.certError.set('');
+    this.certExito.set('');
+    this.certCargando.set(false);
+    this.modalCertificado.set(true);
   }
 
   cerrarCertificado(event: MouseEvent) {
     if ((event.target as HTMLElement).classList.contains('modal-overlay')) {
-      this.modalCertificado = false;
+      this.modalCertificado.set(false);
     }
   }
 
   buscarCertificado() {
-    this.certError = '';
-    this.certExito = '';
+    this.certError.set('');
+    this.certExito.set('');
     if (!this.certDocumento.trim() || this.certDocumento.trim().length < 6) {
-      this.certError = 'Ingresa un número de documento válido (mínimo 6 dígitos).';
+      this.certError.set('Ingresa un número de documento válido (mínimo 6 dígitos).');
       return;
     }
-    this.certCargando = true;
-    /* Aquí irá la llamada al backend en FASE 1 */
+    this.certCargando.set(true);
     setTimeout(() => {
-      this.certCargando = false;
-      this.certError = 'Servicio en implementación. Comunícate con secretaría para tu certificado.';
-      this.cdr.detectChanges();
+      this.certCargando.set(false);
+      this.certError.set('Servicio en implementación. Comunícate con secretaría para tu certificado.');
     }, 1200);
   }
 

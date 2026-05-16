@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, HostListener } from '@angular/core';
+import { Component, OnInit, inject, HostListener, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
 import { ApiService } from '../../services/api.service';
 import { Imagen, VideoYoutube } from '../../models';
 
@@ -10,9 +10,11 @@ type ImagenConTipo = Imagen & { tipo?: string };
   imports: [],
   templateUrl: './galeria.html',
   styleUrl: './galeria.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Galeria implements OnInit {
   private api = inject(ApiService);
+  private cdr = inject(ChangeDetectorRef);
 
   cargando  = true;
   error     = '';
@@ -52,10 +54,12 @@ export class Galeria implements OnInit {
           this.videos = data.videos ?? [];
         }
         this.cargando = false;
+        this.cdr.markForCheck();
       },
       error: e => {
         this.error    = e.mensaje || 'No se pudo cargar la galería.';
         this.cargando = false;
+        this.cdr.markForCheck();
       },
     });
   }

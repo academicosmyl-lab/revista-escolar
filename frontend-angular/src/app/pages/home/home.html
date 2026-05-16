@@ -116,11 +116,11 @@
 </section>
 
 <!-- MODAL VIDEO -->
-@if (modalVideoActivo) {
+@if (modalVideoActivo()) {
   <div class="video-modal-overlay" (click)="cerrarModalVideo($event)">
     <div class="video-modal-caja">
-      <button class="video-modal-cerrar" (click)="modalVideoActivo = false; videoModalUrl = null">✕</button>
-      <iframe [src]="videoModalUrl"
+      <button class="video-modal-cerrar" (click)="modalVideoActivo.set(false); videoModalUrl.set(null)">✕</button>
+      <iframe [src]="videoModalUrl()"
         scrolling="no" frameborder="0" allowfullscreen="true"
         allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share">
       </iframe>
@@ -240,10 +240,10 @@
 </section>
 
 <!-- MODAL CERTIFICADO ESTUDIANTIL -->
-@if (modalCertificado) {
+@if (modalCertificado()) {
   <div class="modal-overlay" (click)="cerrarCertificado($event)">
     <div class="modal-caja">
-      <button class="modal-cerrar" (click)="modalCertificado = false">✕</button>
+      <button class="modal-cerrar" (click)="modalCertificado.set(false)">✕</button>
       <h2 class="modal-titulo">Certificado Estudiantil</h2>
       <p class="modal-sub">Ingresa tus datos para generar y descargar tu certificado de matrícula o estudio.</p>
 
@@ -261,15 +261,15 @@
         </select>
       </div>
 
-      @if (certError) {
-        <div class="modal-error">{{ certError }}</div>
+      @if (certError()) {
+        <div class="modal-error">{{ certError() }}</div>
       }
-      @if (certExito) {
-        <div class="modal-exito">✓ {{ certExito }}</div>
+      @if (certExito()) {
+        <div class="modal-exito">✓ {{ certExito() }}</div>
       }
 
-      <button class="its-btn-primario modal-btn" (click)="buscarCertificado()" [disabled]="certCargando">
-        {{ certCargando ? 'Generando...' : 'Generar Certificado' }}
+      <button class="its-btn-primario modal-btn" (click)="buscarCertificado()" [disabled]="certCargando()">
+        {{ certCargando() ? 'Generando...' : 'Generar Certificado' }}
       </button>
       <p class="modal-aviso">Solo para estudiantes matriculados. El certificado se descarga en PDF.</p>
     </div>
