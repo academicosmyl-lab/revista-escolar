@@ -278,6 +278,35 @@
   @media (max-width: 900px) { padding: 3rem 2rem; }
 }
 
+/* Badge circular rotativo */
+@keyframes badgeSpin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+.badge-rotativo {
+  position: absolute;
+  bottom: 2.5rem;
+  right: 2.5rem;
+  z-index: 2;
+  opacity: 0.82;
+  transition: opacity 0.25s ease, transform 0.3s ease;
+
+  svg { animation: badgeSpin 14s linear infinite; }
+
+  &:hover {
+    opacity: 1;
+    transform: scale(1.08);
+    svg { animation-play-state: paused; }
+  }
+
+  @media (max-width: 900px) {
+    bottom: 1.25rem;
+    right: 1.25rem;
+    svg { width: 110px; height: 110px; }
+  }
+}
+
 @keyframes blobFloat {
   0%, 100% { transform: translate(0, 0) scale(1); }
   33%       { transform: translate(28px, -20px) scale(1.07); }
