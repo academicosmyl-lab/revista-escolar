@@ -205,18 +205,18 @@
 /* ── MISIÓN PARALLAX ────────────────────────────────── */
 .mision-seccion {
   position: relative;
-  min-height: 68vh;
+  min-height: 42vh;
   display: flex;
   align-items: center;
   background-color: #120608;
   background-image: url('/inicio/mision.jpg');
   background-size: cover;
   background-position: center;
-  background-attachment: fixed;   /* parallax desktop */
+  background-attachment: fixed;
 
   @media (max-width: 768px) {
-    background-attachment: scroll; /* iOS no soporta fixed */
-    min-height: 70vw;
+    background-attachment: scroll;
+    min-height: 50vw;
   }
 }
 
@@ -236,7 +236,7 @@
   z-index: 2;
   max-width: 1200px;
   margin: 0 auto;
-  padding: 5rem 2rem;
+  padding: 3rem 2rem;
   width: 100%;
   max-width: 640px;           /* texto ocupa columna izquierda */
   margin-left: max(2rem, calc((100vw - 1200px) / 2 + 2rem));
