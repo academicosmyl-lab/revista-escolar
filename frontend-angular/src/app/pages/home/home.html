@@ -36,29 +36,17 @@
   <div class="vida-videos">
     <div class="linea-dorada" style="background:rgba(212,168,83,0.65);"></div>
     <h2 class="vida-titulo-videos">Vida Institucional</h2>
-    <div class="videos-dupla">
-      @for (v of videos; track v.titulo) {
-        <div class="video-preview-card"
-             (mouseenter)="v.hovered = true"
-             (mouseleave)="v.hovered = false"
-             (click)="abrirVideo(v.url)">
-          @if (!v.hovered) {
-            <div class="video-preview-bg"
-                 [style.background]="'linear-gradient(145deg,' + v.colorA + ',' + v.colorB + ')'">
-              <div class="video-play-btn">
-                <span class="video-play-triangle"></span>
-              </div>
-            </div>
-          } @else {
-            <div class="video-hover-iframe">
-              <iframe [src]="v.safeUrl"
-                scrolling="no" frameborder="0" allowfullscreen="true"
-                allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share">
-              </iframe>
-            </div>
-          }
-          <div class="video-card-footer">
-            <span class="video-card-titulo">{{ v.titulo }}</span>
+    <div class="videos-lista">
+      @for (v of videos; track v.titulo; let i = $index) {
+        <div class="video-cine-card" (click)="abrirVideo(v.url)"
+             [style]="'--ca:' + v.colorA + ';--cb:' + v.colorB">
+          <div class="video-cine-num">0{{ i + 1 }}</div>
+          <div class="video-cine-play">
+            <span class="video-cine-tri"></span>
+          </div>
+          <div class="video-cine-info">
+            <div class="video-cine-linea"></div>
+            <span class="video-cine-titulo">{{ v.titulo }}</span>
           </div>
         </div>
       }

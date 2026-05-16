@@ -13,21 +13,21 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 export class Home implements AfterViewInit {
 
   /* ── Videos institucionales ─────────────────────────── */
-  videos: { url: string; safeUrl: SafeResourceUrl | null; titulo: string; colorA: string; colorB: string; hovered: boolean; }[] = [
+  videos: { url: string; titulo: string; colorA: string; colorB: string; }[] = [
     {
       url: 'https://www.facebook.com/plugins/video.php?href=https%3A%2F%2Fwww.facebook.com%2Freel%2F1194470712637926&show_text=false',
-      safeUrl: null, titulo: 'Salida pedagógica Tierra Alta',
-      colorA: '#7B1D2C', colorB: '#2a0a10', hovered: false,
+      titulo: 'Salida pedagógica Tierra Alta',
+      colorA: '#7B1D2C', colorB: '#2a0a10',
     },
     {
       url: 'https://www.facebook.com/plugins/video.php?href=https%3A%2F%2Fwww.facebook.com%2Freel%2F909732821901936&show_text=false',
-      safeUrl: null, titulo: 'Conmemoración del Día del Síndrome de Down',
-      colorA: '#1A5C3A', colorB: '#0a1f14', hovered: false,
+      titulo: 'Conmemoración del Día del Síndrome de Down',
+      colorA: '#1A5C3A', colorB: '#0a1f14',
     },
   ];
 
-  modalVideoActivo = signal(false);
-  videoModalUrl    = signal<SafeResourceUrl | null>(null);
+  modalVideoActivo  = signal(false);
+  videoModalUrl     = signal<SafeResourceUrl | null>(null);
 
   /* ── Franja docentes B&W ────────────────────────────── */
   docentesSlugs = [
@@ -66,11 +66,7 @@ export class Home implements AfterViewInit {
   certError        = signal('');
   certExito        = signal('');
 
-  constructor(private sanitizer: DomSanitizer) {
-    this.videos.forEach(v => {
-      v.safeUrl = this.sanitizer.bypassSecurityTrustResourceUrl(v.url + '&autoplay=1');
-    });
-  }
+  constructor(private sanitizer: DomSanitizer) {}
 
   abrirVideo(url: string) {
     this.videoModalUrl.set(this.sanitizer.bypassSecurityTrustResourceUrl(url));
