@@ -39,3 +39,6 @@ Thumbs.db
 
 # Tests
 coverage/
+
+# MCP config local (contiene tokens/API keys)
+.mcp.json

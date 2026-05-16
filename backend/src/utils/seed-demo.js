@@ -23,27 +23,15 @@ const BACKEND = process.env.BACKEND_URL ||
   (process.env.RAILWAY_PUBLIC_DOMAIN
     ? `https://${process.env.RAILWAY_PUBLIC_DOMAIN}`
     : 'http://localhost:3000');
+// URL del frontend en Vercel — ajustar con el dominio real cuando se configure
+const FRONTEND = process.env.FRONTEND_URL || 'https://revista-escolar-its.vercel.app';
 const IMG_NEWS = (seed, w = 800, h = 500) =>
   `https://picsum.photos/seed/${seed}/${w}/${h}`;
 
-// Fotos demo con pravatar.cc — caras reales, siempre disponibles (se reemplazan en producción)
-const AVATARS = {
-  'patricia-diaz':    'https://i.pravatar.cc/200?img=5',
-  'roberto-suarez':   'https://i.pravatar.cc/200?img=12',
-  'elena-pacheco':    'https://i.pravatar.cc/200?img=9',
-  'diana-solano':     'https://i.pravatar.cc/200?img=23',
-  'luz-rios':         'https://i.pravatar.cc/200?img=47',
-  'maria-gomez':      'https://i.pravatar.cc/200?img=44',
-  'carlos-rodriguez': 'https://i.pravatar.cc/200?img=15',
-  'andres-torres':    'https://i.pravatar.cc/200?img=33',
-  'liliana-mosquera': 'https://i.pravatar.cc/200?img=56',
-  'jorge-perez':      'https://i.pravatar.cc/200?img=61',
-  'sandra-rivas':     'https://i.pravatar.cc/200?img=38',
-  'hernando-castillo':'https://i.pravatar.cc/200?img=68',
-  'rosa-vargas':      'https://i.pravatar.cc/200?img=25',
-  'felipe-mantilla':  'https://i.pravatar.cc/200?img=52',
-};
-const AVATAR = (slug) => AVATARS[slug] || `https://i.pravatar.cc/200?img=1`;
+// Fotos de docentes — SVG de iniciales en el repo hasta que Ronald suba fotos reales.
+// Para reemplazar: poner la foto en frontend-angular/public/docentes/<slug>.jpg
+// y cambiar la extensión aquí de .svg a .jpg
+const AVATAR = (slug) => `${FRONTEND}/docentes/${slug}.svg`;
 
 // ═══════════════════════════════════════════════════════════
 async function seedDemo() {
@@ -156,13 +144,30 @@ async function seedDemo() {
   const passCoord   = await bcrypt.hash('Coord2024*', 10);
 
   const usuariosData = [
-    // ─ RECTORES ─────────────────────────────────────────────
+    // ─ RECTOR GENERAL ────────────────────────────────────────
+    {
+      email: 'luis.sanchez@itssantander.edu.co',
+      nombre: 'Luis Fernando Sánchez Morales', password_hash: passRector,
+      rol: 'RECTOR', sede_id: s1.id,
+      slug: 'luis-sanchez',
+      cargo: 'Rector General ITS Santander',
+      titulo: 'Mg. en Administración Educativa — Universidad Externado de Colombia',
+      bio: 'Rector con 22 años de experiencia en gestión educativa técnica. Lidera el proceso de transformación digital del Instituto Técnico Industrial Santander. Impulsor de la formación dual con el sector productivo de Fusagasugá y Cundinamarca.',
+      areas_json: ['Gestión Educativa', 'Educación Técnica', 'Liderazgo Institucional'],
+      logros_json: [
+        { año: 2026, texto: 'ITS Santander certificado como institución de excelencia técnica por el MEN' },
+        { año: 2025, texto: 'Convenio de formación dual con 8 empresas del Sumapaz' },
+        { año: 2024, texto: 'Mejor ICFES en educación técnica de Cundinamarca' },
+      ],
+      sedes: [s1, s2, s3],
+    },
+    // ─ COORDINADORES ─────────────────────────────────────────
     {
       email: 'patricia.diaz@itssantander.edu.co',
-      nombre: 'Patricia Díaz Morales', password_hash: passRector,
-      rol: 'RECTOR', sede_id: s1.id,
+      nombre: 'Patricia Helena Díaz Moreno', password_hash: passCoord,
+      rol: 'COORDINADOR', sede_id: s1.id,
       slug: 'patricia-diaz',
-      cargo: 'Rectora Sede Bachillerato',
+      cargo: 'Coordinadora Académica Sede Bachillerato',
       titulo: 'Mg. en Educación — Universidad de los Andes',
       bio: 'Magíster en Educación con 18 años de trayectoria en liderazgo educativo. Impulsora del modelo de educación técnica con énfasis en innovación y pensamiento crítico. Coordinadora del proyecto Revista Digital ITS Santander.',
       areas_json: ['Gestión Educativa', 'Liderazgo Pedagógico', 'Innovación'],
