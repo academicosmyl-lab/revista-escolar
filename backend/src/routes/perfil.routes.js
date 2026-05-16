@@ -15,12 +15,13 @@ router.get('/docentes', async (req, res, next) => {
   try {
     const { sede_id, sedeId } = req.query;
     const filtroSede = sede_id || sedeId;
-    const whereUsuario = { rol: 'DOCENTE', activo: true };
+    const rolesPublicos = ['RECTOR', 'COORDINADOR', 'ORIENTADORA', 'DOCENTE'];
+    const whereUsuario = { rol: rolesPublicos, activo: true };
     if (filtroSede) whereUsuario.sede_principal_id = filtroSede;
 
     const rows = await Usuario.findAll({
       where: whereUsuario,
-      attributes: ['id', 'nombre', 'email'],
+      attributes: ['id', 'nombre', 'email', 'rol'],
       include: [
         {
           model: PerfilDocente, as: 'perfil',
@@ -41,7 +42,7 @@ router.get('/docentes', async (req, res, next) => {
     // Normalizar al contrato del frontend Angular (PerfilDocente interface)
     const docentes = rows.map(d => ({
       id:        d.id,
-      usuario:   { id: d.id, nombre: d.nombre, email: d.email, rol: 'DOCENTE' },
+      usuario:   { id: d.id, nombre: d.nombre, email: d.email, rol: d.rol },
       bio:       d.perfil?.bio        ?? null,
       cargo:     d.perfil?.cargo      ?? null,
       fotoUrl:   d.perfil?.foto_url   ?? null,
