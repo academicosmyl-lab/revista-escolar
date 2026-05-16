@@ -22,7 +22,7 @@ export interface UsuarioAuth {
 
 /* ── Sedes ──────────────────────────────────────────────── */
 export interface Sede {
-  id: number;
+  id: string;
   nombre: string;
   slug: string;
   tipo: string;

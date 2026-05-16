@@ -16,11 +16,9 @@ router.get('/docentes', async (req, res, next) => {
     const { sede_id, sedeId } = req.query;
     const filtroSede = sede_id || sedeId;
     const rolesPublicos = ['RECTOR', 'COORDINADOR', 'ORIENTADORA', 'DOCENTE'];
-    const whereUsuario = { rol: rolesPublicos, activo: true };
-    if (filtroSede) whereUsuario.sede_principal_id = filtroSede;
 
     const rows = await Usuario.findAll({
-      where: whereUsuario,
+      where: { rol: rolesPublicos, activo: true },
       attributes: ['id', 'nombre', 'email', 'rol'],
       include: [
         {
@@ -33,7 +31,8 @@ router.get('/docentes', async (req, res, next) => {
           model: Sede, as: 'sedes',
           through: { attributes: [] },
           attributes: ['id','nombre','slug'],
-          required: false,
+          required: !!filtroSede,
+          ...(filtroSede ? { where: { id: filtroSede } } : {}),
         },
       ],
       order: [['nombre', 'ASC']],

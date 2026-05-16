@@ -20,7 +20,7 @@ export class Docentes implements OnInit {
   sedes:    Sede[]          = [];
 
   busqueda    = '';
-  sedeActiva: number | null = null;
+  sedeActiva: string | null = null;
 
   ngOnInit() {
     this.cargarSedes();
@@ -54,7 +54,7 @@ export class Docentes implements OnInit {
     });
   }
 
-  filtrarSede(id: number | null) {
+  filtrarSede(id: string | null) {
     this.sedeActiva = id;
     this.cargarDocentes();
   }
