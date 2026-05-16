@@ -3,6 +3,15 @@
   <div class="hero-overlay"></div>
   <div class="hero-patron"></div>
 
+  <!-- Partículas doradas flotantes -->
+  <div class="hero-particulas" aria-hidden="true">
+    @for (p of particulas; track $index) {
+      <span class="hero-particula"
+        [style]="'left:' + p.left + '%;animation-duration:' + p.dur + 's;animation-delay:' + p.delay + 's;width:' + p.size + 'px;height:' + p.size + 'px;--op:' + p.op">
+      </span>
+    }
+  </div>
+
   <div class="hero-grid">
     <!-- BLOQUE SUPERIOR: título + lema juntos (izquierda-arriba) -->
     <div class="hero-bloque-titulo fade-in-up">

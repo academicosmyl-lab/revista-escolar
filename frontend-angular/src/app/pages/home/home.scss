@@ -65,6 +65,39 @@
 
 .wsp-texto { display: none; }
 
+/* ── PARTÍCULAS DORADAS HERO ────────────────────────── */
+@keyframes particulaFlota {
+  0%   { transform: translateY(92vh) translateX(0)     scale(0);   opacity: 0; }
+  6%   { transform: translateY(80vh) translateX(4px)   scale(1);   opacity: var(--op, 0.35); }
+  35%  { transform: translateY(55vh) translateX(10px)  scale(1.15); }
+  65%  { transform: translateY(28vh) translateX(-6px)  scale(0.9); }
+  94%  { opacity: var(--op, 0.35); }
+  100% { transform: translateY(-4vh) translateX(3px)   scale(0);   opacity: 0; }
+}
+
+@keyframes particulaDestellea {
+  0%, 100% { box-shadow: 0 0 3px 1px rgba(212,168,83,0.6); }
+  50%       { box-shadow: 0 0 8px 3px rgba(212,168,83,0.9); }
+}
+
+.hero-particulas {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  overflow: hidden;
+}
+
+.hero-particula {
+  position: absolute;
+  bottom: 0;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #f5d98b, #D4A853 60%, #a07830);
+  animation:
+    particulaFlota var(--dur, 8s) linear infinite,
+    particulaDestellea 2.5s ease-in-out infinite;
+}
+
 /* ── HERO PANTALLA COMPLETA ─────────────────────────── */
 .hero-section {
   position: relative;

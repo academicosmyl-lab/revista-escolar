@@ -26,6 +26,15 @@ export class Home implements AfterViewInit {
     },
   ];
 
+  /* ── Partículas doradas hero ────────────────────────── */
+  particulas = Array.from({ length: 22 }, (_, i) => ({
+    left:  (i * 4.6 + [3,8,1,9,2,7,4,6,0,5,2,8,3,7,1,9,4,6,0,5,3,8][i]) % 97,
+    delay: -((i * 0.55) % 9),
+    dur:   7 + (i % 5) * 0.7,
+    size:  2 + (i % 3),
+    op:    0.18 + (i % 5) * 0.07,
+  }));
+
   /* ── Franja docentes B&W ────────────────────────────── */
   docentesSlugs = [
     'luis-sanchez','patricia-diaz','roberto-suarez','elena-pacheco','diana-solano',
