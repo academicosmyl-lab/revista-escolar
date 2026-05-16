@@ -63,10 +63,15 @@ export class Home implements AfterViewInit {
   certError        = signal('');
   certExito        = signal('');
 
+  readonly mapaSrc: SafeResourceUrl;
+
   constructor(private sanitizer: DomSanitizer) {
     this.videos.forEach(v => {
       v.safeUrl = this.sanitizer.bypassSecurityTrustResourceUrl(v.url + '&autoplay=1');
     });
+    this.mapaSrc = this.sanitizer.bypassSecurityTrustResourceUrl(
+      'https://www.openstreetmap.org/export/embed.html?bbox=-74.3637479%2C4.3449812%2C-74.3597479%2C4.3489812&layer=mapnik&marker=4.3469812%2C-74.3617479'
+    );
   }
 
   toggleVideo(v: typeof this.videos[0], e: MouseEvent) {
