@@ -24,7 +24,7 @@ const BACKEND = process.env.BACKEND_URL ||
     ? `https://${process.env.RAILWAY_PUBLIC_DOMAIN}`
     : 'http://localhost:3000');
 // URL del frontend en Vercel — ajustar con el dominio real cuando se configure
-const FRONTEND = process.env.FRONTEND_URL || 'https://revista-escolar-its.vercel.app';
+const FRONTEND = process.env.FRONTEND_URL || 'https://revista-escolar-zeta.vercel.app';
 const IMG_NEWS = (seed, w = 800, h = 500) =>
   `https://picsum.photos/seed/${seed}/${w}/${h}`;
 
