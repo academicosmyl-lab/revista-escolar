@@ -6,12 +6,13 @@
 
 /* Colores del escudo oficial ITS Santander Fusagasugá */
 :root {
-  --vinotinto: #7B1D2C;
-  --verde:     #1A5C3A;
-  --dorado:    #C9A84C;
-  --crema:     #F8F5F0;
-  --gris:      #3D3D3D;
-  --claro:     #EDF0ED;
+  --vinotinto: #A94455;
+  --verde:     #3A7D5C;
+  --azul:      #4A7FB5;
+  --dorado:    #D4A853;
+  --crema:     #F5F7FA;
+  --gris:      #2C3E50;
+  --claro:     #EEF2F7;
   --blanco:    #FFFFFF;
 }
 
@@ -64,7 +65,7 @@ h1, h2, h3, h4, h5 {
   display: inline-block;
   text-decoration: none;
 }
-.its-btn-verde:hover { background: #144d30; }
+.its-btn-verde:hover { background: #2E6B4F; }
 
 /* Líneas decorativas */
 .linea-dorada { width: 48px; height: 3px; background: var(--dorado); margin-bottom: 1rem; }
@@ -77,7 +78,7 @@ h1, h2, h3, h4, h5 {
 }
 .card-noticia:hover {
   transform: translateY(-3px);
-  box-shadow: 0 8px 32px rgba(123,29,44,0.12);
+  box-shadow: 0 8px 32px rgba(169,68,85,0.12);
 }
 
 /* Placeholder de imagen */

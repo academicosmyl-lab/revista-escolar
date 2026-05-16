@@ -192,7 +192,7 @@
   text-transform: uppercase;
   cursor: pointer;
   transition: background 0.2s;
-  &:hover:not(:disabled) { background: #144d30; }
+  &:hover:not(:disabled) { background: #2E6B4F; }
   &:disabled { opacity: 0.5; cursor: not-allowed; }
 }
 .adm-btn-rechazar {

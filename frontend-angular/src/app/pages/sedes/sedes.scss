@@ -21,14 +21,14 @@
 /* ── HERO VERDE ───────────────────────────────────────────── */
 
 .sed-hero {
-  background: #1A5C3A;
+  background: #3A7D5C;
   height: 45vh;
   min-height: 280px;
   position: relative;
   overflow: hidden;
   display: flex;
   align-items: center;
-  border-bottom: 4px solid #C9A84C;
+  border-bottom: 4px solid #D4A853;
 
   &::before {
     content: '';
@@ -36,8 +36,8 @@
     inset: 0;
     opacity: 0.05;
     background-image:
-      repeating-linear-gradient(0deg,  #C9A84C 0, #C9A84C 1px, transparent 0, transparent 28px),
-      repeating-linear-gradient(90deg, #C9A84C 0, #C9A84C 1px, transparent 0, transparent 28px);
+      repeating-linear-gradient(0deg,  #D4A853 0, #D4A853 1px, transparent 0, transparent 28px),
+      repeating-linear-gradient(90deg, #D4A853 0, #D4A853 1px, transparent 0, transparent 28px);
     background-size: 28px 28px;
     pointer-events: none;
   }
@@ -73,7 +73,7 @@
   font-weight: 700;
   letter-spacing: 0.15em;
   text-transform: uppercase;
-  color: #C9A84C;
+  color: #D4A853;
   margin-bottom: 10px;
 }
 
@@ -111,7 +111,7 @@
 .sed-intro-linea {
   width: 48px;
   height: 3px;
-  background: #1A5C3A;
+  background: #3A7D5C;
   margin: 0 auto 24px;
 }
 
@@ -180,7 +180,7 @@
 .sed-card-principal-img-placeholder {
   width: 100%;
   height: 350px;
-  background: linear-gradient(135deg, #5C1520 0%, #7B1D2C 100%);
+  background: linear-gradient(135deg, #5C1520 0%, #A94455 100%);
 
   @media (max-width: 900px) { height: 220px; }
 }
@@ -237,7 +237,7 @@
 .sed-card-secundaria-img-placeholder {
   width: 100%;
   height: 220px;
-  background: linear-gradient(135deg, #5C1520 0%, #7B1D2C 100%);
+  background: linear-gradient(135deg, #5C1520 0%, #A94455 100%);
 }
 
 .sed-card-secundaria-body {
@@ -255,7 +255,7 @@
   font-family: 'Playfair Display', serif;
   font-size: 1.4rem;
   font-weight: 700;
-  color: #7B1D2C;
+  color: #A94455;
   line-height: 1.2;
   margin-bottom: 10px;
 
@@ -270,7 +270,7 @@
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: white;
-  background: #1A5C3A;
+  background: #3A7D5C;
   border-radius: 4px;
   padding: 4px 10px;
   margin-bottom: 14px;
@@ -307,7 +307,7 @@
   width: 7px;
   height: 7px;
   border-radius: 50%;
-  background: #C9A84C;
+  background: #D4A853;
   margin-top: 6px;
 }
 
@@ -319,9 +319,9 @@
   font-weight: 700;
   letter-spacing: 0.07em;
   text-transform: uppercase;
-  color: #7B1D2C;
+  color: #A94455;
   background: transparent;
-  border: 2px solid #7B1D2C;
+  border: 2px solid #A94455;
   border-radius: 6px;
   padding: 9px 20px;
   cursor: default;
@@ -352,14 +352,14 @@
   font-weight: 700;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: #C9A84C;
+  color: #D4A853;
   margin-bottom: 8px;
 }
 
 .sed-mapa-titulo {
   font-family: 'Playfair Display', serif;
   font-size: clamp(1.2rem, 3vw, 1.6rem);
-  color: #7B1D2C;
+  color: #A94455;
   margin-bottom: 24px;
 }
 
@@ -494,14 +494,14 @@
 .sed-vacio-linea {
   width: 48px;
   height: 3px;
-  background: #C9A84C;
+  background: #D4A853;
   margin: 0 auto 24px;
 }
 
 .sed-vacio-titulo {
   font-family: 'Playfair Display', serif;
   font-size: 1.3rem;
-  color: #7B1D2C;
+  color: #A94455;
   margin-bottom: 10px;
 }
 

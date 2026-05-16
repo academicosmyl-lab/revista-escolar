@@ -1,8 +1,8 @@
 /* ── HERO ──────────────────────────────────────────────── */
 .ind-hero {
-  background: linear-gradient(135deg, #1A5C3A 0%, #0f3d25 100%);
+  background: linear-gradient(135deg, #3A7D5C 0%, #0f3d25 100%);
   padding: 3.5rem 2rem;
-  border-bottom: 4px solid #C9A84C;
+  border-bottom: 4px solid #D4A853;
   @media (max-width: 640px) { padding: 2.5rem 1rem; }
 }
 .ind-hero-inner {
@@ -12,7 +12,7 @@
 }
 .ind-etiqueta {
   font-family: 'Source Sans 3', sans-serif; font-size: 0.72rem; letter-spacing: 0.15em;
-  text-transform: uppercase; color: #C9A84C; font-weight: 700; margin-bottom: 0.75rem;
+  text-transform: uppercase; color: #D4A853; font-weight: 700; margin-bottom: 0.75rem;
 }
 .ind-titulo {
   font-family: 'Playfair Display', serif; color: white;
@@ -26,7 +26,7 @@
   @media (max-width: 768px) { align-items: flex-start; }
 }
 .ind-btn-excel {
-  background: #C9A84C; color: #1A5C3A; font-family: 'Source Sans 3', sans-serif;
+  background: #D4A853; color: #3A7D5C; font-family: 'Source Sans 3', sans-serif;
   font-weight: 700; font-size: 0.82rem; letter-spacing: 0.06em; text-transform: uppercase;
   padding: 0.75rem 1.5rem; text-decoration: none; white-space: nowrap;
   transition: background 0.2s, transform 0.15s;
@@ -38,7 +38,7 @@
 }
 
 /* ── TARJETAS RESUMEN ──────────────────────────────────── */
-.ind-resumen { background: #F8F5F0; padding: 2.5rem 2rem; }
+.ind-resumen { background: #F5F7FA; padding: 2.5rem 2rem; }
 .ind-resumen-inner {
   max-width: 1200px; margin: 0 auto;
   display: grid; grid-template-columns: repeat(4,1fr); gap: 1.25rem;
@@ -49,13 +49,13 @@
   background: white; padding: 1.75rem 1.5rem; text-align: center;
   border-top: 4px solid transparent;
   box-shadow: 0 2px 12px rgba(0,0,0,0.06);
-  &-vinotinto { border-top-color: #7B1D2C; }
-  &-verde     { border-top-color: #1A5C3A; }
-  &-dorado    { border-top-color: #C9A84C; }
+  &-vinotinto { border-top-color: #A94455; }
+  &-verde     { border-top-color: #3A7D5C; }
+  &-dorado    { border-top-color: #D4A853; }
 }
 .ind-tarjeta-valor {
   font-family: 'Playfair Display', serif; font-size: 2.2rem; font-weight: 700;
-  color: #7B1D2C; line-height: 1;
+  color: #A94455; line-height: 1;
 }
 .ind-tarjeta-label {
   font-family: 'Source Sans 3', sans-serif; font-size: 0.72rem; letter-spacing: 0.08em;
@@ -80,25 +80,25 @@
   border: 1px solid #e8e8e8; overflow: hidden;
   box-shadow: 0 2px 12px rgba(0,0,0,0.05);
   transition: box-shadow 0.2s;
-  &:hover { box-shadow: 0 6px 24px rgba(26,92,58,0.1); }
+  &:hover { box-shadow: 0 6px 24px rgba(58,125,92,0.1); }
 }
 .ind-iframe { width: 100%; height: 400px; display: block; }
 .ind-placeholder {
-  height: 300px; background: linear-gradient(135deg, #EDF0ED 0%, #dde5dd 100%);
+  height: 300px; background: linear-gradient(135deg, #EEF2F7 0%, #dde5dd 100%);
   display: flex; flex-direction: column; align-items: center; justify-content: center;
   gap: 0.5rem; padding: 2rem; text-align: center;
   border-bottom: 2px dashed #a0b8a0;
 }
 .ind-placeholder-linea {
-  width: 48px; height: 4px; background: #1A5C3A; margin-bottom: 0.75rem;
+  width: 48px; height: 4px; background: #3A7D5C; margin-bottom: 0.75rem;
 }
-.ind-placeholder strong { font-family: 'Playfair Display', serif; color: #1A5C3A; font-size: 1.1rem; }
+.ind-placeholder strong { font-family: 'Playfair Display', serif; color: #3A7D5C; font-size: 1.1rem; }
 .ind-placeholder-hint {
   font-family: 'Source Sans 3', sans-serif; font-size: 0.78rem; color: #5a5a5a; margin-top: 0.25rem;
 }
 .ind-placeholder-code {
   font-family: monospace; font-size: 0.72rem; background: white; padding: 0.3rem 0.6rem;
-  color: #7B1D2C; border: 1px solid #e0e0e0; margin-top: 0.25rem;
+  color: #A94455; border: 1px solid #e0e0e0; margin-top: 0.25rem;
 }
 .ind-card-info { padding: 1rem 1.25rem; border-top: 1px solid #f0f0f0; }
 .ind-card-titulo { font-size: 1rem; margin-bottom: 0.25rem; }
@@ -106,22 +106,22 @@
 
 /* ── INSTRUCCIONES ─────────────────────────────────────── */
 .ind-instrucciones {
-  margin-top: 2.5rem; background: #F8F5F0; padding: 1.75rem 2rem;
-  border-left: 4px solid #C9A84C;
+  margin-top: 2.5rem; background: #F5F7FA; padding: 1.75rem 2rem;
+  border-left: 4px solid #D4A853;
 }
 .ind-inst-titulo { font-size: 1.1rem; margin-bottom: 1rem; }
 .ind-inst-lista {
-  font-family: 'Source Sans 3', sans-serif; font-size: 0.9rem; color: #3D3D3D;
+  font-family: 'Source Sans 3', sans-serif; font-size: 0.9rem; color: #2C3E50;
   padding-left: 1.25rem; line-height: 2.2;
 }
 .ind-inst-nota {
   margin-top: 1.25rem; background: #e8f5ee; padding: 0.875rem 1rem;
-  font-family: 'Source Sans 3', sans-serif; font-size: 0.85rem; color: #1A5C3A;
-  border-left: 3px solid #1A5C3A;
+  font-family: 'Source Sans 3', sans-serif; font-size: 0.85rem; color: #3A7D5C;
+  border-left: 3px solid #3A7D5C;
 }
 
 /* ── EXPORTAR DATOS ────────────────────────────────────── */
-.ind-datos { background: #F8F5F0; padding: 3rem 2rem;
+.ind-datos { background: #F5F7FA; padding: 3rem 2rem;
   @media (max-width: 640px) { padding: 2rem 1rem; }
 }
 .ind-datos-inner { max-width: 1200px; margin: 0 auto; }
@@ -132,12 +132,12 @@
 }
 .ind-export-card {
   background: white; padding: 1.5rem; text-align: center; text-decoration: none;
-  border: 1px solid #e8e8e8; border-left: 4px solid #C9A84C;
+  border: 1px solid #e8e8e8; border-left: 4px solid #D4A853;
   display: flex; flex-direction: column; gap: 0.4rem;
-  font-family: 'Source Sans 3', sans-serif; color: #3D3D3D;
+  font-family: 'Source Sans 3', sans-serif; color: #2C3E50;
   transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
-  strong { font-size: 0.95rem; font-weight: 700; color: #1A5C3A; }
-  &:hover { border-left-color: #7B1D2C; transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,0.08); }
+  strong { font-size: 0.95rem; font-weight: 700; color: #3A7D5C; }
+  &:hover { border-left-color: #A94455; transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,0.08); }
 }
 .ind-export-formato {
   font-size: 0.68rem !important; letter-spacing: 0.06em; text-transform: uppercase;

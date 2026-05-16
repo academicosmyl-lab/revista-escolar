@@ -1,6 +1,6 @@
 .login-seccion {
   min-height: 100vh; display: flex; align-items: center; justify-content: center;
-  background: linear-gradient(135deg, #7B1D2C 0%, #1A5C3A 100%);
+  background: linear-gradient(135deg, #A94455 0%, #3A7D5C 100%);
   padding: 2rem 1rem;
 }
 .login-caja {
@@ -17,23 +17,23 @@
 .login-form { text-align: left; }
 .campo {
   margin-bottom: 1.25rem;
-  label { display: block; font-family: 'Source Sans 3', sans-serif; font-size: 0.78rem; font-weight: 600; color: #3D3D3D; margin-bottom: 0.4rem; text-transform: uppercase; letter-spacing: 0.05em; }
+  label { display: block; font-family: 'Source Sans 3', sans-serif; font-size: 0.78rem; font-weight: 600; color: #2C3E50; margin-bottom: 0.4rem; text-transform: uppercase; letter-spacing: 0.05em; }
 }
 .input-its {
   width: 100%; padding: 0.7rem 1rem; border: 2px solid #e0e0e0;
   font-family: 'Source Sans 3', sans-serif; font-size: 0.95rem;
   transition: border-color 0.2s; outline: none;
-  &:focus { border-color: #C9A84C; }
+  &:focus { border-color: #D4A853; }
 }
 .w-full { width: 100%; text-align: center; margin-top: 0.5rem; }
 .login-error {
-  background: #fff0f0; border: 1px solid #f5c0c0; color: #7B1D2C;
+  background: #fff0f0; border: 1px solid #f5c0c0; color: #A94455;
   padding: 0.75rem 1rem; margin-bottom: 1.25rem;
   font-family: 'Source Sans 3', sans-serif; font-size: 0.85rem;
 }
 button:disabled { opacity: 0.65; cursor: not-allowed; }
 .login-volver {
   display: block; margin-top: 1.5rem; font-family: 'Source Sans 3', sans-serif;
-  font-size: 0.8rem; color: #7B1D2C; text-decoration: none;
-  &:hover { color: #C9A84C; }
+  font-size: 0.8rem; color: #A94455; text-decoration: none;
+  &:hover { color: #D4A853; }
 }

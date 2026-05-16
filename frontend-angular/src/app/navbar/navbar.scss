@@ -1,6 +1,6 @@
 /* ── Barra superior ─────────────────────────────────── */
 .its-topbar {
-  background: #7B1D2C;
+  background: #A94455;
   color: white;
   font-family: 'Source Sans 3', sans-serif;
   font-size: 0.7rem;
@@ -22,7 +22,7 @@
 /* ── Navbar ─────────────────────────────────────────── */
 .its-nav {
   background: white;
-  border-bottom: 3px solid #C9A84C;
+  border-bottom: 3px solid #D4A853;
   padding: 0.75rem 2rem;
   display: flex;
   align-items: center;
@@ -62,7 +62,7 @@
 .its-nav-nombre {
   font-family: 'Playfair Display', serif;
   font-size: 1rem;
-  color: #7B1D2C;
+  color: #A94455;
   font-weight: 700;
   line-height: 1.2;
 
@@ -72,7 +72,7 @@
 .its-nav-sede {
   font-family: 'Source Sans 3', sans-serif;
   font-size: 0.68rem;
-  color: #1A5C3A;
+  color: #3A7D5C;
   font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -92,7 +92,7 @@
     display: block;
     width: 24px;
     height: 2px;
-    background: #7B1D2C;
+    background: #A94455;
     transition: all 0.2s;
   }
 
@@ -123,7 +123,7 @@
   font-family: 'Source Sans 3', sans-serif;
   font-size: 0.82rem;
   font-weight: 600;
-  color: #3D3D3D;
+  color: #2C3E50;
   text-decoration: none;
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -133,8 +133,8 @@
   white-space: nowrap;
 
   &:hover, &.nav-activo {
-    color: #7B1D2C;
-    border-bottom-color: #C9A84C;
+    color: #A94455;
+    border-bottom-color: #D4A853;
   }
 
   @media (max-width: 768px) {
@@ -146,11 +146,11 @@
 }
 
 .nav-link-indicadores {
-  color: #1A5C3A !important;
+  color: #4A7FB5 !important;
   font-weight: 700 !important;
   &:hover, &.nav-activo {
-    color: #1A5C3A !important;
-    border-bottom-color: #1A5C3A !important;
+    color: #4A7FB5 !important;
+    border-bottom-color: #4A7FB5 !important;
   }
 }
 

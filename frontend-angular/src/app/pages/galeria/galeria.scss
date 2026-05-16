@@ -81,7 +81,7 @@
   font-weight: 700;
   letter-spacing: 0.15em;
   text-transform: uppercase;
-  color: #C9A84C;
+  color: #D4A853;
   margin-bottom: 10px;
 }
 
@@ -140,11 +140,11 @@
   white-space: nowrap;
   transition: color 0.2s ease, border-color 0.2s ease;
 
-  &:hover { color: #7B1D2C; }
+  &:hover { color: #A94455; }
 
   &.activo {
-    color: #7B1D2C;
-    border-bottom-color: #7B1D2C;
+    color: #A94455;
+    border-bottom-color: #A94455;
     font-weight: 700;
   }
 
@@ -243,7 +243,7 @@
   font-weight: 700;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: #C9A84C;
+  color: #D4A853;
   margin-bottom: 8px;
 }
 
@@ -251,7 +251,7 @@
   font-family: 'Playfair Display', serif;
   font-size: clamp(1.3rem, 3vw, 1.7rem);
   font-weight: 700;
-  color: #7B1D2C;
+  color: #A94455;
   margin-bottom: 24px;
   line-height: 1.2;
 }
@@ -279,7 +279,7 @@
 
   &:hover {
     transform: translateY(-4px);
-    box-shadow: 0 10px 32px rgba(123,29,44,.12);
+    box-shadow: 0 10px 32px rgba(169,68,85,.12);
   }
 }
 
@@ -310,7 +310,7 @@
   width: 44px;
   height: 44px;
   border-radius: 50%;
-  background: rgba(123,29,44,.88);
+  background: rgba(169,68,85,.88);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -329,7 +329,7 @@
   }
 
   .gal-video-card:hover & {
-    background: #7B1D2C;
+    background: #A94455;
     transform: translate(-50%, -50%) scale(1.1);
   }
 }
@@ -362,7 +362,7 @@
   letter-spacing: 0.07em;
   text-transform: uppercase;
   color: white;
-  background: #7B1D2C;
+  background: #A94455;
   border: none;
   border-radius: 6px;
   padding: 8px 16px;
@@ -406,14 +406,14 @@
 .gal-vacio-linea {
   width: 48px;
   height: 3px;
-  background: #C9A84C;
+  background: #D4A853;
   margin: 0 auto 24px;
 }
 
 .gal-vacio-titulo {
   font-family: 'Playfair Display', serif;
   font-size: 1.3rem;
-  color: #7B1D2C;
+  color: #A94455;
   margin-bottom: 10px;
 }
 
@@ -490,7 +490,7 @@
   letter-spacing: 0.04em;
   transition: color 0.2s ease;
 
-  &:hover:not(:disabled) { color: #C9A84C; }
+  &:hover:not(:disabled) { color: #D4A853; }
   &:disabled { opacity: 0.25; cursor: not-allowed; }
 }
 
@@ -514,5 +514,5 @@
   padding: 8px;
   transition: color 0.2s ease;
 
-  &:hover { color: #C9A84C; }
+  &:hover { color: #D4A853; }
 }
