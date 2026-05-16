@@ -599,6 +599,13 @@
 }
 
 /* ── HORIZONTE INSTITUCIONAL — PÁRAMO DE SUMAPAZ ─────── */
+@keyframes colibriFlota {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  40%       { transform: translateY(-14px) rotate(1.5deg); }
+  70%       { transform: translateY(8px) rotate(-1deg); }
+}
+
+
 
 .horizonte-seccion {
   position: relative;
@@ -606,6 +613,28 @@
     linear-gradient(175deg, rgba(6,14,8,0.82) 0%, rgba(10,3,6,0.78) 50%, rgba(6,14,8,0.82) 100%),
     url('/inicio/paramo-sumapaz.jpg') center center / cover no-repeat;
   overflow: hidden;
+}
+
+/* Colibrí grabado */
+.colibri-wrap {
+  position: absolute;
+  top: 6%; right: 3%;
+  pointer-events: none;
+  z-index: 1;
+
+  @media (max-width: 700px) { top: 2%; right: 1%; }
+}
+
+.colibri-img {
+  width: 260px;
+  height: auto;
+  display: block;
+  filter: invert(1) sepia(0.3) saturate(2) hue-rotate(15deg);
+  mix-blend-mode: screen;
+  opacity: 0.22;
+  animation: colibriFlota 5s ease-in-out infinite;
+
+  @media (max-width: 700px) { width: 130px; opacity: 0.16; }
 }
 
 /* Encabezado centrado */
@@ -666,13 +695,16 @@
 
 .horizonte-pilar {
   position: relative;
-  padding: 3rem 3.5rem 4.5rem;
+  padding: 4.5rem 4.5rem 5.5rem;
   overflow: hidden;
+  min-height: 420px;
+  display: flex;
+  align-items: center;
 
   &--mision { background: linear-gradient(145deg, rgba(28,5,16,0.72) 0%, rgba(13,3,8,0.65) 100%); }
   &--vision { background: linear-gradient(145deg, rgba(4,14,6,0.72) 0%, rgba(7,21,5,0.65) 100%); }
 
-  @media (max-width: 900px) { padding: 2.5rem 2rem 3.5rem; }
+  @media (max-width: 900px) { padding: 3rem 2.5rem 4rem; min-height: 320px; }
 }
 
 .horizonte-fantasma {
@@ -715,9 +747,9 @@
 
 .horizonte-texto {
   font-family: 'Source Sans 3', sans-serif;
-  font-size: 1.125rem;
-  color: rgba(255,255,255,0.75);
-  line-height: 1.85;
+  font-size: 1.15rem;
+  color: rgba(255,255,255,0.78);
+  line-height: 1.9;
   margin: 0;
 }
 
