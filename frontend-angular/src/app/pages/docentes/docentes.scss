@@ -268,28 +268,30 @@
 }
 
 .doc-card-foto {
-  width: 80px;
-  height: 80px;
+  width: 130px;
+  height: 130px;
   border-radius: 50%;
   object-fit: cover;
   object-position: top center;
   display: block;
-  border: 2px solid #F0ECE6;
+  border: 3px solid #F0ECE6;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.12);
 }
 
 .doc-card-inicial {
-  width: 80px;
-  height: 80px;
+  width: 130px;
+  height: 130px;
   border-radius: 50%;
   background: #7B1D2C;
   display: flex;
   align-items: center;
   justify-content: center;
   font-family: 'Playfair Display', serif;
-  font-size: 1.8rem;
+  font-size: 2.6rem;
   font-weight: 700;
   color: white;
   flex-shrink: 0;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.12);
 }
 
 .doc-card-body {

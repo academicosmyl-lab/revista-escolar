@@ -39,8 +39,11 @@ router.get('/docentes', async (req, res, next) => {
       order: [['nombre', 'ASC']],
     });
 
+    const jerarquia = { RECTOR: 1, COORDINADOR: 2, ORIENTADORA: 3, DOCENTE: 4 };
+
     // Normalizar al contrato del frontend Angular (PerfilDocente interface)
-    const docentes = rows.map(d => ({
+    const docentes = rows
+      .map(d => ({
       id:        d.id,
       usuario:   { id: d.id, nombre: d.nombre, email: d.email, rol: d.rol },
       bio:       d.perfil?.bio        ?? null,
@@ -49,10 +52,14 @@ router.get('/docentes', async (req, res, next) => {
       titulo:    d.perfil?.titulo_profesional ?? null,
       areas:     d.perfil?.estudios   ?? [],
       logros:    d.perfil?.logros     ?? [],
-      urlBlog:   d.perfil?.url_blog   ?? null,
-      urlLinkedin: d.perfil?.url_linkedin ?? null,
-      sedes:     d.sedes ?? [],
-    }));
+        urlBlog:   d.perfil?.url_blog   ?? null,
+        urlLinkedin: d.perfil?.url_linkedin ?? null,
+        sedes:     d.sedes ?? [],
+        _orden:    jerarquia[d.rol] ?? 9,
+      }))
+      .sort((a, b) => a._orden - b._orden || a.usuario.nombre.localeCompare(b.usuario.nombre));
+
+    docentes.forEach(d => delete d._orden);
 
     res.json({ docentes });
   } catch (err) { next(err); }
