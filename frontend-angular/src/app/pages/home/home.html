@@ -48,6 +48,22 @@
   </div>
 </section>
 
+<!-- FRANJA DOCENTES B&W — marquee infinito -->
+<div class="docentes-tira" aria-hidden="true">
+  <div class="docentes-tira-track">
+    @for (slug of docentesSlugs; track slug) {
+      <div class="docentes-tira-foto">
+        <img [src]="'/docentes/' + slug + '.jpg'" alt="">
+      </div>
+    }
+    @for (slug of docentesSlugs; track slug + 'd') {
+      <div class="docentes-tira-foto">
+        <img [src]="'/docentes/' + slug + '.jpg'" alt="">
+      </div>
+    }
+  </div>
+</div>
+
 <!-- NOTICIAS RECIENTES con scroll reveal -->
 <section class="noticias-seccion">
   <div class="seccion-header reveal">

@@ -10,6 +10,13 @@ import { FormsModule } from '@angular/forms';
 })
 export class Home implements AfterViewInit {
 
+  /* ── Franja docentes B&W ────────────────────────────── */
+  docentesSlugs = [
+    'luis-sanchez','patricia-diaz','roberto-suarez','elena-pacheco','diana-solano',
+    'luz-rios','maria-gomez','carlos-rodriguez','andres-torres','liliana-mosquera',
+    'jorge-perez','sandra-rivas','hernando-castillo','rosa-vargas','felipe-mantilla',
+  ];
+
   /* ── Datos de ejemplo ───────────────────────────────── */
   noticiasEjemplo = [
     { id: 1, img: 'https://picsum.photos/seed/its-dep/800/450',  categoria: 'Deportes',   titulo: 'Campeones departamentales de atletismo 2026',       fecha: '12 de mayo, 2026' },
