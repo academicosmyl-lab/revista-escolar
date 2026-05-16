@@ -1066,7 +1066,7 @@
   background: linear-gradient(-45deg, #f4c5cb, #c8e6f0, #d4ecd8, #f9d0d5, #c5dff4, #f4c5cb);
   background-size: 400% 400%;
   animation: footerGradiente 14s ease infinite;
-  color: #1a1a2e;
+  color: #000;
   border-top: 3px solid #A94455;
   padding: 3.5rem 2rem 1.5rem;
   position: relative;
@@ -1102,7 +1102,7 @@
 
 .footer-nombre {
   font-family: 'Playfair Display', serif;
-  font-size: 1rem; font-weight: 700; color: #1a1a2e; margin: 0 0 0.2rem;
+  font-size: 1.1rem; font-weight: 700; color: #000; margin: 0 0 0.2rem;
 }
 
 .footer-lema {
@@ -1113,12 +1113,12 @@
 
 .footer-desc {
   font-family: 'Source Sans 3', sans-serif;
-  font-size: 0.83rem; color: rgba(26,26,46,0.65); line-height: 1.75; max-width: 300px; margin: 0;
+  font-size: 0.93rem; font-weight: 700; color: #000; line-height: 1.75; max-width: 300px; margin: 0;
 }
 
 .footer-col-titulo {
   font-family: 'Source Sans 3', sans-serif;
-  font-size: 0.65rem; font-weight: 700; letter-spacing: 0.18em;
+  font-size: 0.75rem; font-weight: 700; letter-spacing: 0.18em; color: #000;
   text-transform: uppercase; color: #D4A853;
   margin: 0 0 1.1rem; padding-bottom: 0.5rem;
   border-bottom: 1px solid rgba(212,168,83,0.2);
@@ -1128,7 +1128,7 @@
 
 .footer-link {
   font-family: 'Source Sans 3', sans-serif;
-  font-size: 0.88rem; color: rgba(26,26,46,0.7); text-decoration: none; transition: color 0.2s;
+  font-size: 0.98rem; font-weight: 700; color: #000; text-decoration: none; transition: color 0.2s;
   &:hover { color: #D4A853; }
 }
 
@@ -1141,12 +1141,12 @@
 }
 
 .footer-dato-label {
-  font-size: 0.62rem; font-weight: 700; letter-spacing: 0.12em;
-  text-transform: uppercase; color: rgba(212,168,83,0.75);
+  font-size: 0.72rem; font-weight: 700; letter-spacing: 0.12em;
+  text-transform: uppercase; color: #000;
 }
 
 .footer-email {
-  color: #A94455; text-decoration: none; font-size: 0.8rem;
+  color: #000; font-weight: 700; text-decoration: none; font-size: 0.9rem;
   transition: color 0.2s; word-break: break-all;
   &:hover { color: #D4A853; }
 }
@@ -1163,7 +1163,7 @@
 
 .footer-mapa-link {
   font-family: 'Source Sans 3', sans-serif;
-  font-size: 0.72rem; color: rgba(212,168,83,0.8); text-decoration: none; letter-spacing: 0.04em;
+  font-size: 0.82rem; font-weight: 700; color: #000; text-decoration: none; letter-spacing: 0.04em;
   transition: color 0.2s;
   &:hover { color: #D4A853; }
 }
@@ -1175,4 +1175,4 @@
   font-family: 'Source Sans 3', sans-serif; font-size: 0.7rem; color: rgba(255,255,255,0.4);
 }
 
-.footer-web { color: rgba(26,26,46,0.45); }
+.footer-web { color: #000; font-weight: 700; }
