@@ -1,27 +1,35 @@
-<!-- HERO -->
+<!-- HERO PANTALLA COMPLETA -->
 <section class="hero-section">
+  <div class="hero-overlay"></div>
   <div class="hero-patron"></div>
-  <div class="hero-contenido">
-    <div class="hero-texto fade-in-up">
-      <div class="hero-etiqueta">Revista Digital Institucional</div>
+
+  <div class="hero-grid">
+    <!-- bloque título -->
+    <div class="hero-bloque-titulo fade-in-up">
+      <div class="hero-eyebrow">Revista Digital Institucional</div>
       <h1 class="hero-titulo">
-        Educación con<br><em class="hero-em">Lealtad, Ciencia</em><br>y Técnica
+        Instituto Técnico<br>Industrial<br><em class="hero-em">Santander</em>
       </h1>
-      <p class="hero-desc">
-        Noticias, logros y vida académica del Instituto Técnico Industrial Santander de Fusagasugá.
+    </div>
+
+    <!-- leyenda + botones -->
+    <div class="hero-bloque-accion fade-in-up" style="--i:1">
+      <p class="hero-lema">
+        Inspiramos jóvenes con pensamiento técnico, humano y tecnológico
+        para innovar, liderar y transformar su entorno.
       </p>
       <div class="hero-botones">
-        <a routerLink="/noticias" class="its-btn-primario hero-btn-dorado">Ver Revista</a>
-        <button class="its-btn-primario hero-btn-certificado" (click)="abrirCertificado()">
+        <a routerLink="/noticias" class="hero-btn-primario">Ver Revista</a>
+        <button class="hero-btn-secundario" (click)="abrirCertificado()">
           Certificado Estudiantil
         </button>
-        <a routerLink="/sedes" class="hero-link-sedes">Nuestras Sedes</a>
       </div>
-    </div>
-    <div class="hero-img-wrap">
-      <img class="hero-img" src="https://picsum.photos/seed/its-hero/1200/600" alt="Instituto Técnico Industrial Santander">
+      <a routerLink="/sedes" class="hero-link-sedes">Conoce nuestras sedes</a>
     </div>
   </div>
+
+  <!-- línea decorativa inferior -->
+  <div class="hero-linea-base"></div>
 </section>
 
 <!-- ESTADÍSTICAS con contadores animados -->
