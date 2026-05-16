@@ -17,8 +17,22 @@ router.get('/docentes', async (req, res, next) => {
     const filtroSede = sede_id || sedeId;
     const rolesPublicos = ['RECTOR', 'COORDINADOR', 'ORIENTADORA', 'DOCENTE'];
 
+    // Si hay filtro de sede, primero obtenemos los IDs de usuarios de esa sede
+    let usuarioIdsEnSede = null;
+    if (filtroSede) {
+      const filas = await DocenteSede.findAll({
+        where: { sede_id: filtroSede },
+        attributes: ['usuario_id'],
+      });
+      usuarioIdsEnSede = filas.map(f => f.usuario_id);
+      if (usuarioIdsEnSede.length === 0) return res.json({ docentes: [] });
+    }
+
+    const whereUsuario = { rol: rolesPublicos, activo: true };
+    if (usuarioIdsEnSede) whereUsuario.id = usuarioIdsEnSede;
+
     const rows = await Usuario.findAll({
-      where: { rol: rolesPublicos, activo: true },
+      where: whereUsuario,
       attributes: ['id', 'nombre', 'email', 'rol'],
       include: [
         {
@@ -31,8 +45,7 @@ router.get('/docentes', async (req, res, next) => {
           model: Sede, as: 'sedes',
           through: { attributes: [] },
           attributes: ['id','nombre','slug'],
-          required: !!filtroSede,
-          ...(filtroSede ? { where: { id: filtroSede } } : {}),
+          required: false,
         },
       ],
       order: [['nombre', 'ASC']],

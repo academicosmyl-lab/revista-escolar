@@ -36,9 +36,9 @@ async function seedDemo() {
 
   // ── 0. BASE SEED (crea lo que falte, no sobrescribe) ─────
   const sedesBase = [
-    { nombre: 'Técnico Industrial Bachillerato',        slug: 'tecnico-industrial-bachillerato',        tipo: 'bachillerato',    color_institucional: '#7B1D2C' },
-    { nombre: 'Técnico Industrial Básica Primaria',     slug: 'tecnico-industrial-basica-primaria',     tipo: 'basica_primaria', color_institucional: '#1A5C3A' },
-    { nombre: 'Técnico Industrial Rural Los Sauces',    slug: 'tecnico-industrial-rural-los-sauces',    tipo: 'rural',           color_institucional: '#92400E' },
+    { nombre: 'Técnico Industrial Bachillerato',        slug: 'tecnico-industrial-bachillerato',        tipo: 'bachillerato',    color_institucional: '#A94455' },
+    { nombre: 'Técnico Industrial Básica Primaria',     slug: 'tecnico-industrial-basica-primaria',     tipo: 'basica_primaria', color_institucional: '#3A7D5C' },
+    { nombre: 'Técnico Industrial Rural Los Sauces',    slug: 'tecnico-industrial-rural-los-sauces',    tipo: 'rural',           color_institucional: '#A05C2E' },
   ];
   for (const s of sedesBase) await Sede.findOrCreate({ where: { slug: s.slug }, defaults: s });
 
@@ -73,21 +73,21 @@ async function seedDemo() {
       direccion: 'Calle 5 # 7-20, Fusagasugá, Cundinamarca',
       telefono: '(601) 867-1234',
       imagen_portada: IMG_NEWS('school-main', 1200, 600),
-      color_institucional: '#7B1D2C',
+      color_institucional: '#A94455',
     },
     'tecnico-industrial-basica-primaria': {
       descripcion: 'Sede de básica primaria con enfoque en el desarrollo integral de niños desde preescolar hasta grado 5°. Espacios lúdicos, huerta escolar y programa de lectura temprana.',
       direccion: 'Carrera 12 # 3-45, Fusagasugá, Cundinamarca',
       telefono: '(601) 867-5678',
       imagen_portada: IMG_NEWS('primary-building', 1200, 600),
-      color_institucional: '#1A5C3A',
+      color_institucional: '#3A7D5C',
     },
     'tecnico-industrial-rural-los-sauces': {
       descripcion: 'Sede rural en vereda Los Sauces con proyecto agropecuario activo y énfasis en educación ambiental. Modelo de escuela nueva multigrado reconocido por la Secretaría de Educación.',
       direccion: 'Vereda Los Sauces km 8, vía Silvania, Fusagasugá',
       telefono: '(601) 867-9012',
       imagen_portada: IMG_NEWS('rural-landscape', 1200, 600),
-      color_institucional: '#92400E',
+      color_institucional: '#A05C2E',
     },
   };
 
@@ -118,13 +118,13 @@ async function seedDemo() {
 
   // ── 3. CATEGORÍAS ─────────────────────────────────────────
   const catsData = [
-    { nombre: 'Académico',  color: '#7B1D2C', descripcion: 'Logros y noticias del ámbito académico' },
-    { nombre: 'Deportivo',  color: '#1A5C3A', descripcion: 'Torneos, competencias y logros deportivos' },
-    { nombre: 'Cultural',   color: '#C9A84C', descripcion: 'Arte, festivales y expresión cultural' },
-    { nombre: 'Tecnología', color: '#0891B2', descripcion: 'Proyectos tecnológicos y robótica' },
-    { nombre: 'Comunidad',  color: '#059669', descripcion: 'Proyectos con impacto en la comunidad' },
-    { nombre: 'Logros',     color: '#7C3AED', descripcion: 'Reconocimientos y premios institucionales' },
-    { nombre: 'Anuncios',   color: '#4A4A4A', descripcion: 'Avisos y comunicados oficiales' },
+    { nombre: 'Académico',  color: '#A94455', descripcion: 'Logros y noticias del ámbito académico' },
+    { nombre: 'Deportivo',  color: '#3A7D5C', descripcion: 'Torneos, competencias y logros deportivos' },
+    { nombre: 'Cultural',   color: '#D4A853', descripcion: 'Arte, festivales y expresión cultural' },
+    { nombre: 'Tecnología', color: '#4A7FB5', descripcion: 'Proyectos tecnológicos y robótica' },
+    { nombre: 'Comunidad',  color: '#5BA08A', descripcion: 'Proyectos con impacto en la comunidad' },
+    { nombre: 'Logros',     color: '#7C6D9F', descripcion: 'Reconocimientos y premios institucionales' },
+    { nombre: 'Anuncios',   color: '#6B7280', descripcion: 'Avisos y comunicados oficiales' },
   ];
   const cats = {};
   for (const c of catsData) {
