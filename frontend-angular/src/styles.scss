@@ -161,3 +161,7 @@ h1, h2, h3, h4, h5 {
 
 /* Borde dorado decorativo */
 .borde-dorado-izq { border-left: 4px solid var(--dorado); padding-left: 1rem; }
+
+/* Footer — forzar negro global (sin encapsulación Angular) */
+.footer, .footer * { color: #000 !important; }
+.footer a:hover, .footer .footer-link:hover, .footer .footer-mapa-link:hover { color: #A94455 !important; }
