@@ -71,13 +71,12 @@
         @for (d of docentesFiltrados; track d.id; let i = $index) {
           <div class="doc-card" [style.--i]="i">
 
-            <!-- Foto o inicial -->
+            <!-- Foto: inicial visible siempre, foto encima al cargar -->
             <div class="doc-card-foto-wrap">
+              <div class="doc-card-inicial">{{ inicial(d.usuario.nombre) }}</div>
               @if (d.fotoUrl) {
                 <img class="doc-card-foto" [src]="d.fotoUrl" [alt]="d.usuario.nombre"
-                     (error)="onFotoError($event)">
-              } @else {
-                <div class="doc-card-inicial">{{ inicial(d.usuario.nombre) }}</div>
+                     (load)="onFotoLoad($event)" (error)="onFotoError($event)">
               }
             </div>
 
