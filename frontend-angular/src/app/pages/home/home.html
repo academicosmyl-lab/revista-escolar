@@ -31,36 +31,110 @@
 
 <!-- SECCIÓN VIDEOS INSTITUCIONALES -->
 <section class="videos-seccion">
-  <div class="videos-inner">
-    <div class="videos-encabezado reveal">
-      <div class="linea-dorada"></div>
-      <h2 class="seccion-titulo">Vida Institucional</h2>
-    </div>
-    <div class="videos-grid">
-      <div class="video-card reveal">
-        <div class="video-wrapper">
-          <iframe
-            src="https://www.facebook.com/plugins/video.php?href=https%3A%2F%2Fwww.facebook.com%2Freel%2F909732821901936&show_text=false"
-            scrolling="no"
-            frameborder="0"
-            allowfullscreen="true"
-            allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share">
-          </iframe>
-        </div>
-        <p class="video-caption">Salida pedagógica Tierra Alta</p>
+  <div class="seccion-container">
+    <div class="seccion-header reveal">
+      <div>
+        <div class="linea-dorada"></div>
+        <h2 class="seccion-titulo">Vida Institucional</h2>
       </div>
-
-      <div class="video-card reveal" style="--i:1">
-        <div class="video-wrapper">
-          <iframe
-            src="https://www.facebook.com/plugins/video.php?href=https%3A%2F%2Fwww.facebook.com%2Freel%2F909732821901936&show_text=false"
-            scrolling="no"
-            frameborder="0"
-            allowfullscreen="true"
-            allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share">
-          </iframe>
+    </div>
+    <div class="videos-grid reveal">
+      @for (v of videos; track v.titulo) {
+        <div class="video-preview-card" (click)="abrirVideo(v.url)">
+          <div class="video-preview-bg" [style.background]="'linear-gradient(145deg,' + v.colorA + ',' + v.colorB + ')'">
+            <div class="video-play-btn">
+              <span class="video-play-triangle"></span>
+            </div>
+          </div>
+          <div class="video-card-footer">
+            <span class="video-card-titulo">{{ v.titulo }}</span>
+          </div>
         </div>
-        <p class="video-caption">Conmemoración del Día del Síndrome de Down</p>
+      }
+    </div>
+  </div>
+</section>
+
+<!-- MODAL VIDEO -->
+@if (modalVideoActivo) {
+  <div class="video-modal-overlay" (click)="cerrarModalVideo($event)">
+    <div class="video-modal-caja">
+      <button class="video-modal-cerrar" (click)="modalVideoActivo = false; videoModalUrl = null">✕</button>
+      <iframe [src]="videoModalUrl"
+        scrolling="no" frameborder="0" allowfullscreen="true"
+        allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share">
+      </iframe>
+    </div>
+  </div>
+}
+
+<!-- SECCIÓN QUIÉNES SOMOS -->
+<section class="quienes-seccion">
+  <div class="seccion-container">
+    <div class="quienes-grid reveal">
+      <div class="quienes-imagen-col">
+        <img src="assets/images/logo-its.png" alt="Instituto Técnico Industrial Santander" class="quienes-escudo">
+        <div class="quienes-badges">
+          <span class="quienes-badge">Oficial</span>
+          <span class="quienes-badge">Técnico Industrial</span>
+          <span class="quienes-badge">Mixto</span>
+        </div>
+      </div>
+      <div class="quienes-texto-col">
+        <div class="linea-dorada"></div>
+        <h2 class="quienes-titulo">¿Quiénes <em>somos?</em></h2>
+        <p class="quienes-texto">
+          Somos una institución educativa pública ubicada en <strong>Fusagasugá, Cundinamarca</strong>,
+          comprometida con la formación de bachilleres técnicos industriales con competencias tecnológicas,
+          científicas y humanas para enfrentar los retos del mundo actual.
+        </p>
+        <p class="quienes-texto">
+          Nuestras áreas técnicas incluyen <strong>Electrónica, Corte y Confección, Diseño Digital,
+          Medios Audiovisuales e Inglés Comunicativo</strong>. Contamos con tres sedes, más de
+          50 docentes y cerca de 1.000 estudiantes preparándose para la universidad y el campo laboral.
+        </p>
+        <div class="quienes-stats">
+          <div class="quienes-stat"><span class="stat-num">3</span><span class="stat-label">Sedes</span></div>
+          <div class="quienes-stat"><span class="stat-num">50+</span><span class="stat-label">Docentes</span></div>
+          <div class="quienes-stat"><span class="stat-num">1.000+</span><span class="stat-label">Estudiantes</span></div>
+        </div>
+        <a routerLink="/docentes" class="its-btn-outline">Conocer nuestro equipo</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SECCIÓN MISIÓN Y VISIÓN -->
+<section class="mivision-seccion">
+  <div class="seccion-container">
+    <div class="seccion-header reveal" style="margin-bottom:2.5rem;">
+      <div>
+        <div class="linea-dorada" style="background:rgba(212,168,83,0.6);"></div>
+        <h2 class="seccion-titulo" style="color:white;">Horizonte Institucional</h2>
+      </div>
+    </div>
+    <div class="mivision-grid reveal">
+      <div class="mivision-card">
+        <div class="mivision-numero">01</div>
+        <h3 class="mivision-subtitulo">Misión</h3>
+        <p class="mivision-texto">
+          Formamos jóvenes íntegros con visión técnica, humana y tecnológica, preparados
+          para transformar su entorno mediante la innovación, el conocimiento y la creatividad,
+          integrando ciencia, técnica y valores para afrontar los retos de la sociedad actual.
+        </p>
+      </div>
+      <div class="mivision-card">
+        <div class="mivision-numero">02</div>
+        <h3 class="mivision-subtitulo">Visión</h3>
+        <p class="mivision-texto">
+          Ser una institución líder en educación técnica y tecnológica, reconocida por formar
+          ciudadanos innovadores, humanos y comprometidos con el desarrollo de Fusagasugá
+          y de Colombia.
+        </p>
+        <p class="mivision-contacto">
+          Fusagasugá, Cundinamarca · Colombia<br>
+          institutotecnicosantander.com.co
+        </p>
       </div>
     </div>
   </div>

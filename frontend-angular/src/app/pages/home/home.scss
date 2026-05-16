@@ -206,66 +206,310 @@
 /* ── SECCIÓN VIDEOS INSTITUCIONALES ────────────────────── */
 .videos-seccion {
   background: #F5F7FA;
-  padding: 2.5rem 2rem;
-}
-
-.videos-inner {
-  max-width: 560px;   /* contenedor pequeño — dos videos caben compactos */
-  margin: 0 auto;
-}
-
-.videos-encabezado {
-  margin-bottom: 1.75rem;
+  padding: 3.5rem 2rem;
 }
 
 .videos-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 1.25rem;
+  gap: 1.5rem;
+  max-width: 680px;
+  margin: 0 auto;
 
-  @media (max-width: 480px) {
+  @media (max-width: 560px) {
     grid-template-columns: 1fr;
-    max-width: 280px;
-    margin: 0 auto;
+    max-width: 320px;
   }
 }
 
-.video-card {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
+.video-preview-card {
+  cursor: pointer;
+  border-radius: 4px;
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.10);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 32px rgba(0,0,0,0.18);
+
+    .video-play-btn { transform: scale(1.12); border-color: #D4A853; }
+    .video-play-triangle { border-left-color: #D4A853; }
+  }
 }
 
-.video-wrapper {
+.video-preview-bg {
   position: relative;
-  height: 300px;   /* altura fija — evita que 9:16 estire la sección */
-  overflow: hidden;
-  background: #111;
-  border: 1px solid #dde3ea;
-  border-radius: 2px;
+  aspect-ratio: 4 / 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.video-play-btn {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  border: 2.5px solid rgba(255,255,255,0.75);
+  background: rgba(255,255,255,0.1);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.video-play-triangle {
+  width: 0; height: 0;
+  border-style: solid;
+  border-width: 10px 0 10px 20px;
+  border-color: transparent transparent transparent white;
+  margin-left: 4px;
+  transition: border-left-color 0.2s ease;
+}
+
+.video-card-footer {
+  background: white;
+  padding: 0.9rem 1rem;
+  border-top: 3px solid #D4A853;
+}
+
+.video-card-titulo {
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: #2C3E50;
+  display: block;
+  line-height: 1.45;
+}
+
+/* ── Modal video ──────────────────────────────────────── */
+.video-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: rgba(0,0,0,0.88);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  animation: fadeIn 0.2s ease;
+}
+
+.video-modal-caja {
+  position: relative;
+  width: 360px;
+  max-width: 90vw;
+  cursor: default;
 
   iframe {
-    position: absolute;
-    top: 0;
-    left: 0;
     width: 100%;
-    height: 100%;
+    aspect-ratio: 9 / 16;
     border: none;
+    display: block;
   }
 }
 
-.video-caption {
+.video-modal-cerrar {
+  position: absolute;
+  top: -44px;
+  right: 0;
+  background: transparent;
+  border: 1.5px solid rgba(255,255,255,0.4);
+  color: white;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color 0.2s, color 0.2s;
+
+  &:hover { border-color: #D4A853; color: #D4A853; }
+}
+
+/* ── SECCIÓN QUIÉNES SOMOS ────────────────────────────── */
+.quienes-seccion {
+  background: white;
+  padding: 4.5rem 2rem;
+}
+
+.quienes-grid {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 4rem;
+  align-items: center;
+  max-width: 1000px;
+  margin: 0 auto;
+
+  @media (max-width: 768px) { grid-template-columns: 1fr; gap: 2rem; }
+}
+
+.quienes-imagen-col {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.quienes-escudo {
+  width: 160px;
+  height: auto;
+  opacity: 0.92;
+  filter: drop-shadow(0 8px 24px rgba(169,68,85,0.15));
+
+  @media (max-width: 768px) { width: 120px; }
+}
+
+.quienes-titulo {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(1.8rem, 4vw, 2.8rem);
+  font-weight: 900;
+  color: #1a0a0e;
+  line-height: 1.1;
+  margin: 1rem 0 1.5rem;
+  letter-spacing: -0.01em;
+
+  em { color: #A94455; font-style: italic; }
+}
+
+.quienes-texto {
   font-family: 'Source Sans 3', sans-serif;
-  font-size: 0.75rem;
+  font-size: 1rem;
+  color: #4a5568;
+  line-height: 1.8;
+  margin: 0 0 1rem;
+
+  strong { color: #1a0a0e; }
+}
+
+.quienes-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 1.25rem;
+  justify-content: center;
+}
+
+.quienes-badge {
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.68rem;
   font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: #2C3E50;
-  text-align: center;
+  color: #A94455;
+  border: 1px solid rgba(169,68,85,0.3);
+  padding: 4px 12px;
+  border-radius: 20px;
+  background: rgba(169,68,85,0.05);
+}
+
+.quienes-stats {
+  display: flex;
+  gap: 2rem;
+  margin: 1.75rem 0;
+  padding: 1.5rem 0;
+  border-top: 1px solid #eee;
+  border-bottom: 1px solid #eee;
+}
+
+.quienes-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.stat-num {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.9rem;
+  font-weight: 900;
+  color: #A94455;
+  line-height: 1;
+}
+
+.stat-label {
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #888;
+}
+
+.its-btn-outline {
+  display: inline-block;
+  margin-top: 1rem;
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #A94455;
+  text-decoration: none;
+  border: 1.5px solid #A94455;
+  padding: 11px 28px;
+  transition: background 0.2s ease, color 0.2s ease;
+
+  &:hover { background: #A94455; color: white; }
+}
+
+/* ── SECCIÓN MISIÓN Y VISIÓN ──────────────────────────── */
+.mivision-seccion {
+  background: #1a0a0e;
+  padding: 4.5rem 2rem;
+}
+
+.mivision-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+
+  @media (max-width: 640px) { grid-template-columns: 1fr; }
+}
+
+.mivision-card {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(212,168,83,0.18);
+  padding: 2.5rem 2rem;
+  border-top: 3px solid #D4A853;
+}
+
+.mivision-numero {
+  font-family: 'Playfair Display', serif;
+  font-size: 3rem;
+  font-weight: 900;
+  color: rgba(212,168,83,0.25);
+  line-height: 1;
+  margin-bottom: 0.75rem;
+}
+
+.mivision-subtitulo {
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #D4A853;
+  margin: 0 0 1.25rem;
+}
+
+.mivision-texto {
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.95rem;
+  color: rgba(255,255,255,0.72);
+  line-height: 1.8;
+  margin: 0 0 1rem;
+}
+
+.mivision-contacto {
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.78rem;
+  color: rgba(212,168,83,0.65);
+  line-height: 1.7;
   margin: 0;
-  padding-top: 0.75rem;
-  border-top: 2px solid #D4A853;
-  line-height: 1.5;
+  letter-spacing: 0.02em;
 }
 
 /* ── FRANJA DOCENTES B&W ────────────────────────────── */

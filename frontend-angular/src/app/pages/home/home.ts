@@ -1,6 +1,7 @@
 import { Component, AfterViewInit, ChangeDetectorRef } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-home',
@@ -9,6 +10,23 @@ import { FormsModule } from '@angular/forms';
   styleUrl: './home.scss',
 })
 export class Home implements AfterViewInit {
+
+  /* ── Videos institucionales ─────────────────────────── */
+  videos = [
+    {
+      url: 'https://www.facebook.com/plugins/video.php?href=https%3A%2F%2Fwww.facebook.com%2Freel%2F909732821901936&show_text=false',
+      titulo: 'Salida pedagógica Tierra Alta',
+      colorA: '#7B1D2C', colorB: '#2a0a10',
+    },
+    {
+      url: 'https://www.facebook.com/plugins/video.php?href=https%3A%2F%2Fwww.facebook.com%2Freel%2F909732821901936&show_text=false',
+      titulo: 'Conmemoración del Día del Síndrome de Down',
+      colorA: '#1A5C3A', colorB: '#0a1f14',
+    },
+  ];
+
+  modalVideoActivo = false;
+  videoModalUrl: SafeResourceUrl | null = null;
 
   /* ── Franja docentes B&W ────────────────────────────── */
   docentesSlugs = [
@@ -47,7 +65,19 @@ export class Home implements AfterViewInit {
   certError        = '';
   certExito        = '';
 
-  constructor(private cdr: ChangeDetectorRef) {}
+  constructor(private cdr: ChangeDetectorRef, private sanitizer: DomSanitizer) {}
+
+  abrirVideo(url: string) {
+    this.videoModalUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url);
+    this.modalVideoActivo = true;
+  }
+
+  cerrarModalVideo(e: MouseEvent) {
+    if ((e.target as HTMLElement).classList.contains('video-modal-overlay')) {
+      this.modalVideoActivo = false;
+      this.videoModalUrl = null;
+    }
+  }
 
   abrirCertificado() {
     this.certDocumento = '';
