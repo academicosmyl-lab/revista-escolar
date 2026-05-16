@@ -38,16 +38,25 @@
     <h2 class="vida-titulo-videos">Vida Institucional</h2>
     <div class="videos-lista">
       @for (v of videos; track v.titulo; let i = $index) {
-        <div class="video-cine-card" (click)="abrirVideo(v.url)"
-             [style]="'--ca:' + v.colorA + ';--cb:' + v.colorB">
-          <div class="video-cine-num">0{{ i + 1 }}</div>
-          <div class="video-cine-play">
-            <span class="video-cine-tri"></span>
-          </div>
-          <div class="video-cine-info">
-            <div class="video-cine-linea"></div>
-            <span class="video-cine-titulo">{{ v.titulo }}</span>
-          </div>
+        <div class="video-cine-card" [class.playing]="v.playing"
+             [style]="'--ca:' + v.colorA + ';--cb:' + v.colorB"
+             (click)="!v.playing && toggleVideo(v, $event)">
+          @if (v.playing) {
+            <button class="video-cine-cerrar" (click)="v.playing = false; $event.stopPropagation()">✕</button>
+            <iframe class="video-cine-iframe" [src]="v.safeUrl"
+              frameborder="0" scrolling="no" allowfullscreen="true"
+              allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share">
+            </iframe>
+          } @else {
+            <div class="video-cine-num">0{{ i + 1 }}</div>
+            <div class="video-cine-play">
+              <span class="video-cine-tri"></span>
+            </div>
+            <div class="video-cine-info">
+              <div class="video-cine-linea"></div>
+              <span class="video-cine-titulo">{{ v.titulo }}</span>
+            </div>
+          }
         </div>
       }
     </div>
@@ -102,19 +111,6 @@
   </div>
 
 </section>
-
-<!-- MODAL VIDEO -->
-@if (modalVideoActivo()) {
-  <div class="video-modal-overlay" (click)="cerrarModalVideo($event)">
-    <div class="video-modal-caja">
-      <button class="video-modal-cerrar" (click)="modalVideoActivo.set(false); videoModalUrl.set(null)">✕</button>
-      <iframe [src]="videoModalUrl()"
-        scrolling="no" frameborder="0" allowfullscreen="true"
-        allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share">
-      </iframe>
-    </div>
-  </div>
-}
 
 <!-- HORIZONTE INSTITUCIONAL — PÁRAMO DE SUMAPAZ -->
 <section class="horizonte-seccion">
