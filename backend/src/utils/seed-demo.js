@@ -177,9 +177,9 @@ async function seedDemo() {
     {
       email: 'roberto.suarez@itssantander.edu.co',
       nombre: 'Roberto Suárez Peña', password_hash: passRector,
-      rol: 'RECTOR', sede_id: s2.id,
+      rol: 'COORDINADOR', sede_id: s2.id,
       slug: 'roberto-suarez',
-      cargo: 'Rector Sede Básica Primaria',
+      cargo: 'Coordinador Sede Básica Primaria',
       titulo: 'Esp. en Pedagogía — Universidad Pedagógica Nacional',
       bio: 'Especialista en Pedagogía Infantil con 14 años dirigiendo la sede de primaria. Pionero en la implementación del programa de lectura temprana y de actividades lúdico-pedagógicas en los primeros grados.',
       areas_json: ['Pedagogía Infantil', 'Lectura y Escritura', 'Lúdica'],
@@ -192,9 +192,9 @@ async function seedDemo() {
     {
       email: 'elena.pacheco@itssantander.edu.co',
       nombre: 'Elena Pacheco Álvarez', password_hash: passRector,
-      rol: 'RECTOR', sede_id: s3.id,
+      rol: 'COORDINADOR', sede_id: s3.id,
       slug: 'elena-pacheco',
-      cargo: 'Rectora Sede Rural Los Sauces',
+      cargo: 'Coordinadora Sede Rural Los Sauces',
       titulo: 'Lic. en Educación Rural — Universidad del Tolima',
       bio: 'Licenciada en Educación Rural con 20 años trabajando en comunidades campesinas. Creadora del Proyecto Huerta Viva, modelo agropecuario escolar premiado a nivel departamental.',
       areas_json: ['Educación Rural', 'Proyectos Agropecuarios', 'Comunidad'],
