@@ -105,19 +105,20 @@
   font-style: italic;
 }
 
-/* Botón aislado — fila 4, columna 3 (centro) */
+/* Botones — fila 4, alineados bajo el título */
 .hero-bloque-btn {
-  grid-column: 3;
+  grid-column: 2 / 5;
   grid-row: 4;
   display: flex;
-  flex-direction: column;
-  gap: 10px;
-  justify-content: center;
+  flex-direction: row;
+  gap: 16px;
+  align-items: center;
+  flex-wrap: wrap;
   animation: fadeInUp 0.6s ease forwards;
   animation-delay: calc(var(--i, 0) * 120ms);
   opacity: 0;
 
-  @media (max-width: 900px) { grid-column: 2 / 4; flex-direction: row; flex-wrap: wrap; }
+  @media (max-width: 900px) { grid-column: 2 / 4; }
 }
 
 .hero-lema {
