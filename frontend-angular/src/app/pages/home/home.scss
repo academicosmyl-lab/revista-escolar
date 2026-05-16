@@ -211,9 +211,9 @@
   @media (max-width: 900px) { grid-template-columns: 1fr; }
 }
 
-/* Columna izquierda — oscura */
+/* Columna izquierda — vinotinto institucional */
 .vida-videos {
-  background: #1a0a0e;
+  background: #A94455;
   padding: 4rem 3rem;
   display: flex;
   flex-direction: column;
@@ -238,9 +238,9 @@
   flex: 1;
 }
 
-/* Columna derecha — crema cálida */
+/* Columna derecha — crema institucional */
 .vida-quienes {
-  background: #F5EDE0;
+  background: #F5F7FA;
   padding: 4rem 3rem;
   display: flex;
   align-items: center;
@@ -309,7 +309,7 @@
 }
 
 .video-card-footer {
-  background: #0d0406;
+  background: #8B2D3C;
   padding: 0.65rem 0.75rem;
   border-top: 2px solid #D4A853;
 }
