@@ -598,61 +598,185 @@
   &:hover { background: #A94455; color: white; }
 }
 
-/* ── SECCIÓN MISIÓN Y VISIÓN ──────────────────────────── */
-.mivision-seccion {
-  background: #1a0a0e;
-  padding: 4.5rem 2rem;
+/* ── HORIZONTE INSTITUCIONAL — PÁRAMO DE SUMAPAZ ─────── */
+@keyframes condorVuelo {
+  0%   { transform: translateX(-340px) translateY(0px); }
+  25%  { transform: translateX(25vw)   translateY(-18px); }
+  50%  { transform: translateX(50vw)   translateY(4px); }
+  75%  { transform: translateX(75vw)   translateY(-12px); }
+  100% { transform: translateX(calc(100vw + 340px)) translateY(0px); }
 }
 
-.mivision-grid {
+@keyframes venadoRespira {
+  0%, 100% { transform: scale(1) translateY(0); }
+  50%       { transform: scale(1.018) translateY(-3px); }
+}
+
+.horizonte-seccion {
+  position: relative;
+  background: linear-gradient(175deg, #060e08 0%, #0a0306 50%, #060e08 100%);
+  overflow: hidden;
+}
+
+/* Cóndor volando */
+.condor-wrap {
+  position: absolute;
+  top: 22%;
+  left: 0;
+  width: 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.condor-svg {
+  width: 260px;
+  height: auto;
+  opacity: 0.13;
+  animation: condorVuelo 28s linear infinite;
+  display: block;
+
+  @media (max-width: 640px) { width: 160px; }
+}
+
+/* Venado — esquina inferior derecha */
+.venado-wrap {
+  position: absolute;
+  bottom: -10px;
+  right: -18px;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.venado-svg {
+  width: 110px;
+  height: auto;
+  opacity: 0.14;
+  animation: venadoRespira 5s ease-in-out infinite;
+  display: block;
+
+  @media (max-width: 640px) { width: 70px; }
+}
+
+/* Encabezado centrado */
+.horizonte-header {
+  text-align: center;
+  padding: 4.5rem 2rem 3rem;
+  position: relative;
+  z-index: 2;
+}
+
+.horizonte-header-linea {
+  width: 48px; height: 3px;
+  background: #D4A853;
+  margin: 0 auto 1.1rem;
+}
+
+.horizonte-eyebrow {
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(212,168,83,0.7);
+  margin: 0 0 0.75rem;
+}
+
+.horizonte-titulo {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(1.8rem, 3.5vw, 3rem);
+  font-weight: 900;
+  color: white;
+  margin: 0;
+  line-height: 1.15;
+}
+
+/* Split de pilares */
+.horizonte-split {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 2rem;
+  position: relative;
+  z-index: 2;
 
-  @media (max-width: 640px) { grid-template-columns: 1fr; }
+  /* Línea dorada vertical divisoria */
+  &::after {
+    content: '';
+    position: absolute;
+    top: 10%; left: 50%;
+    width: 1px; height: 80%;
+    background: linear-gradient(to bottom, transparent, rgba(212,168,83,0.45) 20%, rgba(212,168,83,0.45) 80%, transparent);
+    pointer-events: none;
+  }
+
+  @media (max-width: 700px) {
+    grid-template-columns: 1fr;
+    &::after { display: none; }
+  }
 }
 
-.mivision-card {
-  background: rgba(255,255,255,0.04);
-  border: 1px solid rgba(212,168,83,0.18);
-  padding: 2.5rem 2rem;
-  border-top: 3px solid #D4A853;
+.horizonte-pilar {
+  position: relative;
+  padding: 3rem 3.5rem 4.5rem;
+  overflow: hidden;
+
+  &--mision { background: linear-gradient(145deg, #1c0510 0%, #0d0308 100%); }
+  &--vision { background: linear-gradient(145deg, #040e06 0%, #071505 100%); }
+
+  @media (max-width: 900px) { padding: 2.5rem 2rem 3.5rem; }
 }
 
-.mivision-numero {
+.horizonte-fantasma {
+  position: absolute;
+  bottom: -0.15em; right: 0.1em;
   font-family: 'Playfair Display', serif;
-  font-size: 3rem;
+  font-size: clamp(7rem, 14vw, 13rem);
   font-weight: 900;
-  color: rgba(212,168,83,0.25);
+  color: rgba(255,255,255,0.028);
   line-height: 1;
-  margin-bottom: 0.75rem;
+  user-select: none;
+  pointer-events: none;
+  letter-spacing: -0.04em;
 }
 
-.mivision-subtitulo {
+.horizonte-pilar-inner {
+  position: relative;
+  z-index: 1;
+  max-width: 440px;
+}
+
+.horizonte-sep {
+  width: 32px; height: 2px;
+  background: #D4A853;
+  margin-bottom: 1rem;
+  transition: width 0.4s ease;
+
+  .horizonte-pilar:hover & { width: 52px; }
+}
+
+.horizonte-label {
   font-family: 'Source Sans 3', sans-serif;
-  font-size: 0.7rem;
+  font-size: 0.62rem;
   font-weight: 700;
-  letter-spacing: 0.2em;
+  letter-spacing: 0.24em;
   text-transform: uppercase;
   color: #D4A853;
-  margin: 0 0 1.25rem;
+  margin: 0 0 1.1rem;
 }
 
-.mivision-texto {
+.horizonte-texto {
   font-family: 'Source Sans 3', sans-serif;
-  font-size: 0.95rem;
-  color: rgba(255,255,255,0.72);
-  line-height: 1.8;
-  margin: 0 0 1rem;
-}
-
-.mivision-contacto {
-  font-family: 'Source Sans 3', sans-serif;
-  font-size: 0.78rem;
-  color: rgba(212,168,83,0.65);
-  line-height: 1.7;
+  font-size: 1rem;
+  color: rgba(255,255,255,0.75);
+  line-height: 1.85;
   margin: 0;
-  letter-spacing: 0.02em;
+}
+
+.horizonte-ubicacion {
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.72rem;
+  color: rgba(212,168,83,0.6);
+  line-height: 1.7;
+  margin-top: 1.75rem;
+  letter-spacing: 0.04em;
 }
 
 /* ── FRANJA DOCENTES B&W ────────────────────────────── */
