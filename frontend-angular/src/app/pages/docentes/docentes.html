@@ -74,7 +74,8 @@
             <!-- Foto o inicial -->
             <div class="doc-card-foto-wrap">
               @if (d.fotoUrl) {
-                <img class="doc-card-foto" [src]="d.fotoUrl" [alt]="d.usuario.nombre">
+                <img class="doc-card-foto" [src]="d.fotoUrl" [alt]="d.usuario.nombre"
+                     (error)="onFotoError($event)">
               } @else {
                 <div class="doc-card-inicial">{{ inicial(d.usuario.nombre) }}</div>
               }

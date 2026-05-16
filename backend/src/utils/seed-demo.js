@@ -31,7 +31,8 @@ const IMG_NEWS = (seed, w = 800, h = 500) =>
 // Fotos de docentes — SVG de iniciales en el repo hasta que Ronald suba fotos reales.
 // Para reemplazar: poner la foto en frontend-angular/public/docentes/<slug>.jpg
 // y cambiar la extensión aquí de .svg a .jpg
-const AVATAR = (slug) => `${FRONTEND}/docentes/${slug}.svg`;
+// Cuando pongas la foto: nombrarla <slug>.jpg en frontend-angular/public/docentes/
+const AVATAR = (slug) => `${FRONTEND}/docentes/${slug}.jpg`;
 
 // ═══════════════════════════════════════════════════════════
 async function seedDemo() {

@@ -71,6 +71,18 @@ export class Docentes implements OnInit {
 
   inicial(nombre: string): string { return nombre.charAt(0).toUpperCase(); }
 
+  onFotoError(event: Event) {
+    const img = event.target as HTMLImageElement;
+    img.style.display = 'none';
+    const wrap = img.closest('.doc-card-foto-wrap');
+    if (wrap) {
+      const div = document.createElement('div');
+      div.className = 'doc-card-inicial';
+      div.textContent = this.inicial(img.alt);
+      wrap.appendChild(div);
+    }
+  }
+
   sedeNombres(d: PerfilDocente): string {
     return d.sedes?.map(s => s.nombre).join(' · ') ?? '';
   }
