@@ -1162,7 +1162,7 @@
   background: linear-gradient(-45deg, #f4c5cb, #c8e6f0, #d4ecd8, #f9d0d5, #c5dff4, #f4c5cb);
   background-size: 400% 400%;
   animation: footerGradiente 14s ease infinite;
-  color: #000;
+  color: #000 !important;
   border-top: 3px solid #A94455;
   padding: 3.5rem 2rem 1.5rem;
   position: relative;
