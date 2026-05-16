@@ -203,110 +203,64 @@
   &.visible { opacity: 1; transform: translateY(0); }
 }
 
-/* ── MISIÓN PARALLAX ────────────────────────────────── */
-.mision-seccion {
-  position: relative;
-  min-height: 42vh;
-  display: flex;
-  align-items: center;
-  background-color: #120608;
-  background-image: url('/inicio/mision.jpg');
-  background-size: cover;
-  background-position: center;
-  background-attachment: fixed;
-
-  @media (max-width: 768px) {
-    background-attachment: scroll;
-    min-height: 50vw;
-  }
+/* ── SECCIÓN VIDEOS INSTITUCIONALES ────────────────────── */
+.videos-seccion {
+  background: #120608;
+  padding: 5rem 2rem 4rem;
+  border-top: 1px solid rgba(212, 168, 83, 0.12);
 }
 
-.mision-overlay {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    100deg,
-    rgba(10, 3, 5, 0.87) 0%,
-    rgba(58, 125, 92, 0.42) 60%,
-    rgba(0, 0, 0, 0.18) 100%
-  );
-}
-
-.mision-contenido {
-  position: relative;
-  z-index: 2;
-  max-width: 1200px;
+.videos-inner {
+  max-width: 900px;
   margin: 0 auto;
-  padding: 3rem 2rem;
-  width: 100%;
-  max-width: 640px;           /* texto ocupa columna izquierda */
-  margin-left: max(2rem, calc((100vw - 1200px) / 2 + 2rem));
-
-  @media (max-width: 900px) { margin-left: 2rem; max-width: calc(100% - 4rem); }
-  @media (max-width: 480px) { padding: 3.5rem 1.5rem; margin-left: 1.5rem; max-width: calc(100% - 3rem); }
 }
 
-.mision-eyebrow {
-  font-family: 'Source Sans 3', sans-serif;
-  font-size: 0.68rem;
-  font-weight: 700;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: #D4A853;
-  margin-bottom: 20px;
+.videos-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2.5rem;
+
+  @media (max-width: 640px) {
+    grid-template-columns: 1fr;
+    max-width: 360px;
+    margin: 0 auto;
+  }
+}
+
+.video-card {
   display: flex;
-  align-items: center;
-  gap: 10px;
+  flex-direction: column;
+  gap: 1.25rem;
+}
 
-  &::before {
-    content: '';
-    display: inline-block;
-    width: 28px;
-    height: 2px;
-    background: #D4A853;
-    flex-shrink: 0;
+.video-wrapper {
+  position: relative;
+  aspect-ratio: 9 / 16;
+  overflow: hidden;
+  background: #0a0406;
+  border: 1px solid rgba(212, 168, 83, 0.22);
+
+  iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
   }
 }
 
-.mision-titulo {
-  font-family: 'Playfair Display', serif;
-  font-size: clamp(2rem, 4.5vw, 3.8rem);
-  font-weight: 900;
-  color: white;
-  line-height: 1.08;
-  margin: 0 0 24px;
-  letter-spacing: -0.01em;
-
-  em {
-    color: #D4A853;
-    font-style: italic;
-  }
-}
-
-.mision-texto {
-  font-family: 'Source Sans 3', sans-serif;
-  font-size: clamp(0.9rem, 1.6vw, 1.05rem);
-  color: rgba(255, 255, 255, 0.75);
-  line-height: 1.75;
-  margin: 0 0 36px;
-  max-width: 460px;
-}
-
-.mision-btn {
+.video-caption {
   font-family: 'Source Sans 3', sans-serif;
   font-size: 0.78rem;
   font-weight: 700;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: #1a0a0e;
-  background: #D4A853;
-  border: none;
-  padding: 14px 36px;
-  text-decoration: none;
-  display: inline-block;
-  transition: background 0.2s ease, transform 0.15s ease;
-
-  &:hover { background: #e8bd6a; transform: translateY(-2px); }
+  color: #D4A853;
+  text-align: center;
+  margin: 0;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(212, 168, 83, 0.18);
 }
 
 /* ── FRANJA DOCENTES B&W ────────────────────────────── */
