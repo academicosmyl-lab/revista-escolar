@@ -211,18 +211,25 @@
 }
 
 .videos-inner {
-  max-width: 900px;
+  max-width: 720px;   /* ancho total controlado — 2 × 320px + gap */
   margin: 0 auto;
+}
+
+.videos-encabezado {
+  text-align: center;
+  margin-bottom: 3rem;
+
+  .linea-dorada { margin: 0 auto 1rem; }
 }
 
 .videos-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 2.5rem;
+  gap: 2rem;
 
-  @media (max-width: 640px) {
+  @media (max-width: 600px) {
     grid-template-columns: 1fr;
-    max-width: 360px;
+    max-width: 320px;
     margin: 0 auto;
   }
 }
@@ -252,7 +259,7 @@
 
 .video-caption {
   font-family: 'Source Sans 3', sans-serif;
-  font-size: 0.78rem;
+  font-size: 0.75rem;
   font-weight: 700;
   letter-spacing: 0.14em;
   text-transform: uppercase;
@@ -261,6 +268,7 @@
   margin: 0;
   padding-top: 1rem;
   border-top: 1px solid rgba(212, 168, 83, 0.18);
+  line-height: 1.5;
 }
 
 /* ── FRANJA DOCENTES B&W ────────────────────────────── */
