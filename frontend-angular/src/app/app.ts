@@ -24,14 +24,16 @@ export class App implements OnInit, AfterViewInit {
     let rafId = 0;
 
     const onMove = (e: MouseEvent) => {
-      dot.style.opacity  = '1';
+      dot.style.opacity = '1';
       ring.style.opacity = '1';
-      dot.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`;
+      dot.style.left = (e.clientX - 4) + 'px';
+      dot.style.top  = (e.clientY - 4) + 'px';
       cancelAnimationFrame(rafId);
       rafId = requestAnimationFrame(() => {
         rx += (e.clientX - rx) * 0.12;
         ry += (e.clientY - ry) * 0.12;
-        ring.style.transform = `translate(${rx}px, ${ry}px)`;
+        ring.style.left = (rx - 19) + 'px';
+        ring.style.top  = (ry - 19) + 'px';
       });
     };
     const onEnter = () => { dot.style.opacity = '1'; ring.style.opacity = '1'; };
