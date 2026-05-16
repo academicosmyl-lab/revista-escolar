@@ -8,7 +8,7 @@
   background-color: #1a0a0e;
   background-image: url('/inicio/hero.jpg');
   background-size: cover;
-  background-position: center top;
+  background-position: center 35%;
 
   @media (max-width: 768px) { min-height: 100svh; align-items: center; }
 }
