@@ -238,14 +238,50 @@
   flex: 1;
 }
 
-/* Columna derecha — crema institucional */
+/* Columna derecha — crema institucional + blobs de color */
 .vida-quienes {
   background: #F5F7FA;
   padding: 4rem 3rem;
   display: flex;
   align-items: center;
+  position: relative;
+  overflow: hidden;
+
+  /* Blob vinotinto — arriba-izquierda */
+  &::before {
+    content: '';
+    position: absolute;
+    width: 320px; height: 320px;
+    border-radius: 50%;
+    background: #A94455;
+    filter: blur(90px);
+    opacity: 0.10;
+    top: -80px; left: -80px;
+    pointer-events: none;
+    animation: blobFloat 8s ease-in-out infinite;
+  }
+
+  /* Blob dorado — abajo-derecha */
+  &::after {
+    content: '';
+    position: absolute;
+    width: 260px; height: 260px;
+    border-radius: 50%;
+    background: #D4A853;
+    filter: blur(80px);
+    opacity: 0.12;
+    bottom: -60px; right: -60px;
+    pointer-events: none;
+    animation: blobFloat 10s ease-in-out infinite reverse;
+  }
 
   @media (max-width: 900px) { padding: 3rem 2rem; }
+}
+
+@keyframes blobFloat {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33%       { transform: translate(28px, -20px) scale(1.07); }
+  66%       { transform: translate(-14px, 14px) scale(0.94); }
 }
 
 /* Tarjeta de video preview */
@@ -411,16 +447,32 @@
   @media (max-width: 768px) { width: 120px; }
 }
 
+@keyframes gradientShift {
+  0%   { background-position: 0% center; }
+  100% { background-position: 200% center; }
+}
+
 .quienes-titulo {
   font-family: 'Playfair Display', serif;
-  font-size: clamp(1.8rem, 4vw, 2.8rem);
+  font-size: clamp(2.2rem, 4.5vw, 3.4rem);
   font-weight: 900;
   color: #1a0a0e;
-  line-height: 1.1;
-  margin: 1rem 0 1.5rem;
-  letter-spacing: -0.01em;
+  line-height: 1.05;
+  margin: 1.25rem 0 1.5rem;
+  letter-spacing: -0.025em;
+  position: relative;
+  z-index: 1;
 
-  em { color: #A94455; font-style: italic; }
+  em {
+    display: block;
+    font-style: italic;
+    background: linear-gradient(90deg, #A94455 0%, #D4A853 45%, #3A7D5C 80%, #A94455 100%);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: gradientShift 3.5s linear infinite;
+  }
 }
 
 .quienes-texto {
