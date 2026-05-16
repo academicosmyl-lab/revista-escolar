@@ -32,17 +32,21 @@
   <div class="hero-linea-base"></div>
 </section>
 
-<!-- ESTADÍSTICAS con contadores animados -->
-<div class="estadisticas-banda">
-  <div class="estadisticas-grid">
-    @for (c of contadores; track c.label) {
-      <div class="stat-item">
-        <div class="stat-num">{{ c.actual }}{{ c.sufijo }}</div>
-        <div class="stat-label">{{ c.label }}</div>
-      </div>
-    }
+<!-- SECCIÓN MISIÓN — parallax -->
+<section class="mision-seccion">
+  <div class="mision-overlay"></div>
+  <div class="mision-contenido">
+    <div class="mision-eyebrow">Instituto Técnico Industrial Santander</div>
+    <h2 class="mision-titulo">
+      Formamos el talento<br>técnico que Colombia<br><em>necesita</em>
+    </h2>
+    <p class="mision-texto">
+      Tres sedes, más de 50 docentes y 1.000 estudiantes construyendo
+      un futuro con lealtad, ciencia y técnica desde Fusagasugá.
+    </p>
+    <a routerLink="/docentes" class="mision-btn">Conocer nuestro equipo</a>
   </div>
-</div>
+</section>
 
 <!-- NOTICIAS RECIENTES con scroll reveal -->
 <section class="noticias-seccion">

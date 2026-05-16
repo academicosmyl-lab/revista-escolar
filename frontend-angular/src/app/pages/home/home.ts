@@ -10,14 +10,6 @@ import { FormsModule } from '@angular/forms';
 })
 export class Home implements AfterViewInit {
 
-  /* ── Contadores ─────────────────────────────────────── */
-  contadores = [
-    { label: 'Sedes',           valor: 3,    sufijo: '',  actual: 0 },
-    { label: 'Docentes',        valor: 50,   sufijo: '+', actual: 0 },
-    { label: 'Áreas académicas',valor: 14,   sufijo: '',  actual: 0 },
-    { label: 'Estudiantes',     valor: 1000, sufijo: '+', actual: 0 },
-  ];
-
   /* ── Datos de ejemplo ───────────────────────────────── */
   noticiasEjemplo = [
     { id: 1, img: 'https://picsum.photos/seed/its-dep/800/450',  categoria: 'Deportes',   titulo: 'Campeones departamentales de atletismo 2026',       fecha: '12 de mayo, 2026' },
@@ -83,7 +75,6 @@ export class Home implements AfterViewInit {
   /* ── Animaciones ────────────────────────────────────── */
   ngAfterViewInit() {
     this.initScrollReveal();
-    this.initContadores();
   }
 
   private initScrollReveal() {
@@ -94,41 +85,5 @@ export class Home implements AfterViewInit {
       { threshold: 0.12 }
     );
     document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
-  }
-
-  private initContadores() {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            this.animarContadores();
-            observer.disconnect();
-          }
-        });
-      },
-      { threshold: 0.3 }
-    );
-    const banda = document.querySelector('.estadisticas-banda');
-    if (banda) observer.observe(banda);
-  }
-
-  private animarContadores() {
-    const duracion = 1800;
-    const pasos    = 60;
-    this.contadores.forEach((c, i) => {
-      const delay      = i * 80;
-      const incremento = c.valor / pasos;
-      let paso = 0;
-      setTimeout(() => {
-        const intervalo = setInterval(() => {
-          paso++;
-          const progreso = paso / pasos;
-          const ease     = 1 - Math.pow(1 - progreso, 3);
-          this.contadores[i].actual = Math.min(Math.round(c.valor * ease), c.valor);
-          this.cdr.detectChanges();
-          if (paso >= pasos) clearInterval(intervalo);
-        }, duracion / pasos);
-      }, delay);
-    });
   }
 }

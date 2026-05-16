@@ -205,38 +205,110 @@
   &.visible { opacity: 1; transform: translateY(0); }
 }
 
-/* ── ESTADÍSTICAS ───────────────────────────────────── */
-.estadisticas-banda {
-  background: #3A7D5C; color: white; padding: 3rem 2rem;
-  border-top: 4px solid #D4A853;
-  @media (max-width: 640px) { padding: 2rem 1rem; }
-}
-.estadisticas-grid {
-  max-width: 1200px; margin: 0 auto;
-  display: grid; grid-template-columns: repeat(4,1fr);
-  gap: 1.5rem; text-align: center;
-  @media (max-width: 640px) { grid-template-columns: repeat(2,1fr); gap: 2rem; }
-}
-.stat-item {
-  padding: 1rem 0.5rem;
-  border-right: 1px solid rgba(201,168,76,0.25);
-  &:last-child { border-right: none; }
-  @media (max-width: 640px) {
-    border-right: none;
-    border-bottom: 1px solid rgba(201,168,76,0.2);
-    padding-bottom: 1.5rem;
-    &:nth-child(even) { border-right: none; }
-    &:last-child, &:nth-last-child(2):nth-child(odd) { border-bottom: none; }
+/* ── MISIÓN PARALLAX ────────────────────────────────── */
+.mision-seccion {
+  position: relative;
+  min-height: 68vh;
+  display: flex;
+  align-items: center;
+  background-color: #120608;
+  background-image: url('/inicio/mision.jpg');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;   /* parallax desktop */
+
+  @media (max-width: 768px) {
+    background-attachment: scroll; /* iOS no soporta fixed */
+    min-height: 70vw;
   }
 }
-.stat-num {
-  font-family: 'Playfair Display', serif;
-  font-size: clamp(2rem, 5vw, 3rem); font-weight: 700; color: #D4A853;
-  line-height: 1; transition: all 0.05s;
+
+.mision-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    100deg,
+    rgba(10, 3, 5, 0.87) 0%,
+    rgba(58, 125, 92, 0.42) 60%,
+    rgba(0, 0, 0, 0.18) 100%
+  );
 }
-.stat-label {
-  font-family: 'Source Sans 3', sans-serif; font-size: 0.74rem;
-  letter-spacing: 0.08em; text-transform: uppercase; opacity: 0.8; margin-top: 0.5rem;
+
+.mision-contenido {
+  position: relative;
+  z-index: 2;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 5rem 2rem;
+  width: 100%;
+  max-width: 640px;           /* texto ocupa columna izquierda */
+  margin-left: max(2rem, calc((100vw - 1200px) / 2 + 2rem));
+
+  @media (max-width: 900px) { margin-left: 2rem; max-width: calc(100% - 4rem); }
+  @media (max-width: 480px) { padding: 3.5rem 1.5rem; margin-left: 1.5rem; max-width: calc(100% - 3rem); }
+}
+
+.mision-eyebrow {
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #D4A853;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  &::before {
+    content: '';
+    display: inline-block;
+    width: 28px;
+    height: 2px;
+    background: #D4A853;
+    flex-shrink: 0;
+  }
+}
+
+.mision-titulo {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(2rem, 4.5vw, 3.8rem);
+  font-weight: 900;
+  color: white;
+  line-height: 1.08;
+  margin: 0 0 24px;
+  letter-spacing: -0.01em;
+
+  em {
+    color: #D4A853;
+    font-style: italic;
+  }
+}
+
+.mision-texto {
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: clamp(0.9rem, 1.6vw, 1.05rem);
+  color: rgba(255, 255, 255, 0.75);
+  line-height: 1.75;
+  margin: 0 0 36px;
+  max-width: 460px;
+}
+
+.mision-btn {
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #1a0a0e;
+  background: #D4A853;
+  border: none;
+  padding: 14px 36px;
+  text-decoration: none;
+  display: inline-block;
+  transition: background 0.2s ease, transform 0.15s ease;
+
+  &:hover { background: #e8bd6a; transform: translateY(-2px); }
 }
 
 /* ── NOTICIAS ───────────────────────────────────────── */
