@@ -914,3 +914,337 @@ $radius-lg:   20px;
 
   &:hover { color: $vinotinto; }
 }
+
+// ══════════════════════════════════════════════════════════
+//  SECCIÓN ROL — Section 00 (destaca visualmente)
+// ══════════════════════════════════════════════════════════
+.reg-seccion-rol {
+  border-color: rgba(212,168,83,0.35);
+  box-shadow: 0 4px 32px rgba(212,168,83,0.08);
+}
+
+.reg-select-rol {
+  font-size: 1rem;
+  font-weight: 600;
+  color: $text;
+  padding: 0.9rem 2.5rem 0.9rem 1rem;
+  border-width: 2px;
+
+  &:focus {
+    border-color: $gold;
+    box-shadow: 0 0 0 4px rgba(212,168,83,0.12);
+  }
+}
+
+// ══════════════════════════════════════════════════════════
+//  INFO PERSONAL — Banner informativo para roles mínimos
+// ══════════════════════════════════════════════════════════
+.reg-info-personal {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  background: rgba(74,127,181,0.07);
+  border: 1.5px solid rgba(74,127,181,0.2);
+  border-radius: 8px;
+  padding: 0.85rem 1rem;
+  font-size: 0.84rem;
+  color: #3A5F88;
+  line-height: 1.6;
+
+  svg { flex-shrink: 0; margin-top: 2px; color: #4A7FB5; }
+}
+
+// ══════════════════════════════════════════════════════════
+//  BOTÓN IA — Revisar ortografía
+// ══════════════════════════════════════════════════════════
+.reg-btn-ia {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #5A3E1B;
+  background: linear-gradient(135deg, rgba(212,168,83,0.18) 0%, rgba(212,168,83,0.08) 100%);
+  border: 1.5px solid rgba(212,168,83,0.45);
+  border-radius: 8px;
+  padding: 0.75rem 1.5rem;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s, transform 0.15s, box-shadow 0.2s;
+
+  svg { color: #B8860B; flex-shrink: 0; }
+
+  &:hover:not(:disabled) {
+    background: linear-gradient(135deg, rgba(212,168,83,0.28) 0%, rgba(212,168,83,0.14) 100%);
+    border-color: $gold;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 16px rgba(212,168,83,0.2);
+  }
+
+  &:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+    transform: none;
+  }
+}
+
+.reg-ia-aviso {
+  font-size: 0.8rem;
+  color: $text-dim;
+  margin: 0.6rem 0 0;
+  font-style: italic;
+  line-height: 1.6;
+}
+
+// ══════════════════════════════════════════════════════════
+//  PANEL COMPARACIÓN IA — Backdrop + Modal
+// ══════════════════════════════════════════════════════════
+.reg-ia-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(8,6,10,0.72);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  animation: iaFadeIn 0.22s ease;
+}
+
+@keyframes iaFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.reg-ia-panel {
+  background: $surface;
+  border-radius: $radius-lg;
+  width: 100%;
+  max-width: 860px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 24px 80px rgba(0,0,0,0.32), 0 0 0 1px rgba(0,0,0,0.08);
+  animation: iaPanelUp 0.28s cubic-bezier(0.34,1.4,0.64,1);
+
+  // Scrollbar sutil
+  &::-webkit-scrollbar { width: 5px; }
+  &::-webkit-scrollbar-track { background: transparent; }
+  &::-webkit-scrollbar-thumb { background: $border; border-radius: 10px; }
+}
+
+@keyframes iaPanelUp {
+  from { opacity: 0; transform: translateY(32px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0)    scale(1); }
+}
+
+// ── Header del panel ─────────────────────────────────────
+.reg-ia-panel-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.5rem 1.75rem;
+  border-bottom: 1px solid $border;
+  position: sticky;
+  top: 0;
+  background: $surface;
+  z-index: 1;
+}
+
+.reg-ia-panel-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(212,168,83,0.15) 0%, rgba(212,168,83,0.05) 100%);
+  border: 1.5px solid rgba(212,168,83,0.3);
+  color: $gold;
+  flex-shrink: 0;
+}
+
+.reg-ia-panel-titulo {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: $text;
+  margin: 0 0 0.15rem;
+}
+
+.reg-ia-panel-sub {
+  font-size: 0.78rem;
+  color: $text-dim;
+  margin: 0;
+}
+
+.reg-ia-panel-close {
+  margin-left: auto;
+  flex-shrink: 0;
+  background: none;
+  border: 1.5px solid $border;
+  border-radius: 50%;
+  width: 32px; height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  color: $text-dim;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+
+  &:hover { background: $vinotinto; border-color: $vinotinto; color: white; }
+}
+
+// ── Observaciones IA ─────────────────────────────────────
+.reg-ia-obs {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.55rem;
+  margin: 1.25rem 1.75rem 0;
+  padding: 0.75rem 1rem;
+  background: rgba(74,127,181,0.06);
+  border: 1px solid rgba(74,127,181,0.18);
+  border-radius: 8px;
+  font-size: 0.8rem;
+  color: #3A5F88;
+  line-height: 1.6;
+
+  svg { flex-shrink: 0; margin-top: 2px; color: #4A7FB5; }
+}
+
+// ── Grid de comparación ───────────────────────────────────
+.reg-ia-comparacion {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  margin: 1.25rem 1.75rem;
+  border: 1px solid $border;
+  border-radius: $radius;
+  overflow: hidden;
+
+  @media (max-width: 600px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.reg-ia-col {
+  display: flex;
+  flex-direction: column;
+
+  &:first-child { border-right: 1px solid $border; }
+
+  @media (max-width: 600px) {
+    &:first-child { border-right: none; border-bottom: 1px solid $border; }
+  }
+}
+
+.reg-ia-col-header {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding: 0.7rem 1.1rem;
+  border-bottom: 1px solid $border;
+
+  &.reg-ia-col-original {
+    background: #F5F6F9;
+    color: #7B8298;
+  }
+
+  &.reg-ia-col-mejorada {
+    background: rgba(22,163,74,0.06);
+    color: #16A34A;
+    border-bottom-color: rgba(22,163,74,0.15);
+  }
+}
+
+.reg-ia-col-body {
+  flex: 1;
+  padding: 1.1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  background: white;
+}
+
+.reg-ia-campo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+
+  p {
+    font-size: 0.88rem;
+    color: $text;
+    line-height: 1.7;
+    margin: 0;
+  }
+}
+
+.reg-ia-etiqueta {
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: $text-dim;
+}
+
+// ── Footer del panel ─────────────────────────────────────
+.reg-ia-panel-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.85rem;
+  padding: 1.25rem 1.75rem;
+  border-top: 1px solid $border;
+  position: sticky;
+  bottom: 0;
+  background: $surface;
+
+  @media (max-width: 480px) {
+    flex-direction: column-reverse;
+    align-items: stretch;
+  }
+}
+
+.reg-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 0.8rem 1.75rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.18s, border-color 0.18s, color 0.18s, transform 0.15s, box-shadow 0.18s;
+  white-space: nowrap;
+
+  &:active { transform: scale(0.98); }
+}
+
+.reg-btn-ghost {
+  background: none;
+  border: 1.5px solid $border;
+  color: $text-dim;
+
+  &:hover { border-color: #9CA3AF; color: $text; background: #F8F9FB; }
+}
+
+.reg-btn-aceptar {
+  background: linear-gradient(135deg, #16A34A 0%, #22C55E 100%);
+  border: none;
+  color: white;
+  box-shadow: 0 4px 16px rgba(22,163,74,0.25);
+
+  svg { flex-shrink: 0; }
+
+  &:hover {
+    background: linear-gradient(135deg, #15803D 0%, #16A34A 100%);
+    box-shadow: 0 6px 24px rgba(22,163,74,0.35);
+    transform: translateY(-1px);
+  }
+}

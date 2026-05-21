@@ -1,12 +1,8 @@
-<!-- ═══════════════════════════════════════════════════
-     HERO EDITORIAL — fondo oscuro institucional
-     Texto motivacional antes del formulario
-     ══════════════════════════════════════════════════ -->
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- HERO                                                 -->
+<!-- ═══════════════════════════════════════════════════ -->
 <section class="reg-hero">
-
   <div class="reg-hero-patron" aria-hidden="true"></div>
-
-  <!-- Escudo institucional decorativo -->
   <div class="reg-hero-escudo" aria-hidden="true">
     <svg viewBox="0 0 100 100" fill="none">
       <circle cx="50" cy="50" r="48" stroke="rgba(212,168,83,0.18)" stroke-width="1.5"/>
@@ -15,23 +11,16 @@
             font-family="serif" font-weight="900">✦</text>
     </svg>
   </div>
-
   <div class="reg-hero-inner">
-    <span class="reg-hero-eyebrow" id="regEyebrow">
-      Instituto Técnico Industrial Santander · Fusagasugá
-    </span>
-
+    <span class="reg-hero-eyebrow" id="regEyebrow">Instituto Técnico Industrial Santander · Fusagasugá</span>
     <h1 class="reg-hero-titulo" id="regTitulo">
-      Tu historia<br>
-      <em>merece estar aquí.</em>
+      Tu historia<br><em>merece estar aquí.</em>
     </h1>
-
     <p class="reg-hero-subtitulo" id="regSubtitulo">
-      Esta página es el escaparate digital de nuestro equipo docente.<br>
+      Esta página es el escaparate digital de nuestro equipo.<br>
       Completar tu perfil es una forma de decirle a la comunidad:<br>
-      <strong>"Soy parte del ITS Santander, y lo que hago importa."</strong>
+      <strong>"Soy parte del ITS, y lo que hago importa."</strong>
     </p>
-
     <div class="reg-hero-firma" id="regFirma">
       <div class="reg-firma-linea"></div>
       <p class="reg-firma-texto">
@@ -39,37 +28,23 @@
         y genera en los estudiantes un modelo de vida a seguir.
       </p>
     </div>
-
-    <!-- Indicadores de impacto -->
     <div class="reg-hero-impacto">
-      <div class="reg-impacto-item">
-        <span class="reg-impacto-num">50+</span>
-        <span class="reg-impacto-label">Docentes en el equipo</span>
-      </div>
+      <div class="reg-impacto-item"><span class="reg-impacto-num">50+</span><span class="reg-impacto-label">Personas en el equipo</span></div>
       <div class="reg-impacto-sep" aria-hidden="true">·</div>
-      <div class="reg-impacto-item">
-        <span class="reg-impacto-num">3</span>
-        <span class="reg-impacto-label">Sedes institucionales</span>
-      </div>
+      <div class="reg-impacto-item"><span class="reg-impacto-num">3</span><span class="reg-impacto-label">Sedes institucionales</span></div>
       <div class="reg-impacto-sep" aria-hidden="true">·</div>
-      <div class="reg-impacto-item">
-        <span class="reg-impacto-num">1.000+</span>
-        <span class="reg-impacto-label">Estudiantes que nos ven</span>
-      </div>
+      <div class="reg-impacto-item"><span class="reg-impacto-num">1.000+</span><span class="reg-impacto-label">Estudiantes que nos ven</span></div>
     </div>
   </div>
-
-  <!-- Indicador visual de "sigue abajo" -->
   <div class="reg-hero-scroll" aria-hidden="true">
     <span class="reg-scroll-texto">Completa tu perfil</span>
     <div class="reg-scroll-flecha"></div>
   </div>
-
 </section>
 
-<!-- ═══════════════════════════════════════════════════
-     ESTADO: ENVIADO CON ÉXITO
-     ══════════════════════════════════════════════════ -->
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- ESTADO: ENVIADO CON ÉXITO                           -->
+<!-- ═══════════════════════════════════════════════════ -->
 @if (enviado()) {
   <section class="reg-exito">
     <div class="reg-exito-inner">
@@ -77,91 +52,122 @@
       <h2 class="reg-exito-titulo">¡Perfil recibido!</h2>
       <p class="reg-exito-texto">
         Tu información llegó correctamente. El equipo directivo la revisará
-        y tu perfil estará publicado en la página de docentes muy pronto.
+        y tu perfil estará publicado muy pronto.
       </p>
-      <p class="reg-exito-sub">
-        Recibirás una notificación por email cuando esté en línea.
-      </p>
+      <p class="reg-exito-sub">Recibirás una notificación por email cuando esté en línea.</p>
       <a routerLink="/docentes" class="reg-exito-btn">Ver directorio de docentes</a>
     </div>
   </section>
 }
 
-<!-- ═══════════════════════════════════════════════════
-     FORMULARIO PRINCIPAL
-     ══════════════════════════════════════════════════ -->
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- FORMULARIO PRINCIPAL                                -->
+<!-- ═══════════════════════════════════════════════════ -->
 @if (!enviado()) {
 <main class="reg-form-wrap">
   <form class="reg-form" (ngSubmit)="enviar()" novalidate>
 
-    <!-- ── SECCIÓN 1: FOTO DE PERFIL ──────────────────── -->
+    <!-- ══════════════════════════════════════════
+         SECCIÓN 00 — ROL (obligatorio, desbloquea el resto)
+         ══════════════════════════════════════════ -->
+    <section class="reg-seccion reg-seccion-rol">
+      <div class="reg-sec-label">
+        <span class="reg-sec-num">00</span>
+        <h2 class="reg-sec-titulo">¿Cuál es tu rol?</h2>
+        <p class="reg-sec-desc">
+          Selecciona tu cargo en la institución.
+          El formulario se adaptará mostrando solo los campos que aplican para tu perfil.
+        </p>
+      </div>
+      <div class="reg-campos">
+        <div class="reg-campo reg-campo-full">
+          <label class="reg-label" for="fRol">Cargo <span class="reg-req">*</span></label>
+          <select id="fRol" class="reg-select reg-select-rol"
+                  [ngModel]="rol()" (ngModelChange)="rol.set($event)" required>
+            <option value="" disabled>Selecciona tu cargo...</option>
+            @for (r of roles; track r.value) {
+              <option [value]="r.value">{{ r.label }}</option>
+            }
+          </select>
+        </div>
+        @if (esPersonal()) {
+          <div class="reg-campo reg-campo-full">
+            <div class="reg-info-personal">
+              <svg viewBox="0 0 20 20" fill="currentColor" width="16"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/></svg>
+              Para personal de servicios generales el formulario es más breve.
+              Solo necesitamos tu nombre, sede y una foto opcional.
+            </div>
+          </div>
+        }
+      </div>
+    </section>
+
+    <!-- El resto del formulario solo aparece si se eligió un rol -->
+    @if (rolSeleccionado()) {
+
+    <!-- ══════════════════════════════════════════
+         SECCIÓN 01 — FOTO
+         ══════════════════════════════════════════ -->
     <section class="reg-seccion">
       <div class="reg-sec-label">
         <span class="reg-sec-num">01</span>
         <h2 class="reg-sec-titulo">Tu foto</h2>
         <p class="reg-sec-desc">
-          Una foto profesional genera confianza. Recomendamos una imagen nítida,
-          fondo neutro, con buena iluminación. Ratio ideal: 4×5.
+          Una foto profesional genera confianza.
+          Recomendamos fondo neutro, buena iluminación,
+          y que tu rostro ocupe al menos el 60% del encuadre.
+          Ratio ideal: 4×5.
         </p>
       </div>
-
-      <div class="reg-foto-area">
-
-        <!-- Zona de drop / click -->
-        <label class="reg-drop-zona"
-               for="inputFoto"
-               (dragover)="onDragOver($event)"
-               (dragleave)="onDragLeave($event)"
-               (drop)="onDrop($event)">
-
-          @if (fotoPreview()) {
-            <!-- Preview: así se verá la tarjeta en la página -->
-            <div class="reg-foto-preview-wrap">
-              <img [src]="fotoPreview()!" alt="Vista previa" class="reg-foto-preview">
-              <div class="reg-foto-preview-tag">Así se verá tu tarjeta</div>
-              <div class="reg-foto-overlay-demo" aria-hidden="true">
-                <span class="reg-overlay-nombre">{{ nombre() || 'Tu nombre' }}</span>
-                <span class="reg-overlay-area">{{ area() || 'Tu área' }}</span>
-              </div>
-            </div>
-          } @else {
-            <div class="reg-drop-placeholder">
-              <div class="reg-drop-icono">
-                <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5">
-                  <circle cx="24" cy="20" r="8"/>
-                  <path d="M8 40c0-8.837 7.163-16 16-16s16 7.163 16 16"/>
-                  <path d="M32 10l4 4-4 4M36 14H28" stroke-linecap="round"/>
-                </svg>
-              </div>
-              <span class="reg-drop-texto">Arrastra tu foto aquí</span>
-              <span class="reg-drop-sub">o haz clic para buscarla · JPG/PNG · máx 4 MB</span>
-            </div>
-          }
-
-          <input id="inputFoto" type="file" accept="image/*"
-                 class="reg-input-oculto" (change)="onFotoChange($event)">
-        </label>
-
-        @if (fotoPreview()) {
-          <button type="button" class="reg-foto-cambiar"
-                  onclick="document.getElementById('inputFoto').click()">
-            Cambiar foto
-          </button>
-        }
-
+      <div class="reg-campos">
+        <div class="reg-campo reg-campo-full">
+          <div class="reg-foto-area">
+            <label class="reg-drop-zona" for="inputFoto"
+                   (dragover)="onDragOver($event)" (dragleave)="onDragLeave($event)" (drop)="onDrop($event)">
+              @if (fotoPreview()) {
+                <div class="reg-foto-preview-wrap">
+                  <img [src]="fotoPreview()!" alt="Vista previa" class="reg-foto-preview">
+                  <div class="reg-foto-preview-tag">Así se verá tu tarjeta</div>
+                  <div class="reg-foto-overlay-demo" aria-hidden="true">
+                    <span class="reg-overlay-nombre">{{ nombre() || 'Tu nombre' }}</span>
+                    <span class="reg-overlay-area">{{ area() || rol() || 'Tu cargo' }}</span>
+                  </div>
+                </div>
+              } @else {
+                <div class="reg-drop-placeholder">
+                  <div class="reg-drop-icono">
+                    <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5">
+                      <circle cx="24" cy="20" r="8"/><path d="M8 40c0-8.837 7.163-16 16-16s16 7.163 16 16"/>
+                      <path d="M32 10l4 4-4 4M36 14H28" stroke-linecap="round"/>
+                    </svg>
+                  </div>
+                  <span class="reg-drop-texto">Arrastra tu foto aquí</span>
+                  <span class="reg-drop-sub">o haz clic para buscarla · JPG/PNG · máx 5 MB</span>
+                </div>
+              }
+              <input id="inputFoto" type="file" accept="image/*" class="reg-input-oculto" (change)="onFotoChange($event)">
+            </label>
+            @if (fotoPreview()) {
+              <button type="button" class="reg-foto-cambiar" onclick="document.getElementById('inputFoto').click()">
+                Cambiar foto
+              </button>
+            }
+          </div>
+        </div>
       </div>
     </section>
 
-    <!-- ── SECCIÓN 2: DATOS PERSONALES ────────────────── -->
+    <!-- ══════════════════════════════════════════
+         SECCIÓN 02 — DATOS PERSONALES
+         ══════════════════════════════════════════ -->
     <section class="reg-seccion">
       <div class="reg-sec-label">
         <span class="reg-sec-num">02</span>
         <h2 class="reg-sec-titulo">Datos personales</h2>
         <p class="reg-sec-desc">
-          Esta información aparece en tu tarjeta y en la cabecera de tu perfil.
+          Esta información aparece en tu tarjeta y en la cabecera de tu perfil público.
         </p>
       </div>
-
       <div class="reg-campos">
 
         <div class="reg-campo reg-campo-full">
@@ -169,100 +175,121 @@
           <input id="fNombre" type="text" class="reg-input"
                  placeholder="Ej: Carlos Alberto Rodríguez Pérez"
                  [ngModel]="nombre()" (ngModelChange)="nombre.set($event)"
-                 required maxlength="80">
+                 (blur)="onBlurNombre()" required maxlength="80">
         </div>
 
         <div class="reg-campo">
-          <label class="reg-label" for="fTitulo">Título académico <span class="reg-req">*</span></label>
-          <input id="fTitulo" type="text" class="reg-input"
-                 placeholder="Ej: Lic. en Electrónica Industrial"
-                 [ngModel]="titulo()" (ngModelChange)="titulo.set($event)"
-                 required maxlength="80">
-        </div>
-
-        <div class="reg-campo">
-          <label class="reg-label" for="fEmail">Email institucional</label>
-          <input id="fEmail" type="email" class="reg-input"
-                 placeholder="nombre@itisantander.edu.co"
-                 [ngModel]="email()" (ngModelChange)="email.set($event)"
-                 maxlength="100">
-        </div>
-
-        <div class="reg-campo">
-          <label class="reg-label" for="fArea">Área / Materia principal <span class="reg-req">*</span></label>
-          <select id="fArea" class="reg-select"
-                  [ngModel]="area()" (ngModelChange)="area.set($event)" required>
-            <option value="" disabled>Selecciona tu área...</option>
-            @for (a of areas; track a) {
-              <option [value]="a">{{ a }}</option>
-            }
-          </select>
-        </div>
-
-        <div class="reg-campo">
-          <label class="reg-label" for="fSede">Sede donde laboras <span class="reg-req">*</span></label>
+          <label class="reg-label" for="fSede">Sede donde trabajas <span class="reg-req">*</span></label>
           <select id="fSede" class="reg-select"
                   [ngModel]="sede()" (ngModelChange)="sede.set($event)" required>
             <option value="" disabled>Selecciona la sede...</option>
-            @for (s of sedes; track s) {
-              <option [value]="s">{{ s }}</option>
-            }
+            @for (s of sedes; track s) { <option [value]="s">{{ s }}</option> }
           </select>
         </div>
 
-        <div class="reg-campo">
-          <label class="reg-label" for="fExp">Años de experiencia docente</label>
-          <input id="fExp" type="number" class="reg-input" placeholder="Ej: 12"
-                 min="0" max="60"
-                 [ngModel]="experiencia()" (ngModelChange)="experiencia.set($event)">
-        </div>
+        @if (!esPersonal()) {
+          <div class="reg-campo">
+            <label class="reg-label" for="fTitulo">Título académico <span class="reg-req">*</span></label>
+            <input id="fTitulo" type="text" class="reg-input"
+                   placeholder="Ej: Licenciado en Matemáticas"
+                   [ngModel]="titulo()" (ngModelChange)="titulo.set($event)"
+                   (blur)="onBlurTitulo()" maxlength="80">
+          </div>
+
+          <div class="reg-campo">
+            <label class="reg-label" for="fEmail">Email institucional</label>
+            <input id="fEmail" type="email" class="reg-input"
+                   placeholder="nombre@itssantander.edu.co"
+                   [ngModel]="email()" (ngModelChange)="email.set($event)"
+                   (blur)="onBlurEmail()" maxlength="100">
+          </div>
+
+          @if (mostrarArea()) {
+            <div class="reg-campo">
+              <label class="reg-label" for="fArea">Área / Materia principal <span class="reg-req">*</span></label>
+              <select id="fArea" class="reg-select"
+                      [ngModel]="area()" (ngModelChange)="area.set($event)" required>
+                <option value="" disabled>Selecciona tu área...</option>
+                @for (a of areas; track a) { <option [value]="a">{{ a }}</option> }
+              </select>
+            </div>
+          }
+
+          <div class="reg-campo">
+            <label class="reg-label" for="fExp">Años de experiencia</label>
+            <input id="fExp" type="number" class="reg-input" placeholder="Ej: 12"
+                   min="0" max="60"
+                   [ngModel]="experiencia()" (ngModelChange)="experiencia.set(+$event)">
+          </div>
+        }
 
       </div>
     </section>
 
-    <!-- ── SECCIÓN 3: TU HISTORIA ──────────────────────── -->
+    <!-- ══════════════════════════════════════════
+         SECCIÓN 03 — HISTORIA (no para PERSONAL)
+         ══════════════════════════════════════════ -->
+    @if (!esPersonal()) {
     <section class="reg-seccion">
       <div class="reg-sec-label">
         <span class="reg-sec-num">03</span>
         <h2 class="reg-sec-titulo">Tu historia</h2>
         <p class="reg-sec-desc">
-          Esta sección es la voz que acompañará tu tarjeta.
-          Escribe con naturalidad — no tienes que sonar como un CV.
+          Escribe con naturalidad, no como un CV.
+          Usa minúsculas si quieres — la revisión automática corregirá
+          tildes y mayúsculas antes de enviar.
         </p>
       </div>
-
       <div class="reg-campos">
-
         <div class="reg-campo reg-campo-full">
           <label class="reg-label" for="fBioCorta">
             Bio corta — aparece en tu tarjeta <span class="reg-req">*</span>
           </label>
           <textarea id="fBioCorta" class="reg-textarea reg-textarea-sm"
-                    placeholder="Ej: Docente de electrónica con énfasis en robótica e IoT. Apasionado por conectar la teoría con proyectos reales."
+                    placeholder="Ej: docente de electronica con enfasis en robotica. me apasiona conectar la teoria con proyectos reales."
                     [ngModel]="bioCorta()" (ngModelChange)="bioCorta.set($event)"
-                    maxlength="140" required></textarea>
+                    (blur)="onBlurBioCorta()" maxlength="140" required></textarea>
           <div class="reg-contador" [class.reg-contador-warn]="bioShortLeft() <= 15">
             {{ bioShortLeft() }} caracteres restantes
           </div>
         </div>
-
         <div class="reg-campo reg-campo-full">
           <label class="reg-label" for="fBioFull">
             Presentación completa — se muestra en tu perfil
           </label>
           <textarea id="fBioFull" class="reg-textarea reg-textarea-lg"
-                    placeholder="Cuéntanos tu trayectoria, tu metodología, qué te motivó a ser docente, logros destacados, proyectos con estudiantes... (máximo 600 caracteres)"
+                    placeholder="Cuéntanos tu trayectoria, metodología, qué te motivó, logros, proyectos con estudiantes..."
                     [ngModel]="bioCompleta()" (ngModelChange)="bioCompleta.set($event)"
-                    maxlength="600"></textarea>
+                    (blur)="onBlurBioCompleta()" maxlength="600"></textarea>
           <div class="reg-contador" [class.reg-contador-warn]="bioFullLeft() <= 30">
             {{ bioFullLeft() }} caracteres restantes
           </div>
         </div>
 
+        <!-- Botón revisión IA -->
+        <div class="reg-campo reg-campo-full">
+          <button type="button" class="reg-btn-ia"
+                  (click)="revisarConIA()"
+                  [disabled]="mejorandoTexto() || (!titulo().trim() && !bioCorta().trim())">
+            @if (mejorandoTexto()) {
+              <span class="reg-btn-spinner"></span> Revisando ortografía...
+            } @else {
+              <svg viewBox="0 0 20 20" fill="currentColor" width="16"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+              Revisar ortografía con IA
+            }
+          </button>
+          @if (iaError()) {
+            <p class="reg-ia-aviso">{{ iaError() }}</p>
+          }
+        </div>
       </div>
     </section>
+    }
 
-    <!-- ── SECCIÓN 4: ESPECIALIDADES ──────────────────── -->
+    <!-- ══════════════════════════════════════════
+         SECCIÓN 04 — ESPECIALIDADES (condicional)
+         ══════════════════════════════════════════ -->
+    @if (mostrarEspecialidades()) {
     <section class="reg-seccion">
       <div class="reg-sec-label">
         <span class="reg-sec-num">04</span>
@@ -272,149 +299,112 @@
           Presiona Enter o coma para agregar cada una.
         </p>
       </div>
-
       <div class="reg-campos">
         <div class="reg-campo reg-campo-full">
-
-          <!-- Tags activos -->
           @if (especialidades().length > 0) {
             <div class="reg-tags">
               @for (tag of especialidades(); track tag) {
                 <span class="reg-tag">
                   {{ tag }}
-                  <button type="button" class="reg-tag-x"
-                          (click)="quitarEspecialidad(tag)" aria-label="Eliminar {{ tag }}">✕</button>
+                  <button type="button" class="reg-tag-x" (click)="quitarEspecialidad(tag)">✕</button>
                 </span>
               }
             </div>
           }
-
-          <!-- Input para agregar -->
           @if (especialidades().length < 5) {
             <div class="reg-tag-input-wrap">
               <input type="text" class="reg-input" placeholder="Ej: Arduino, Robótica, Álgebra..."
-                     [ngModel]="nuevaEspecialidad()"
-                     (ngModelChange)="nuevaEspecialidad.set($event)"
-                     (keydown)="onTagKey($event)"
-                     maxlength="40">
-              <button type="button" class="reg-tag-agregar"
-                      (click)="agregarEspecialidad()"
-                      [disabled]="!nuevaEspecialidad().trim()">
-                + Agregar
-              </button>
+                     [ngModel]="nuevaEspecialidad()" (ngModelChange)="nuevaEspecialidad.set($event)"
+                     (keydown)="onTagKey($event)" maxlength="40">
+              <button type="button" class="reg-tag-agregar" (click)="agregarEspecialidad()"
+                      [disabled]="!nuevaEspecialidad().trim()">+ Agregar</button>
             </div>
           } @else {
-            <p class="reg-tags-max">Has alcanzado el máximo de 5 especialidades.</p>
+            <p class="reg-tags-max">Máximo de 5 especialidades alcanzado.</p>
           }
-
         </div>
       </div>
     </section>
+    }
 
-    <!-- ── SECCIÓN 5: PUBLICACIONES ────────────────────── -->
+    <!-- ══════════════════════════════════════════
+         SECCIÓN 05 — PUBLICACIONES (condicional)
+         ══════════════════════════════════════════ -->
+    @if (mostrarPublicaciones()) {
     <section class="reg-seccion">
       <div class="reg-sec-label">
         <span class="reg-sec-num">05</span>
-        <h2 class="reg-sec-titulo">Publicaciones e investigaciones
-          <span class="reg-sec-opcional">(opcional)</span>
-        </h2>
+        <h2 class="reg-sec-titulo">Publicaciones <span class="reg-sec-opcional">(opcional)</span></h2>
         <p class="reg-sec-desc">
-          Artículos, ponencias, manuales, investigaciones o cualquier trabajo
-          académico que hayas publicado. Esto posiciona la institución
-          como centro de producción intelectual.
+          Artículos, ponencias, manuales o investigaciones.
+          Esto posiciona la institución como centro de producción intelectual.
         </p>
       </div>
-
       <div class="reg-campos">
         <div class="reg-campo reg-campo-full">
-
           @for (pub of publicaciones(); track $index; let i = $index) {
             <div class="reg-pub-item">
               <div class="reg-pub-num">{{ i + 1 }}</div>
               <div class="reg-pub-campos">
                 <input type="text" class="reg-input reg-pub-titulo"
-                       placeholder="Título de la publicación o investigación"
-                       [ngModel]="pub.titulo"
-                       (ngModelChange)="updatePub(i, 'titulo', $event)"
-                       maxlength="200">
+                       placeholder="Título de la publicación"
+                       [ngModel]="pub.titulo" (ngModelChange)="updatePub(i,'titulo',$event)" maxlength="200">
                 <div class="reg-pub-fila2">
-                  <input type="number" class="reg-input reg-pub-anio"
-                         placeholder="Año" min="1990" max="2030"
-                         [ngModel]="pub.anio"
-                         (ngModelChange)="updatePub(i, 'anio', $event)">
-                  <input type="url" class="reg-input reg-pub-link"
-                         placeholder="Link (opcional)  https://..."
-                         [ngModel]="pub.link"
-                         (ngModelChange)="updatePub(i, 'link', $event)"
-                         maxlength="300">
+                  <input type="number" class="reg-input reg-pub-anio" placeholder="Año"
+                         min="1990" max="2030" [ngModel]="pub.anio" (ngModelChange)="updatePub(i,'anio',$event)">
+                  <input type="url" class="reg-input reg-pub-link" placeholder="Link  https://..."
+                         [ngModel]="pub.link" (ngModelChange)="updatePub(i,'link',$event)" maxlength="300">
                 </div>
               </div>
-              <button type="button" class="reg-pub-x"
-                      (click)="quitarPublicacion(i)" aria-label="Eliminar publicación">✕</button>
+              <button type="button" class="reg-pub-x" (click)="quitarPublicacion(i)">✕</button>
             </div>
           }
-
-          <button type="button" class="reg-agregar-pub"
-                  (click)="agregarPublicacion()">
-            <span class="reg-agregar-icono">+</span>
-            Agregar publicación
+          <button type="button" class="reg-agregar-pub" (click)="agregarPublicacion()">
+            <span class="reg-agregar-icono">+</span> Agregar publicación
           </button>
-
         </div>
       </div>
     </section>
+    }
 
-    <!-- ── SECCIÓN 6: PRESENCIA DIGITAL ───────────────── -->
+    <!-- ══════════════════════════════════════════
+         SECCIÓN 06 — PRESENCIA DIGITAL (condicional)
+         ══════════════════════════════════════════ -->
+    @if (mostrarRedes()) {
     <section class="reg-seccion">
       <div class="reg-sec-label">
         <span class="reg-sec-num">06</span>
-        <h2 class="reg-sec-titulo">Presencia digital
-          <span class="reg-sec-opcional">(opcional)</span>
-        </h2>
+        <h2 class="reg-sec-titulo">Presencia digital <span class="reg-sec-opcional">(opcional)</span></h2>
         <p class="reg-sec-desc">
-          Si tienes blog, sitio web, perfil de LinkedIn u ORCID,
-          estos links aparecerán en tu biografía para que la comunidad
-          pueda conocer más de tu trabajo.
+          Blog, LinkedIn u ORCID. Estos links aparecerán en tu perfil
+          para que la comunidad conozca más de tu trabajo.
         </p>
       </div>
-
       <div class="reg-campos">
-
         <div class="reg-campo reg-campo-full">
-          <label class="reg-label" for="fWeb">
-            <span class="reg-link-icono">
-              <svg viewBox="0 0 20 20" fill="currentColor" width="14" height="14">
-                <path d="M10 0C4.477 0 0 4.477 0 10s4.477 10 10 10 10-4.477 10-10S15.523 0 10 0zm0 18c-1.32 0-2.578-.312-3.694-.869l.527-1.54A5.99 5.99 0 0010 16a5.99 5.99 0 003.167-.41l.527 1.54A7.96 7.96 0 0110 18zm5.293-2.707l-1.414-1.414A7.96 7.96 0 0016 10a7.96 7.96 0 00-1.121-4.121l1.414-1.414A9.956 9.956 0 0118 10a9.956 9.956 0 01-2.707 5.293z"/>
-              </svg>
-            </span>
-            Blog / Sitio web personal
-          </label>
-          <input id="fWeb" type="url" class="reg-input"
-                 placeholder="https://minombre.com"
+          <label class="reg-label" for="fWeb">Blog / Sitio web</label>
+          <input id="fWeb" type="url" class="reg-input" placeholder="https://minombre.com"
                  [ngModel]="web()" (ngModelChange)="web.set($event)" maxlength="200">
         </div>
-
         <div class="reg-campo">
           <label class="reg-label" for="fLinkedin">LinkedIn</label>
-          <input id="fLinkedin" type="url" class="reg-input"
-                 placeholder="https://linkedin.com/in/tu-perfil"
+          <input id="fLinkedin" type="url" class="reg-input" placeholder="https://linkedin.com/in/tu-perfil"
                  [ngModel]="linkedin()" (ngModelChange)="linkedin.set($event)" maxlength="200">
         </div>
-
         <div class="reg-campo">
           <label class="reg-label" for="fOrcid">
             ORCID
-            <span class="reg-tooltip" title="Identificador único para investigadores y académicos">?</span>
+            <span class="reg-tooltip" title="Identificador único para investigadores académicos">?</span>
           </label>
-          <input id="fOrcid" type="text" class="reg-input"
-                 placeholder="0000-0000-0000-0000"
-                 [ngModel]="orcid()" (ngModelChange)="orcid.set($event)" maxlength="20">
+          <input id="fOrcid" type="text" class="reg-input" placeholder="0000-0000-0000-0000"
+                 [ngModel]="orcid()" (ngModelChange)="orcid.set($event)"
+                 (blur)="onBlurOrcid()" maxlength="20">
         </div>
-
       </div>
     </section>
+    }
 
-    <!-- ── ERROR DE ENVÍO ──────────────────────────────── -->
+    <!-- Error de envío -->
     @if (errorEnvio()) {
       <div class="reg-error-banner" role="alert">
         <span class="reg-error-icono">!</span>
@@ -422,34 +412,83 @@
       </div>
     }
 
-    <!-- ── BOTÓN SUBMIT ────────────────────────────────── -->
+    <!-- ══════════════════════════════════════════
+         SUBMIT
+         ══════════════════════════════════════════ -->
     <section class="reg-submit-wrap">
       <div class="reg-submit-nota">
-        <p>
-          Al enviar, tu perfil queda en revisión. El equipo directivo lo aprobará
-          y recibirás confirmación por email cuando esté publicado.
-        </p>
-        <p class="reg-submit-nota-req">
-          Los campos marcados con <span class="reg-req">*</span> son obligatorios.
-        </p>
+        <p>Al enviar, tu perfil queda en revisión. El equipo directivo lo aprobará
+           y recibirás confirmación por email cuando esté publicado.</p>
+        <p class="reg-submit-nota-req">Campos marcados con <span class="reg-req">*</span> son obligatorios.</p>
       </div>
-
-      <button type="submit"
-              class="reg-btn-submit"
-              [disabled]="!formValido || enviando()">
+      <button type="submit" class="reg-btn-submit" [disabled]="!formValido || enviando()">
         @if (enviando()) {
-          <span class="reg-btn-spinner"></span>
-          Enviando tu perfil...
+          <span class="reg-btn-spinner"></span> Enviando tu perfil...
         } @else {
           Enviar mi perfil al Instituto
         }
       </button>
-
-      <a routerLink="/docentes" class="reg-link-volver">
-        ← Ver directorio de docentes
-      </a>
+      <a routerLink="/docentes" class="reg-link-volver">← Ver directorio de docentes</a>
     </section>
+
+    } <!-- /rolSeleccionado -->
 
   </form>
 </main>
+}
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- PANEL DE COMPARACIÓN IA                             -->
+<!-- ═══════════════════════════════════════════════════ -->
+@if (mostrandoComparacion() && textosMejorados()) {
+  <div class="reg-ia-backdrop" (click)="rechazarMejora()">
+    <div class="reg-ia-panel" (click)="$event.stopPropagation()">
+      <div class="reg-ia-panel-header">
+        <div class="reg-ia-panel-icon">
+          <svg viewBox="0 0 20 20" fill="currentColor" width="20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+        </div>
+        <div>
+          <h3 class="reg-ia-panel-titulo">Revisión ortográfica lista</h3>
+          <p class="reg-ia-panel-sub">Compara ambas versiones y elige cuál prefieres</p>
+        </div>
+        <button class="reg-ia-panel-close" (click)="rechazarMejora()">✕</button>
+      </div>
+
+      @if (textosMejorados()!.observaciones) {
+        <div class="reg-ia-obs">
+          <svg viewBox="0 0 20 20" fill="currentColor" width="14"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/></svg>
+          {{ textosMejorados()!.observaciones }}
+        </div>
+      }
+
+      <div class="reg-ia-comparacion">
+        <!-- Tu versión -->
+        <div class="reg-ia-col">
+          <div class="reg-ia-col-header reg-ia-col-original">Tu versión</div>
+          <div class="reg-ia-col-body">
+            @if (titulo()) { <div class="reg-ia-campo"><span class="reg-ia-etiqueta">Título</span><p>{{ titulo() }}</p></div> }
+            @if (bioCorta()) { <div class="reg-ia-campo"><span class="reg-ia-etiqueta">Bio corta</span><p>{{ bioCorta() }}</p></div> }
+            @if (bioCompleta()) { <div class="reg-ia-campo"><span class="reg-ia-etiqueta">Bio completa</span><p>{{ bioCompleta() }}</p></div> }
+          </div>
+        </div>
+        <!-- Versión mejorada -->
+        <div class="reg-ia-col">
+          <div class="reg-ia-col-header reg-ia-col-mejorada">Versión corregida</div>
+          <div class="reg-ia-col-body">
+            @if (textosMejorados()!.titulo) { <div class="reg-ia-campo"><span class="reg-ia-etiqueta">Título</span><p>{{ textosMejorados()!.titulo }}</p></div> }
+            @if (textosMejorados()!.bioCorta) { <div class="reg-ia-campo"><span class="reg-ia-etiqueta">Bio corta</span><p>{{ textosMejorados()!.bioCorta }}</p></div> }
+            @if (textosMejorados()!.bioCompleta) { <div class="reg-ia-campo"><span class="reg-ia-etiqueta">Bio completa</span><p>{{ textosMejorados()!.bioCompleta }}</p></div> }
+          </div>
+        </div>
+      </div>
+
+      <div class="reg-ia-panel-footer">
+        <button class="reg-btn reg-btn-ghost" (click)="rechazarMejora()">Mantener mi versión</button>
+        <button class="reg-btn reg-btn-aceptar" (click)="aceptarMejora()">
+          <svg viewBox="0 0 20 20" fill="currentColor" width="16"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+          Usar versión corregida
+        </button>
+      </div>
+    </div>
+  </div>
 }
