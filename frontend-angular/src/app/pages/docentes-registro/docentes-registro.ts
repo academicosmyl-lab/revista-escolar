@@ -1,11 +1,14 @@
 import {
-  Component, OnInit, AfterViewInit,
+  Component, OnInit, OnDestroy, AfterViewInit,
   signal, computed, inject,
   ChangeDetectionStrategy, ChangeDetectorRef,
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { ApiService } from '../../services/api.service';
+import { BackNavigationUtil } from '../../utils/back-navigation.util';
+
+type ModoInicio = '' | 'nuevo' | 'buscando' | 'editando';
 
 interface Publicacion { titulo: string; anio: number | null; link: string; }
 interface TextosMejorados { titulo: string; bioCorta: string; bioCompleta: string; observaciones?: string | null; }
@@ -17,7 +20,7 @@ interface TextosMejorados { titulo: string; bioCorta: string; bioCompleta: strin
   styleUrl:    './docentes-registro.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DocentesRegistro implements OnInit, AfterViewInit {
+export class DocentesRegistro implements OnInit, AfterViewInit, OnDestroy {
 
   private api = inject(ApiService);
   private cdr = inject(ChangeDetectorRef);
@@ -86,11 +89,14 @@ export class DocentesRegistro implements OnInit, AfterViewInit {
   errorEnvio = signal('');
 
   // ── Flujo nuevo / ya registrado ─────────────────────────
-  modoInicio     = signal<'' | 'nuevo' | 'buscando' | 'editando'>('');
+  modoInicio     = signal<ModoInicio>('');
   emailBusqueda  = signal('');
   solicitudId    = signal<number | null>(null);
   buscandoPerfil = signal(false);
   errorBusqueda  = signal('');
+
+  // Manejo del botón Atrás del browser (ver utils/back-navigation.util.ts)
+  private backNav!: BackNavigationUtil<ModoInicio>;
 
   // ── IA — mejora de texto ────────────────────────────────
   mejorandoTexto       = signal(false);
@@ -141,7 +147,19 @@ export class DocentesRegistro implements OnInit, AfterViewInit {
   }
 
   ngOnInit() {
-    // Cargar áreas desde la API — incluye las personalizadas que ya registraron otros
+    // ── Back navigation ──────────────────────────────────────
+    // Cada transición de paso hace pushState — el botón Atrás del browser
+    // desanda esos pasos antes de salir de la página.
+    this.backNav = new BackNavigationUtil<ModoInicio>(
+      '',
+      (modo) => {
+        this.modoInicio.set(modo);
+        this.errorBusqueda.set('');
+        this.cdr.markForCheck();
+      },
+    );
+
+    // ── Cargar áreas ─────────────────────────────────────────
     this.api.get<string[]>('/areas').subscribe({
       next:  lista => this.areas.set([...lista, 'Otra']),
       error: ()    => this.areas.set([
@@ -152,6 +170,10 @@ export class DocentesRegistro implements OnInit, AfterViewInit {
         'Orientación Escolar','Química','Religión','Sistemas','Tecnología e Informática','Otra',
       ]),
     });
+  }
+
+  ngOnDestroy() {
+    this.backNav.destroy();
   }
 
   ngAfterViewInit() {
@@ -176,17 +198,19 @@ export class DocentesRegistro implements OnInit, AfterViewInit {
   irANuevo() {
     this.modoInicio.set('nuevo');
     this.solicitudId.set(null);
+    this.backNav.push('nuevo');        // ← registrar en historial del browser
   }
 
   irABuscando() {
     this.modoInicio.set('buscando');
     this.errorBusqueda.set('');
     this.emailBusqueda.set('');
+    this.backNav.push('buscando');     // ← registrar en historial del browser
   }
 
   irAEleccion() {
-    this.modoInicio.set('');
-    this.errorBusqueda.set('');
+    // Usa history.back() — respeta el stack y desanda exactamente un paso
+    this.backNav.goBack();
   }
 
   buscarPerfil() {
@@ -199,6 +223,7 @@ export class DocentesRegistro implements OnInit, AfterViewInit {
       next: data => {
         this.cargarDatos(data.solicitud);
         this.modoInicio.set('editando');
+        this.backNav.push('editando');   // ← registrar en historial del browser
         this.buscandoPerfil.set(false);
         this.cdr.markForCheck();
       },
