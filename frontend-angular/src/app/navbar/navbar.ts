@@ -1,6 +1,7 @@
 // CAMBIO ARCH-UI: HostListener + signal para efecto vidrio en scroll
-import { Component, HostListener, signal, ChangeDetectionStrategy } from '@angular/core';
+import { Component, HostListener, signal, ChangeDetectionStrategy, inject } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
+import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-navbar',
@@ -10,18 +11,13 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Navbar {
+  auth = inject(AuthService);
   menuAbierto = false;
-
-  // signal: Angular OnPush detecta el cambio cuando scrolled() cambia
-  // (true = usuario bajó más de 60px → activa glass morphism)
   scrolled = signal(false);
 
   toggleMenu() { this.menuAbierto = !this.menuAbierto; }
   cerrarMenu() { this.menuAbierto = false; }
 
-  // HostListener: escucha el evento scroll de window dentro de este componente
   @HostListener('window:scroll')
-  onScroll() {
-    this.scrolled.set(window.scrollY > 60);
-  }
+  onScroll() { this.scrolled.set(window.scrollY > 60); }
 }

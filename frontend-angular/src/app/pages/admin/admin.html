@@ -28,6 +28,9 @@
       <span class="adm-user-badge">
         {{ auth.usuario()?.nombre }} — {{ auth.usuario()?.rol }}
       </span>
+      @if (auth.esAdmin()) {
+        <a routerLink="/super-admin" class="adm-btn-revista" style="background:#7B2D3F;color:#fff;border-color:#7B2D3F">Super Admin</a>
+      }
       <a routerLink="/" class="adm-btn-revista">Ir a la Revista</a>
       <button class="adm-btn-salir" (click)="auth.logout()">Salir</button>
     </div>

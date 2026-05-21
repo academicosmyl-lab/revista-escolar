@@ -29,7 +29,16 @@
     <a routerLink="/docentes" routerLinkActive="nav-activo" class="nav-link" (click)="cerrarMenu()">Docentes</a>
     <a routerLink="/sedes" routerLinkActive="nav-activo" class="nav-link" (click)="cerrarMenu()">Sedes</a>
     <a routerLink="/indicadores" routerLinkActive="nav-activo" class="nav-link nav-link-indicadores" (click)="cerrarMenu()">Indicadores</a>
-    <a routerLink="/login" class="its-btn-primario its-btn-nav" (click)="cerrarMenu()">Ingresar</a>
+
+    @if (auth.loggedIn()) {
+      @if (auth.esAdmin()) {
+        <a routerLink="/super-admin" routerLinkActive="nav-activo" class="nav-link" (click)="cerrarMenu()">Super Admin</a>
+      }
+      <a routerLink="/panel" routerLinkActive="nav-activo" class="nav-link" (click)="cerrarMenu()">Mi Panel</a>
+      <button class="its-btn-primario its-btn-nav" (click)="auth.logout(); cerrarMenu()">Salir</button>
+    } @else {
+      <a routerLink="/login" class="its-btn-primario its-btn-nav" (click)="cerrarMenu()">Ingresar</a>
+    }
   </div>
 
 </nav>
