@@ -9,6 +9,13 @@ const router = Router();
 router.get('/health', async (req, res) => {
   try {
     await sequelize.authenticate();
+    // Contar solicitudes para debug
+    let solicitudes = null;
+    try {
+      const { SolicitudPerfil } = require('../models');
+      solicitudes = await SolicitudPerfil.count();
+    } catch(e) { solicitudes = 'tabla no existe: ' + e.message; }
+
     res.json({
       status: 'ok',
       database: 'connected',
@@ -16,6 +23,7 @@ router.get('/health', async (req, res) => {
       environment: process.env.NODE_ENV,
       timestamp: new Date().toISOString(),
       version: '1.0.0',
+      solicitudes_perfil_total: solicitudes,
     });
   } catch (error) {
     res.status(503).json({ status: 'error', database: 'disconnected', error: error.message });
