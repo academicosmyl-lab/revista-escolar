@@ -90,7 +90,27 @@
   font-family: 'Source Sans 3', sans-serif;
   font-size: 0.95rem;
   color: rgba(255,255,255,.68);
-  margin: 0;
+  margin: 0 0 1.25rem;
+}
+
+/* CTA — invita a los docentes a registrar su perfil */
+.doc-hero-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: #1a0a0e;
+  background: #D4A853;
+  padding: 0.55rem 1.35rem;
+  transition: background 0.2s ease, transform 0.15s ease;
+
+  &::after { content: ' →'; }
+  &:hover { background: #e8bd6a; transform: translateY(-1px); }
 }
 
 /* ── BARRA DE CONTROLES ───────────────────────────────────── */

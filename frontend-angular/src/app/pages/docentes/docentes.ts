@@ -1,11 +1,12 @@
 import { Component, OnInit, inject, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import { ApiService } from '../../services/api.service';
 import { PerfilDocente, Sede } from '../../models';
 
 @Component({
   selector: 'app-docentes',
-  imports: [FormsModule],
+  imports: [FormsModule, RouterLink],
   templateUrl: './docentes.html',
   styleUrl: './docentes.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
