@@ -27,7 +27,7 @@ export class DocentesRegistro implements OnInit, AfterViewInit {
   // Los valores del grupo "apoyo" comienzan con "P_" — se normalizan a 'PERSONAL' al enviar.
   readonly roles = [
     // ── Equipo académico y directivo ──
-    { value: 'RECTOR',        label: 'Rector / Rectora',                grupo: 'directivo' },
+    { value: 'RECTOR',        label: 'Rector',                           grupo: 'directivo' },
     { value: 'COORDINADOR',   label: 'Coordinador / Coordinadora',      grupo: 'directivo' },
     { value: 'ORIENTADORA',   label: 'Orientador / Orientadora',        grupo: 'directivo' },
     { value: 'DOCENTE',       label: 'Docente',                         grupo: 'academico' },
