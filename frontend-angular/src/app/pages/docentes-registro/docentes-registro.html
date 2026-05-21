@@ -14,7 +14,7 @@
   <div class="reg-hero-inner">
     <span class="reg-hero-eyebrow" id="regEyebrow">Instituto Técnico Industrial · Fusagasugá</span>
     <h1 class="reg-hero-titulo" id="regTitulo">
-      Ayúdanos a construir<br><em>la identidad del ITS.</em>
+      Ayúdanos a construir<br><em>la identidad del ITI.</em>
     </h1>
     <p class="reg-hero-subtitulo" id="regSubtitulo">
       Deja tu huella compartiendo tus datos y permitiéndonos conocer más sobre ti,
@@ -25,7 +25,7 @@
       <p class="reg-firma-texto">
         Gracias por ser parte de este proyecto y por contribuir al crecimiento
         de una comunidad más unida, visible y fortalecida tecnológicamente.
-        Cada persona que hace parte del ITS aporta valor, compromiso e historia
+        Cada persona que hace parte del ITI aporta valor, compromiso e historia
         a la institución que seguimos construyendo juntos.
       </p>
     </div>
@@ -206,7 +206,7 @@
                 <svg viewBox="0 0 24 24" fill="currentColor" width="22"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
               </div>
               <div>
-                <strong>¡Tu rol es fundamental en el ITS!</strong>
+                <strong>¡Tu rol es fundamental en el ITI!</strong>
                 El equipo de apoyo hace posible que la institución funcione cada día.
                 Tu perfil tendrá el mismo protagonismo que el de cualquier docente.
               </div>
@@ -370,7 +370,7 @@
 
         <div class="reg-campo">
           <label class="reg-label" for="fExp">
-            @if (esPersonal()) { Años en el ITS } @else { Años de experiencia }
+            @if (esPersonal()) { Años en el ITI } @else { Años de experiencia }
           </label>
           <input id="fExp" type="number" class="reg-input"
                  [placeholder]="esPersonal() ? 'Ej: 8' : 'Ej: 12'"
@@ -389,7 +389,7 @@
       <div class="reg-sec-label">
         <span class="reg-sec-num">03</span>
         @if (esPersonal()) {
-          <h2 class="reg-sec-titulo">Tu aporte al ITS</h2>
+          <h2 class="reg-sec-titulo">Tu aporte al ITI</h2>
           <p class="reg-sec-desc">
             Cuéntanos qué haces cada día, cómo contribuyes a la institución
             y qué hace especial tu trabajo aquí.
@@ -412,7 +412,7 @@
               Descripción de tu cargo — aparece en tu tarjeta
               <span class="reg-sec-opcional">(opcional)</span>
             } @else {
-              Bio corta — aparece en tu tarjeta <span class="reg-req">*</span>
+              Presentación profesional breve — visible en tu tarjeta pública <span class="reg-req">*</span>
             }
           </label>
           <textarea id="fBioCorta" class="reg-textarea reg-textarea-sm"
@@ -429,7 +429,7 @@
         <div class="reg-campo reg-campo-full">
           <label class="reg-label" for="fBioFull">
             @if (esPersonal()) {
-              Mi historia en el ITS
+              Mi historia en el ITI
               <span class="reg-sec-opcional" style="margin-left:4px">(opcional)</span>
             } @else {
               Presentación completa — se muestra en tu perfil
@@ -437,7 +437,7 @@
           </label>
           <textarea id="fBioFull" class="reg-textarea reg-textarea-lg"
                     [placeholder]="esPersonal()
-                      ? 'Cuéntanos cómo llegaste al ITS, qué te gusta de trabajar aquí, algo que te enorgullezca de tu labor...'
+                      ? 'Cuéntanos cómo llegaste al ITI, qué te gusta de trabajar aquí, algo que te enorgullezca de tu labor...'
                       : 'Cuéntanos tu trayectoria, metodología, qué te motivó, logros, proyectos con estudiantes...'"
                     [ngModel]="bioCompleta()" (ngModelChange)="bioCompleta.set($event)"
                     (blur)="onBlurBioCompleta()" maxlength="600"></textarea>

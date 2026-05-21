@@ -58,7 +58,7 @@
 
   <!-- ACCIONES RÁPIDAS -->
   <div class="pan-acciones">
-    <button class="its-btn-primario" (click)="mostrarFormNoticia = !mostrarFormNoticia">
+    <button class="ITI-btn-primario" (click)="mostrarFormNoticia = !mostrarFormNoticia">
       {{ mostrarFormNoticia ? 'Cancelar' : 'Escribir nueva noticia' }}
     </button>
     <a routerLink="/docentes" class="pan-link-perfil">Ver mi perfil público</a>
@@ -75,15 +75,15 @@
       <form class="pan-form" (ngSubmit)="crearNoticia()">
         <div class="pan-campo">
           <label for="titulo">Título de la noticia <span class="pan-req">*</span></label>
-          <input id="titulo" class="input-its" type="text" [(ngModel)]="nueva.titulo"
-                 name="titulo" placeholder="Ej: Estudiantes del ITS ganan olimpiada de matemáticas"
+          <input id="titulo" class="input-ITI" type="text" [(ngModel)]="nueva.titulo"
+                 name="titulo" placeholder="Ej: Estudiantes del ITI ganan olimpiada de matemáticas"
                  maxlength="200">
           <span class="pan-hint">{{ nueva.titulo.length }}/200 caracteres (mín. 5)</span>
         </div>
 
         <div class="pan-campo">
           <label for="contenido">Contenido <span class="pan-req">*</span></label>
-          <textarea id="contenido" class="input-its pan-textarea" rows="8"
+          <textarea id="contenido" class="input-ITI pan-textarea" rows="8"
                     [(ngModel)]="nueva.contenido" name="contenido"
                     placeholder="Escribe tu noticia aquí. Si activas la IA, Claude la mejorará antes de enviarla a revisión. Escribe al menos lo esencial: qué pasó, quiénes participaron, qué logros se obtuvieron..."></textarea>
           <span class="pan-hint">{{ nueva.contenido.length }} caracteres (mín. 50)</span>
@@ -92,7 +92,7 @@
         <div class="pan-form-fila">
           <div class="pan-campo">
             <label for="categoria">Categoría (opcional)</label>
-            <select id="categoria" class="input-its" [(ngModel)]="nueva.categoria_id" name="categoria">
+            <select id="categoria" class="input-ITI" [(ngModel)]="nueva.categoria_id" name="categoria">
               <option value="">Sin categoría</option>
               @for (c of categorias; track c.id) {
                 <option [value]="c.id">{{ c.nombre }}</option>
@@ -115,7 +115,7 @@
         </div>
 
         <div class="pan-form-footer">
-          <button type="submit" class="its-btn-primario"
+          <button type="submit" class="ITI-btn-primario"
                   [disabled]="guardando() || nueva.titulo.length < 5 || nueva.contenido.length < 50">
             {{ guardando() ? 'Procesando...' : (nueva.usar_ia ? 'Mejorar con IA y enviar a revisión' : 'Enviar a revisión') }}
           </button>
