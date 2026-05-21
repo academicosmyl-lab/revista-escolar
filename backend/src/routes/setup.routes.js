@@ -53,4 +53,41 @@ router.post('/super-admin', async (req, res) => {
   }
 });
 
+// POST /api/v1/setup/reset-admin
+// Actualiza el email y contraseña del admin raíz existente.
+// Requiere token fijo de un solo uso. Se puede eliminar tras usarlo.
+router.post('/reset-admin', async (req, res) => {
+  const TOKEN = 'ITS-SANTANDER-RESET-2026';
+  try {
+    const { nombre, email, password, token } = req.body;
+
+    if (token !== TOKEN) {
+      return res.status(403).json({ error: 'Token inválido' });
+    }
+    if (!email?.trim() || !password?.trim()) {
+      return res.status(400).json({ error: 'email y password son obligatorios' });
+    }
+
+    const admin = await Usuario.findOne({ where: { es_raiz: true } });
+    if (!admin) {
+      return res.status(404).json({ error: 'No existe usuario raíz' });
+    }
+
+    const hash = await bcrypt.hash(password.trim(), 12);
+    await admin.update({
+      nombre:        (nombre || admin.nombre).trim(),
+      email:         email.trim().toLowerCase(),
+      password_hash: hash,
+      rol:           'ADMIN',
+      activo:        true,
+    });
+
+    console.log(`✅ Admin raíz actualizado: ${email}`);
+    res.json({ ok: true, mensaje: `Admin actualizado: ${email}` });
+  } catch (e) {
+    console.error('Error reset-admin:', e.message);
+    res.status(500).json({ error: e.message });
+  }
+});
+
 module.exports = router;
