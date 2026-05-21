@@ -11,12 +11,26 @@ type Tab = 'dashboard' | 'cola' | 'docentes' | 'historial';
 type ModalTipo = 'aprobar' | 'rechazar' | 'crear' | 'editar' | null;
 
 interface Solicitud {
-  id: string; nombre: string; titulo?: string; area?: string; sede?: string;
-  email?: string; bioCorta?: string; bioCompleta?: string;
-  especialidades?: string; publicaciones?: string;
-  fotoUrl?: string; web?: string; linkedin?: string; orcid?: string;
+  id: string;
+  rol?: string;
+  nombre: string;
+  titulo?: string;
+  area?: string;
+  sede?: string;
+  experiencia?: number | null;
+  email?: string;
+  bioCorta?: string;
+  bioCompleta?: string;
+  especialidades?: string;
+  publicaciones?: string;
+  fotoUrl?: string;
+  web?: string;
+  linkedin?: string;
+  orcid?: string;
   estado: 'pendiente' | 'aprobado' | 'rechazado';
-  motivoAdmin?: string; revisadoEn?: string; createdAt: string;
+  motivoAdmin?: string;
+  revisadoEn?: string;
+  createdAt: string;
 }
 
 interface Docente {
@@ -96,6 +110,14 @@ export class SuperAdmin implements OnInit {
   readonly LIMIT = 12;
 
   /* Iconos de tipo acción */
+  readonly etiquetaRol: Record<string, string> = {
+    RECTOR:       'Rector',
+    COORDINADOR:  'Coordinador/a',
+    ORIENTADORA:  'Orientador/a',
+    DOCENTE:      'Docente',
+    PERSONAL:     'Equipo de apoyo',
+  };
+
   readonly iconoAccion: Record<string, string> = {
     aprobar_perfil:      '✅',
     rechazar_perfil:     '❌',

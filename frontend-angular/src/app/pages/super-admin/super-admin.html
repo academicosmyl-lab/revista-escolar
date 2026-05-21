@@ -1,5 +1,5 @@
 <!-- ╔══════════════════════════════════════════════════════╗ -->
-<!-- ║   SUPER ADMIN — Panel de Control ITS Santander       ║ -->
+<!-- ║   SUPER ADMIN — Panel de Control ITS       ║ -->
 <!-- ╚══════════════════════════════════════════════════════╝ -->
 <div class="sa-shell">
 
@@ -9,7 +9,7 @@
       <span class="sa-brand-icon">⚙</span>
       <div>
         <span class="sa-brand-name">Super Admin</span>
-        <span class="sa-brand-sub">ITS Santander</span>
+        <span class="sa-brand-sub">ITS</span>
       </div>
     </div>
 
@@ -67,7 +67,7 @@
       <div class="sa-page">
         <header class="sa-page-header">
           <h1 class="sa-page-title">Panel de control</h1>
-          <p class="sa-page-sub">Instituto Técnico Industrial Santander</p>
+          <p class="sa-page-sub">Instituto Técnico Industrial</p>
         </header>
 
         @if (cargando() && !stats) {
@@ -186,16 +186,35 @@
               </div>
 
               <div class="sa-sol-body">
-                <h3 class="sa-sol-nombre">{{ sol.nombre }}</h3>
+                <div class="sa-sol-head-row">
+                  <h3 class="sa-sol-nombre">{{ sol.nombre }}</h3>
+                  @if (sol.rol) {
+                    <span class="sa-rol-chip sa-rol-{{ sol.rol.toLowerCase() }}">
+                      {{ etiquetaRol[sol.rol] || sol.rol }}
+                    </span>
+                  }
+                </div>
                 @if (sol.titulo) { <p class="sa-sol-titulo">{{ sol.titulo }}</p> }
                 <div class="sa-sol-meta">
-                  @if (sol.area)  { <span>📚 {{ sol.area }}</span> }
-                  @if (sol.sede)  { <span>🏫 {{ sol.sede }}</span> }
-                  @if (sol.email) { <span>✉ {{ sol.email }}</span> }
+                  @if (sol.area)        { <span>📚 {{ sol.area }}</span> }
+                  @if (sol.sede)        { <span>🏫 {{ sol.sede }}</span> }
+                  @if (sol.email)       { <span>✉ {{ sol.email }}</span> }
+                  @if (sol.experiencia) { <span>⏱ {{ sol.experiencia }} años</span> }
                 </div>
 
                 @if (sol.bioCorta) {
                   <p class="sa-sol-bio">{{ sol.bioCorta }}</p>
+                }
+                @if (sol.bioCompleta) {
+                  <p class="sa-sol-bio sa-sol-bio-full">{{ sol.bioCompleta }}</p>
+                }
+
+                @if (parseEspecialidades(sol.especialidades).length) {
+                  <div class="sa-sol-tags">
+                    @for (tag of parseEspecialidades(sol.especialidades); track tag) {
+                      <span class="sa-tag">{{ tag }}</span>
+                    }
+                  </div>
                 }
 
                 @if (sol.motivoAdmin) {
@@ -415,33 +434,78 @@
 
       @if (asSolicitud(modalItem()); as sol) {
         <div class="sa-modal-body">
+
+          <!-- Encabezado del perfil -->
           <div class="sa-modal-info">
             @if (sol.fotoUrl) {
               <img [src]="sol.fotoUrl" [alt]="sol.nombre" class="sa-modal-foto">
+            } @else {
+              <div class="sa-modal-foto-placeholder">{{ sol.nombre[0] }}</div>
             }
-            <div>
+            <div class="sa-modal-info-text">
               <p class="sa-modal-nombre">{{ sol.nombre }}</p>
+              @if (sol.rol) {
+                <span class="sa-rol-chip sa-rol-{{ sol.rol.toLowerCase() }}" style="margin-bottom:6px">
+                  {{ etiquetaRol[sol.rol] || sol.rol }}
+                </span>
+              }
               @if (sol.titulo) { <p class="sa-modal-sub">{{ sol.titulo }}</p> }
-              @if (sol.area)   { <p class="sa-modal-sub">{{ sol.area }}</p> }
-              @if (sol.email)  { <p class="sa-modal-sub">{{ sol.email }}</p> }
+              @if (sol.area)   { <p class="sa-modal-sub">📚 {{ sol.area }}</p> }
+              @if (sol.sede)   { <p class="sa-modal-sub">🏫 {{ sol.sede }}</p> }
+              @if (sol.email)  { <p class="sa-modal-sub">✉ {{ sol.email }}</p> }
+              @if (sol.experiencia) { <p class="sa-modal-sub">⏱ {{ sol.experiencia }} años de experiencia</p> }
             </div>
           </div>
 
+          <!-- Bio completa -->
+          @if (sol.bioCorta || sol.bioCompleta) {
+            <div class="sa-modal-section">
+              <h4 class="sa-modal-section-title">Presentación</h4>
+              @if (sol.bioCorta)    { <p class="sa-modal-bio-corta">{{ sol.bioCorta }}</p> }
+              @if (sol.bioCompleta) { <p class="sa-modal-bio-full">{{ sol.bioCompleta }}</p> }
+            </div>
+          }
+
+          <!-- Especialidades / habilidades -->
+          @if (parseEspecialidades(sol.especialidades).length) {
+            <div class="sa-modal-section">
+              <h4 class="sa-modal-section-title">Especialidades / habilidades</h4>
+              <div class="sa-sol-tags">
+                @for (tag of parseEspecialidades(sol.especialidades); track tag) {
+                  <span class="sa-tag">{{ tag }}</span>
+                }
+              </div>
+            </div>
+          }
+
+          <!-- Redes -->
+          @if (sol.web || sol.linkedin || sol.orcid) {
+            <div class="sa-modal-section">
+              <h4 class="sa-modal-section-title">Presencia digital</h4>
+              <div class="sa-modal-redes">
+                @if (sol.web)      { <a [href]="sol.web"      target="_blank" rel="noopener" class="sa-modal-red">🌐 Blog / Sitio web</a> }
+                @if (sol.linkedin) { <a [href]="sol.linkedin" target="_blank" rel="noopener" class="sa-modal-red">💼 LinkedIn</a> }
+                @if (sol.orcid)    { <span class="sa-modal-red">🔬 ORCID: {{ sol.orcid }}</span> }
+              </div>
+            </div>
+          }
+
+          <!-- Aviso de acción -->
           @if (modal() === 'aprobar') {
             <div class="sa-modal-notice sa-modal-notice-ok">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16"><circle cx="12" cy="12" r="10"/><path d="M12 8v4m0 4h.01"/></svg>
-              Al aprobar, se creará una cuenta de docente y se enviará un correo con las credenciales de acceso.
+              Al aprobar se creará una cuenta y se enviará un correo con las credenciales de acceso.
             </div>
           } @else {
             <div class="sa-modal-notice sa-modal-notice-err">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16"><circle cx="12" cy="12" r="10"/><path d="M12 8v4m0 4h.01"/></svg>
-              El docente recibirá un correo con el motivo y podrá corregir y reenviar su solicitud.
+              La persona recibirá un correo con el motivo y podrá corregir y reenviar su solicitud.
             </div>
           }
 
           <label class="sa-label" for="motivo-input">
             Motivo <span class="sa-required">*</span>
-            <span class="sa-label-hint">(obligatorio — se envía al docente)</span>
+            <span class="sa-label-hint">(se envía por email a la persona)</span>
           </label>
           <textarea id="motivo-input" class="sa-textarea" rows="4"
             placeholder="{{ modal() === 'aprobar' ? 'Ej: Perfil completo y verificado. Bienvenido al equipo.' : 'Ej: La biografía es demasiado breve. Por favor amplíala con experiencia y logros.' }}"
