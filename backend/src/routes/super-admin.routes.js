@@ -139,10 +139,10 @@ router.put('/solicitudes/:id/aprobar', soloAdmin, async (req, res) => {
 
     // Parsear especialidades seguro
     let especialidades = null;
-    try { especialidades = sol.especialidades ? JSON.parse(sol.especialidades) : null; } catch {}
+    try { especialidades = sol.especialidades ? JSON.parse(sol.especialidades) : null; } catch (e) { /* JSON inválido — ignorar */ }
 
     let publicaciones = null;
-    try { publicaciones = sol.publicaciones ? JSON.parse(sol.publicaciones) : null; } catch {}
+    try { publicaciones = sol.publicaciones ? JSON.parse(sol.publicaciones) : null; } catch (e) { /* JSON inválido — ignorar */ }
 
     // Crear perfil
     await PerfilDocente.create({
