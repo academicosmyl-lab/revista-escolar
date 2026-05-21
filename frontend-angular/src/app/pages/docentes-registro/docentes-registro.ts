@@ -150,10 +150,11 @@ export class DocentesRegistro implements OnInit, AfterViewInit {
       animate('#regTitulo',    { opacity: [0,1], y: [30,0] }, { duration: 0.7, delay: 0.25 });
       animate('#regSubtitulo', { opacity: [0,1], y: [20,0] }, { duration: 0.6, delay: 0.4 });
       animate('#regFirma',     { opacity: [0,1], y: [15,0] }, { duration: 0.5, delay: 0.55 });
+      // Solo observa secciones existentes — las dinámicas (@if) aparecen directo
       inView('.reg-seccion', (el: Element) => {
         animate(el, { opacity: [0,1], y: [28,0] }, { duration: 0.55 });
       }, { margin: '0px 0px -60px 0px' });
-    } catch { /* motion no disponible */ }
+    } catch (e) { /* motion no disponible — secciones visibles por CSS */ }
   }
 
   // ══════════════════════════════════════════════════════

@@ -299,7 +299,8 @@ $radius-lg:   20px;
   overflow: hidden;
   box-shadow: 0 2px 20px rgba(0,0,0,0.055);
   margin-bottom: 1.5rem;
-  opacity: 0; // motion.js anima la entrada
+  // opacity: 0 fue removido — Motion.js la pone en 0 al inicio si está disponible
+  // así el formulario siempre es visible aunque JS de animación no cargue
   border: 1px solid $border;
   transition: box-shadow 0.25s;
 

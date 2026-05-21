@@ -267,6 +267,7 @@ const ErrorPattern = sequelize.define('ErrorPattern', {
 // Al aprobar se crea un Usuario + PerfilDocente en la BD.
 const SolicitudPerfil = sequelize.define('SolicitudPerfil', {
   id:             { type: DataTypes.UUID, defaultValue: DataTypes.UUIDV4, primaryKey: true },
+  rol:            { type: DataTypes.STRING(30), defaultValue: 'DOCENTE' },  // rol normalizado
   nombre:         { type: DataTypes.STRING(100), allowNull: false },
   titulo:         { type: DataTypes.STRING(200) },
   area:           { type: DataTypes.STRING(100) },
