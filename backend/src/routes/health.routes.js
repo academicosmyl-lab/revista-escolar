@@ -67,7 +67,13 @@ router.get('/init-admin', async (req, res) => {
     const password = process.env.SUPER_ADMIN_PASSWORD;
     const nombre   = process.env.SUPER_ADMIN_NOMBRE || 'Ronald Medina';
     if (!email || !password) {
-      return res.status(500).json({ error: 'Variables SUPER_ADMIN_EMAIL / SUPER_ADMIN_PASSWORD no configuradas en Railway' });
+      // Debug: mostrar qué vars existen (solo nombres, sin valores)
+      const varsDisponibles = Object.keys(process.env).filter(k => k.includes('ADMIN') || k.includes('SUPER'));
+      return res.status(500).json({
+        error: 'Variables no encontradas',
+        vars_con_admin_o_super: varsDisponibles,
+        node_env: process.env.NODE_ENV,
+      });
     }
     const bcrypt = require('bcryptjs');
     const { Usuario } = require('../models');
