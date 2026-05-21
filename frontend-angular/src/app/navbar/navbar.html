@@ -4,8 +4,8 @@
   <span class="its-topbar-lema">Lealtad · Ciencia · Técnica</span>
 </div>
 
-<!-- Navbar principal -->
-<nav class="its-nav">
+<!-- Navbar principal — .scrolled activa glass morphism al bajar 60px -->
+<nav class="its-nav" [class.scrolled]="scrolled()">
 
   <!-- Logo + Nombre -->
   <a routerLink="/" class="its-nav-brand">

@@ -1,4 +1,5 @@
-import { Component, OnInit, AfterViewInit, signal, computed, inject, ChangeDetectionStrategy } from '@angular/core';
+// CAMBIO ARCH-UI: motion.js — animaciones revolucionarias con scroll/inView/stagger
+import { Component, OnInit, AfterViewInit, signal, computed, inject, ChangeDetectionStrategy, NgZone } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
@@ -16,8 +17,11 @@ import { HorizonteSection } from './sections/horizonte-section'; // CAMBIO ARCH-
 export class Home implements OnInit, AfterViewInit {
 
   // CAMBIO ARCH-UI: ApiService inyectado para cargar noticias reales del backend
-  private api = inject(ApiService);
+  private api       = inject(ApiService);
   private sanitizer = inject(DomSanitizer);
+  // NgZone: necesario para correr event listeners de motion.js FUERA de Angular
+  // Esto evita que Angular ejecute detección de cambios en cada frame de animación
+  private zone      = inject(NgZone);
 
   /* ── Noticias del API real ──────────────────────────── */
   // CAMBIO ARCH-UI: reemplaza noticiasEjemplo (picsum.photos hardcodeado)
@@ -171,11 +175,38 @@ export class Home implements OnInit, AfterViewInit {
     return (n.categoria as any)?.color ?? '#A94455';
   }
 
-  /* ── Animaciones scroll reveal ───────────────────────── */
+  /* ── Animaciones revolucionarias con motion.js ────────── */
+  // CAMBIO ARCH-UI: motion.js (framer-motion/dom) maneja todas las animaciones
+  // Se carga de forma dinámica para reducir el bundle inicial
   ngAfterViewInit() {
-    this.initScrollReveal();
+    // Corre todo fuera de la zona de Angular → Angular no ejecuta
+    // change detection en cada frame de animación (mucho más eficiente)
+    this.zone.runOutsideAngular(() => {
+      // importación dinámica: motion solo se descarga cuando el home carga
+      import('motion').then(({ animate, inView, scroll, stagger }) => {
+        this.initScrollProgress(scroll);
+        this.initScrollReveal();
+        this.initHeroTitleReveal(animate);
+        this.initMagneticButtons();
+        this.initHeroParallax(scroll);
+        this.initStatsCountUp(animate, inView);
+        this.initBadgeRotativo();
+      });
+    });
   }
 
+  // ── 1. Barra de progreso de scroll ─────────────────────
+  // Escala la barra en X según qué tan abajo está el usuario (0% = arriba, 100% = abajo)
+  private initScrollProgress(scroll: Function) {
+    const bar = document.getElementById('scrollProgress');
+    if (!bar) return;
+    scroll((info: any) => {
+      bar.style.transform = `scaleX(${info.y.progress})`;
+    });
+  }
+
+  // ── 2. Scroll reveal con IntersectionObserver ──────────
+  // Añade .visible a cualquier elemento con .reveal al entrar al viewport
   private initScrollReveal() {
     const observer = new IntersectionObserver(
       (entries) => entries.forEach(e => {
@@ -184,5 +215,138 @@ export class Home implements OnInit, AfterViewInit {
       { threshold: 0.12 }
     );
     document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+  }
+
+  // ── 3. Hero: título línea por línea ────────────────────
+  // Cada línea (.ht-inner) sube desde abajo con spring easing escalonado
+  private initHeroTitleReveal(animate: Function) {
+    const inners  = document.querySelectorAll<HTMLElement>('.ht-inner');
+    const eyebrow = document.getElementById('heroEyebrow');
+    const lema    = document.getElementById('heroLema');
+    const btns    = document.getElementById('heroBtns');
+
+    // Eyebrow — aparece primero
+    if (eyebrow) {
+      animate(eyebrow,
+        { opacity: [0, 1], y: ['-12px', '0px'] },
+        { duration: 0.6, delay: 0.1, ease: [0.16, 1, 0.3, 1] }
+      );
+    }
+
+    // Cada línea del título llega desde abajo (como prensa tipográfica)
+    inners.forEach((el, i) => {
+      animate(el,
+        { y: ['105%', '0%'], opacity: [0, 1] },
+        { duration: 1.0, delay: 0.25 + i * 0.18, ease: [0.16, 1, 0.3, 1] }
+      );
+    });
+
+    // Lema aparece después del título
+    if (lema) {
+      animate(lema,
+        { opacity: [0, 1], y: ['20px', '0px'] },
+        { duration: 0.8, delay: 0.85, ease: [0.22, 1, 0.36, 1] }
+      );
+    }
+
+    // Botones — al final con scale sutil
+    if (btns) {
+      animate(btns,
+        { opacity: [0, 1], y: ['24px', '0px'], scale: [0.95, 1] },
+        { duration: 0.7, delay: 1.1, ease: [0.22, 1, 0.36, 1] }
+      );
+    }
+  }
+
+  // ── 4. Botones magnéticos ──────────────────────────────
+  // El botón "sigue" el cursor — efecto imán que lo hace sentir vivo
+  private initMagneticButtons() {
+    const FUERZA = 0.32; // qué tan fuerte sigue el cursor (0–1)
+
+    document.querySelectorAll<HTMLElement>('.btn-magnetic').forEach(btn => {
+      btn.addEventListener('mousemove', (e: MouseEvent) => {
+        const rect = btn.getBoundingClientRect();
+        const x = (e.clientX - rect.left - rect.width  / 2) * FUERZA;
+        const y = (e.clientY - rect.top  - rect.height / 2) * FUERZA;
+        btn.style.transform    = `translate(${x}px, ${y}px)`;
+        btn.style.transition   = 'transform 0.08s ease';
+      });
+      btn.addEventListener('mouseleave', () => {
+        btn.style.transform  = 'translate(0,0)';
+        btn.style.transition = 'transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1)';
+      });
+    });
+  }
+
+  // ── 5. Parallax en el fondo del hero ───────────────────
+  // La imagen de fondo se mueve más lento que el scroll → da sensación de profundidad
+  private initHeroParallax(scroll: Function) {
+    const hero = document.querySelector<HTMLElement>('.hero-section');
+    if (!hero) return;
+
+    scroll((info: any) => {
+      const yCurrent = info.y.current;
+      // Solo aplica mientras el hero está visible (antes de llegar a la siguiente sección)
+      if (yCurrent < window.innerHeight * 1.2) {
+        hero.style.backgroundPositionY = `calc(35% + ${yCurrent * 0.22}px)`;
+      }
+    });
+  }
+
+  // ── 6. Contador animado en estadísticas ───────────────
+  // Al hacer scroll hasta los stats, los números cuentan de 0 al valor real
+  private initStatsCountUp(animate: Function, inView: Function) {
+    const statEls = document.querySelectorAll<HTMLElement>('[data-count]');
+
+    statEls.forEach(el => {
+      const target = parseInt(el.dataset['count'] ?? '0', 10);
+      const suffix = el.dataset['suffix'] ?? '';
+      let animado  = false;
+
+      // inView: observa el elemento — cuando entra al viewport, dispara el conteo
+      inView(el, () => {
+        if (animado) return;
+        animado = true;
+
+        // Formatea con separador de miles para números >= 1000
+        const fmt = (v: number) =>
+          v >= 1000 ? v.toLocaleString('es-CO') : String(v);
+
+        animate(0, target, {
+          duration: target > 500 ? 2.2 : 1.5,
+          ease: [0.0, 0.9, 0.57, 1.0],  // ease-out agresivo
+          onUpdate: (latest: number) => {
+            el.textContent = fmt(Math.round(latest)) + suffix;
+          },
+          onComplete: () => {
+            el.textContent = fmt(target) + suffix;
+          },
+        });
+      }, { amount: 0.8 });
+    });
+  }
+
+  // ── 7. Badge rotativo — texto circular girando ─────────
+  // Animación CSS pura — pero la activa motion para sincronizar con scroll
+  private initBadgeRotativo() {
+    const badge = document.querySelector<HTMLElement>('.badge-rotativo');
+    if (!badge) return;
+
+    let angle  = 0;
+    let rafId  = 0;
+    let paused = false;
+
+    const rotar = () => {
+      if (!paused) {
+        angle = (angle + 0.4) % 360;
+        badge.style.transform = `rotate(${angle}deg)`;
+      }
+      rafId = requestAnimationFrame(rotar);
+    };
+    rafId = requestAnimationFrame(rotar);
+
+    // Pausa al hover para permitir leer el texto
+    badge.addEventListener('mouseenter', () => { paused = true; });
+    badge.addEventListener('mouseleave', () => { paused = false; });
   }
 }

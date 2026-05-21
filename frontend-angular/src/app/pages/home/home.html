@@ -13,22 +13,25 @@
   </div>
 
   <div class="hero-grid">
-    <!-- BLOQUE SUPERIOR: título + lema juntos (izquierda-arriba) -->
-    <div class="hero-bloque-titulo fade-in-up">
-      <div class="hero-eyebrow">Revista Digital Institucional</div>
+    <!-- BLOQUE SUPERIOR: título con líneas envueltas para la animación clip-reveal -->
+    <div class="hero-bloque-titulo">
+      <div class="hero-eyebrow" id="heroEyebrow">Revista Digital Institucional</div>
+      <!-- .ht-line oculta overflow; .ht-inner empieza abajo → motion.js lo sube -->
       <h1 class="hero-titulo">
-        Instituto Técnico<br>Industrial<br><em class="hero-em">Santander</em>
+        <span class="ht-line"><span class="ht-inner">Instituto Técnico</span></span>
+        <span class="ht-line"><span class="ht-inner">Industrial</span></span>
+        <span class="ht-line"><span class="ht-inner"><em class="hero-em">Santander</em></span></span>
       </h1>
-      <p class="hero-lema">
+      <p class="hero-lema" id="heroLema">
         Inspiramos jóvenes con pensamiento técnico, humano y tecnológico
         para innovar, liderar y transformar su entorno.
       </p>
     </div>
 
-    <!-- BLOQUE INFERIOR: botón aislado en columna central (como referencia) -->
-    <div class="hero-bloque-btn fade-in-up" style="--i:2">
-      <a routerLink="/noticias" class="hero-btn-primario">Ver Revista</a>
-      <button class="hero-btn-secundario" (click)="abrirCertificado()">
+    <!-- BLOQUE INFERIOR: botones con clase magnetic para efecto imán -->
+    <div class="hero-bloque-btn" id="heroBtns">
+      <a routerLink="/noticias" class="hero-btn-primario btn-magnetic" id="heroBtnPrimario">Ver Revista</a>
+      <button class="hero-btn-secundario btn-magnetic" id="heroBtnSecundario" (click)="abrirCertificado()">
         Certificado Estudiantil
       </button>
     </div>
@@ -110,10 +113,12 @@
         Nuestras áreas técnicas: <strong>Electrónica, Corte y Confección, Diseño Digital,
         Medios Audiovisuales e Inglés Comunicativo</strong>.
       </p>
+      <!-- stats: data-count = valor final, data-suffix = texto después del número -->
+      <!-- motion.js usa inView() para disparar el conteo solo cuando son visibles -->
       <div class="quienes-stats">
-        <div class="quienes-stat"><span class="stat-num">3</span><span class="stat-label">Sedes</span></div>
-        <div class="quienes-stat"><span class="stat-num">50+</span><span class="stat-label">Docentes</span></div>
-        <div class="quienes-stat"><span class="stat-num">1.000+</span><span class="stat-label">Estudiantes</span></div>
+        <div class="quienes-stat"><span class="stat-num" data-count="3" data-suffix="">3</span><span class="stat-label">Sedes</span></div>
+        <div class="quienes-stat"><span class="stat-num" data-count="50" data-suffix="+">50+</span><span class="stat-label">Docentes</span></div>
+        <div class="quienes-stat"><span class="stat-num" data-count="1000" data-suffix="+">1.000+</span><span class="stat-label">Estudiantes</span></div>
       </div>
       <a routerLink="/docentes" class="its-btn-outline">Conocer nuestro equipo</a>
     </div>
@@ -177,9 +182,9 @@
   @if (!cargandoNoticias() && noticiasHome().length > 0) {
     <div class="noticias-grid reveal">
 
-      <!-- Noticia destacada (la más reciente) -->
+      <!-- Noticia destacada (la más reciente) — animación con delay 0 -->
       @if (noticiaDestacada(); as nd) {
-        <a [routerLink]="['/noticias', nd.id]" class="card-noticia noticia-principal card-link">
+        <a [routerLink]="['/noticias', nd.id]" class="card-noticia noticia-principal card-link motion-card" style="--card-i:0">
           @if (imagenNoticia(nd)) {
             <img class="card-img" [src]="imagenNoticia(nd)!" [alt]="altNoticia(nd)" style="height:260px;width:100%;object-fit:cover;">
           } @else {
@@ -200,9 +205,9 @@
         </a>
       }
 
-      <!-- Noticias secundarias -->
-      @for (n of noticiasSecundarias(); track n.id) {
-        <a [routerLink]="['/noticias', n.id]" class="card-noticia card-link">
+      <!-- Noticias secundarias — stagger: cada una llega 110ms después -->
+      @for (n of noticiasSecundarias(); track n.id; let i = $index) {
+        <a [routerLink]="['/noticias', n.id]" class="card-noticia card-link motion-card" [style]="'--card-i:' + (i + 1)">
           @if (imagenNoticia(n)) {
             <img class="card-img" [src]="imagenNoticia(n)!" [alt]="altNoticia(n)" style="height:130px;width:100%;object-fit:cover;">
           } @else {
@@ -274,9 +279,10 @@
       </div>
       <a routerLink="/sedes" class="ver-todas-link" style="color:rgba(255,255,255,0.7); border-bottom-color:rgba(201,168,76,0.5);">Ver todas</a>
     </div>
+    <!-- Sedes: stagger CSS — cada card aparece 150ms después que la anterior -->
     <div class="sedes-grid">
-      @for (sede of sedes; track sede.nombre) {
-        <div class="sede-card">
+      @for (sede of sedes; track sede.nombre; let i = $index) {
+        <div class="sede-card motion-sede" [style]="'--sede-i:' + i">
           <img class="sede-img" [src]="sede.img" [alt]="sede.nombre" style="width:100%;object-fit:cover;">
           <div class="sede-info">
             <h3 class="sede-nombre">{{ sede.nombre }}</h3>

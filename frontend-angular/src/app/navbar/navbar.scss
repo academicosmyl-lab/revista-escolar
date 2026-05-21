@@ -31,10 +31,31 @@
   top: 0;
   z-index: 1000;
   box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+  /* Transición suave entre estado normal y glass */
+  transition:
+    background 0.35s ease,
+    backdrop-filter 0.35s ease,
+    box-shadow 0.35s ease,
+    border-color 0.35s ease,
+    padding 0.35s ease;
+
+  /* ── Glass morphism al hacer scroll ──────────────── */
+  /* Activa cuando el usuario bajó más de 60px */
+  &.scrolled {
+    background: rgba(255, 255, 255, 0.82);
+    backdrop-filter: blur(18px) saturate(1.6);
+    -webkit-backdrop-filter: blur(18px) saturate(1.6);
+    border-bottom-color: rgba(212, 168, 83, 0.6);
+    box-shadow:
+      0 1px 0 rgba(212, 168, 83, 0.15) inset,
+      0 4px 24px rgba(0, 0, 0, 0.1);
+    padding: 0.5rem 2rem;
+  }
 
   @media (max-width: 768px) {
     padding: 0.75rem 1rem;
     flex-wrap: wrap;
+    &.scrolled { padding: 0.4rem 1rem; }
   }
 }
 
