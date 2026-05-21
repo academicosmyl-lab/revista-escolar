@@ -27,7 +27,6 @@ const inclusionRoutes        = require('./routes/inclusion.routes');
 const panelDocenteRoutes     = require('./routes/panel-docente.routes');
 const sseRoutes              = require('./routes/sse.routes');
 const superAdminRoutes       = require('./routes/super-admin.routes');
-const setupRoutes            = require('./routes/setup.routes');
 
 const app = express();
 
@@ -95,7 +94,6 @@ app.use('/api/v1/inclusion',         inclusionRoutes);
 app.use('/api/v1/panel',             panelDocenteRoutes);
 app.use('/api/v1/sse',               sseRoutes);
 app.use('/api/v1/super-admin',      superAdminRoutes);
-app.use('/api/v1/setup',            setupRoutes);
 
 // ── Errores ───────────────────────────────────────────────
 app.use(errorHandler);
