@@ -1,0 +1,66 @@
+<footer class="footer">
+  <div class="footer-inner">
+
+    <!-- Marca -->
+    <div class="footer-brand">
+      <img src="assets/images/logo-its.png" alt="Escudo ITS Santander" class="footer-logo">
+      <p class="footer-nombre">Instituto Técnico Industrial Santander</p>
+      <p class="footer-lema">Lealtad · Ciencia · Técnica</p>
+      <p class="footer-desc">Formamos bachilleres técnicos industriales con competencias tecnológicas, científicas y humanas para el desarrollo de Fusagasugá y Colombia.</p>
+    </div>
+
+    <!-- Navegación -->
+    <div class="footer-col">
+      <h4 class="footer-col-titulo">Navegación</h4>
+      <div class="footer-links">
+        @for (link of linksFooter; track link.path) {
+          <a [routerLink]="link.path" class="footer-link">{{ link.label }}</a>
+        }
+      </div>
+    </div>
+
+    <!-- Contacto -->
+    <div class="footer-col">
+      <h4 class="footer-col-titulo">Contacto</h4>
+      <div class="footer-datos">
+        <div class="footer-dato">
+          <span class="footer-dato-label">Dirección</span>
+          <span>Carrera 6A #16-02, Balmoral<br>Fusagasugá, Cundinamarca</span>
+        </div>
+        <div class="footer-dato">
+          <span class="footer-dato-label">Teléfonos</span>
+          <span>(8) 867-4962 &nbsp;·&nbsp; 312 379 8520</span>
+        </div>
+        <div class="footer-dato">
+          <span class="footer-dato-label">Correo</span>
+          <a href="mailto:secretaria@itifusagasuga.com" class="footer-email">secretaria&#64;itifusagasuga.com</a>
+        </div>
+        <div class="footer-dato">
+          <span class="footer-dato-label">Horario</span>
+          <span>Lunes a viernes · 8:00 am – 12:00 pm</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mapa -->
+    <div class="footer-col">
+      <h4 class="footer-col-titulo">Ubicación</h4>
+      <div class="footer-mapa-wrap">
+        <iframe class="footer-mapa" [src]="mapaSrc"
+          loading="lazy" title="Ubicación ITS Santander" frameborder="0">
+        </iframe>
+      </div>
+      <a class="footer-mapa-link"
+         href="https://www.google.com/maps?q=4.3469812,-74.3617479"
+         target="_blank" rel="noopener noreferrer">
+        Ver en Google Maps
+      </a>
+    </div>
+
+  </div>
+
+  <div class="footer-copy">
+    <span>© 2026 Instituto Técnico Industrial Santander · Fusagasugá, Cundinamarca · Colombia</span>
+    <span class="footer-web">institutotecnicosantander.com.co</span>
+  </div>
+</footer>

@@ -829,169 +829,7 @@
   &:hover { background: #A94455; color: white; }
 }
 
-/* ── HORIZONTE INSTITUCIONAL — PÁRAMO DE SUMAPAZ ─────── */
-@keyframes colibriFlota {
-  0%, 100% { transform: translateY(0) rotate(0deg); }
-  40%       { transform: translateY(-14px) rotate(1.5deg); }
-  70%       { transform: translateY(8px) rotate(-1deg); }
-}
-
-
-
-.horizonte-seccion {
-  position: relative;
-  background:
-    linear-gradient(175deg, rgba(6,14,8,0.82) 0%, rgba(10,3,6,0.78) 50%, rgba(6,14,8,0.82) 100%),
-    url('/inicio/paramo-sumapaz.jpg') center center / cover no-repeat;
-  overflow: hidden;
-}
-
-/* Colibrí grabado */
-.colibri-wrap {
-  position: absolute;
-  top: 6%; right: 3%;
-  pointer-events: none;
-  z-index: 1;
-
-  @media (max-width: 700px) { top: 2%; right: 1%; }
-}
-
-.colibri-img {
-  width: 260px;
-  height: auto;
-  display: block;
-  filter: invert(1) sepia(0.3) saturate(2) hue-rotate(15deg);
-  mix-blend-mode: screen;
-  opacity: 0.22;
-  animation: colibriFlota 5s ease-in-out infinite;
-
-  @media (max-width: 700px) { width: 130px; opacity: 0.16; }
-}
-
-/* Encabezado centrado */
-.horizonte-header {
-  text-align: center;
-  padding: 4.5rem 2rem 3rem;
-  position: relative;
-  z-index: 2;
-}
-
-.horizonte-header-linea {
-  width: 48px; height: 3px;
-  background: #D4A853;
-  margin: 0 auto 1.1rem;
-}
-
-.horizonte-eyebrow {
-  font-family: 'Source Sans 3', sans-serif;
-  font-size: 0.65rem;
-  font-weight: 700;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: rgba(212,168,83,0.7);
-  margin: 0 0 0.75rem;
-}
-
-.horizonte-titulo {
-  font-family: 'Playfair Display', serif;
-  font-size: clamp(1.8rem, 3.5vw, 3rem);
-  font-weight: 900;
-  color: white;
-  margin: 0;
-  line-height: 1.15;
-}
-
-/* Split de pilares */
-.horizonte-split {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  position: relative;
-  z-index: 2;
-
-  /* Línea dorada vertical divisoria */
-  &::after {
-    content: '';
-    position: absolute;
-    top: 10%; left: 50%;
-    width: 1px; height: 80%;
-    background: linear-gradient(to bottom, transparent, rgba(212,168,83,0.45) 20%, rgba(212,168,83,0.45) 80%, transparent);
-    pointer-events: none;
-  }
-
-  @media (max-width: 700px) {
-    grid-template-columns: 1fr;
-    &::after { display: none; }
-  }
-}
-
-.horizonte-pilar {
-  position: relative;
-  padding: 4.5rem 4.5rem 5.5rem;
-  overflow: hidden;
-  min-height: 420px;
-  display: flex;
-  align-items: center;
-
-  &--mision { background: linear-gradient(145deg, rgba(28,5,16,0.72) 0%, rgba(13,3,8,0.65) 100%); }
-  &--vision { background: linear-gradient(145deg, rgba(4,14,6,0.72) 0%, rgba(7,21,5,0.65) 100%); }
-
-  @media (max-width: 900px) { padding: 3rem 2.5rem 4rem; min-height: 320px; }
-}
-
-.horizonte-fantasma {
-  position: absolute;
-  bottom: -0.15em; right: 0.1em;
-  font-family: 'Playfair Display', serif;
-  font-size: clamp(7rem, 14vw, 13rem);
-  font-weight: 900;
-  color: rgba(255,255,255,0.028);
-  line-height: 1;
-  user-select: none;
-  pointer-events: none;
-  letter-spacing: -0.04em;
-}
-
-.horizonte-pilar-inner {
-  position: relative;
-  z-index: 1;
-  max-width: 440px;
-}
-
-.horizonte-sep {
-  width: 32px; height: 2px;
-  background: #D4A853;
-  margin-bottom: 1rem;
-  transition: width 0.4s ease;
-
-  .horizonte-pilar:hover & { width: 52px; }
-}
-
-.horizonte-label {
-  font-family: 'Playfair Display', serif;
-  font-size: 1.6rem;
-  font-weight: 700;
-  letter-spacing: 0.24em;
-  text-transform: uppercase;
-  color: #D4A853;
-  margin: 0 0 1.1rem;
-}
-
-.horizonte-texto {
-  font-family: 'Source Sans 3', sans-serif;
-  font-size: 1.2rem;
-  color: rgba(255,255,255,0.82);
-  line-height: 1.9;
-  margin: 0;
-}
-
-.horizonte-ubicacion {
-  font-family: 'Source Sans 3', sans-serif;
-  font-size: 0.72rem;
-  color: rgba(212,168,83,0.6);
-  line-height: 1.7;
-  margin-top: 1.75rem;
-  letter-spacing: 0.04em;
-}
+/* CAMBIO ARCH-UI (Lote C): estilos de Horizonte movidos a sections/horizonte-section.scss */
 
 /* ── FRANJA DOCENTES B&W ────────────────────────────── */
 @keyframes tira-scroll {
@@ -1152,126 +990,48 @@
 .modal-error { background: #fff0f0; border: 1px solid #f5c0c0; color: #A94455; padding: 0.75rem 1rem; margin-top: 1rem; font-family: 'Source Sans 3', sans-serif; font-size: 0.85rem; }
 .modal-exito { background: #f0fff6; border: 1px solid #a0d8b0; color: #3A7D5C; padding: 0.75rem 1rem; margin-top: 1rem; font-family: 'Source Sans 3', sans-serif; font-size: 0.85rem; }
 
-/* ── FOOTER ─────────────────────────────────────────── */
-@keyframes footerGradiente {
-  0%, 100% { background-position: 0% 50%; }
-  50%       { background-position: 100% 50%; }
+/* ── NOTICIAS HOME — extras API real (CAMBIO ARCH-UI) ── */
+// Convierte la card en enlace sin romper el layout
+.card-link {
+  text-decoration: none;
+  color: inherit;
+  display: block;
 }
 
-.footer, .footer span, .footer p, .footer h3, .footer h4, .footer div {
-  color: #000 !important;
-}
-
-.footer {
-  background: linear-gradient(-45deg, #2a0f1a, #0d1f35, #0f1e15, #1e0c16, #0a1628, #2a0f1a);
-  background-size: 400% 400%;
-  animation: footerGradiente 14s ease infinite;
-  border-top: 3px solid #A94455;
-  padding: 3.5rem 2rem 1.5rem;
-  position: relative;
-
-  /* Línea decorativa dorada sutil en el borde superior */
-  &::before {
-    content: '';
-    position: absolute;
-    top: 3px; left: 0; right: 0;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(212,168,83,0.5) 30%, rgba(212,168,83,0.5) 70%, transparent);
-    pointer-events: none;
-  }
-}
-
-.footer-inner {
-  max-width: 1280px;
-  margin: 0 auto 2.5rem;
-  display: grid;
-  grid-template-columns: 2fr 1fr 1.4fr 1.6fr;
-  gap: 2.5rem;
-
-  @media (max-width: 1024px) { grid-template-columns: 1fr 1fr; }
-  @media (max-width: 540px)  { grid-template-columns: 1fr; gap: 2rem; }
-}
-
-.footer-brand {
-  @media (max-width: 1024px) { grid-column: span 2; }
-  @media (max-width: 540px)  { grid-column: span 1; }
-}
-
-.footer-logo { height: 80px; margin-bottom: 0.75rem; display: block; }
-
-.footer-nombre {
-  font-family: 'Playfair Display', serif;
-  font-size: 1.1rem; font-weight: 700; color: #000; margin: 0 0 0.2rem;
-}
-
-.footer-lema {
+// Estado vacío — cuando aún no hay noticias publicadas
+.noticias-vacias {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: #888;
   font-family: 'Source Sans 3', sans-serif;
-  font-size: 0.7rem; font-weight: 700; letter-spacing: 0.15em;
-  text-transform: uppercase; color: #000; margin: 0 0 0.9rem;
+
+  p { margin-bottom: 1.25rem; }
 }
 
-.footer-desc {
-  font-family: 'Source Sans 3', sans-serif;
-  font-size: 0.93rem; font-weight: 700; color: #000; line-height: 1.75; max-width: 300px; margin: 0;
+// Skeleton loading — animación de brillo que simula carga
+@keyframes skeletonShimmer {
+  0%   { background-position: -400px 0; }
+  100% { background-position: 400px 0; }
 }
 
-.footer-col-titulo {
-  font-family: 'Source Sans 3', sans-serif;
-  font-size: 0.75rem; font-weight: 700; letter-spacing: 0.18em;
-  text-transform: uppercase; color: #000 !important;
-  margin: 0 0 1.1rem; padding-bottom: 0.5rem;
-  border-bottom: 1px solid rgba(212,168,83,0.2);
+.skeleton-img {
+  width: 100%;
+  background: linear-gradient(90deg, #e8eaed 25%, #f5f5f5 50%, #e8eaed 75%);
+  background-size: 800px 100%;
+  animation: skeletonShimmer 1.4s ease-in-out infinite;
 }
 
-.footer-links { display: flex; flex-direction: column; gap: 0.55rem; }
-
-.footer-link {
-  font-family: 'Source Sans 3', sans-serif;
-  font-size: 0.98rem; font-weight: 700; color: #000; text-decoration: none; transition: color 0.2s;
-  &:hover { color: #D4A853; }
+.skeleton-line {
+  border-radius: 4px;
+  background: linear-gradient(90deg, #e8eaed 25%, #f5f5f5 50%, #e8eaed 75%);
+  background-size: 800px 100%;
+  animation: skeletonShimmer 1.4s ease-in-out infinite;
+  margin-top: 0.5rem;
 }
 
-.footer-datos { display: flex; flex-direction: column; gap: 0.9rem; }
+.skeleton-badge  { height: 14px; width: 60px; }
+.skeleton-titulo { height: 18px; width: 85%; margin-top: 0.6rem; }
+.skeleton-desc   { height: 14px; width: 70%; }
+.skeleton-fecha  { height: 12px; width: 45%; }
 
-.footer-dato {
-  display: flex; flex-direction: column; gap: 0.15rem;
-  font-family: 'Source Sans 3', sans-serif;
-  font-size: 0.83rem; font-weight: 700; color: #000; line-height: 1.6;
-}
-
-.footer-dato-label {
-  font-size: 0.72rem; font-weight: 700; letter-spacing: 0.12em;
-  text-transform: uppercase; color: #000;
-}
-
-.footer-email {
-  color: #000; font-weight: 700; text-decoration: none; font-size: 0.9rem;
-  transition: color 0.2s; word-break: break-all;
-  &:hover { color: #D4A853; }
-}
-
-.footer-mapa-wrap {
-  width: 100%; height: 160px; overflow: hidden;
-  border: 1px solid rgba(212,168,83,0.2); margin-bottom: 0.6rem;
-}
-
-.footer-mapa {
-  width: 100%; height: 100%; border: none; display: block;
-  filter: grayscale(0.35) contrast(1.05);
-}
-
-.footer-mapa-link {
-  font-family: 'Source Sans 3', sans-serif;
-  font-size: 0.82rem; font-weight: 700; color: #000; text-decoration: none; letter-spacing: 0.04em;
-  transition: color 0.2s;
-  &:hover { color: #D4A853; }
-}
-
-.footer-copy {
-  max-width: 1280px; margin: 0 auto;
-  border-top: 1px solid rgba(26,26,46,0.15); padding-top: 1.2rem;
-  display: flex; justify-content: space-between; flex-wrap: wrap; gap: 0.4rem;
-  font-family: 'Source Sans 3', sans-serif; font-size: 0.7rem; font-weight: 700; color: #000 !important;
-}
-
-.footer-web { color: #000; font-weight: 700; }
+/* CAMBIO ARCH-UI: estilos del footer movidos a src/app/shared/footer/footer.scss */

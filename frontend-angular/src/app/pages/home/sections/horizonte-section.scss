@@ -1,0 +1,153 @@
+// CAMBIO ARCH-UI: estilos de horizonte-section movidos desde home.scss
+
+@keyframes colibriFlota {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  40%       { transform: translateY(-14px) rotate(1.5deg); }
+  70%       { transform: translateY(8px) rotate(-1deg); }
+}
+
+.horizonte-seccion {
+  position: relative;
+  background:
+    linear-gradient(175deg, rgba(6,14,8,0.82) 0%, rgba(10,3,6,0.78) 50%, rgba(6,14,8,0.82) 100%),
+    url('/inicio/paramo-sumapaz.jpg') center center / cover no-repeat;
+  overflow: hidden;
+}
+
+.colibri-wrap {
+  position: absolute;
+  top: 6%; right: 3%;
+  pointer-events: none;
+  z-index: 1;
+
+  @media (max-width: 700px) { top: 2%; right: 1%; }
+}
+
+.colibri-img {
+  width: 260px;
+  height: auto;
+  display: block;
+  filter: invert(1) sepia(0.3) saturate(2) hue-rotate(15deg);
+  mix-blend-mode: screen;
+  opacity: 0.22;
+  animation: colibriFlota 5s ease-in-out infinite;
+
+  @media (max-width: 700px) { width: 130px; opacity: 0.16; }
+}
+
+.horizonte-header {
+  text-align: center;
+  padding: 4.5rem 2rem 3rem;
+  position: relative;
+  z-index: 2;
+}
+
+.horizonte-header-linea {
+  width: 48px; height: 3px;
+  background: #D4A853;
+  margin: 0 auto 1.1rem;
+}
+
+.horizonte-eyebrow {
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(212,168,83,0.7);
+  margin: 0 0 0.75rem;
+}
+
+.horizonte-titulo {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(1.8rem, 3.5vw, 3rem);
+  font-weight: 900;
+  color: white;
+  margin: 0;
+  line-height: 1.15;
+}
+
+.horizonte-split {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  position: relative;
+  z-index: 2;
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: 10%; left: 50%;
+    width: 1px; height: 80%;
+    background: linear-gradient(to bottom, transparent, rgba(212,168,83,0.45) 20%, rgba(212,168,83,0.45) 80%, transparent);
+    pointer-events: none;
+  }
+
+  @media (max-width: 700px) {
+    grid-template-columns: 1fr;
+    &::after { display: none; }
+  }
+}
+
+.horizonte-pilar {
+  position: relative;
+  padding: 4.5rem 4.5rem 5.5rem;
+  overflow: hidden;
+  min-height: 420px;
+  display: flex;
+  align-items: center;
+
+  &--mision { background: linear-gradient(145deg, rgba(28,5,16,0.72) 0%, rgba(13,3,8,0.65) 100%); }
+  &--vision { background: linear-gradient(145deg, rgba(4,14,6,0.72) 0%, rgba(7,21,5,0.65) 100%); }
+
+  @media (max-width: 900px) { padding: 3rem 2.5rem 4rem; min-height: 320px; }
+}
+
+.horizonte-pilar-inner {
+  position: relative;
+  z-index: 1;
+  max-width: 440px;
+}
+
+.horizonte-sep {
+  width: 32px; height: 2px;
+  background: #D4A853;
+  margin-bottom: 1rem;
+  transition: width 0.4s ease;
+
+  .horizonte-pilar:hover & { width: 52px; }
+}
+
+.horizonte-label {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.6rem;
+  font-weight: 700;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: #D4A853;
+  margin: 0 0 1.1rem;
+}
+
+.horizonte-texto {
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 1.2rem;
+  color: rgba(255,255,255,0.82);
+  line-height: 1.9;
+  margin: 0;
+}
+
+.horizonte-ubicacion {
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.72rem;
+  color: rgba(212,168,83,0.6);
+  line-height: 1.7;
+  margin-top: 1.75rem;
+  letter-spacing: 0.04em;
+}
+
+// reveal — heredado del global; esta clase la activa home.ts con IntersectionObserver
+.reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+  &.visible { opacity: 1; transform: translateY(0); }
+}

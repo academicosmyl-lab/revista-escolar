@@ -1,16 +1,36 @@
-import { Component, AfterViewInit, signal, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, AfterViewInit, signal, computed, inject, ChangeDetectionStrategy } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { ApiService } from '../../services/api.service';
+import { Noticia } from '../../models';
+import { HorizonteSection } from './sections/horizonte-section'; // CAMBIO ARCH-UI (Lote C)
 
 @Component({
   selector: 'app-home',
-  imports: [RouterLink, FormsModule],
+  imports: [RouterLink, FormsModule, HorizonteSection],
   templateUrl: './home.html',
   styleUrl: './home.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class Home implements AfterViewInit {
+export class Home implements OnInit, AfterViewInit {
+
+  // CAMBIO ARCH-UI: ApiService inyectado para cargar noticias reales del backend
+  private api = inject(ApiService);
+  private sanitizer = inject(DomSanitizer);
+
+  /* ── Noticias del API real ──────────────────────────── */
+  // CAMBIO ARCH-UI: reemplaza noticiasEjemplo (picsum.photos hardcodeado)
+  // Signal: un contenedor reactivo — cuando cambia, Angular actualiza la vista automáticamente
+  cargandoNoticias = signal(true);
+  noticiasHome     = signal<Noticia[]>([]);
+
+  // computed: se recalcula solo cuando noticiasHome() cambia
+  noticiaDestacada   = computed(() => this.noticiasHome()[0] ?? null);
+  noticiasSecundarias = computed(() => this.noticiasHome().slice(1));
+
+  // Skeletons: array de 4 elementos para mostrar mientras carga
+  skeletons = Array(4);
 
   /* ── Videos institucionales ─────────────────────────── */
   videos: { url: string; safeUrl: SafeResourceUrl | null; titulo: string; colorA: string; colorB: string; playing: boolean; }[] = [
@@ -42,49 +62,60 @@ export class Home implements AfterViewInit {
     'jorge-perez','sandra-rivas','hernando-castillo','rosa-vargas','felipe-mantilla',
   ];
 
-  /* ── Datos de ejemplo ───────────────────────────────── */
-  noticiasEjemplo = [
-    { id: 1, img: 'https://picsum.photos/seed/its-dep/800/450',  categoria: 'Deportes',   titulo: 'Campeones departamentales de atletismo 2026',       fecha: '12 de mayo, 2026' },
-    { id: 2, img: 'https://picsum.photos/seed/its-mat/800/450',  categoria: 'Ciencia',    titulo: 'Estudiantes ganan olimpiada de matemáticas',         fecha: '8 de mayo, 2026'  },
-    { id: 3, img: 'https://picsum.photos/seed/its-art/800/450',  categoria: 'Cultura',    titulo: 'Festival artístico intercolegial sede Bachillerato', fecha: '5 de mayo, 2026'  },
-    { id: 4, img: 'https://picsum.photos/seed/its-tec/800/450',  categoria: 'Tecnología', titulo: 'Feria de ciencias e innovación técnica 2026',        fecha: '2 de mayo, 2026'  },
-  ];
-
+  /* ── Sedes institucionales ───────────────────────────── */
   sedes = [
     { nombre: 'Sede Bachillerato',    tipo: 'Bachillerato Técnico', img: '/inicio/sede-bachillerato.jpg' },
     { nombre: 'Sede Básica Primaria', tipo: 'Básica Primaria',      img: '/inicio/sede-primaria.jpg'     },
     { nombre: 'Sede Los Sauces',      tipo: 'Rural',                img: '/inicio/sede-rural.jpg'        },
   ];
 
-  linksFooter = [
-    { label: 'Inicio',   path: '/'         },
-    { label: 'Revista',  path: '/noticias' },
-    { label: 'Galería',  path: '/galeria'  },
-    { label: 'Docentes', path: '/docentes' },
-    { label: 'Sedes',    path: '/sedes'    },
-  ];
-
   /* ── Modal Certificado ──────────────────────────────── */
   modalCertificado = signal(false);
-  certDocumento    = '';
-  certTipo         = 'matricula';
-  certCargando     = signal(false);
-  certError        = signal('');
-  certExito        = signal('');
+  // CAMBIO ARCH-UI (Lote B): certDocumento y certTipo ahora son signals
+  // Antes eran variables planas — con OnPush eso puede dejar la vista sin actualizar
+  certDocumento = signal('');
+  certTipo      = signal('matricula');
+  certCargando  = signal(false);
+  certError     = signal('');
+  certExito     = signal('');
 
-  readonly mapaSrc: SafeResourceUrl;
-  readonly fbSrc:   SafeResourceUrl;
+  readonly fbSrc: SafeResourceUrl;
 
-  constructor(private sanitizer: DomSanitizer) {
-    this.videos.forEach(v => {
-      v.safeUrl = this.sanitizer.bypassSecurityTrustResourceUrl(v.url + '&autoplay=1');
-    });
-    this.mapaSrc = this.sanitizer.bypassSecurityTrustResourceUrl(
-      'https://www.openstreetmap.org/export/embed.html?bbox=-74.3637479%2C4.3449812%2C-74.3597479%2C4.3489812&layer=mapnik&marker=4.3469812%2C-74.3617479'
-    );
+  constructor() {
+    // CAMBIO ARCH-UI: fbSrc permanece aquí porque pertenece a la sección Facebook del home
+    // mapaSrc se movió a FooterComponent donde corresponde
     this.fbSrc = this.sanitizer.bypassSecurityTrustResourceUrl(
       'https://www.facebook.com/plugins/page.php?href=https%3A%2F%2Fwww.facebook.com%2Fitifusagasugaoficial&tabs=timeline&width=500&height=680&small_header=true&adapt_container_width=true&hide_cover=false&show_facepile=false'
     );
+    this.videos.forEach(v => {
+      v.safeUrl = this.sanitizer.bypassSecurityTrustResourceUrl(v.url + '&autoplay=1');
+    });
+  }
+
+  /* ── Ciclo de vida ──────────────────────────────────── */
+  ngOnInit() {
+    this.cargarNoticiasHome();
+  }
+
+  // CAMBIO ARCH-UI: carga las últimas 5 noticias publicadas del backend real
+  // SOLO modifica home.ts — NO toca noticias.ts ni la ruta /noticias
+  private cargarNoticiasHome() {
+    this.cargandoNoticias.set(true);
+    this.api.get<any>('/noticias', { estado: 'publicada', limit: 5 }).subscribe({
+      next: r => {
+        // El backend puede devolver la data en distintos formatos — manejamos ambos
+        const raw = r.data ?? r;
+        const lista: Noticia[] = Array.isArray(raw)
+          ? raw
+          : (raw.rows ?? raw.noticias ?? []);
+        this.noticiasHome.set(lista);
+        this.cargandoNoticias.set(false);
+      },
+      error: () => {
+        // Si el backend no responde, simplemente no mostramos noticias (sin romper la página)
+        this.cargandoNoticias.set(false);
+      },
+    });
   }
 
   toggleVideo(v: typeof this.videos[0], e: MouseEvent) {
@@ -94,7 +125,7 @@ export class Home implements AfterViewInit {
   }
 
   abrirCertificado() {
-    this.certDocumento = '';
+    this.certDocumento.set('');
     this.certError.set('');
     this.certExito.set('');
     this.certCargando.set(false);
@@ -110,7 +141,8 @@ export class Home implements AfterViewInit {
   buscarCertificado() {
     this.certError.set('');
     this.certExito.set('');
-    if (!this.certDocumento.trim() || this.certDocumento.trim().length < 6) {
+    const doc = this.certDocumento().trim();
+    if (!doc || doc.length < 6) {
       this.certError.set('Ingresa un número de documento válido (mínimo 6 dígitos).');
       return;
     }
@@ -121,7 +153,25 @@ export class Home implements AfterViewInit {
     }, 1200);
   }
 
-  /* ── Animaciones ────────────────────────────────────── */
+  /* ── Helpers para noticias ──────────────────────────── */
+  imagenNoticia(n: Noticia): string | null {
+    return n.imagenes?.[0]?.url ?? null;
+  }
+
+  altNoticia(n: Noticia): string {
+    return n.imagenes?.[0]?.altText ?? n.titulo;
+  }
+
+  formatFecha(fecha: string | undefined): string {
+    if (!fecha) return '';
+    return new Date(fecha).toLocaleDateString('es-CO', { day: 'numeric', month: 'long', year: 'numeric' });
+  }
+
+  colorCategoria(n: Noticia): string {
+    return (n.categoria as any)?.color ?? '#A94455';
+  }
+
+  /* ── Animaciones scroll reveal ───────────────────────── */
   ngAfterViewInit() {
     this.initScrollReveal();
   }

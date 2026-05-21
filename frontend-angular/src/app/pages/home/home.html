@@ -121,51 +121,14 @@
 
 </section>
 
-<!-- HORIZONTE INSTITUCIONAL — PÁRAMO DE SUMAPAZ -->
-<section class="horizonte-seccion">
-
-  <!-- COLIBRÍ — grabado flotante -->
-  <div class="colibri-wrap" aria-hidden="true">
-    <img class="colibri-img" src="/inicio/colibri.png" alt="">
-  </div>
-
-  <!-- ENCABEZADO -->
-  <div class="horizonte-header reveal">
-    <div class="horizonte-header-linea"></div>
-    <p class="horizonte-eyebrow">Páramo de Sumapaz · Fusagasugá · Cundinamarca</p>
-    <h2 class="horizonte-titulo">Horizonte Institucional</h2>
-  </div>
-
-  <!-- DOS PILARES: MISIÓN | VISIÓN -->
-  <div class="horizonte-split">
-
-    <div class="horizonte-pilar horizonte-pilar--mision reveal">
-      <div class="horizonte-pilar-inner">
-        <div class="horizonte-sep"></div>
-        <h3 class="horizonte-label">Misión</h3>
-        <p class="horizonte-texto">
-          Formamos jóvenes íntegros con visión técnica, humana y tecnológica, preparados
-          para transformar su entorno mediante la innovación, el conocimiento y la creatividad,
-          integrando ciencia, técnica y valores para afrontar los retos de la sociedad actual.
-        </p>
-      </div>
-    </div>
-
-    <div class="horizonte-pilar horizonte-pilar--vision reveal">
-      <div class="horizonte-pilar-inner">
-        <div class="horizonte-sep"></div>
-        <h3 class="horizonte-label">Visión</h3>
-        <p class="horizonte-texto">
-          Ser una institución líder en educación técnica y tecnológica, reconocida por formar
-          ciudadanos innovadores, humanos y comprometidos con el desarrollo de Fusagasugá
-          y de Colombia.
-        </p>
-        <p class="horizonte-ubicacion">Fusagasugá, Cundinamarca · Colombia</p>
-      </div>
-    </div>
-
-  </div>
-</section>
+<!-- CAMBIO ARCH-UI (Lote C 3.1): sección extraída a HorizonteSectionComponent -->
+<!-- @defer: Angular carga este componente solo cuando el usuario llega a él (viewport) -->
+@defer (on viewport) {
+  <app-horizonte-section></app-horizonte-section>
+} @placeholder {
+  <!-- Espacio reservado — evita el salto de layout mientras carga -->
+  <div style="min-height:600px;background:linear-gradient(175deg,rgba(6,14,8,0.82),rgba(10,3,6,0.78))"></div>
+}
 
 <!-- FRANJA DOCENTES B&W — marquee infinito -->
 <div class="docentes-tira" aria-hidden="true">
@@ -183,7 +146,7 @@
   </div>
 </div>
 
-<!-- NOTICIAS RECIENTES con scroll reveal -->
+<!-- NOTICIAS RECIENTES — datos reales del API (CAMBIO ARCH-UI) -->
 <section class="noticias-seccion">
   <div class="seccion-header reveal">
     <div>
@@ -193,58 +156,113 @@
     <a routerLink="/noticias" class="ver-todas-link">Ver todas</a>
   </div>
 
-  <!-- Grid desktop / Slider móvil -->
-  <div class="noticias-grid reveal">
-    <div class="card-noticia noticia-principal">
-      <img class="card-img" src="https://picsum.photos/seed/its-principal/800/450" alt="Logros académicos 2026" style="height:260px;width:100%;object-fit:cover;">
-      <div class="card-body">
-        <span class="badge badge-vinotinto">Destacada</span>
-        <h3 class="card-titulo-grande">Logros académicos del año lectivo 2026</h3>
-        <p class="card-desc">Nuestros estudiantes destacaron en olimpiadas de matemáticas, ciencias y tecnología a nivel departamental...</p>
-        <div class="card-fecha">15 de mayo, 2026</div>
-      </div>
-    </div>
-
-    @for (n of noticiasEjemplo; track n.id) {
-      <div class="card-noticia">
-        <img class="card-img" [src]="n.img" [alt]="n.titulo" style="height:130px;width:100%;object-fit:cover;">
-        <div class="card-body card-body-sm">
-          <span class="badge badge-verde">{{ n.categoria }}</span>
-          <h4 class="card-titulo-sm">{{ n.titulo }}</h4>
-          <div class="card-fecha">{{ n.fecha }}</div>
+  <!-- Skeleton: placeholders animados mientras carga el API -->
+  @if (cargandoNoticias()) {
+    <div class="noticias-grid reveal">
+      @for (s of skeletons; track $index) {
+        <div class="card-noticia card-skeleton" [class.noticia-principal]="$index === 0">
+          <div class="skeleton-img" [style.height]="$index === 0 ? '260px' : '130px'"></div>
+          <div class="card-body" [class.card-body-sm]="$index > 0">
+            <div class="skeleton-line skeleton-badge"></div>
+            <div class="skeleton-line skeleton-titulo"></div>
+            @if ($index === 0) { <div class="skeleton-line skeleton-desc"></div> }
+            <div class="skeleton-line skeleton-fecha"></div>
+          </div>
         </div>
-      </div>
-    }
-  </div>
+      }
+    </div>
+  }
+
+  <!-- Noticias reales del API -->
+  @if (!cargandoNoticias() && noticiasHome().length > 0) {
+    <div class="noticias-grid reveal">
+
+      <!-- Noticia destacada (la más reciente) -->
+      @if (noticiaDestacada(); as nd) {
+        <a [routerLink]="['/noticias', nd.id]" class="card-noticia noticia-principal card-link">
+          @if (imagenNoticia(nd)) {
+            <img class="card-img" [src]="imagenNoticia(nd)!" [alt]="altNoticia(nd)" style="height:260px;width:100%;object-fit:cover;">
+          } @else {
+            <div class="img-placeholder" style="height:260px;">
+              <span>Sin imagen</span>
+            </div>
+          }
+          <div class="card-body">
+            <span class="badge badge-vinotinto">
+              {{ nd.categoria?.nombre ?? 'Destacada' }}
+            </span>
+            <h3 class="card-titulo-grande">{{ nd.titulo }}</h3>
+            @if (nd.resumen) {
+              <p class="card-desc">{{ nd.resumen }}</p>
+            }
+            <div class="card-fecha">{{ formatFecha(nd.fechaPublicacion ?? nd.createdAt) }}</div>
+          </div>
+        </a>
+      }
+
+      <!-- Noticias secundarias -->
+      @for (n of noticiasSecundarias(); track n.id) {
+        <a [routerLink]="['/noticias', n.id]" class="card-noticia card-link">
+          @if (imagenNoticia(n)) {
+            <img class="card-img" [src]="imagenNoticia(n)!" [alt]="altNoticia(n)" style="height:130px;width:100%;object-fit:cover;">
+          } @else {
+            <div class="img-placeholder" style="height:130px;">
+              <span>Sin imagen</span>
+            </div>
+          }
+          <div class="card-body card-body-sm">
+            <span class="badge badge-verde"
+                  [style.color]="colorCategoria(n)">
+              {{ n.categoria?.nombre ?? 'General' }}
+            </span>
+            <h4 class="card-titulo-sm">{{ n.titulo }}</h4>
+            <div class="card-fecha">{{ formatFecha(n.fechaPublicacion ?? n.createdAt) }}</div>
+          </div>
+        </a>
+      }
+    </div>
+  }
+
+  <!-- Sin noticias aún -->
+  @if (!cargandoNoticias() && noticiasHome().length === 0) {
+    <div class="noticias-vacias reveal">
+      <p>Próximamente las últimas noticias del Instituto.</p>
+      <a routerLink="/noticias" class="its-btn-primario">Ir a la Revista</a>
+    </div>
+  }
 </section>
 
-<!-- SECCIÓN FACEBOOK — feed oficial -->
-<section class="fb-seccion reveal">
-  <div class="fb-inner">
-    <div class="fb-texto">
-      <div class="linea-dorada"></div>
-      <p class="fb-eyebrow">Síguenos en Facebook</p>
-      <h2 class="fb-titulo">Noticias y vida<br><em>institucional</em></h2>
-      <p class="fb-desc">
-        Publicamos eventos, logros, actividades y noticias en tiempo real.
-        Cada publicación aparece aquí automáticamente.
-      </p>
-      <a class="fb-btn"
-         href="https://www.facebook.com/itifusagasugaoficial"
-         target="_blank" rel="noopener noreferrer">
-        Ver página completa en Facebook
-      </a>
+<!-- SECCIÓN FACEBOOK — @defer: el iframe solo carga cuando el usuario llega aquí (CAMBIO ARCH-UI) -->
+@defer (on viewport) {
+  <section class="fb-seccion reveal">
+    <div class="fb-inner">
+      <div class="fb-texto">
+        <div class="linea-dorada"></div>
+        <p class="fb-eyebrow">Síguenos en Facebook</p>
+        <h2 class="fb-titulo">Noticias y vida<br><em>institucional</em></h2>
+        <p class="fb-desc">
+          Publicamos eventos, logros, actividades y noticias en tiempo real.
+          Cada publicación aparece aquí automáticamente.
+        </p>
+        <a class="fb-btn"
+           href="https://www.facebook.com/itifusagasugaoficial"
+           target="_blank" rel="noopener noreferrer">
+          Ver página completa en Facebook
+        </a>
+      </div>
+      <div class="fb-embed-wrap">
+        <iframe class="fb-embed"
+          [src]="fbSrc"
+          scrolling="no"
+          frameborder="0"
+          allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share">
+        </iframe>
+      </div>
     </div>
-    <div class="fb-embed-wrap">
-      <iframe class="fb-embed"
-        [src]="fbSrc"
-        scrolling="no"
-        frameborder="0"
-        allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share">
-      </iframe>
-    </div>
-  </div>
-</section>
+  </section>
+} @placeholder {
+  <div style="min-height:200px;background:#f0f4fa"></div>
+}
 
 <!-- SECCIÓN SEDES con scroll reveal -->
 <section class="sedes-seccion reveal">
@@ -278,14 +296,19 @@
       <h2 class="modal-titulo">Certificado Estudiantil</h2>
       <p class="modal-sub">Ingresa tus datos para generar y descargar tu certificado de matrícula o estudio.</p>
 
+      <!-- CAMBIO ARCH-UI (Lote B): ngModel ahora lee/escribe el signal directamente -->
       <div class="modal-campo">
         <label>Número de documento</label>
         <input class="input-cert" type="text" placeholder="Ej: 1234567890"
-               [(ngModel)]="certDocumento" maxlength="12">
+               [ngModel]="certDocumento()"
+               (ngModelChange)="certDocumento.set($event)"
+               maxlength="12">
       </div>
       <div class="modal-campo">
         <label>Tipo de certificado</label>
-        <select class="modal-select" [(ngModel)]="certTipo">
+        <select class="modal-select"
+                [ngModel]="certTipo()"
+                (ngModelChange)="certTipo.set($event)">
           <option value="matricula">Certificado de Matrícula</option>
           <option value="estudio">Certificado de Estudio</option>
           <option value="notas">Certificado de Calificaciones</option>
@@ -328,70 +351,4 @@
   <span class="wsp-texto">WhatsApp</span>
 </a>
 
-<!-- FOOTER -->
-<footer class="footer">
-  <div class="footer-inner">
-
-    <!-- Marca -->
-    <div class="footer-brand">
-      <img src="assets/images/logo-its.png" alt="Escudo ITS Santander" class="footer-logo">
-      <p class="footer-nombre">Instituto Técnico Industrial Santander</p>
-      <p class="footer-lema">Lealtad · Ciencia · Técnica</p>
-      <p class="footer-desc">Formamos bachilleres técnicos industriales con competencias tecnológicas, científicas y humanas para el desarrollo de Fusagasugá y Colombia.</p>
-    </div>
-
-    <!-- Navegación -->
-    <div class="footer-col">
-      <h4 class="footer-col-titulo">Navegación</h4>
-      <div class="footer-links">
-        @for (link of linksFooter; track link.path) {
-          <a [routerLink]="link.path" class="footer-link">{{ link.label }}</a>
-        }
-      </div>
-    </div>
-
-    <!-- Contacto -->
-    <div class="footer-col">
-      <h4 class="footer-col-titulo">Contacto</h4>
-      <div class="footer-datos">
-        <div class="footer-dato">
-          <span class="footer-dato-label">Dirección</span>
-          <span>Carrera 6A #16-02, Balmoral<br>Fusagasugá, Cundinamarca</span>
-        </div>
-        <div class="footer-dato">
-          <span class="footer-dato-label">Teléfonos</span>
-          <span>(8) 867-4962 &nbsp;·&nbsp; 312 379 8520</span>
-        </div>
-        <div class="footer-dato">
-          <span class="footer-dato-label">Correo</span>
-          <a href="mailto:secretaria@itifusagasuga.com" class="footer-email">secretaria&#64;itifusagasuga.com</a>
-        </div>
-        <div class="footer-dato">
-          <span class="footer-dato-label">Horario</span>
-          <span>Lunes a viernes · 8:00 am – 12:00 pm</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- Mapa -->
-    <div class="footer-col">
-      <h4 class="footer-col-titulo">Ubicación</h4>
-      <div class="footer-mapa-wrap">
-        <iframe class="footer-mapa" [src]="mapaSrc"
-          loading="lazy" title="Ubicación ITS Santander" frameborder="0">
-        </iframe>
-      </div>
-      <a class="footer-mapa-link"
-         href="https://www.google.com/maps?q=4.3469812,-74.3617479"
-         target="_blank" rel="noopener noreferrer">
-        Ver en Google Maps
-      </a>
-    </div>
-
-  </div>
-
-  <div class="footer-copy">
-    <span>© 2026 Instituto Técnico Industrial Santander · Fusagasugá, Cundinamarca · Colombia</span>
-    <span class="footer-web">institutotecnicosantander.com.co</span>
-  </div>
-</footer>
+<!-- CAMBIO ARCH-UI: footer eliminado de home.html — ahora está en app-footer (app.html) -->
