@@ -206,10 +206,10 @@ h1, h2, h3, h4, h5 {
   line-height: 1.02;
 }
 
-/* El contenido de cada línea empieza invisible y abajo (motion.js lo sube y revela) */
+/* Línea de título — motion.js anima la entrada cuando carga */
+/* Sin opacity:0 aquí — si motion falla el texto sigue visible */
 .ht-inner {
   display: block;
-  opacity: 0;
   will-change: transform, opacity;
 }
 

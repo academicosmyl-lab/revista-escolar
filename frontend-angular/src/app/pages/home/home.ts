@@ -183,13 +183,18 @@ export class Home implements OnInit, AfterViewInit {
     // change detection en cada frame de animación (mucho más eficiente)
     this.zone.runOutsideAngular(() => {
       // importación dinámica: motion solo se descarga cuando el home carga
-      import('motion').then(({ animate, inView, scroll, stagger }) => {
+      // .catch(): si el import falla (red, error), todo sigue visible sin animaciones
+      import('motion').then(({ animate, inView, scroll }) => {
         this.initScrollProgress(scroll);
         this.initScrollReveal();
         this.initHeroTitleReveal(animate);
         this.initMagneticButtons();
         this.initHeroParallax(scroll);
         this.initStatsCountUp(animate, inView);
+        this.initBadgeRotativo();
+      }).catch(() => {
+        // fallback: si motion.js no carga, activa scroll-reveal con el observer nativo
+        this.initScrollReveal();
         this.initBadgeRotativo();
       });
     });
