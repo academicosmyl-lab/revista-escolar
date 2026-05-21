@@ -370,6 +370,42 @@ router.put('/docentes/:id', soloAdmin, async (req, res) => {
   }
 });
 
+// Publicar / despublicar perfil en la página /docentes (toggle perfil_publico)
+router.patch('/docentes/:id/visible', soloAdmin, async (req, res) => {
+  try {
+    const usuario = await Usuario.findByPk(req.params.id, {
+      include: [{ model: PerfilDocente, as: 'perfil' }],
+    });
+    if (!usuario) return res.status(404).json({ error: 'Docente no encontrado' });
+
+    // Crear perfil si aún no existe
+    let perfil = usuario.perfil;
+    if (!perfil) {
+      perfil = await PerfilDocente.create({
+        usuario_id:   usuario.id,
+        perfil_publico: true,
+        ultima_actualizacion: new Date(),
+      });
+    }
+
+    const nuevoEstado = !perfil.perfil_publico;
+    await perfil.update({ perfil_publico: nuevoEstado, ultima_actualizacion: new Date() });
+
+    const msg = nuevoEstado ? 'publicado en /docentes' : 'ocultado de /docentes';
+    await AccionAdmin.create({
+      admin_id:     req.usuario.id,
+      tipo:         'editar_docente',
+      descripcion:  `Perfil de "${usuario.nombre}" ${msg}`,
+      entidad_tipo: 'PerfilDocente',
+      entidad_id:   perfil.id,
+    });
+
+    res.json({ ok: true, perfil_publico: nuevoEstado, mensaje: `"${usuario.nombre}" ${msg}` });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
 // Desactivar docente (soft delete)
 router.delete('/docentes/:id', soloAdmin, async (req, res) => {
   try {

@@ -846,6 +846,40 @@ $radius-lg:  16px;
   }
 }
 
+// ── Toggle visible /docentes ─────────────────────────────
+.sa-td-visible { white-space: nowrap; }
+
+.sa-visible-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 4px 10px;
+  border-radius: 20px;
+  border: 1px solid;
+  font-size: 0.72rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.15s, transform 0.12s;
+
+  svg { display: block; }
+
+  &:active { transform: scale(0.96); }
+
+  &.visible {
+    background: rgba(34,197,94,0.1);
+    border-color: rgba(34,197,94,0.35);
+    color: $ok;
+    &:hover { background: rgba(34,197,94,0.2); }
+  }
+
+  &.oculto {
+    background: rgba(122,130,153,0.1);
+    border-color: rgba(122,130,153,0.25);
+    color: $text-dim;
+    &:hover { background: rgba(122,130,153,0.18); color: $text; }
+  }
+}
+
 // ── Historial ────────────────────────────────────────────
 .sa-historial-list {
   background: $surface;

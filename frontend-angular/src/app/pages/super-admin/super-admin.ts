@@ -21,7 +21,7 @@ interface Solicitud {
 
 interface Docente {
   id: string; nombre: string; email: string; activo: boolean; rol: string;
-  perfil?: { tituloProfesional?: string; cargo?: string; fotoUrl?: string; bio?: string; perfil_publico?: boolean; };
+  perfil?: { tituloProfesional?: string; cargo?: string; fotoUrl?: string; bio?: string; perfil_publico?: boolean; id?: string; };
 }
 
 interface AccionAdmin {
@@ -192,6 +192,22 @@ export class SuperAdmin implements OnInit {
   toggleActivo(doc: Docente) {
     this.api.delete<any>(`/super-admin/docentes/${doc.id}`).subscribe({
       next:  r => { this.exito.set(r.mensaje || 'Actualizado'); this.cargarDocentes(); this.cdr.markForCheck(); },
+      error: e => { this.error.set(e.mensaje ?? 'Error'); this.cdr.markForCheck(); },
+    });
+  }
+
+  toggleVisible(doc: Docente) {
+    this.api.patch<any>(`/super-admin/docentes/${doc.id}/visible`, {}).subscribe({
+      next:  r => {
+        this.exito.set(r.mensaje || 'Visibilidad actualizada');
+        // Actualizar en memoria sin recargar toda la lista
+        if (doc.perfil) {
+          doc.perfil.perfil_publico = r.perfil_publico;
+        } else {
+          doc.perfil = { perfil_publico: r.perfil_publico };
+        }
+        this.cdr.markForCheck();
+      },
       error: e => { this.error.set(e.mensaje ?? 'Error'); this.cdr.markForCheck(); },
     });
   }

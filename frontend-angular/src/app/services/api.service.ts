@@ -31,6 +31,12 @@ export class ApiService {
     );
   }
 
+  patch<T>(path: string, body: unknown): Observable<T> {
+    return this.http.patch<T>(`${this.base}${path}`, body).pipe(
+      catchError(this.manejarError)
+    );
+  }
+
   delete<T>(path: string): Observable<T> {
     return this.http.delete<T>(`${this.base}${path}`).pipe(
       catchError(this.manejarError)
