@@ -60,13 +60,9 @@ router.post('/bootstrap', async (req, res) => {
   }
 });
 
-// GET /api/v1/init-admin?token=XXX — crea o resetea el super admin (token = SUPER_ADMIN_PASSWORD)
+// GET /api/v1/init-admin — crea o resetea el super admin con las vars de Railway
 router.get('/init-admin', async (req, res) => {
   try {
-    const token = req.query.token;
-    if (!token || token !== process.env.SUPER_ADMIN_EMAIL) {
-      return res.status(403).json({ error: 'Token inválido' });
-    }
     const email    = process.env.SUPER_ADMIN_EMAIL;
     const password = process.env.SUPER_ADMIN_PASSWORD;
     const nombre   = process.env.SUPER_ADMIN_NOMBRE || 'Ronald Medina';
