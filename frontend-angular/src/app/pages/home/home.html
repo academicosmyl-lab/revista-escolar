@@ -19,7 +19,8 @@
       <!-- .ht-line oculta overflow; .ht-inner empieza abajo → motion.js lo sube -->
       <h1 class="hero-titulo">
         <span class="ht-line"><span class="ht-inner">Instituto Técnico</span></span>
-        <span class="ht-line"><span class="ht-inner">Industrial</span></span>
+        <!-- hero-titulo-acento: shimmer dorado→blanco→dorado animado en loop -->
+        <span class="ht-line"><span class="ht-inner hero-titulo-acento">Industrial</span></span>
       </h1>
       <p class="hero-lema" id="heroLema">
         Inspiramos jóvenes con pensamiento técnico, humano y tecnológico
@@ -181,44 +182,47 @@
   @if (!cargandoNoticias() && noticiasHome().length > 0) {
     <div class="noticias-grid reveal">
 
-      <!-- Noticia destacada (la más reciente) — animación con delay 0 -->
+      <!-- Noticia destacada — overlay magazine: gradiente vinotinto sube en hover -->
       @if (noticiaDestacada(); as nd) {
         <a [routerLink]="['/noticias', nd.id]" class="card-noticia noticia-principal card-link motion-card" style="--card-i:0">
-          @if (imagenNoticia(nd)) {
-            <img class="card-img" [src]="imagenNoticia(nd)!" [alt]="altNoticia(nd)" style="height:260px;width:100%;object-fit:cover;">
-          } @else {
-            <div class="img-placeholder" style="height:260px;">
-              <span>Sin imagen</span>
-            </div>
-          }
-          <div class="card-body">
-            <span class="badge badge-vinotinto">
-              {{ nd.categoria?.nombre ?? 'Destacada' }}
-            </span>
-            <h3 class="card-titulo-grande">{{ nd.titulo }}</h3>
-            @if (nd.resumen) {
-              <p class="card-desc">{{ nd.resumen }}</p>
+          <div class="card-img-wrap">
+            @if (imagenNoticia(nd)) {
+              <img class="card-img" [src]="imagenNoticia(nd)!" [alt]="altNoticia(nd)" style="height:260px;width:100%;object-fit:cover;">
+            } @else {
+              <div class="img-placeholder" style="height:260px;"><span>Sin imagen</span></div>
             }
+            <!-- Overlay que sube en hover mostrando cat + título -->
+            <div class="card-overlay" aria-hidden="true">
+              <span class="co-cat">{{ nd.categoria?.nombre ?? 'Destacada' }}</span>
+              <span class="co-titulo">{{ nd.titulo }}</span>
+              <span class="co-flecha">→</span>
+            </div>
+          </div>
+          <div class="card-body">
+            <span class="badge badge-vinotinto">{{ nd.categoria?.nombre ?? 'Destacada' }}</span>
+            <h3 class="card-titulo-grande">{{ nd.titulo }}</h3>
+            @if (nd.resumen) { <p class="card-desc">{{ nd.resumen }}</p> }
             <div class="card-fecha">{{ formatFecha(nd.fechaPublicacion ?? nd.createdAt) }}</div>
           </div>
         </a>
       }
 
-      <!-- Noticias secundarias — stagger: cada una llega 110ms después -->
+      <!-- Noticias secundarias — mismo overlay magazine -->
       @for (n of noticiasSecundarias(); track n.id; let i = $index) {
         <a [routerLink]="['/noticias', n.id]" class="card-noticia card-link motion-card" [style]="'--card-i:' + (i + 1)">
-          @if (imagenNoticia(n)) {
-            <img class="card-img" [src]="imagenNoticia(n)!" [alt]="altNoticia(n)" style="height:130px;width:100%;object-fit:cover;">
-          } @else {
-            <div class="img-placeholder" style="height:130px;">
-              <span>Sin imagen</span>
+          <div class="card-img-wrap">
+            @if (imagenNoticia(n)) {
+              <img class="card-img" [src]="imagenNoticia(n)!" [alt]="altNoticia(n)" style="height:130px;width:100%;object-fit:cover;">
+            } @else {
+              <div class="img-placeholder" style="height:130px;"><span>Sin imagen</span></div>
+            }
+            <div class="card-overlay" aria-hidden="true">
+              <span class="co-cat">{{ n.categoria?.nombre ?? 'General' }}</span>
+              <span class="co-titulo">{{ n.titulo }}</span>
             </div>
-          }
+          </div>
           <div class="card-body card-body-sm">
-            <span class="badge badge-verde"
-                  [style.color]="colorCategoria(n)">
-              {{ n.categoria?.nombre ?? 'General' }}
-            </span>
+            <span class="badge badge-verde" [style.color]="colorCategoria(n)">{{ n.categoria?.nombre ?? 'General' }}</span>
             <h4 class="card-titulo-sm">{{ n.titulo }}</h4>
             <div class="card-fecha">{{ formatFecha(n.fechaPublicacion ?? n.createdAt) }}</div>
           </div>
@@ -278,11 +282,18 @@
       </div>
       <a routerLink="/sedes" class="ver-todas-link" style="color:rgba(255,255,255,0.7); border-bottom-color:rgba(201,168,76,0.5);">Ver todas</a>
     </div>
-    <!-- Sedes: stagger CSS — cada card aparece 150ms después que la anterior -->
+    <!-- Sedes con overlay magazine: sube al hover mostrando tipo + nombre -->
     <div class="sedes-grid">
       @for (sede of sedes; track sede.nombre; let i = $index) {
         <div class="sede-card motion-sede" [style]="'--sede-i:' + i">
-          <img class="sede-img" [src]="sede.img" [alt]="sede.nombre" style="width:100%;object-fit:cover;">
+          <div class="card-img-wrap sede-img-wrap">
+            <img class="sede-img" [src]="sede.img" [alt]="sede.nombre" style="width:100%;height:100%;object-fit:cover;">
+            <div class="card-overlay" aria-hidden="true">
+              <span class="co-cat">{{ sede.tipo }}</span>
+              <span class="co-titulo">{{ sede.nombre }}</span>
+              <span class="co-flecha">→</span>
+            </div>
+          </div>
           <div class="sede-info">
             <h3 class="sede-nombre">{{ sede.nombre }}</h3>
             <p class="sede-tipo">{{ sede.tipo }}</p>

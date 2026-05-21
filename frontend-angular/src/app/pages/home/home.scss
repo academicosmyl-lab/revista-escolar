@@ -301,6 +301,126 @@
   font-style: italic;
 }
 
+/* "Industrial" — shimmer dorado→blanco→dorado en loop infinito */
+.hero-titulo-acento {
+  background: linear-gradient(
+    90deg,
+    #D4A853 0%,
+    rgba(255, 255, 255, 0.92) 42%,
+    #e8c97a 55%,
+    #D4A853 100%
+  );
+  background-size: 250% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  /* Comienza 1.8s después (cuando la animación de entrada termina) */
+  animation: heroShimmer 5s ease-in-out infinite;
+  animation-delay: 1.8s;
+}
+
+@keyframes heroShimmer {
+  0%, 100% { background-position: 0% 50%; }
+  50%       { background-position: 100% 50%; }
+}
+
+/* ── MAGAZINE HOVER — overlay vinotinto que sube en cards ── */
+/* .card-img-wrap: contenedor relativo que oculta el overflow */
+.card-img-wrap {
+  position: relative;
+  overflow: hidden;
+
+  img {
+    display: block;
+    width: 100%;
+    object-fit: cover;
+    /* Zoom suave al hover */
+    transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+}
+
+/* Overlay: gradiente vinotinto que empieza escondido abajo */
+.card-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    rgba(169, 68, 85, 0.97) 0%,
+    rgba(169, 68, 85, 0.82) 45%,
+    rgba(10, 3, 8, 0.20) 100%
+  );
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 1.1rem 1.25rem;
+  gap: 0.28rem;
+  /* Empieza abajo del todo */
+  transform: translateY(100%);
+  transition: transform 0.55s cubic-bezier(0.16, 1, 0.3, 1);
+  pointer-events: none;
+
+  /* Cada elemento del overlay entra con micro-delay escalonado */
+  .co-cat {
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: #D4A853;
+    transform: translateY(14px);
+    opacity: 0;
+    transition:
+      transform 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.05s,
+      opacity   0.4s ease 0.05s;
+  }
+
+  .co-titulo {
+    font-family: 'Playfair Display', serif;
+    font-size: 0.9rem;
+    line-height: 1.35;
+    color: #fff;
+    transform: translateY(18px);
+    opacity: 0;
+    transition:
+      transform 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.09s,
+      opacity   0.4s ease 0.09s;
+
+    /* Limita texto largo a 3 líneas */
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .co-flecha {
+    font-size: 1.05rem;
+    color: #D4A853;
+    transform: translateY(18px) translateX(-6px);
+    opacity: 0;
+    transition:
+      transform 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.13s,
+      opacity   0.4s ease 0.13s;
+  }
+}
+
+/* Activación: cuando hoverea el card o la sede */
+.card-noticia:hover, .sede-card:hover {
+  .card-img-wrap img { transform: scale(1.07); }
+
+  .card-overlay {
+    transform: translateY(0);
+
+    .co-cat, .co-flecha { transform: translateY(0) translateX(0); opacity: 1; }
+    .co-titulo { transform: translateY(0); opacity: 1; }
+  }
+}
+
+/* sede-img-wrap: altura fija para que el overlay funcione */
+.sede-img-wrap {
+  height: 220px;
+  flex-shrink: 0;
+}
+
 /* Botones — fila 4, alineados bajo el título */
 /* motion.js maneja la animación de entrada — no hay opacity:0 aquí */
 .hero-bloque-btn {
