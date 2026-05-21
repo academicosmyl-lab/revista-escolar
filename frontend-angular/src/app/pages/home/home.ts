@@ -184,16 +184,16 @@ export class Home implements OnInit, AfterViewInit {
     this.zone.runOutsideAngular(() => {
       // importación dinámica: motion solo se descarga cuando el home carga
       // .catch(): si el import falla (red, error), todo sigue visible sin animaciones
-      import('motion').then(({ animate, inView, scroll }) => {
+      import('motion').then(({ animate, inView, scroll, stagger }) => {
         this.initScrollProgress(scroll);
         this.initScrollReveal();
-        this.initHeroTitleReveal(animate);
+        this.initHeroTitleReveal(animate, stagger);   // letra por letra + scramble
         this.initMagneticButtons();
         this.initHeroParallax(scroll);
         this.initStatsCountUp(animate, inView);
         this.initBadgeRotativo();
+        this.initCardTilt();                          // 3D tilt en cards y sedes
       }).catch(() => {
-        // fallback: si motion.js no carga, activa scroll-reveal con el observer nativo
         this.initScrollReveal();
         this.initBadgeRotativo();
       });
@@ -222,45 +222,101 @@ export class Home implements OnInit, AfterViewInit {
     document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
   }
 
-  // ── 3. Hero: título línea por línea ────────────────────
-  // Cada línea (.ht-inner) sube desde abajo con spring easing escalonado
-  private initHeroTitleReveal(animate: Function) {
-    const inners  = document.querySelectorAll<HTMLElement>('.ht-inner');
+  // ── 3. Hero: entrada letra por letra + scramble ────────
+  // Nivel 2: cada CARÁCTER del título entra con rotación individual
+  // El eyebrow hace "scramble": letras aleatorias → texto real (efecto hacker)
+  private initHeroTitleReveal(animate: Function, stagger: Function) {
     const eyebrow = document.getElementById('heroEyebrow');
     const lema    = document.getElementById('heroLema');
     const btns    = document.getElementById('heroBtns');
 
-    // Eyebrow — aparece primero
-    if (eyebrow) {
-      animate(eyebrow,
-        { opacity: [0, 1], y: ['-12px', '0px'] },
-        { duration: 0.6, delay: 0.1, ease: [0.16, 1, 0.3, 1] }
-      );
-    }
+    // EFECTO SCRAMBLE en el eyebrow: letras aleatorizadas que se resuelven al texto real
+    if (eyebrow) this.textScramble(eyebrow, 0.15);
 
-    // Cada línea del título llega desde abajo (como prensa tipográfica)
-    inners.forEach((el, i) => {
-      animate(el,
-        { y: ['105%', '0%'], opacity: [0, 1] },
-        { duration: 1.0, delay: 0.25 + i * 0.18, ease: [0.16, 1, 0.3, 1] }
+    // LETRA POR LETRA en el título
+    // splitChars() descompone el texto en <span> individuales para animar cada uno
+    const inners = document.querySelectorAll<HTMLElement>('.ht-inner');
+    inners.forEach((inner, lineIndex) => {
+      const chars = this.splitChars(inner);
+      if (!chars.length) return;
+      animate(
+        chars,
+        { y: ['115%', '0%'], opacity: [0, 1], rotate: [-10, 0] },
+        {
+          // stagger: 40ms entre letra y letra; cada línea empieza 300ms después
+          delay:    stagger(0.04, { startDelay: 0.4 + lineIndex * 0.28 }),
+          duration: 0.6,
+          ease:     [0.16, 1, 0.3, 1],
+        }
       );
     });
 
-    // Lema aparece después del título
+    // Lema — entra con blur que se disipa (efecto "foco")
     if (lema) {
       animate(lema,
-        { opacity: [0, 1], y: ['20px', '0px'] },
-        { duration: 0.8, delay: 0.85, ease: [0.22, 1, 0.36, 1] }
+        { opacity: [0, 1], y: ['18px', '0px'], filter: ['blur(6px)', 'blur(0px)'] },
+        { duration: 1.0, delay: 1.25, ease: [0.22, 1, 0.36, 1] }
       );
     }
 
-    // Botones — al final con scale sutil
+    // Botones — escalan desde 90% con bounce
     if (btns) {
       animate(btns,
-        { opacity: [0, 1], y: ['24px', '0px'], scale: [0.95, 1] },
-        { duration: 0.7, delay: 1.1, ease: [0.22, 1, 0.36, 1] }
+        { opacity: [0, 1], y: ['22px', '0px'], scale: [0.88, 1] },
+        { duration: 0.75, delay: 1.55, ease: [0.34, 1.56, 0.64, 1] }
       );
     }
+  }
+
+  // ── Helper: descompone texto en <span> por carácter ────
+  // Necesario para animar letra por letra con motion.js
+  // Los espacios se preservan como   (no-break space visible)
+  private splitChars(el: HTMLElement): HTMLElement[] {
+    const text = el.textContent ?? '';
+    el.innerHTML = '';
+    const chars: HTMLElement[] = [];
+
+    for (const char of text) {
+      const span = document.createElement('span');
+      span.style.display = 'inline-block';
+      if (char === ' ') {
+        // Espacio: visible, no animado
+        span.textContent = ' ';
+      } else {
+        span.textContent = char;
+        chars.push(span); // solo letras reales se animan
+      }
+      el.appendChild(span);
+    }
+    return chars;
+  }
+
+  // ── Helper: efecto scramble en un elemento de texto ────
+  // Muestra letras aleatorias que se "resuelven" al texto real de izquierda a derecha
+  private textScramble(el: HTMLElement, delaySeconds = 0) {
+    const POOL  = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ·—·';
+    const final = el.textContent ?? '';
+    let frame   = 0;
+    const totalFrames = final.length * 3; // 3 frames aleatorios por carácter
+
+    setTimeout(() => {
+      const id = setInterval(() => {
+        el.textContent = final
+          .split('')
+          .map((char, i) => {
+            if (char === ' ') return ' ';
+            // Una vez que el "cursor" llegó a esta posición, queda fijo
+            if (i < Math.floor(frame / 3)) return final[i];
+            return POOL[Math.floor(Math.random() * POOL.length)];
+          })
+          .join('');
+
+        if (++frame > totalFrames) {
+          el.textContent = final; // asegura el texto final exacto
+          clearInterval(id);
+        }
+      }, 28); // ~35 fps para que el scramble sea veloz pero legible
+    }, delaySeconds * 1000);
   }
 
   // ── 4. Botones magnéticos ──────────────────────────────
@@ -353,5 +409,49 @@ export class Home implements OnInit, AfterViewInit {
     // Pausa al hover para permitir leer el texto
     badge.addEventListener('mouseenter', () => { paused = true; });
     badge.addEventListener('mouseleave', () => { paused = false; });
+  }
+
+  // ── 8. 3D tilt en cards al hover ───────────────────────
+  // Al mover el mouse sobre una card, rota en perspectiva 3D
+  // La sombra se mueve dinámicamente según el ángulo → sensación de luz real
+  private initCardTilt() {
+    const STRENGTH = 14; // grados máximos de inclinación
+
+    const applyTilt = (card: HTMLElement) => {
+      if (card.dataset['tilt']) return; // evitar doble registro
+      card.dataset['tilt'] = '1';
+
+      card.addEventListener('mousemove', (e: MouseEvent) => {
+        const rect  = card.getBoundingClientRect();
+        const xPct  = (e.clientX - rect.left) / rect.width  - 0.5;
+        const yPct  = (e.clientY - rect.top)  / rect.height - 0.5;
+        const rotX  = yPct * -STRENGTH;
+        const rotY  = xPct *  STRENGTH;
+        card.style.transform  = `perspective(900px) rotateX(${rotX}deg) rotateY(${rotY}deg) scale(1.03)`;
+        card.style.boxShadow  = `${-rotY * 2}px ${-rotX * 2}px 32px rgba(169,68,85,0.22), 0 8px 24px rgba(0,0,0,0.1)`;
+        card.style.transition = 'transform 0.06s linear, box-shadow 0.06s linear';
+      });
+
+      card.addEventListener('mouseleave', () => {
+        card.style.transform  = 'perspective(900px) rotateX(0) rotateY(0) scale(1)';
+        card.style.boxShadow  = '';
+        card.style.transition = 'transform 0.55s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.4s ease';
+      });
+    };
+
+    // Sedes (siempre en DOM desde el inicio)
+    document.querySelectorAll<HTMLElement>('.sede-card').forEach(applyTilt);
+
+    // Cards de noticias: se renderizan DESPUÉS del fetch al API
+    // MutationObserver: espera a que Angular las inyecte en el DOM
+    const contenedor = document.querySelector('.noticias-seccion');
+    if (contenedor) {
+      const mo = new MutationObserver(() => {
+        document.querySelectorAll<HTMLElement>('.card-noticia').forEach(applyTilt);
+      });
+      mo.observe(contenedor, { childList: true, subtree: true });
+      // También aplica a cards ya presentes
+      document.querySelectorAll<HTMLElement>('.card-noticia').forEach(applyTilt);
+    }
   }
 }
