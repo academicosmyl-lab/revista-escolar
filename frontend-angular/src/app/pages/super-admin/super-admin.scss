@@ -1147,3 +1147,132 @@ $radius-lg:  16px;
   color: #fca5a5;
   margin: 0.2rem 0 0;
 }
+
+// ── Rol-chip color variants ──────────────────────────────
+.sa-rol-chip {
+  &.sa-rol-docente      { background: $gold-dim; color: $gold; }
+  &.sa-rol-rector       { background: rgba(139,92,246,0.12); color: #c4b5fd; }
+  &.sa-rol-coordinador  { background: rgba(59,130,246,0.12); color: #93c5fd; }
+  &.sa-rol-orientadora  { background: rgba(236,72,153,0.12); color: #f9a8d4; }
+  &.sa-rol-personal     { background: rgba(22,163,74,0.12);  color: #86efac; }
+}
+
+// ── Solicitud card — nuevas clases ──────────────────────
+.sa-sol-head-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.2rem;
+  flex-wrap: wrap;
+}
+
+.sa-sol-bio-full {
+  font-size: 0.8rem;
+  color: $text-dim;
+  line-height: 1.55;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  margin: 0 0 0.5rem;
+}
+
+.sa-sol-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-bottom: 0.5rem;
+}
+
+.sa-tag {
+  display: inline-block;
+  background: rgba(212,168,83,0.1);
+  color: $gold;
+  font-size: 0.68rem;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 20px;
+  border: 1px solid rgba(212,168,83,0.25);
+  letter-spacing: 0.03em;
+}
+
+// ── Modal perfil completo ────────────────────────────────
+.sa-modal-foto-placeholder {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: $gold-dim;
+  color: $gold;
+  font-size: 1.3rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  text-transform: uppercase;
+  border: 2px solid rgba(212,168,83,0.25);
+}
+
+.sa-modal-info-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  flex: 1;
+  min-width: 0;
+}
+
+.sa-modal-section {
+  margin-bottom: 1.25rem;
+
+  &:last-child { margin-bottom: 0; }
+}
+
+.sa-modal-section-title {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: $text-dim;
+  margin: 0 0 0.6rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 1px solid $border;
+}
+
+.sa-modal-bio-corta {
+  font-size: 0.85rem;
+  color: $text;
+  line-height: 1.6;
+  margin: 0 0 0.6rem;
+}
+
+.sa-modal-bio-full {
+  font-size: 0.82rem;
+  color: $text-dim;
+  line-height: 1.65;
+  margin: 0;
+}
+
+.sa-modal-redes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.sa-modal-red {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.78rem;
+  color: $gold;
+  text-decoration: none;
+  padding: 4px 10px;
+  border-radius: 6px;
+  border: 1px solid rgba(212,168,83,0.25);
+  background: rgba(212,168,83,0.06);
+  transition: background 0.15s, border-color 0.15s;
+
+  &:hover {
+    background: rgba(212,168,83,0.14);
+    border-color: rgba(212,168,83,0.45);
+  }
+}
