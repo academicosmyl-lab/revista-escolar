@@ -37,6 +37,34 @@ async function iniciar() {
       console.error('⚠️  Auto-seed falló (no crítico):', seedErr.message);
     }
 
+    // Auto-seed Super Admin si las variables de entorno están definidas
+    if (process.env.SUPER_ADMIN_EMAIL && process.env.SUPER_ADMIN_PASSWORD) {
+      try {
+        const bcrypt  = require('bcryptjs');
+        const { Usuario } = require('./models');
+        const existente = await Usuario.findOne({ where: { email: process.env.SUPER_ADMIN_EMAIL } });
+        if (!existente) {
+          const hash = await bcrypt.hash(process.env.SUPER_ADMIN_PASSWORD, 12);
+          await Usuario.create({
+            nombre:        process.env.SUPER_ADMIN_NOMBRE || 'Ronald Medina',
+            email:         process.env.SUPER_ADMIN_EMAIL,
+            password_hash: hash,
+            rol:           'ADMIN',
+            activo:        true,
+            es_raiz:       true,
+          });
+          console.log(`✅ Super Admin creado: ${process.env.SUPER_ADMIN_EMAIL}`);
+        } else if (existente.rol !== 'ADMIN' || !existente.es_raiz) {
+          await existente.update({ rol: 'ADMIN', activo: true, es_raiz: true });
+          console.log(`✅ Super Admin actualizado: ${process.env.SUPER_ADMIN_EMAIL}`);
+        } else {
+          console.log(`ℹ️  Super Admin ya existe: ${process.env.SUPER_ADMIN_EMAIL}`);
+        }
+      } catch (saErr) {
+        console.error('⚠️  Super Admin seed falló (no crítico):', saErr.message);
+      }
+    }
+
     // Verificar email (no bloqueante)
     emailService.verificar().then(emailOk => {
       console.log(emailOk.ok ? '✅ Email configurado' : `⚠️  Email: ${emailOk.error}`);
