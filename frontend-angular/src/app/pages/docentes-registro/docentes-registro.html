@@ -12,28 +12,21 @@
     </svg>
   </div>
   <div class="reg-hero-inner">
-    <span class="reg-hero-eyebrow" id="regEyebrow">Instituto Técnico Industrial Santander · Fusagasugá</span>
+    <span class="reg-hero-eyebrow" id="regEyebrow">Directorio del equipo · Instituto Técnico Industrial Santander</span>
     <h1 class="reg-hero-titulo" id="regTitulo">
-      Tu historia<br><em>merece estar aquí.</em>
+      Tu presencia<br><em>hace al ITS.</em>
     </h1>
     <p class="reg-hero-subtitulo" id="regSubtitulo">
-      Esta página es el escaparate digital de nuestro equipo.<br>
-      Completar tu perfil es una forma de decirle a la comunidad:<br>
-      <strong>"Soy parte del ITS, y lo que hago importa."</strong>
+      El ITS no es un edificio. Es el equipo que lo hace vivir.<br>
+      Docentes, orientadores, vigilantes, cocineras, secretarias, personal de aseo —<br>
+      <strong>todos construyen este lugar cada día.</strong>
     </p>
     <div class="reg-hero-firma" id="regFirma">
       <div class="reg-firma-linea"></div>
       <p class="reg-firma-texto">
-        Cada perfil publicado refuerza la imagen de excelencia de nuestra institución
-        y genera en los estudiantes un modelo de vida a seguir.
+        No hay labor pequeña en el ITS. Hay personas que eligen dar lo mejor de sí mismas
+        y merecen que su historia sea visible para toda la comunidad.
       </p>
-    </div>
-    <div class="reg-hero-impacto">
-      <div class="reg-impacto-item"><span class="reg-impacto-num">50+</span><span class="reg-impacto-label">Personas en el equipo</span></div>
-      <div class="reg-impacto-sep" aria-hidden="true">·</div>
-      <div class="reg-impacto-item"><span class="reg-impacto-num">3</span><span class="reg-impacto-label">Sedes institucionales</span></div>
-      <div class="reg-impacto-sep" aria-hidden="true">·</div>
-      <div class="reg-impacto-item"><span class="reg-impacto-num">1.000+</span><span class="reg-impacto-label">Estudiantes que nos ven</span></div>
     </div>
   </div>
   <div class="reg-hero-scroll" aria-hidden="true">
@@ -223,20 +216,13 @@
         </div>
 
         @if (!esPersonal()) {
+          <!-- ── Solo académicos: título + área ── -->
           <div class="reg-campo">
             <label class="reg-label" for="fTitulo">Título académico <span class="reg-req">*</span></label>
             <input id="fTitulo" type="text" class="reg-input"
                    placeholder="Ej: Licenciado en Matemáticas"
                    [ngModel]="titulo()" (ngModelChange)="titulo.set($event)"
                    (blur)="onBlurTitulo()" maxlength="80">
-          </div>
-
-          <div class="reg-campo">
-            <label class="reg-label" for="fEmail">Email institucional</label>
-            <input id="fEmail" type="email" class="reg-input"
-                   placeholder="nombre@itssantander.edu.co"
-                   [ngModel]="email()" (ngModelChange)="email.set($event)"
-                   (blur)="onBlurEmail()" maxlength="100">
           </div>
 
           @if (mostrarArea()) {
@@ -265,51 +251,89 @@
               </div>
             }
           }
-
-          <div class="reg-campo">
-            <label class="reg-label" for="fExp">Años de experiencia</label>
-            <input id="fExp" type="number" class="reg-input" placeholder="Ej: 12"
-                   min="0" max="60"
-                   [ngModel]="experiencia()" (ngModelChange)="experiencia.set(+$event)">
-          </div>
         }
+
+        <!-- ── Todos los roles: email + tiempo en la institución ── -->
+        <div class="reg-campo">
+          <label class="reg-label" for="fEmail">
+            @if (esPersonal()) { Email de contacto } @else { Email institucional }
+          </label>
+          <input id="fEmail" type="email" class="reg-input"
+                 [placeholder]="esPersonal() ? 'tucorreo@ejemplo.com' : 'nombre@itssantander.edu.co'"
+                 [ngModel]="email()" (ngModelChange)="email.set($event)"
+                 (blur)="onBlurEmail()" maxlength="100">
+        </div>
+
+        <div class="reg-campo">
+          <label class="reg-label" for="fExp">
+            @if (esPersonal()) { Años en el ITS } @else { Años de experiencia }
+          </label>
+          <input id="fExp" type="number" class="reg-input"
+                 [placeholder]="esPersonal() ? 'Ej: 8' : 'Ej: 12'"
+                 min="0" max="60"
+                 [ngModel]="experiencia()" (ngModelChange)="experiencia.set(+$event)">
+        </div>
 
       </div>
     </section>
 
     <!-- ══════════════════════════════════════════
-         SECCIÓN 03 — HISTORIA (no para PERSONAL)
+         SECCIÓN 03 — DESCRIPCIÓN / HISTORIA
+         Visible para TODOS los roles (labels adaptativos)
          ══════════════════════════════════════════ -->
-    @if (!esPersonal()) {
     <section class="reg-seccion">
       <div class="reg-sec-label">
         <span class="reg-sec-num">03</span>
-        <h2 class="reg-sec-titulo">Tu historia</h2>
-        <p class="reg-sec-desc">
-          Escribe con naturalidad, no como un CV.
-          Usa minúsculas si quieres — la revisión automática corregirá
-          tildes y mayúsculas antes de enviar.
-        </p>
+        @if (esPersonal()) {
+          <h2 class="reg-sec-titulo">Tu aporte al ITS</h2>
+          <p class="reg-sec-desc">
+            Cuéntanos qué haces cada día, cómo contribuyes a la institución
+            y qué hace especial tu trabajo aquí.
+            Escribe con naturalidad — la revisión automática corregirá la ortografía.
+          </p>
+        } @else {
+          <h2 class="reg-sec-titulo">Tu historia</h2>
+          <p class="reg-sec-desc">
+            Escribe con naturalidad, no como un CV.
+            Usa minúsculas si quieres — la revisión automática corregirá
+            tildes y mayúsculas antes de enviar.
+          </p>
+        }
       </div>
       <div class="reg-campos">
+
         <div class="reg-campo reg-campo-full">
           <label class="reg-label" for="fBioCorta">
-            Bio corta — aparece en tu tarjeta <span class="reg-req">*</span>
+            @if (esPersonal()) {
+              Descripción de tu cargo — aparece en tu tarjeta <span class="reg-req">*</span>
+            } @else {
+              Bio corta — aparece en tu tarjeta <span class="reg-req">*</span>
+            }
           </label>
           <textarea id="fBioCorta" class="reg-textarea reg-textarea-sm"
-                    placeholder="Ej: docente de electronica con enfasis en robotica. me apasiona conectar la teoria con proyectos reales."
+                    [placeholder]="esPersonal()
+                      ? 'Ej: Encargado de la seguridad de las tres sedes. Llevo 8 años cuidando a nuestra comunidad educativa.'
+                      : 'Ej: docente de electrónica con énfasis en robótica. Me apasiona conectar la teoría con proyectos reales.'"
                     [ngModel]="bioCorta()" (ngModelChange)="bioCorta.set($event)"
                     (blur)="onBlurBioCorta()" maxlength="140" required></textarea>
           <div class="reg-contador" [class.reg-contador-warn]="bioShortLeft() <= 15">
             {{ bioShortLeft() }} caracteres restantes
           </div>
         </div>
+
         <div class="reg-campo reg-campo-full">
           <label class="reg-label" for="fBioFull">
-            Presentación completa — se muestra en tu perfil
+            @if (esPersonal()) {
+              Mi historia en el ITS
+              <span class="reg-sec-opcional" style="margin-left:4px">(opcional)</span>
+            } @else {
+              Presentación completa — se muestra en tu perfil
+            }
           </label>
           <textarea id="fBioFull" class="reg-textarea reg-textarea-lg"
-                    placeholder="Cuéntanos tu trayectoria, metodología, qué te motivó, logros, proyectos con estudiantes..."
+                    [placeholder]="esPersonal()
+                      ? 'Cuéntanos cómo llegaste al ITS, qué te gusta de trabajar aquí, algo que te enorgullezca de tu labor...'
+                      : 'Cuéntanos tu trayectoria, metodología, qué te motivó, logros, proyectos con estudiantes...'"
                     [ngModel]="bioCompleta()" (ngModelChange)="bioCompleta.set($event)"
                     (blur)="onBlurBioCompleta()" maxlength="600"></textarea>
           <div class="reg-contador" [class.reg-contador-warn]="bioFullLeft() <= 30">
@@ -321,7 +345,7 @@
         <div class="reg-campo reg-campo-full">
           <button type="button" class="reg-btn-ia"
                   (click)="revisarConIA()"
-                  [disabled]="mejorandoTexto() || (!titulo().trim() && !bioCorta().trim())">
+                  [disabled]="mejorandoTexto() || !bioCorta().trim()">
             @if (mejorandoTexto()) {
               <span class="reg-btn-spinner"></span> Revisando ortografía...
             } @else {
@@ -335,7 +359,6 @@
         </div>
       </div>
     </section>
-    }
 
     <!-- ══════════════════════════════════════════
          SECCIÓN 04 — ESPECIALIDADES (condicional)
@@ -344,11 +367,19 @@
     <section class="reg-seccion">
       <div class="reg-sec-label">
         <span class="reg-sec-num">04</span>
-        <h2 class="reg-sec-titulo">Especialidades</h2>
-        <p class="reg-sec-desc">
-          Etiquetas que aparecen en tu perfil. Máximo 5.
-          Presiona Enter o coma para agregar cada una.
-        </p>
+        @if (esPersonal()) {
+          <h2 class="reg-sec-titulo">Habilidades y destrezas</h2>
+          <p class="reg-sec-desc">
+            Etiquetas que aparecen en tu perfil. Máximo 5.
+            Ej: Primeros auxilios, Atención al público, Excel, Mantenimiento eléctrico...
+          </p>
+        } @else {
+          <h2 class="reg-sec-titulo">Especialidades</h2>
+          <p class="reg-sec-desc">
+            Etiquetas que aparecen en tu perfil. Máximo 5.
+            Presiona Enter o coma para agregar cada una.
+          </p>
+        }
       </div>
       <div class="reg-campos">
         <div class="reg-campo reg-campo-full">
@@ -424,12 +455,19 @@
     @if (mostrarRedes()) {
     <section class="reg-seccion">
       <div class="reg-sec-label">
-        <span class="reg-sec-num">06</span>
+        <span class="reg-sec-num">@if (esPersonal()) { 05 } @else { 06 }</span>
         <h2 class="reg-sec-titulo">Presencia digital <span class="reg-sec-opcional">(opcional)</span></h2>
-        <p class="reg-sec-desc">
-          Blog, LinkedIn u ORCID. Estos links aparecerán en tu perfil
-          para que la comunidad conozca más de tu trabajo.
-        </p>
+        @if (esPersonal()) {
+          <p class="reg-sec-desc">
+            Si tienes LinkedIn o un sitio personal, puedes incluirlo.
+            No es obligatorio, pero le da más visibilidad a tu perfil.
+          </p>
+        } @else {
+          <p class="reg-sec-desc">
+            Blog, LinkedIn u ORCID. Estos links aparecerán en tu perfil
+            para que la comunidad conozca más de tu trabajo.
+          </p>
+        }
       </div>
       <div class="reg-campos">
         <div class="reg-campo reg-campo-full">

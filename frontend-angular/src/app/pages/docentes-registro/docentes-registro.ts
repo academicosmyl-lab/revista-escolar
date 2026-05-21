@@ -101,11 +101,13 @@ export class DocentesRegistro implements OnInit, AfterViewInit {
 
   mostrarArea           = computed(() => this.rol() === 'DOCENTE');
   mostrarOtraArea       = computed(() => this.area() === 'Otra');
-  mostrarEspecialidades = computed(() => ['RECTOR','COORDINADOR','ORIENTADORA','DOCENTE'].includes(this.rol()));
+  // Publicaciones: solo roles académicos con producción intelectual
   mostrarPublicaciones  = computed(() => ['RECTOR','COORDINADOR','DOCENTE'].includes(this.rol()));
-  mostrarRedes          = computed(() => ['RECTOR','COORDINADOR','ORIENTADORA','DOCENTE'].includes(this.rol()));
+  // Especialidades/habilidades y redes: TODOS los roles (personal también tiene destrezas y puede tener LinkedIn)
+  mostrarEspecialidades = computed(() => !!this.rol());
+  mostrarRedes          = computed(() => !!this.rol());
 
-  // Roles del equipo directivo/académico (muestran bio, titulo académico, etc.)
+  // Roles del equipo directivo/académico (muestran bio académica, titulo, área)
   esAcademico           = computed(() => !this.esPersonal());
 
   // ── Contadores ──────────────────────────────────────────
@@ -117,7 +119,11 @@ export class DocentesRegistro implements OnInit, AfterViewInit {
     if (!this.rol())                         return false;
     if (this.nombre().trim().length < 3)     return false;
     if (!this.sede())                        return false;
-    if (!this.esPersonal()) {
+    if (this.esPersonal()) {
+      // Personal de apoyo: al menos una descripción breve de su cargo
+      if (this.bioCorta().trim().length < 15) return false;
+    } else {
+      // Roles académicos: título + bio obligatorios
       if (this.titulo().trim().length < 3)   return false;
       if (this.bioCorta().trim().length < 20) return false;
     }
