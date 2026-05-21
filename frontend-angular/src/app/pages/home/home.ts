@@ -59,11 +59,26 @@ export class Home implements OnInit, AfterViewInit {
     op:    0.18 + (i % 5) * 0.07,
   }));
 
-  /* ── Franja docentes B&W ────────────────────────────── */
-  docentesSlugs = [
-    'luis-sanchez','patricia-diaz','roberto-suarez','elena-pacheco','diana-solano',
-    'luz-rios','maria-gomez','carlos-rodriguez','andres-torres','liliana-mosquera',
-    'jorge-perez','sandra-rivas','hernando-castillo','rosa-vargas','felipe-mantilla',
+  /* ── Sección equipo docente — dos filas marquee ────── */
+  docentesFila1 = [
+    { slug: 'luis-sanchez',      nombre: 'Luis Sánchez',       area: 'Electrónica'         },
+    { slug: 'patricia-diaz',     nombre: 'Patricia Díaz',      area: 'Español y Literatura' },
+    { slug: 'roberto-suarez',    nombre: 'Roberto Suárez',     area: 'Matemáticas'          },
+    { slug: 'elena-pacheco',     nombre: 'Elena Pacheco',      area: 'Diseño Digital'       },
+    { slug: 'diana-solano',      nombre: 'Diana Solano',       area: 'Inglés Comunicativo'  },
+    { slug: 'luz-rios',          nombre: 'Luz Ríos',           area: 'Ciencias Naturales'   },
+    { slug: 'maria-gomez',       nombre: 'María Gómez',        area: 'Corte y Confección'   },
+    { slug: 'carlos-rodriguez',  nombre: 'Carlos Rodríguez',   area: 'Educación Física'     },
+  ];
+
+  docentesFila2 = [
+    { slug: 'andres-torres',     nombre: 'Andrés Torres',      area: 'Medios Audiovisuales' },
+    { slug: 'liliana-mosquera',  nombre: 'Liliana Mosquera',   area: 'Matemáticas'          },
+    { slug: 'jorge-perez',       nombre: 'Jorge Pérez',        area: 'Tecnología e Inf.'    },
+    { slug: 'sandra-rivas',      nombre: 'Sandra Rivas',       area: 'Ciencias Sociales'    },
+    { slug: 'hernando-castillo', nombre: 'Hernando Castillo',  area: 'Electrónica'          },
+    { slug: 'rosa-vargas',       nombre: 'Rosa Vargas',        area: 'Inglés Comunicativo'  },
+    { slug: 'felipe-mantilla',   nombre: 'Felipe Mantilla',    area: 'Diseño Digital'       },
   ];
 
   /* ── Sedes institucionales ───────────────────────────── */

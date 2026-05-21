@@ -135,21 +135,82 @@
   <div style="min-height:600px;background:linear-gradient(175deg,rgba(6,14,8,0.82),rgba(10,3,6,0.78))"></div>
 }
 
-<!-- FRANJA DOCENTES B&W — marquee infinito -->
-<div class="docentes-tira" aria-hidden="true">
-  <div class="docentes-tira-track">
-    @for (slug of docentesSlugs; track slug) {
-      <div class="docentes-tira-foto">
-        <img [src]="'/docentes/' + slug + '.jpg'" alt="">
-      </div>
-    }
-    @for (slug of docentesSlugs; track slug + 'd') {
-      <div class="docentes-tira-foto">
-        <img [src]="'/docentes/' + slug + '.jpg'" alt="">
-      </div>
-    }
+<!-- SECCIÓN EQUIPO DOCENTE — editorial dark con dos filas marquee -->
+<section class="docentes-seccion">
+
+  <!-- Watermark tipográfico de fondo -->
+  <div class="docentes-watermark" aria-hidden="true">DOCENTES</div>
+
+  <!-- Header: título + stats en línea -->
+  <div class="docentes-header reveal">
+    <div>
+      <div class="linea-dorada"></div>
+      <h2 class="docentes-titulo">Nuestro Equipo</h2>
+      <p class="docentes-subtitulo">Profesionales comprometidos con la formación técnica integral</p>
+    </div>
+    <div class="docentes-stats-mini">
+      <span class="doc-stat"><strong>50+</strong> Docentes</span>
+      <span class="doc-stat-sep">·</span>
+      <span class="doc-stat"><strong>5</strong> Áreas Técnicas</span>
+      <span class="doc-stat-sep">·</span>
+      <span class="doc-stat"><strong>3</strong> Sedes</span>
+    </div>
   </div>
-</div>
+
+  <!-- Fila 1: avanza izquierda → derecha -->
+  <div class="docentes-fila">
+    <div class="docentes-track docentes-track-fwd">
+      @for (d of docentesFila1; track d.slug) {
+        <div class="doc-card">
+          <img [src]="'/docentes/' + d.slug + '.jpg'" [alt]="d.nombre">
+          <div class="doc-overlay" aria-hidden="true">
+            <span class="doc-nombre">{{ d.nombre }}</span>
+            <span class="doc-area">{{ d.area }}</span>
+          </div>
+        </div>
+      }
+      @for (d of docentesFila1; track d.slug + 'b') {
+        <div class="doc-card">
+          <img [src]="'/docentes/' + d.slug + '.jpg'" [alt]="d.nombre">
+          <div class="doc-overlay" aria-hidden="true">
+            <span class="doc-nombre">{{ d.nombre }}</span>
+            <span class="doc-area">{{ d.area }}</span>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+
+  <!-- Fila 2: retrocede derecha → izquierda (sentido contrario) -->
+  <div class="docentes-fila">
+    <div class="docentes-track docentes-track-rev">
+      @for (d of docentesFila2; track d.slug) {
+        <div class="doc-card">
+          <img [src]="'/docentes/' + d.slug + '.jpg'" [alt]="d.nombre">
+          <div class="doc-overlay" aria-hidden="true">
+            <span class="doc-nombre">{{ d.nombre }}</span>
+            <span class="doc-area">{{ d.area }}</span>
+          </div>
+        </div>
+      }
+      @for (d of docentesFila2; track d.slug + 'b') {
+        <div class="doc-card">
+          <img [src]="'/docentes/' + d.slug + '.jpg'" [alt]="d.nombre">
+          <div class="doc-overlay" aria-hidden="true">
+            <span class="doc-nombre">{{ d.nombre }}</span>
+            <span class="doc-area">{{ d.area }}</span>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+
+  <!-- CTA centrado abajo -->
+  <div class="docentes-footer reveal">
+    <a routerLink="/docentes" class="its-btn-primario btn-magnetic">Conocer el equipo completo</a>
+  </div>
+
+</section>
 
 <!-- NOTICIAS RECIENTES — datos reales del API (CAMBIO ARCH-UI) -->
 <section class="noticias-seccion">

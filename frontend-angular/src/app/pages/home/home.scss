@@ -949,36 +949,141 @@
 
 /* CAMBIO ARCH-UI (Lote C): estilos de Horizonte movidos a sections/horizonte-section.scss */
 
-/* ── FRANJA DOCENTES B&W ────────────────────────────── */
-@keyframes tira-scroll {
+/* ── SECCIÓN EQUIPO DOCENTE — editorial dark ────────── */
+@keyframes scrollFwd {
   from { transform: translateX(0); }
   to   { transform: translateX(-50%); }
 }
+@keyframes scrollRev {
+  from { transform: translateX(-50%); }
+  to   { transform: translateX(0); }
+}
 
-.docentes-tira {
-  background: #0d0608;
+.docentes-seccion {
+  background: #080205;
+  padding: 4.5rem 0 3.5rem;
   overflow: hidden;
-  padding: 0;
+  position: relative;
   border-top: 3px solid #D4A853;
   border-bottom: 3px solid #D4A853;
-  cursor: default;
-  user-select: none;
 }
 
-.docentes-tira-track {
+/* Gran tipografía de fondo — watermark */
+.docentes-watermark {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(5rem, 18vw, 13rem);
+  font-weight: 900;
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(212, 168, 83, 0.07);
+  white-space: nowrap;
+  pointer-events: none;
+  user-select: none;
+  letter-spacing: -0.01em;
+  z-index: 0;
+}
+
+/* Header: título + stats en una sola línea */
+.docentes-header {
+  position: relative;
+  z-index: 1;
+  max-width: 1200px;
+  margin: 0 auto 2.5rem;
+  padding: 0 2rem;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 2rem;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+}
+
+.docentes-titulo {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(1.8rem, 4vw, 2.8rem);
+  font-weight: 900;
+  color: white;
+  line-height: 1.05;
+  margin: 1rem 0 0.4rem;
+}
+
+.docentes-subtitulo {
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.45);
+  margin: 0;
+}
+
+.docentes-stats-mini {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-shrink: 0;
+  padding-bottom: 0.25rem; /* alinea con la baseline del título */
+}
+
+.doc-stat {
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.82rem;
+  color: rgba(255, 255, 255, 0.5);
+  white-space: nowrap;
+
+  strong {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #D4A853;
+  }
+}
+
+.doc-stat-sep {
+  color: rgba(212, 168, 83, 0.35);
+  font-size: 1.1rem;
+  line-height: 1;
+}
+
+/* Contenedor de cada fila (overflow hidden corta lo que sale del borde) */
+.docentes-fila {
+  position: relative;
+  z-index: 1;
+  overflow: hidden;
+  margin-bottom: 0.6rem;
+}
+
+/* Track: bloque de fotos duplicado para el loop infinito */
+.docentes-track {
   display: flex;
   width: max-content;
-  animation: tira-scroll 28s linear infinite;
 
-  &:hover { animation-play-state: paused; }
+  &.docentes-track-fwd {
+    animation: scrollFwd 34s linear infinite;
+  }
+
+  &.docentes-track-rev {
+    animation: scrollRev 38s linear infinite;
+  }
+
+  /* Al hover SOBRE el track completo se pausa */
+  &:hover {
+    animation-play-state: paused;
+  }
 }
 
-.docentes-tira-foto {
+/* Cada tarjeta de docente */
+.doc-card {
+  position: relative;
   flex-shrink: 0;
-  width: 148px;
-  height: 148px;
+  width: 180px;
+  height: 230px;
   overflow: hidden;
-  border-right: 1px solid rgba(255, 255, 255, 0.04);
+  border-right: 2px solid rgba(8, 2, 5, 0.9);
+  cursor: default;
 
   img {
     width: 100%;
@@ -986,14 +1091,81 @@
     object-fit: cover;
     object-position: top center;
     display: block;
-    filter: grayscale(100%) contrast(1.05);
-    transition: filter 0.4s ease, transform 0.4s ease;
+    /* B&W por defecto — en hover va a color */
+    filter: grayscale(100%) contrast(1.08) brightness(0.82);
+    transition:
+      filter    0.55s cubic-bezier(0.16, 1, 0.3, 1),
+      transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
   }
 
-  &:hover img {
-    filter: grayscale(0%) contrast(1);
-    transform: scale(1.06);
+  /* Overlay magazine idéntico al de noticias/sedes */
+  .doc-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      to top,
+      rgba(169, 68, 85, 0.97) 0%,
+      rgba(169, 68, 85, 0.75) 40%,
+      rgba(10, 3, 8, 0.12) 100%
+    );
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 0.85rem 0.9rem 0.9rem;
+    gap: 0.22rem;
+    transform: translateY(100%);
+    transition: transform 0.52s cubic-bezier(0.16, 1, 0.3, 1);
+    pointer-events: none;
   }
+
+  .doc-nombre {
+    font-family: 'Playfair Display', serif;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #fff;
+    line-height: 1.2;
+    transform: translateY(14px);
+    opacity: 0;
+    transition:
+      transform 0.48s cubic-bezier(0.16, 1, 0.3, 1) 0.06s,
+      opacity   0.38s ease 0.06s;
+  }
+
+  .doc-area {
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 0.57rem;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: #D4A853;
+    transform: translateY(10px);
+    opacity: 0;
+    transition:
+      transform 0.48s cubic-bezier(0.16, 1, 0.3, 1) 0.11s,
+      opacity   0.38s ease 0.11s;
+  }
+
+  /* Activación en hover */
+  &:hover {
+    img {
+      filter: grayscale(0%) contrast(1.05) brightness(1);
+      transform: scale(1.06);
+    }
+
+    .doc-overlay   { transform: translateY(0); }
+    .doc-nombre,
+    .doc-area      { transform: translateY(0); opacity: 1; }
+  }
+}
+
+/* CTA centrado al pie de la sección */
+.docentes-footer {
+  position: relative;
+  z-index: 1;
+  max-width: 1200px;
+  margin: 2.25rem auto 0;
+  padding: 0 2rem;
+  text-align: center;
 }
 
 /* ── NOTICIAS ───────────────────────────────────────── */
