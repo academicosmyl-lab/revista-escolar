@@ -43,10 +43,17 @@
   <section class="reg-exito">
     <div class="reg-exito-inner">
       <div class="reg-exito-icono">✦</div>
-      <h2 class="reg-exito-titulo">¡Perfil recibido!</h2>
+      <h2 class="reg-exito-titulo">
+        @if (modoInicio() === 'editando') { ¡Perfil actualizado! } @else { ¡Perfil recibido! }
+      </h2>
       <p class="reg-exito-texto">
-        Tu información llegó correctamente. El equipo directivo la revisará
-        y tu perfil estará publicado muy pronto.
+        @if (modoInicio() === 'editando') {
+          Tu información fue actualizada correctamente.
+          El equipo directivo la revisará de nuevo y te confirmará por email.
+        } @else {
+          Tu información llegó correctamente. El equipo directivo la revisará
+          y tu perfil estará publicado muy pronto.
+        }
       </p>
       <p class="reg-exito-sub">Recibirás una notificación por email cuando esté en línea.</p>
       <a routerLink="/docentes" class="reg-exito-btn">Ver directorio de docentes</a>
@@ -55,9 +62,105 @@
 }
 
 <!-- ═══════════════════════════════════════════════════ -->
-<!-- FORMULARIO PRINCIPAL                                -->
+<!-- PANTALLA 0 — ELIGE: NUEVO O YA REGISTRADO          -->
 <!-- ═══════════════════════════════════════════════════ -->
-@if (!enviado()) {
+@if (!enviado() && modoInicio() === '') {
+  <section class="reg-eleccion">
+    <div class="reg-eleccion-inner">
+      <h2 class="reg-eleccion-titulo">¿Es la primera vez?</h2>
+      <p class="reg-eleccion-sub">Elige cómo quieres continuar</p>
+      <div class="reg-eleccion-opciones">
+
+        <button type="button" class="reg-eleccion-btn reg-eleccion-btn-nuevo" (click)="irANuevo()">
+          <div class="reg-eleccion-icono">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="30">
+              <circle cx="12" cy="8" r="4"/>
+              <path d="M20 21c0-4.418-3.582-8-8-8s-8 3.582-8 8" stroke-linecap="round"/>
+              <path d="M12 15v5M9.5 17.5h5" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div>
+            <strong>Soy nuevo</strong>
+            <span>Crea tu perfil desde cero</span>
+          </div>
+        </button>
+
+        <button type="button" class="reg-eleccion-btn reg-eleccion-btn-editar" (click)="irABuscando()">
+          <div class="reg-eleccion-icono">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="30">
+              <circle cx="11" cy="11" r="8"/>
+              <path d="m21 21-4.35-4.35" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div>
+            <strong>Ya me registré</strong>
+            <span>Actualiza tu información</span>
+          </div>
+        </button>
+
+      </div>
+    </div>
+  </section>
+}
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- PANTALLA B — BUSCAR POR EMAIL                       -->
+<!-- ═══════════════════════════════════════════════════ -->
+@if (!enviado() && modoInicio() === 'buscando') {
+  <section class="reg-buscar">
+    <div class="reg-buscar-inner">
+      <button type="button" class="reg-buscar-volver" (click)="irAEleccion()">← Volver</button>
+      <h2 class="reg-buscar-titulo">Busca tu registro</h2>
+      <p class="reg-buscar-sub">
+        Escribe el email con el que te registraste
+        y cargamos tus datos para que los actualices.
+      </p>
+      <div class="reg-buscar-form">
+        <input type="email" class="reg-input reg-buscar-input"
+               placeholder="tucorreo@ejemplo.com"
+               [ngModel]="emailBusqueda()" (ngModelChange)="emailBusqueda.set($event)"
+               (keydown.enter)="buscarPerfil()"
+               autocomplete="email">
+        <button type="button" class="reg-btn-submit reg-buscar-btn"
+                (click)="buscarPerfil()"
+                [disabled]="buscandoPerfil() || !emailBusqueda().trim()">
+          @if (buscandoPerfil()) {
+            <span class="reg-btn-spinner"></span> Buscando...
+          } @else {
+            Cargar mis datos
+          }
+        </button>
+      </div>
+      @if (errorBusqueda()) {
+        <div class="reg-error-banner" role="alert" style="margin-top:1.5rem">
+          <span class="reg-error-icono">!</span>
+          {{ errorBusqueda() }}
+          @if (errorBusqueda().includes('nuevo')) {
+            <button type="button" class="reg-buscar-nuevo-link" (click)="irANuevo()">
+              Crear perfil nuevo
+            </button>
+          }
+        </div>
+      }
+    </div>
+  </section>
+}
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- FORMULARIO PRINCIPAL (nuevo o editando)             -->
+<!-- ═══════════════════════════════════════════════════ -->
+@if (!enviado() && (modoInicio() === 'nuevo' || modoInicio() === 'editando')) {
+
+@if (modoInicio() === 'editando') {
+  <div class="reg-edit-banner" role="status">
+    <svg viewBox="0 0 20 20" fill="currentColor" width="16">
+      <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"/>
+    </svg>
+    Editando tu registro anterior — los cambios quedarán en revisión nuevamente.
+    <button type="button" class="reg-edit-volver" (click)="irAEleccion()">Cancelar</button>
+  </div>
+}
+
 <main class="reg-form-wrap">
   <form class="reg-form" (ngSubmit)="enviar()" novalidate>
 
@@ -306,7 +409,8 @@
         <div class="reg-campo reg-campo-full">
           <label class="reg-label" for="fBioCorta">
             @if (esPersonal()) {
-              Descripción de tu cargo — aparece en tu tarjeta <span class="reg-req">*</span>
+              Descripción de tu cargo — aparece en tu tarjeta
+              <span class="reg-sec-opcional">(opcional)</span>
             } @else {
               Bio corta — aparece en tu tarjeta <span class="reg-req">*</span>
             }
@@ -316,7 +420,7 @@
                       ? 'Ej: Encargado de la seguridad de las tres sedes. Llevo 8 años cuidando a nuestra comunidad educativa.'
                       : 'Ej: docente de electrónica con énfasis en robótica. Me apasiona conectar la teoría con proyectos reales.'"
                     [ngModel]="bioCorta()" (ngModelChange)="bioCorta.set($event)"
-                    (blur)="onBlurBioCorta()" maxlength="140" required></textarea>
+                    (blur)="onBlurBioCorta()" maxlength="140" [required]="!esPersonal()"></textarea>
           <div class="reg-contador" [class.reg-contador-warn]="bioShortLeft() <= 15">
             {{ bioShortLeft() }} caracteres restantes
           </div>
@@ -513,9 +617,10 @@
       </div>
       <button type="submit" class="reg-btn-submit" [disabled]="!formValido || enviando()">
         @if (enviando()) {
-          <span class="reg-btn-spinner"></span> Enviando tu perfil...
+          <span class="reg-btn-spinner"></span>
+          @if (modoInicio() === 'editando') { Guardando cambios... } @else { Enviando tu perfil... }
         } @else {
-          Enviar mi perfil al Instituto
+          @if (modoInicio() === 'editando') { Guardar cambios } @else { Enviar mi perfil al Instituto }
         }
       </button>
       <a routerLink="/docentes" class="reg-link-volver">← Ver directorio de docentes</a>
@@ -525,7 +630,7 @@
 
   </form>
 </main>
-}
+} <!-- /modoInicio nuevo|editando -->
 
 <!-- ═══════════════════════════════════════════════════ -->
 <!-- PANEL DE COMPARACIÓN IA                             -->

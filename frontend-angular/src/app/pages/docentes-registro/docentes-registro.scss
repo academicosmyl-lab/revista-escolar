@@ -74,7 +74,6 @@ $radius-lg:   20px;
   padding: 6px 16px;
   border-radius: 99px;
   margin-bottom: 2rem;
-  opacity: 0;
   background: rgba(212,168,83,0.06);
 }
 
@@ -86,7 +85,6 @@ $radius-lg:   20px;
   line-height: 1.06;
   margin: 0 0 2rem;
   letter-spacing: -0.025em;
-  opacity: 0;
 
   em {
     display: block;
@@ -103,7 +101,6 @@ $radius-lg:   20px;
   color: rgba(255,255,255,0.68);
   line-height: 1.9;
   margin: 0 0 2.5rem;
-  opacity: 0;
 
   strong { color: white; font-weight: 600; }
 }
@@ -115,7 +112,6 @@ $radius-lg:   20px;
   text-align: left;
   max-width: 560px;
   margin: 0 auto 3.5rem;
-  opacity: 0;
 }
 
 .reg-firma-linea {
@@ -1363,4 +1359,238 @@ $radius-lg:   20px;
     box-shadow: 0 6px 24px rgba(22,163,74,0.35);
     transform: translateY(-1px);
   }
+}
+
+// ══════════════════════════════════════════════════════════
+//  PANTALLA ELECCIÓN — Nuevo / Ya registrado
+// ══════════════════════════════════════════════════════════
+.reg-eleccion {
+  padding: 5rem 1.5rem 6rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: $bg;
+  min-height: 60vh;
+}
+
+.reg-eleccion-inner {
+  text-align: center;
+  max-width: 640px;
+  width: 100%;
+}
+
+.reg-eleccion-titulo {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(2rem, 5vw, 2.8rem);
+  font-weight: 900;
+  color: $text;
+  margin: 0 0 0.75rem;
+  letter-spacing: -0.02em;
+}
+
+.reg-eleccion-sub {
+  font-size: 1rem;
+  color: $text-dim;
+  margin: 0 0 3rem;
+  line-height: 1.6;
+}
+
+.reg-eleccion-opciones {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+
+  @media (max-width: 520px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.reg-eleccion-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 2.25rem 1.5rem;
+  border-radius: $radius-lg;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+  text-align: center;
+
+  div:last-child {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+
+    strong {
+      display: block;
+      font-size: 1.05rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+    }
+
+    span {
+      font-size: 0.82rem;
+      line-height: 1.5;
+      opacity: 0.75;
+    }
+  }
+
+  &:hover:not(:disabled) {
+    transform: translateY(-4px);
+    box-shadow: 0 16px 48px rgba(0,0,0,0.14);
+  }
+  &:active { transform: translateY(-1px); }
+}
+
+.reg-eleccion-btn-nuevo {
+  background: linear-gradient(150deg, $vinotinto 0%, #6B0F20 100%);
+  color: white;
+  box-shadow: 0 6px 28px rgba(139,26,46,0.3);
+
+  .reg-eleccion-icono { color: rgba(255,255,255,0.85); }
+
+  &:hover:not(:disabled) { box-shadow: 0 16px 48px rgba(139,26,46,0.4); }
+}
+
+.reg-eleccion-btn-editar {
+  background: $surface;
+  color: $text;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.07);
+  border-color: $border;
+
+  .reg-eleccion-icono { color: $vinotinto; }
+
+  &:hover:not(:disabled) { border-color: $vinotinto; }
+}
+
+.reg-eleccion-icono {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px; height: 56px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.12);
+  flex-shrink: 0;
+
+  .reg-eleccion-btn-editar & {
+    background: rgba(139,26,46,0.07);
+  }
+}
+
+// ══════════════════════════════════════════════════════════
+//  PANTALLA BUSCAR — Lookup por email
+// ══════════════════════════════════════════════════════════
+.reg-buscar {
+  padding: 5rem 1.5rem 6rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: $bg;
+  min-height: 60vh;
+}
+
+.reg-buscar-inner {
+  max-width: 480px;
+  width: 100%;
+}
+
+.reg-buscar-volver {
+  background: none;
+  border: none;
+  color: $text-dim;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+  margin-bottom: 2rem;
+  letter-spacing: 0.03em;
+  transition: color 0.18s;
+
+  &:hover { color: $vinotinto; }
+}
+
+.reg-buscar-titulo {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(1.75rem, 4vw, 2.4rem);
+  font-weight: 900;
+  color: $text;
+  margin: 0 0 0.6rem;
+  letter-spacing: -0.02em;
+}
+
+.reg-buscar-sub {
+  font-size: 0.92rem;
+  color: $text-dim;
+  line-height: 1.7;
+  margin: 0 0 2rem;
+}
+
+.reg-buscar-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.reg-buscar-input {
+  font-size: 1rem;
+  padding: 0.85rem 1rem;
+}
+
+.reg-buscar-btn {
+  min-width: 0;
+  width: 100%;
+}
+
+.reg-buscar-nuevo-link {
+  background: none;
+  border: none;
+  color: $vinotinto;
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-decoration: underline;
+  cursor: pointer;
+  padding: 0;
+  margin-left: 0.5rem;
+
+  &:hover { color: $vino-light; }
+}
+
+// ══════════════════════════════════════════════════════════
+//  BANNER EDITANDO — Aviso modo edición
+// ══════════════════════════════════════════════════════════
+.reg-edit-banner {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: rgba(212,168,83,0.09);
+  border: 1.5px solid rgba(212,168,83,0.35);
+  border-radius: 0;
+  padding: 0.9rem 1.5rem;
+  font-size: 0.84rem;
+  color: #5A3E1B;
+  font-weight: 500;
+
+  svg { color: $gold; flex-shrink: 0; }
+
+  @media (max-width: 600px) { flex-wrap: wrap; }
+}
+
+.reg-edit-volver {
+  margin-left: auto;
+  background: none;
+  border: 1.5px solid rgba(212,168,83,0.45);
+  border-radius: 6px;
+  color: #5A3E1B;
+  font-size: 0.73rem;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  cursor: pointer;
+  padding: 0.3rem 0.75rem;
+  transition: background 0.15s, border-color 0.15s;
+  white-space: nowrap;
+  flex-shrink: 0;
+
+  &:hover { background: rgba(212,168,83,0.15); border-color: $gold; }
 }

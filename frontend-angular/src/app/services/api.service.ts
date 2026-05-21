@@ -49,6 +49,12 @@ export class ApiService {
     );
   }
 
+  putFormData<T>(path: string, formData: FormData): Observable<T> {
+    return this.http.put<T>(`${this.base}${path}`, formData).pipe(
+      catchError(this.manejarError)
+    );
+  }
+
   private manejarError(error: { status: number; error?: { mensaje?: string; error?: string } }) {
     const msg = error?.error?.mensaje || error?.error?.error || 'Error de conexión con el servidor';
     return throwError(() => ({ status: error.status, mensaje: msg }));

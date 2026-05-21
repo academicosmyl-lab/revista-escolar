@@ -99,6 +99,98 @@ router.post('/registro-publico', uploadMem.single('foto'), async (req, res) => {
   }
 });
 
+// GET /api/v1/perfil/registro-publico/buscar?email=xxx — buscar solicitud por email
+router.get('/registro-publico/buscar', async (req, res) => {
+  try {
+    const { email } = req.query;
+    if (!email?.trim()) {
+      return res.status(400).json({ error: 'El email es obligatorio' });
+    }
+    const emailNorm = email.trim().toLowerCase();
+    const solicitud = await SolicitudPerfil.findOne({
+      where: { email: emailNorm },
+      order: [['createdAt', 'DESC']],
+    });
+    if (!solicitud) {
+      return res.status(404).json({ error: 'No se encontró ningún registro con ese email' });
+    }
+    res.json({ solicitud });
+  } catch (e) {
+    console.error('Error buscando solicitud:', e.message);
+    res.status(500).json({ error: 'Error al buscar la solicitud' });
+  }
+});
+
+// PUT /api/v1/perfil/registro-publico/:id — actualizar solicitud existente
+router.put('/registro-publico/:id', uploadMem.single('foto'), async (req, res) => {
+  try {
+    const solicitud = await SolicitudPerfil.findByPk(req.params.id);
+    if (!solicitud) {
+      return res.status(404).json({ error: 'Solicitud no encontrada' });
+    }
+
+    const {
+      rol, nombre, titulo, area, sede, experiencia, email,
+      bioCorta, bioCompleta, especialidades, publicaciones,
+      web, linkedin, orcid,
+    } = req.body;
+
+    // Subir nueva foto a Cloudinary si viene
+    let fotoUrl      = solicitud.foto_url;
+    let fotoPublicId = solicitud.foto_public_id;
+    if (req.file) {
+      try {
+        const result = await cloudinaryService.uploadBuffer(
+          req.file.buffer,
+          req.file.mimetype,
+          `solicitudes-perfil/${Date.now()}`
+        );
+        fotoUrl      = result.secure_url;
+        fotoPublicId = result.public_id;
+      } catch (uploadErr) {
+        console.error('Error subiendo foto solicitud update:', uploadErr.message);
+      }
+    }
+
+    await solicitud.update({
+      rol:          rol?.trim()           || solicitud.rol,
+      nombre:       nombre?.trim()        || solicitud.nombre,
+      titulo:       titulo?.trim()        ?? solicitud.titulo,
+      area:         area?.trim()          ?? solicitud.area,
+      sede:         sede?.trim()          ?? solicitud.sede,
+      experiencia:  experiencia !== undefined ? parseInt(experiencia) : solicitud.experiencia,
+      email:        email?.trim()         ?? solicitud.email,
+      bio_corta:    bioCorta?.trim()      ?? solicitud.bio_corta,
+      bio_completa: bioCompleta?.trim()   ?? solicitud.bio_completa,
+      especialidades: especialidades      ?? solicitud.especialidades,
+      publicaciones:  publicaciones       ?? solicitud.publicaciones,
+      web:          web?.trim()           ?? solicitud.web,
+      linkedin:     linkedin?.trim()      ?? solicitud.linkedin,
+      orcid:        orcid?.trim()         ?? solicitud.orcid,
+      foto_url:     fotoUrl,
+      foto_public_id: fotoPublicId,
+      estado:       'pendiente',
+    });
+
+    // Auto-registrar área personalizada
+    if (area?.trim()) {
+      Area.findOrCreate({
+        where: { nombre: area.trim() },
+        defaults: { nombre: area.trim(), activa: true },
+      }).catch(e => console.error('Auto-registro área update:', e.message));
+    }
+
+    res.json({
+      ok:      true,
+      mensaje: 'Tu perfil fue actualizado. El equipo directivo lo revisará pronto.',
+      id:      solicitud.id,
+    });
+  } catch (e) {
+    console.error('Error actualizando solicitud:', e.message);
+    res.status(500).json({ error: 'Error al actualizar la solicitud.' });
+  }
+});
+
 // GET /api/v1/perfil/docentes — lista pública de docentes con perfil
 router.get('/docentes', async (req, res, next) => {
   try {

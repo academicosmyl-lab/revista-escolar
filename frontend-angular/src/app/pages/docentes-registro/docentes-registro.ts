@@ -85,6 +85,13 @@ export class DocentesRegistro implements OnInit, AfterViewInit {
   enviado    = signal(false);
   errorEnvio = signal('');
 
+  // ── Flujo nuevo / ya registrado ─────────────────────────
+  modoInicio     = signal<'' | 'nuevo' | 'buscando' | 'editando'>('');
+  emailBusqueda  = signal('');
+  solicitudId    = signal<number | null>(null);
+  buscandoPerfil = signal(false);
+  errorBusqueda  = signal('');
+
   // ── IA — mejora de texto ────────────────────────────────
   mejorandoTexto       = signal(false);
   mostrandoComparacion = signal(false);
@@ -120,8 +127,7 @@ export class DocentesRegistro implements OnInit, AfterViewInit {
     if (this.nombre().trim().length < 3)     return false;
     if (!this.sede())                        return false;
     if (this.esPersonal()) {
-      // Personal de apoyo: al menos una descripción breve de su cargo
-      if (this.bioCorta().trim().length < 15) return false;
+      // Personal de apoyo: bioCorta es opcional — no bloqueamos envío
     } else {
       // Roles académicos: título + bio obligatorios
       if (this.titulo().trim().length < 3)   return false;
@@ -161,6 +167,78 @@ export class DocentesRegistro implements OnInit, AfterViewInit {
         animate(el, { opacity: [0,1], y: [28,0] }, { duration: 0.55 });
       }, { margin: '0px 0px -60px 0px' });
     } catch (e) { /* motion no disponible — secciones visibles por CSS */ }
+  }
+
+  // ══════════════════════════════════════════════════════
+  //  FLUJO NUEVO / YA REGISTRADO
+  // ══════════════════════════════════════════════════════
+
+  irANuevo() {
+    this.modoInicio.set('nuevo');
+    this.solicitudId.set(null);
+  }
+
+  irABuscando() {
+    this.modoInicio.set('buscando');
+    this.errorBusqueda.set('');
+    this.emailBusqueda.set('');
+  }
+
+  irAEleccion() {
+    this.modoInicio.set('');
+    this.errorBusqueda.set('');
+  }
+
+  buscarPerfil() {
+    const em = this.emailBusqueda().trim().toLowerCase();
+    if (!em) { this.errorBusqueda.set('Escribe tu email para continuar.'); return; }
+    this.buscandoPerfil.set(true);
+    this.errorBusqueda.set('');
+
+    this.api.get<any>('/perfil/registro-publico/buscar', { email: em }).subscribe({
+      next: data => {
+        this.cargarDatos(data.solicitud);
+        this.modoInicio.set('editando');
+        this.buscandoPerfil.set(false);
+        this.cdr.markForCheck();
+      },
+      error: e => {
+        this.errorBusqueda.set(
+          e.status === 404
+            ? 'No encontramos ningún registro con ese email. ¿Quieres crear un perfil nuevo?'
+            : 'Error al buscar. Intenta de nuevo.'
+        );
+        this.buscandoPerfil.set(false);
+        this.cdr.markForCheck();
+      },
+    });
+  }
+
+  private cargarDatos(s: any) {
+    this.solicitudId.set(s.id);
+    this.nombre.set(s.nombre ?? '');
+    this.email.set(s.email ?? '');
+    this.sede.set(s.sede ?? '');
+    this.experiencia.set(s.experiencia ?? null);
+    this.bioCorta.set(s.bio_corta ?? '');
+    this.bioCompleta.set(s.bio_completa ?? '');
+    this.web.set(s.web ?? '');
+    this.linkedin.set(s.linkedin ?? '');
+    this.orcid.set(s.orcid ?? '');
+    this.especialidades.set(Array.isArray(s.especialidades) ? s.especialidades : []);
+    this.publicaciones.set(Array.isArray(s.publicaciones) ? s.publicaciones : []);
+    if (s.foto_url) this.fotoPreview.set(s.foto_url);
+
+    // Restaurar rol: PERSONAL + label del cargo → P_ value del select
+    if (s.rol === 'PERSONAL') {
+      const match = this.roles.find(r => r.grupo === 'apoyo' && r.label === s.titulo);
+      this.rol.set(match?.value ?? 'P_SECRETARIA');
+      this.titulo.set('');
+    } else {
+      this.rol.set(s.rol ?? '');
+      this.titulo.set(s.titulo ?? '');
+      this.area.set(s.area ?? '');
+    }
   }
 
   // ══════════════════════════════════════════════════════
@@ -319,7 +397,12 @@ export class DocentesRegistro implements OnInit, AfterViewInit {
     if (this.publicaciones().length)  fd.append('publicaciones',  JSON.stringify(this.publicaciones()));
     if (this.fotoFile()) fd.append('foto', this.fotoFile()!);
 
-    this.api.postFormData<any>('/perfil/registro-publico', fd).subscribe({
+    const id = this.solicitudId();
+    const obs = id
+      ? this.api.putFormData<any>(`/perfil/registro-publico/${id}`, fd)
+      : this.api.postFormData<any>('/perfil/registro-publico', fd);
+
+    obs.subscribe({
       next:  () => { this.enviado.set(true);  this.enviando.set(false); this.cdr.markForCheck(); },
       error: e  => { this.errorEnvio.set(e.mensaje ?? 'Error al enviar. Intenta de nuevo.'); this.enviando.set(false); this.cdr.markForCheck(); },
     });
