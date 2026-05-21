@@ -81,21 +81,38 @@
       </div>
       <div class="reg-campos">
         <div class="reg-campo reg-campo-full">
-          <label class="reg-label" for="fRol">Cargo <span class="reg-req">*</span></label>
+          <label class="reg-label" for="fRol">Tu cargo en la institución <span class="reg-req">*</span></label>
           <select id="fRol" class="reg-select reg-select-rol"
                   [ngModel]="rol()" (ngModelChange)="rol.set($event)" required>
             <option value="" disabled>Selecciona tu cargo...</option>
-            @for (r of roles; track r.value) {
-              <option [value]="r.value">{{ r.label }}</option>
-            }
+            <optgroup label="── Equipo directivo y académico ──">
+              @for (r of roles; track r.value) {
+                @if (r.grupo !== 'apoyo') {
+                  <option [value]="r.value">{{ r.label }}</option>
+                }
+              }
+            </optgroup>
+            <optgroup label="── Equipo de apoyo institucional ──">
+              @for (r of roles; track r.value) {
+                @if (r.grupo === 'apoyo') {
+                  <option [value]="r.value">{{ r.label }}</option>
+                }
+              }
+            </optgroup>
           </select>
         </div>
+
         @if (esPersonal()) {
           <div class="reg-campo reg-campo-full">
-            <div class="reg-info-personal">
-              <svg viewBox="0 0 20 20" fill="currentColor" width="16"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/></svg>
-              Para personal de servicios generales el formulario es más breve.
-              Solo necesitamos tu nombre, sede y una foto opcional.
+            <div class="reg-info-personal reg-info-apoyo">
+              <div class="reg-info-apoyo-icono">
+                <svg viewBox="0 0 24 24" fill="currentColor" width="22"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+              </div>
+              <div>
+                <strong>¡Tu rol es fundamental en el ITS!</strong>
+                El equipo de apoyo hace posible que la institución funcione cada día.
+                Tu perfil tendrá el mismo protagonismo que el de cualquier docente.
+              </div>
             </div>
           </div>
         }
@@ -154,6 +171,24 @@
             }
           </div>
         </div>
+
+        <!-- Recomendaciones de foto -->
+        <div class="reg-campo reg-campo-full">
+          <div class="reg-foto-tips">
+            <div class="reg-foto-tips-titulo">
+              <svg viewBox="0 0 20 20" fill="currentColor" width="13"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/></svg>
+              Consejos para una buena foto de perfil
+            </div>
+            <ul class="reg-foto-tips-lista">
+              <li>Fondo neutro: blanco, gris claro o azul institucional.</li>
+              <li>Buena iluminación frontal — evita contraluz o sombras duras.</li>
+              <li>Tu rostro debe ocupar al menos el 60% del encuadre.</li>
+              <li>Ropa formal o uniforme limpio. Sonrisa natural y cercana.</li>
+              <li>Evita selfies, filtros o fotos de reuniones sociales.</li>
+            </ul>
+          </div>
+        </div>
+
       </div>
     </section>
 
@@ -210,9 +245,25 @@
               <select id="fArea" class="reg-select"
                       [ngModel]="area()" (ngModelChange)="area.set($event)" required>
                 <option value="" disabled>Selecciona tu área...</option>
-                @for (a of areas; track a) { <option [value]="a">{{ a }}</option> }
+                @for (a of areas(); track a) { <option [value]="a">{{ a }}</option> }
               </select>
             </div>
+
+            @if (mostrarOtraArea()) {
+              <div class="reg-campo reg-campo-full">
+                <label class="reg-label" for="fOtraArea">
+                  ¿Cuál es tu área? <span class="reg-req">*</span>
+                </label>
+                <input id="fOtraArea" type="text" class="reg-input reg-input-otra-area"
+                       placeholder="Ej: Mecánica Automotriz, Artes Plásticas, Música..."
+                       [ngModel]="otraArea()" (ngModelChange)="otraArea.set($event)"
+                       (blur)="onBlurOtraArea()" maxlength="80" autocomplete="off">
+                <span class="reg-otra-area-hint">
+                  <svg viewBox="0 0 16 16" fill="currentColor" width="11"><path d="M8 1a7 7 0 100 14A7 7 0 008 1zm.75 10.5h-1.5v-1.5h1.5v1.5zm0-3h-1.5V4.5h1.5V8.5z"/></svg>
+                  Esta área se agregará a la lista para que futuros registros la puedan seleccionar.
+                </span>
+              </div>
+            }
           }
 
           <div class="reg-campo">

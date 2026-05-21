@@ -23,24 +23,32 @@ export class DocentesRegistro implements OnInit, AfterViewInit {
   private cdr = inject(ChangeDetectorRef);
 
   // ── Opciones ────────────────────────────────────────────
+  // Cada cargo tiene su propio value único.
+  // Los valores del grupo "apoyo" comienzan con "P_" — se normalizan a 'PERSONAL' al enviar.
   readonly roles = [
-    { value: 'RECTOR',      label: 'Rector / Rectora' },
-    { value: 'COORDINADOR', label: 'Coordinador / Coordinadora' },
-    { value: 'ORIENTADORA', label: 'Orientador / Orientadora' },
-    { value: 'DOCENTE',     label: 'Docente' },
-    { value: 'PERSONAL',    label: 'Personal / Servicios Generales' },
+    // ── Equipo académico y directivo ──
+    { value: 'RECTOR',        label: 'Rector / Rectora',                grupo: 'directivo' },
+    { value: 'COORDINADOR',   label: 'Coordinador / Coordinadora',      grupo: 'directivo' },
+    { value: 'ORIENTADORA',   label: 'Orientador / Orientadora',        grupo: 'directivo' },
+    { value: 'DOCENTE',       label: 'Docente',                         grupo: 'academico' },
+    // ── Equipo de apoyo institucional ──
+    { value: 'P_SECRETARIA',  label: 'Secretaría / Administración',     grupo: 'apoyo' },
+    { value: 'P_TECNOLOGIA',  label: 'Tecnología e Informática',        grupo: 'apoyo' },
+    { value: 'P_CAFETERIA',   label: 'Cafetería y Restaurante Escolar', grupo: 'apoyo' },
+    { value: 'P_ASEO',        label: 'Aseo y Mantenimiento',            grupo: 'apoyo' },
+    { value: 'P_VIGILANCIA',  label: 'Vigilancia y Portería',           grupo: 'apoyo' },
+    { value: 'P_OTROS',       label: 'Otros servicios institucionales', grupo: 'apoyo' },
   ];
+
+  // Los values del grupo apoyo comienzan con 'P_'
+  private readonly ROLES_APOYO = new Set([
+    'P_SECRETARIA','P_TECNOLOGIA','P_CAFETERIA','P_ASEO','P_VIGILANCIA','P_OTROS',
+  ]);
 
   readonly sedes = ['Sede Principal', 'Ciudadela', 'Divino Niño'];
 
-  readonly areas = [
-    'Matemáticas', 'Ciencias Naturales', 'Física', 'Química',
-    'Lengua Castellana', 'Inglés', 'Ciencias Sociales', 'Historia y Geografía',
-    'Educación Artística', 'Educación Física', 'Tecnología e Informática',
-    'Electrónica Industrial', 'Electricidad', 'Mecánica Industrial',
-    'Sistemas', 'Diseño', 'Emprendimiento', 'Filosofía', 'Ética',
-    'Religión', 'Orientación Escolar', 'Educación Especial',
-  ];
+  // Cargadas desde la API en ngOnInit — se actualiza cuando alguien agrega "Otra"
+  areas = signal<string[]>([]);
 
   // ── Campos principales ───────────────────────────────────
   rol         = signal('');
@@ -56,6 +64,9 @@ export class DocentesRegistro implements OnInit, AfterViewInit {
   // ── Historia ────────────────────────────────────────────
   bioCorta    = signal('');
   bioCompleta = signal('');
+
+  // ── Área — "Otra" ────────────────────────────────────────
+  otraArea = signal('');
 
   // ── Especialidades ──────────────────────────────────────
   especialidades    = signal<string[]>([]);
@@ -81,12 +92,21 @@ export class DocentesRegistro implements OnInit, AfterViewInit {
   iaError              = signal('');
 
   // ── Visibilidad condicional por rol ─────────────────────
+  esPersonal            = computed(() => this.ROLES_APOYO.has(this.rol()));
+  rolSeleccionado       = computed(() => !!this.rol());
+  // Normaliza el rol para el backend: P_SECRETARIA → PERSONAL, etc.
+  rolBackend            = computed(() => this.esPersonal() ? 'PERSONAL' : this.rol());
+  // Etiqueta legible del cargo de apoyo (para guardarlo como "título" en el perfil)
+  cargoApoyo            = computed(() => this.roles.find(r => r.value === this.rol())?.label ?? '');
+
   mostrarArea           = computed(() => this.rol() === 'DOCENTE');
+  mostrarOtraArea       = computed(() => this.area() === 'Otra');
   mostrarEspecialidades = computed(() => ['RECTOR','COORDINADOR','ORIENTADORA','DOCENTE'].includes(this.rol()));
   mostrarPublicaciones  = computed(() => ['RECTOR','COORDINADOR','DOCENTE'].includes(this.rol()));
   mostrarRedes          = computed(() => ['RECTOR','COORDINADOR','ORIENTADORA','DOCENTE'].includes(this.rol()));
-  esPersonal            = computed(() => this.rol() === 'PERSONAL');
-  rolSeleccionado       = computed(() => !!this.rol());
+
+  // Roles del equipo directivo/académico (muestran bio, titulo académico, etc.)
+  esAcademico           = computed(() => !this.esPersonal());
 
   // ── Contadores ──────────────────────────────────────────
   bioShortLeft = computed(() => 140 - this.bioCorta().length);
@@ -97,15 +117,30 @@ export class DocentesRegistro implements OnInit, AfterViewInit {
     if (!this.rol())                         return false;
     if (this.nombre().trim().length < 3)     return false;
     if (!this.sede())                        return false;
-    if (this.rol() !== 'PERSONAL') {
+    if (!this.esPersonal()) {
       if (this.titulo().trim().length < 3)   return false;
       if (this.bioCorta().trim().length < 20) return false;
     }
-    if (this.rol() === 'DOCENTE' && !this.area()) return false;
+    if (this.rol() === 'DOCENTE') {
+      if (!this.area()) return false;
+      if (this.area() === 'Otra' && !this.otraArea().trim()) return false;
+    }
     return true;
   }
 
-  ngOnInit() {}
+  ngOnInit() {
+    // Cargar áreas desde la API — incluye las personalizadas que ya registraron otros
+    this.api.get<string[]>('/areas').subscribe({
+      next:  lista => this.areas.set([...lista, 'Otra']),
+      error: ()    => this.areas.set([
+        'Artística','Ciencias Naturales','Ciencias Sociales','Corte y Confección',
+        'Diseño Digital','Educación Física','Electricidad','Electrónica',
+        'Emprendimiento','Español y Literatura','Ética y Valores','Filosofía',
+        'Inglés Comunicativo','Matemáticas','Mecánica Industrial','Medios Audiovisuales',
+        'Orientación Escolar','Química','Religión','Sistemas','Tecnología e Informática','Otra',
+      ]),
+    });
+  }
 
   ngAfterViewInit() {
     try {
@@ -146,6 +181,7 @@ export class DocentesRegistro implements OnInit, AfterViewInit {
   onBlurBioCorta()    { this.bioCorta.set(this.capitalizarOraciones(this.bioCorta())); }
   onBlurBioCompleta() { this.bioCompleta.set(this.capitalizarOraciones(this.bioCompleta())); }
   onBlurEmail()       { this.email.set(this.email().trim().toLowerCase()); }
+  onBlurOtraArea()    { this.otraArea.set(this.tituloCase(this.otraArea())); }
   onBlurOrcid() {
     const d = this.orcid().replace(/[^0-9Xx]/g, '').toUpperCase();
     if (d.length === 16) this.orcid.set([0,4,8,12].map(i => d.slice(i, i+4)).join('-'));
@@ -253,12 +289,18 @@ export class DocentesRegistro implements OnInit, AfterViewInit {
     if (!this.formValido) { this.errorEnvio.set('Completa los campos obligatorios antes de continuar.'); return; }
     this.enviando.set(true);
 
+    // Área final: si eligió "Otra", usamos otraArea
+    const areaFinal = this.mostrarOtraArea() ? this.otraArea().trim() : this.area();
+
+    // Título final: personal de apoyo usa su cargo como título profesional
+    const tituloFinal = this.esPersonal() ? this.cargoApoyo() : this.titulo();
+
     const fd = new FormData();
-    fd.append('rol',         this.rol());
+    fd.append('rol',         this.rolBackend());
     fd.append('nombre',      this.nombre());
-    fd.append('titulo',      this.titulo());
+    fd.append('titulo',      tituloFinal);
     fd.append('email',       this.email());
-    fd.append('area',        this.area());
+    fd.append('area',        areaFinal);
     fd.append('sede',        this.sede());
     fd.append('bioCorta',    this.bioCorta());
     fd.append('bioCompleta', this.bioCompleta());

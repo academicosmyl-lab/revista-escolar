@@ -3,7 +3,7 @@
  */
 const { Router } = require('express');
 const multer  = require('multer');
-const { Usuario, PerfilDocente, Noticia, Imagen, Sede, DocenteSede, SolicitudPerfil } = require('../models');
+const { Usuario, PerfilDocente, Noticia, Imagen, Sede, DocenteSede, SolicitudPerfil, Area } = require('../models');
 const { autenticar } = require('../middlewares/auth.middleware');
 const { upload } = require('../middlewares/upload.middleware');
 const { galleryAgent } = require('../agents/gallery.agent');
@@ -20,7 +20,7 @@ const uploadMem = multer({ storage: multer.memoryStorage(), limits: { fileSize: 
 router.post('/registro-publico', uploadMem.single('foto'), async (req, res) => {
   try {
     const {
-      nombre, titulo, area, sede, experiencia, email,
+      rol, nombre, titulo, area, sede, experiencia, email,
       bioCorta, bioCompleta, especialidades, publicaciones,
       web, linkedin, orcid,
     } = req.body;
@@ -48,14 +48,15 @@ router.post('/registro-publico', uploadMem.single('foto'), async (req, res) => {
     }
 
     const solicitud = await SolicitudPerfil.create({
+      rol:          rol?.trim()      || 'DOCENTE',
       nombre:       nombre.trim(),
-      titulo:       titulo?.trim(),
-      area:         area?.trim(),
+      titulo:       titulo?.trim()   || null,
+      area:         area?.trim()     || null,
       sede:         sede?.trim(),
       experiencia:  experiencia ? parseInt(experiencia) : null,
-      email:        email?.trim(),
-      bio_corta:    bioCorta?.trim(),
-      bio_completa: bioCompleta?.trim(),
+      email:        email?.trim()    || null,
+      bio_corta:    bioCorta?.trim() || null,
+      bio_completa: bioCompleta?.trim() || null,
       especialidades: especialidades || null,
       publicaciones:  publicaciones  || null,
       web:          web?.trim()      || null,
@@ -66,6 +67,15 @@ router.post('/registro-publico', uploadMem.single('foto'), async (req, res) => {
       estado:       'pendiente',
       ip_origen:    req.ip,
     });
+
+    // Auto-registrar área personalizada en la tabla de áreas
+    // (para que aparezca en futuros formularios)
+    if (area?.trim()) {
+      Area.findOrCreate({
+        where: { nombre: area.trim() },
+        defaults: { nombre: area.trim(), activa: true },
+      }).catch(e => console.error('Auto-registro área:', e.message));
+    }
 
     // Notificar al super admin (no bloqueante)
     const adminEmail = process.env.SUPER_ADMIN_EMAIL;
