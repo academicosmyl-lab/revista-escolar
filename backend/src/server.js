@@ -16,11 +16,7 @@ const PORT = process.env.PORT || 3000;
 async function iniciar() {
   try {
     // Sincronizar base de datos
-    if (process.env.NODE_ENV !== 'production') {
-      await sequelize.sync({ alter: true });
-    } else {
-      await sequelize.sync({ force: false });
-    }
+    await sequelize.sync({ alter: true });
     console.log('✅ Base de datos sincronizada');
 
     // Auto-seed demo si la BD está vacía
