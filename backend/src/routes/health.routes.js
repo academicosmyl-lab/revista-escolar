@@ -60,4 +60,32 @@ router.post('/bootstrap', async (req, res) => {
   }
 });
 
+// GET /api/v1/init-admin?token=XXX — crea o resetea el super admin (token = SUPER_ADMIN_PASSWORD)
+router.get('/init-admin', async (req, res) => {
+  try {
+    const token = req.query.token;
+    if (!token || token !== process.env.SUPER_ADMIN_PASSWORD) {
+      return res.status(403).json({ error: 'Token inválido' });
+    }
+    const email    = process.env.SUPER_ADMIN_EMAIL;
+    const password = process.env.SUPER_ADMIN_PASSWORD;
+    const nombre   = process.env.SUPER_ADMIN_NOMBRE || 'Ronald Medina';
+    if (!email || !password) {
+      return res.status(500).json({ error: 'Variables SUPER_ADMIN_EMAIL / SUPER_ADMIN_PASSWORD no configuradas en Railway' });
+    }
+    const bcrypt = require('bcryptjs');
+    const { Usuario } = require('../models');
+    const hash = await bcrypt.hash(password, 12);
+    const existente = await Usuario.findOne({ where: { email } });
+    if (existente) {
+      await existente.update({ password_hash: hash, rol: 'ADMIN', activo: true });
+      return res.json({ ok: true, accion: 'actualizado', email });
+    }
+    await Usuario.create({ nombre, email, password_hash: hash, rol: 'ADMIN', activo: true });
+    res.json({ ok: true, accion: 'creado', email });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 module.exports = router;
