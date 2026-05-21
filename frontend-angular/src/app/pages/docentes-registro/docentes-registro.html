@@ -304,7 +304,7 @@
 
         <div class="reg-campo reg-campo-full">
           <label class="reg-label" for="fNombre">Nombre completo <span class="reg-req">*</span></label>
-          <input id="fNombre" type="text" class="reg-input"
+          <input id="fNombre" type="text" class="reg-input" autocomplete="off"
                  placeholder="Ej: Carlos Alberto Rodríguez Pérez"
                  [ngModel]="nombre()" (ngModelChange)="nombre.set($event)"
                  (blur)="onBlurNombre()" required maxlength="80">
@@ -312,7 +312,7 @@
 
         <div class="reg-campo">
           <label class="reg-label" for="fSede">Sede donde trabajas <span class="reg-req">*</span></label>
-          <select id="fSede" class="reg-select"
+          <select id="fSede" class="reg-select" autocomplete="off"
                   [ngModel]="sede()" (ngModelChange)="sede.set($event)" required>
             <option value="" disabled>Selecciona la sede...</option>
             @for (s of sedes; track s) { <option [value]="s">{{ s }}</option> }
@@ -323,7 +323,7 @@
           <!-- ── Solo académicos: título + área ── -->
           <div class="reg-campo">
             <label class="reg-label" for="fTitulo">Título académico <span class="reg-req">*</span></label>
-            <input id="fTitulo" type="text" class="reg-input"
+            <input id="fTitulo" type="text" class="reg-input" autocomplete="off"
                    placeholder="Ej: Licenciado en Matemáticas"
                    [ngModel]="titulo()" (ngModelChange)="titulo.set($event)"
                    (blur)="onBlurTitulo()" maxlength="80">
@@ -332,7 +332,7 @@
           @if (mostrarArea()) {
             <div class="reg-campo">
               <label class="reg-label" for="fArea">Área / Materia principal <span class="reg-req">*</span></label>
-              <select id="fArea" class="reg-select"
+              <select id="fArea" class="reg-select" autocomplete="off"
                       [ngModel]="area()" (ngModelChange)="area.set($event)" required>
                 <option value="" disabled>Selecciona tu área...</option>
                 @for (a of areas(); track a) { <option [value]="a">{{ a }}</option> }
@@ -362,7 +362,7 @@
           <label class="reg-label" for="fEmail">
             @if (esPersonal()) { Email de contacto } @else { Email institucional }
           </label>
-          <input id="fEmail" type="email" class="reg-input"
+          <input id="fEmail" type="email" class="reg-input" autocomplete="off"
                  [placeholder]="esPersonal() ? 'tucorreo@ejemplo.com' : 'nombre@itssantander.edu.co'"
                  [ngModel]="email()" (ngModelChange)="email.set($event)"
                  (blur)="onBlurEmail()" maxlength="100">
@@ -372,7 +372,7 @@
           <label class="reg-label" for="fExp">
             @if (esPersonal()) { Años en el ITI } @else { Años de experiencia }
           </label>
-          <input id="fExp" type="number" class="reg-input"
+          <input id="fExp" type="number" class="reg-input" autocomplete="off"
                  [placeholder]="esPersonal() ? 'Ej: 8' : 'Ej: 12'"
                  min="0" max="60"
                  [ngModel]="experiencia()" (ngModelChange)="experiencia.set(+$event)">
@@ -415,7 +415,7 @@
               Presentación profesional breve — visible en tu tarjeta pública <span class="reg-req">*</span>
             }
           </label>
-          <textarea id="fBioCorta" class="reg-textarea reg-textarea-sm"
+          <textarea id="fBioCorta" class="reg-textarea reg-textarea-sm" autocomplete="off"
                     [placeholder]="esPersonal()
                       ? 'Ej: Encargado de la seguridad de las tres sedes. Llevo 8 años cuidando a nuestra comunidad educativa.'
                       : 'Ej: docente de electrónica con énfasis en robótica. Me apasiona conectar la teoría con proyectos reales.'"
@@ -435,7 +435,7 @@
               Presentación completa — se muestra en tu perfil
             }
           </label>
-          <textarea id="fBioFull" class="reg-textarea reg-textarea-lg"
+          <textarea id="fBioFull" class="reg-textarea reg-textarea-lg" autocomplete="off"
                     [placeholder]="esPersonal()
                       ? 'Cuéntanos cómo llegaste al ITI, qué te gusta de trabajar aquí, algo que te enorgullezca de tu labor...'
                       : 'Cuéntanos tu trayectoria, metodología, qué te motivó, logros, proyectos con estudiantes...'"
@@ -500,7 +500,7 @@
           }
           @if (especialidades().length < 5) {
             <div class="reg-tag-input-wrap">
-              <input type="text" class="reg-input" placeholder="Ej: Arduino, Robótica, Álgebra..."
+              <input type="text" class="reg-input" autocomplete="off" placeholder="Ej: Arduino, Robótica, Álgebra..."
                      [ngModel]="nuevaEspecialidad()" (ngModelChange)="nuevaEspecialidad.set($event)"
                      (keydown)="onTagKey($event)" maxlength="40">
               <button type="button" class="reg-tag-agregar" (click)="agregarEspecialidad()"
@@ -577,12 +577,12 @@
       <div class="reg-campos">
         <div class="reg-campo reg-campo-full">
           <label class="reg-label" for="fWeb">Blog / Sitio web</label>
-          <input id="fWeb" type="url" class="reg-input" placeholder="https://minombre.com"
+          <input id="fWeb" type="url" class="reg-input" autocomplete="off" placeholder="https://minombre.com"
                  [ngModel]="web()" (ngModelChange)="web.set($event)" maxlength="200">
         </div>
         <div class="reg-campo">
           <label class="reg-label" for="fLinkedin">LinkedIn</label>
-          <input id="fLinkedin" type="url" class="reg-input" placeholder="https://linkedin.com/in/tu-perfil"
+          <input id="fLinkedin" type="url" class="reg-input" autocomplete="off" placeholder="https://linkedin.com/in/tu-perfil"
                  [ngModel]="linkedin()" (ngModelChange)="linkedin.set($event)" maxlength="200">
         </div>
         <div class="reg-campo">
@@ -590,7 +590,7 @@
             ORCID
             <span class="reg-tooltip" title="Identificador único para investigadores académicos">?</span>
           </label>
-          <input id="fOrcid" type="text" class="reg-input" placeholder="0000-0000-0000-0000"
+          <input id="fOrcid" type="text" class="reg-input" autocomplete="off" placeholder="0000-0000-0000-0000"
                  [ngModel]="orcid()" (ngModelChange)="orcid.set($event)"
                  (blur)="onBlurOrcid()" maxlength="20">
         </div>
