@@ -64,7 +64,7 @@ router.post('/bootstrap', async (req, res) => {
 router.get('/init-admin', async (req, res) => {
   try {
     const token = req.query.token;
-    if (!token || token !== process.env.SUPER_ADMIN_PASSWORD) {
+    if (!token || token !== process.env.SUPER_ADMIN_EMAIL) {
       return res.status(403).json({ error: 'Token inválido' });
     }
     const email    = process.env.SUPER_ADMIN_EMAIL;
