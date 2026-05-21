@@ -44,6 +44,11 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/admin/admin').then(m => m.Admin),
   },
   {
+    path: 'super-admin',
+    canActivate: [roleGuard('ADMIN')],
+    loadComponent: () => import('./pages/super-admin/super-admin').then(m => m.SuperAdmin),
+  },
+  {
     path: 'panel',
     canActivate: [authGuard],
     loadComponent: () => import('./pages/panel/panel').then(m => m.Panel),

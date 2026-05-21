@@ -1,0 +1,519 @@
+<!-- ╔══════════════════════════════════════════════════════╗ -->
+<!-- ║   SUPER ADMIN — Panel de Control ITS Santander       ║ -->
+<!-- ╚══════════════════════════════════════════════════════╝ -->
+<div class="sa-shell">
+
+  <!-- ── Barra lateral ────────────────────────────────────── -->
+  <aside class="sa-sidebar">
+    <div class="sa-brand">
+      <span class="sa-brand-icon">⚙</span>
+      <div>
+        <span class="sa-brand-name">Super Admin</span>
+        <span class="sa-brand-sub">ITS Santander</span>
+      </div>
+    </div>
+
+    <nav class="sa-nav">
+      <button class="sa-nav-item" [class.active]="tabActiva() === 'dashboard'" (click)="irA('dashboard')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        Dashboard
+      </button>
+      <button class="sa-nav-item" [class.active]="tabActiva() === 'cola'" (click)="irA('cola')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 12h6M9 16h4"/></svg>
+        Cola de solicitudes
+        @if (solicitudes.length && filtroEstado() === 'pendiente') {
+          <span class="sa-badge">{{ totalSolicitudes }}</span>
+        }
+      </button>
+      <button class="sa-nav-item" [class.active]="tabActiva() === 'docentes'" (click)="irA('docentes')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        Gestión docentes
+      </button>
+      <button class="sa-nav-item" [class.active]="tabActiva() === 'historial'" (click)="irA('historial')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        Historial
+      </button>
+    </nav>
+
+    <div class="sa-sidebar-footer">
+      <a routerLink="/" class="sa-back-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+        Volver al sitio
+      </a>
+    </div>
+  </aside>
+
+  <!-- ── Contenido principal ──────────────────────────────── -->
+  <main class="sa-main">
+
+    <!-- Mensajes globales -->
+    @if (error()) {
+      <div class="sa-alert sa-alert-err">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        {{ error() }}
+        <button (click)="limpiarMensajes()" class="sa-alert-close">✕</button>
+      </div>
+    }
+    @if (exito()) {
+      <div class="sa-alert sa-alert-ok">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+        {{ exito() }}
+        <button (click)="limpiarMensajes()" class="sa-alert-close">✕</button>
+      </div>
+    }
+
+    <!-- ════════════════════════════════════════ TAB: DASHBOARD -->
+    @if (tabActiva() === 'dashboard') {
+      <div class="sa-page">
+        <header class="sa-page-header">
+          <h1 class="sa-page-title">Panel de control</h1>
+          <p class="sa-page-sub">Instituto Técnico Industrial Santander</p>
+        </header>
+
+        @if (cargando() && !stats) {
+          <div class="sa-loading"><div class="sa-spinner"></div> Cargando estadísticas…</div>
+        }
+
+        @if (stats) {
+          <!-- Widgets de conteo -->
+          <div class="sa-widgets">
+            <div class="sa-widget sa-widget-warn">
+              <span class="sa-widget-num">{{ stats.solicitudes.pendientes }}</span>
+              <span class="sa-widget-label">Pendientes</span>
+              <button class="sa-widget-cta" (click)="irA('cola')">Revisar →</button>
+            </div>
+            <div class="sa-widget sa-widget-ok">
+              <span class="sa-widget-num">{{ stats.solicitudes.aprobados }}</span>
+              <span class="sa-widget-label">Aprobados</span>
+            </div>
+            <div class="sa-widget sa-widget-err">
+              <span class="sa-widget-num">{{ stats.solicitudes.rechazados }}</span>
+              <span class="sa-widget-label">Rechazados</span>
+            </div>
+            <div class="sa-widget sa-widget-blue">
+              <span class="sa-widget-num">{{ stats.docentes.activos }}</span>
+              <span class="sa-widget-label">Docentes activos</span>
+              <span class="sa-widget-hint">de {{ stats.docentes.total }} totales</span>
+            </div>
+          </div>
+
+          <!-- Fila: distribución por área + últimas acciones -->
+          <div class="sa-dash-row">
+            <!-- Distribución por área -->
+            <div class="sa-card">
+              <h2 class="sa-card-title">Distribución por área</h2>
+              @if (stats.porArea.length === 0) {
+                <p class="sa-empty">Sin datos disponibles</p>
+              }
+              @for (item of stats.porArea; track item.cargo) {
+                <div class="sa-bar-row">
+                  <span class="sa-bar-label">{{ item.cargo || 'Sin área' }}</span>
+                  <div class="sa-bar-track">
+                    <div class="sa-bar-fill" [style.width.%]="(item.total / stats!.docentes.total) * 100"></div>
+                  </div>
+                  <span class="sa-bar-count">{{ item.total }}</span>
+                </div>
+              }
+            </div>
+
+            <!-- Últimas acciones -->
+            <div class="sa-card">
+              <h2 class="sa-card-title">Últimas acciones</h2>
+              @if (stats.ultimasAcciones.length === 0) {
+                <p class="sa-empty">Sin acciones registradas</p>
+              }
+              @for (a of stats.ultimasAcciones; track a.id) {
+                <div class="sa-accion-row">
+                  <span class="sa-accion-icon">{{ iconoAccion[a.tipo] || '📌' }}</span>
+                  <div class="sa-accion-body">
+                    <span class="sa-accion-desc">{{ a.descripcion }}</span>
+                    <span class="sa-accion-meta">{{ a.admin?.nombre ?? 'Sistema' }} · {{ formatFecha(a.createdAt) }}</span>
+                  </div>
+                </div>
+              }
+              <button class="sa-link-btn" (click)="irA('historial')">Ver historial completo →</button>
+            </div>
+          </div>
+        }
+      </div>
+    }
+
+    <!-- ══════════════════════════════════ TAB: COLA SOLICITUDES -->
+    @if (tabActiva() === 'cola') {
+      <div class="sa-page">
+        <header class="sa-page-header">
+          <h1 class="sa-page-title">Cola de solicitudes</h1>
+          <p class="sa-page-sub">Revisa y aprueba los perfiles enviados por docentes</p>
+        </header>
+
+        <!-- Filtros -->
+        <div class="sa-toolbar">
+          <div class="sa-filter-tabs">
+            @for (e of ['pendiente','aprobado','rechazado']; track e) {
+              <button class="sa-filter-tab" [class.active]="filtroEstado() === e" (click)="cambiarFiltroEstado(e)">
+                {{ e | titlecase }}
+              </button>
+            }
+          </div>
+          <div class="sa-search">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input type="text" placeholder="Buscar por nombre…" [value]="busquedaCola()"
+              (input)="busquedaCola.set($any($event.target).value); pagCola.set(1); cargarCola()">
+          </div>
+        </div>
+
+        @if (cargando()) {
+          <div class="sa-loading"><div class="sa-spinner"></div></div>
+        }
+
+        @if (!cargando() && solicitudes.length === 0) {
+          <div class="sa-empty-state">
+            <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.5" width="56"><circle cx="32" cy="32" r="28"/><path d="M32 20v12M32 40v2"/></svg>
+            <p>No hay solicitudes {{ filtroEstado() === 'pendiente' ? 'pendientes' : filtroEstado() + 's' }}</p>
+          </div>
+        }
+
+        <div class="sa-grid">
+          @for (sol of solicitudes; track sol.id) {
+            <article class="sa-sol-card" [class.pendiente]="sol.estado === 'pendiente'" [class.aprobado]="sol.estado === 'aprobado'" [class.rechazado]="sol.estado === 'rechazado'">
+              <div class="sa-sol-foto">
+                @if (sol.fotoUrl) {
+                  <img [src]="sol.fotoUrl" [alt]="sol.nombre" loading="lazy">
+                } @else {
+                  <div class="sa-sol-foto-placeholder">{{ sol.nombre[0] }}</div>
+                }
+                <span class="sa-sol-badge">{{ sol.estado }}</span>
+              </div>
+
+              <div class="sa-sol-body">
+                <h3 class="sa-sol-nombre">{{ sol.nombre }}</h3>
+                @if (sol.titulo) { <p class="sa-sol-titulo">{{ sol.titulo }}</p> }
+                <div class="sa-sol-meta">
+                  @if (sol.area)  { <span>📚 {{ sol.area }}</span> }
+                  @if (sol.sede)  { <span>🏫 {{ sol.sede }}</span> }
+                  @if (sol.email) { <span>✉ {{ sol.email }}</span> }
+                </div>
+
+                @if (sol.bioCorta) {
+                  <p class="sa-sol-bio">{{ sol.bioCorta }}</p>
+                }
+
+                @if (sol.motivoAdmin) {
+                  <div class="sa-sol-motivo">
+                    <strong>Motivo admin:</strong> {{ sol.motivoAdmin }}
+                  </div>
+                }
+
+                <p class="sa-sol-fecha">Enviado {{ formatFecha(sol.createdAt) }}</p>
+
+                @if (sol.estado === 'pendiente') {
+                  <div class="sa-sol-actions">
+                    <button class="sa-btn sa-btn-ok" (click)="abrirRevision(sol, 'aprobar')">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14"><polyline points="20 6 9 17 4 12"/></svg>
+                      Aprobar
+                    </button>
+                    <button class="sa-btn sa-btn-err" (click)="abrirRevision(sol, 'rechazar')">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                      Rechazar
+                    </button>
+                  </div>
+                }
+              </div>
+            </article>
+          }
+        </div>
+
+        <!-- Paginación cola -->
+        @if (totalPagesCola > 1) {
+          <div class="sa-pag">
+            <button class="sa-pag-btn" [disabled]="pagCola() <= 1" (click)="prevCola()">‹ Anterior</button>
+            <span class="sa-pag-info">{{ pagCola() }} / {{ totalPagesCola }}</span>
+            <button class="sa-pag-btn" [disabled]="pagCola() >= totalPagesCola" (click)="nextCola()">Siguiente ›</button>
+          </div>
+        }
+      </div>
+    }
+
+    <!-- ═══════════════════════════════════════ TAB: DOCENTES -->
+    @if (tabActiva() === 'docentes') {
+      <div class="sa-page">
+        <header class="sa-page-header sa-page-header-row">
+          <div>
+            <h1 class="sa-page-title">Gestión de docentes</h1>
+            <p class="sa-page-sub">{{ totalDocentes }} docentes registrados</p>
+          </div>
+          <button class="sa-btn sa-btn-primary sa-btn-lg" (click)="abrirCrear()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="16"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Crear docente
+          </button>
+        </header>
+
+        <!-- Filtros docentes -->
+        <div class="sa-toolbar">
+          <div class="sa-filter-tabs">
+            <button class="sa-filter-tab" [class.active]="filtroActivo() === ''" (click)="filtroActivo.set(''); pagDocentes.set(1); cargarDocentes()">Todos</button>
+            <button class="sa-filter-tab" [class.active]="filtroActivo() === 'true'" (click)="filtroActivo.set('true'); pagDocentes.set(1); cargarDocentes()">Activos</button>
+            <button class="sa-filter-tab" [class.active]="filtroActivo() === 'false'" (click)="filtroActivo.set('false'); pagDocentes.set(1); cargarDocentes()">Inactivos</button>
+          </div>
+          <div class="sa-search">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input type="text" placeholder="Buscar docente…" [value]="busquedaDocentes()"
+              (input)="busquedaDocentes.set($any($event.target).value); pagDocentes.set(1); cargarDocentes()">
+          </div>
+        </div>
+
+        @if (cargando()) {
+          <div class="sa-loading"><div class="sa-spinner"></div></div>
+        }
+
+        @if (!cargando() && docentes.length === 0) {
+          <div class="sa-empty-state">
+            <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.5" width="56"><circle cx="32" cy="32" r="28"/><path d="M32 20v12M32 40v2"/></svg>
+            <p>No hay docentes con ese filtro</p>
+          </div>
+        }
+
+        <div class="sa-table-wrap">
+          @if (docentes.length > 0) {
+            <table class="sa-table">
+              <thead>
+                <tr>
+                  <th>Docente</th>
+                  <th>Email</th>
+                  <th>Rol</th>
+                  <th>Título</th>
+                  <th>Estado</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (doc of docentes; track doc.id) {
+                  <tr [class.inactivo]="!doc.activo">
+                    <td class="sa-td-docente">
+                      @if (doc.perfil?.fotoUrl) {
+                        <img [src]="doc.perfil!.fotoUrl" [alt]="doc.nombre" class="sa-doc-avatar">
+                      } @else {
+                        <div class="sa-doc-avatar-placeholder">{{ doc.nombre[0] }}</div>
+                      }
+                      <span class="sa-doc-nombre">{{ doc.nombre }}</span>
+                    </td>
+                    <td class="sa-td-email">{{ doc.email }}</td>
+                    <td><span class="sa-rol-chip">{{ doc.rol }}</span></td>
+                    <td class="sa-td-titulo">{{ doc.perfil?.tituloProfesional ?? '—' }}</td>
+                    <td>
+                      <span class="sa-status-chip" [class.activo]="doc.activo" [class.inactivo]="!doc.activo">
+                        {{ doc.activo ? 'Activo' : 'Inactivo' }}
+                      </span>
+                    </td>
+                    <td class="sa-td-actions">
+                      <button class="sa-icon-btn" [class.deactivate]="doc.activo" [class.activate]="!doc.activo"
+                        (click)="toggleActivo(doc)"
+                        [title]="doc.activo ? 'Desactivar' : 'Reactivar'">
+                        @if (doc.activo) {
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16"><circle cx="12" cy="12" r="10"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+                        } @else {
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+                        }
+                      </button>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          }
+        </div>
+
+        <!-- Paginación docentes -->
+        @if (totalPagesDocentes > 1) {
+          <div class="sa-pag">
+            <button class="sa-pag-btn" [disabled]="pagDocentes() <= 1" (click)="prevDocentes()">‹ Anterior</button>
+            <span class="sa-pag-info">{{ pagDocentes() }} / {{ totalPagesDocentes }}</span>
+            <button class="sa-pag-btn" [disabled]="pagDocentes() >= totalPagesDocentes" (click)="nextDocentes()">Siguiente ›</button>
+          </div>
+        }
+      </div>
+    }
+
+    <!-- ════════════════════════════════════════ TAB: HISTORIAL -->
+    @if (tabActiva() === 'historial') {
+      <div class="sa-page">
+        <header class="sa-page-header">
+          <h1 class="sa-page-title">Historial de acciones</h1>
+          <p class="sa-page-sub">Registro completo de operaciones administrativas</p>
+        </header>
+
+        @if (cargando()) {
+          <div class="sa-loading"><div class="sa-spinner"></div></div>
+        }
+
+        @if (!cargando() && historial.length === 0) {
+          <div class="sa-empty-state">
+            <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.5" width="56"><circle cx="32" cy="32" r="28"/><polyline points="32 20 32 32 40 36"/></svg>
+            <p>Sin acciones registradas aún</p>
+          </div>
+        }
+
+        <div class="sa-historial-list">
+          @for (a of historial; track a.id) {
+            <div class="sa-hist-row">
+              <span class="sa-hist-icon">{{ iconoAccion[a.tipo] || '📌' }}</span>
+              <div class="sa-hist-body">
+                <span class="sa-hist-desc">{{ a.descripcion }}</span>
+                <span class="sa-hist-meta">
+                  {{ a.admin?.nombre ?? 'Sistema' }} · {{ formatFecha(a.createdAt) }}
+                </span>
+              </div>
+              <span class="sa-hist-tipo">{{ a.tipo.replace(/_/g, ' ') }}</span>
+            </div>
+          }
+        </div>
+
+        <!-- Paginación historial -->
+        @if (totalPagesHistorial > 1) {
+          <div class="sa-pag">
+            <button class="sa-pag-btn" [disabled]="pagHistorial() <= 1" (click)="prevHistorial()">‹ Anterior</button>
+            <span class="sa-pag-info">{{ pagHistorial() }} / {{ totalPagesHistorial }}</span>
+            <button class="sa-pag-btn" [disabled]="pagHistorial() >= totalPagesHistorial" (click)="nextHistorial()">Siguiente ›</button>
+          </div>
+        }
+      </div>
+    }
+
+  </main><!-- /sa-main -->
+</div><!-- /sa-shell -->
+
+
+<!-- ╔══════════════════════════════════════╗ -->
+<!-- ║   MODALES                             ║ -->
+<!-- ╚══════════════════════════════════════╝ -->
+
+<!-- Modal: Aprobar / Rechazar solicitud -->
+@if (modal() === 'aprobar' || modal() === 'rechazar') {
+  <div class="sa-modal-backdrop" (click)="cerrarModal()">
+    <div class="sa-modal" (click)="$event.stopPropagation()">
+      <div class="sa-modal-header" [class.aprobar]="modal() === 'aprobar'" [class.rechazar]="modal() === 'rechazar'">
+        <h2>{{ modal() === 'aprobar' ? '✅ Aprobar perfil' : '❌ Rechazar solicitud' }}</h2>
+        <button class="sa-modal-close" (click)="cerrarModal()">✕</button>
+      </div>
+
+      @if (asSolicitud(modalItem()); as sol) {
+        <div class="sa-modal-body">
+          <div class="sa-modal-info">
+            @if (sol.fotoUrl) {
+              <img [src]="sol.fotoUrl" [alt]="sol.nombre" class="sa-modal-foto">
+            }
+            <div>
+              <p class="sa-modal-nombre">{{ sol.nombre }}</p>
+              @if (sol.titulo) { <p class="sa-modal-sub">{{ sol.titulo }}</p> }
+              @if (sol.area)   { <p class="sa-modal-sub">{{ sol.area }}</p> }
+              @if (sol.email)  { <p class="sa-modal-sub">{{ sol.email }}</p> }
+            </div>
+          </div>
+
+          @if (modal() === 'aprobar') {
+            <div class="sa-modal-notice sa-modal-notice-ok">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16"><circle cx="12" cy="12" r="10"/><path d="M12 8v4m0 4h.01"/></svg>
+              Al aprobar, se creará una cuenta de docente y se enviará un correo con las credenciales de acceso.
+            </div>
+          } @else {
+            <div class="sa-modal-notice sa-modal-notice-err">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16"><circle cx="12" cy="12" r="10"/><path d="M12 8v4m0 4h.01"/></svg>
+              El docente recibirá un correo con el motivo y podrá corregir y reenviar su solicitud.
+            </div>
+          }
+
+          <label class="sa-label" for="motivo-input">
+            Motivo <span class="sa-required">*</span>
+            <span class="sa-label-hint">(obligatorio — se envía al docente)</span>
+          </label>
+          <textarea id="motivo-input" class="sa-textarea" rows="4"
+            placeholder="{{ modal() === 'aprobar' ? 'Ej: Perfil completo y verificado. Bienvenido al equipo.' : 'Ej: La biografía es demasiado breve. Por favor amplíala con experiencia y logros.' }}"
+            [value]="motivo()"
+            (input)="motivo.set($any($event.target).value); motivoErr.set('')">
+          </textarea>
+          @if (motivoErr()) {
+            <p class="sa-field-err">{{ motivoErr() }}</p>
+          }
+        </div>
+
+        <div class="sa-modal-footer">
+          <button class="sa-btn sa-btn-ghost" (click)="cerrarModal()" [disabled]="cargando()">Cancelar</button>
+          <button class="sa-btn" [class.sa-btn-ok]="modal() === 'aprobar'" [class.sa-btn-err]="modal() === 'rechazar'"
+            (click)="confirmarAccion()" [disabled]="cargando()">
+            @if (cargando()) { <span class="sa-btn-spinner"></span> }
+            {{ modal() === 'aprobar' ? 'Confirmar aprobación' : 'Confirmar rechazo' }}
+          </button>
+        </div>
+      }
+    </div>
+  </div>
+}
+
+<!-- Modal: Crear docente -->
+@if (modal() === 'crear') {
+  <div class="sa-modal-backdrop" (click)="cerrarModal()">
+    <div class="sa-modal sa-modal-wide" (click)="$event.stopPropagation()">
+      <div class="sa-modal-header sa-modal-header-neutral">
+        <h2>➕ Crear docente manualmente</h2>
+        <button class="sa-modal-close" (click)="cerrarModal()">✕</button>
+      </div>
+
+      <div class="sa-modal-body">
+        <div class="sa-form-grid">
+          <div class="sa-field">
+            <label class="sa-label" for="c-nombre">Nombre completo <span class="sa-required">*</span></label>
+            <input id="c-nombre" class="sa-input" type="text" placeholder="Ej: María García López"
+              [value]="nuevoNombre()" (input)="nuevoNombre.set($any($event.target).value)">
+          </div>
+          <div class="sa-field">
+            <label class="sa-label" for="c-email">Correo institucional <span class="sa-required">*</span></label>
+            <input id="c-email" class="sa-input" type="email" placeholder="docente@itssantander.edu.co"
+              [value]="nuevoEmail()" (input)="nuevoEmail.set($any($event.target).value)">
+          </div>
+          <div class="sa-field">
+            <label class="sa-label" for="c-titulo">Título profesional</label>
+            <input id="c-titulo" class="sa-input" type="text" placeholder="Ej: Licenciado en Matemáticas"
+              [value]="nuevoTitulo()" (input)="nuevoTitulo.set($any($event.target).value)">
+          </div>
+          <div class="sa-field">
+            <label class="sa-label" for="c-area">Área / Cargo</label>
+            <input id="c-area" class="sa-input" type="text" placeholder="Ej: Docente de Ciencias Naturales"
+              [value]="nuevoArea()" (input)="nuevoArea.set($any($event.target).value)">
+          </div>
+          <div class="sa-field">
+            <label class="sa-label" for="c-sede">Sede</label>
+            <select id="c-sede" class="sa-input sa-select"
+              [value]="nuevoSede()" (change)="nuevoSede.set($any($event.target).value)">
+              <option value="">Seleccionar sede…</option>
+              <option value="Principal">Sede Principal</option>
+              <option value="Ciudadela">Ciudadela</option>
+              <option value="Divino">Divino Niño</option>
+            </select>
+          </div>
+          <div class="sa-field sa-field-full">
+            <label class="sa-label" for="c-bio">Biografía corta</label>
+            <textarea id="c-bio" class="sa-textarea" rows="3" placeholder="Breve descripción del docente…"
+              [value]="nuevoBio()" (input)="nuevoBio.set($any($event.target).value)">
+            </textarea>
+          </div>
+        </div>
+
+        @if (nuevoCreandoErr()) {
+          <p class="sa-field-err">{{ nuevoCreandoErr() }}</p>
+        }
+
+        <p class="sa-modal-hint">
+          Se creará la cuenta con una contraseña temporal que el docente deberá cambiar en su primer ingreso.
+        </p>
+      </div>
+
+      <div class="sa-modal-footer">
+        <button class="sa-btn sa-btn-ghost" (click)="cerrarModal()" [disabled]="cargando()">Cancelar</button>
+        <button class="sa-btn sa-btn-primary" (click)="crearDocente()" [disabled]="cargando()">
+          @if (cargando()) { <span class="sa-btn-spinner"></span> }
+          Crear docente
+        </button>
+      </div>
+    </div>
+  </div>
+}

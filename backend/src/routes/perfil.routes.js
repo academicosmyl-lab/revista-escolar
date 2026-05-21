@@ -2,13 +2,92 @@
  * routes/perfil.routes.js — Perfil público y edición del docente
  */
 const { Router } = require('express');
-const { Usuario, PerfilDocente, Noticia, Imagen, Sede, DocenteSede } = require('../models');
+const multer  = require('multer');
+const { Usuario, PerfilDocente, Noticia, Imagen, Sede, DocenteSede, SolicitudPerfil } = require('../models');
 const { autenticar } = require('../middlewares/auth.middleware');
 const { upload } = require('../middlewares/upload.middleware');
 const { galleryAgent } = require('../agents/gallery.agent');
 const { crearError } = require('../middlewares/error.middleware');
+const { emailService }      = require('../services/email.service');
+const { cloudinaryService } = require('../services/cloudinary.service');
 
 const router = Router();
+const uploadMem = multer({ storage: multer.memoryStorage(), limits: { fileSize: 5 * 1024 * 1024 } });
+
+// ── POST /api/v1/perfil/registro-publico ──────────────────
+// Recibe el formulario público del docente (sin autenticación).
+// Guarda la solicitud como "pendiente" y notifica al super admin.
+router.post('/registro-publico', uploadMem.single('foto'), async (req, res) => {
+  try {
+    const {
+      nombre, titulo, area, sede, experiencia, email,
+      bioCorta, bioCompleta, especialidades, publicaciones,
+      web, linkedin, orcid,
+    } = req.body;
+
+    if (!nombre?.trim()) {
+      return res.status(400).json({ error: 'El nombre es obligatorio' });
+    }
+
+    // Subir foto a Cloudinary si viene en la solicitud
+    let fotoUrl    = null;
+    let fotoPublicId = null;
+    if (req.file) {
+      try {
+        const result = await cloudinaryService.uploadBuffer(
+          req.file.buffer,
+          req.file.mimetype,
+          `solicitudes-perfil/${Date.now()}`
+        );
+        fotoUrl      = result.secure_url;
+        fotoPublicId = result.public_id;
+      } catch (uploadErr) {
+        console.error('Error subiendo foto solicitud:', uploadErr.message);
+        // No bloqueamos — la solicitud sigue aunque falle la foto
+      }
+    }
+
+    const solicitud = await SolicitudPerfil.create({
+      nombre:       nombre.trim(),
+      titulo:       titulo?.trim(),
+      area:         area?.trim(),
+      sede:         sede?.trim(),
+      experiencia:  experiencia ? parseInt(experiencia) : null,
+      email:        email?.trim(),
+      bio_corta:    bioCorta?.trim(),
+      bio_completa: bioCompleta?.trim(),
+      especialidades: especialidades || null,
+      publicaciones:  publicaciones  || null,
+      web:          web?.trim()      || null,
+      linkedin:     linkedin?.trim() || null,
+      orcid:        orcid?.trim()    || null,
+      foto_url:     fotoUrl,
+      foto_public_id: fotoPublicId,
+      estado:       'pendiente',
+      ip_origen:    req.ip,
+    });
+
+    // Notificar al super admin (no bloqueante)
+    const adminEmail = process.env.SUPER_ADMIN_EMAIL;
+    if (adminEmail) {
+      emailService.solicitudPerfilPendiente({
+        adminEmail,
+        docenteNombre: nombre,
+        docenteArea:   area,
+        solicitudId:   solicitud.id,
+      }).catch(e => console.error('Email solicitudPerfilPendiente error:', e.message));
+    }
+
+    res.status(201).json({
+      ok:      true,
+      mensaje: 'Tu perfil fue recibido. El equipo directivo lo revisará pronto.',
+      id:      solicitud.id,
+    });
+  } catch (e) {
+    console.error('Error registro-publico:', e.message);
+    res.status(500).json({ error: 'Error al guardar la solicitud. Intenta de nuevo.' });
+  }
+});
 
 // GET /api/v1/perfil/docentes — lista pública de docentes con perfil
 router.get('/docentes', async (req, res, next) => {

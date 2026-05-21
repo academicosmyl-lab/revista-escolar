@@ -262,6 +262,56 @@ const ErrorPattern = sequelize.define('ErrorPattern', {
   docente_id:     { type: DataTypes.UUID },
 }, { tableName: 'error_patterns', underscored: true });
 
+// ─── SOLICITUD PERFIL DOCENTE (formulario público) ────────
+// Recibe la info del form /docentes/registro ANTES de que el admin la apruebe.
+// Al aprobar se crea un Usuario + PerfilDocente en la BD.
+const SolicitudPerfil = sequelize.define('SolicitudPerfil', {
+  id:             { type: DataTypes.UUID, defaultValue: DataTypes.UUIDV4, primaryKey: true },
+  nombre:         { type: DataTypes.STRING(100), allowNull: false },
+  titulo:         { type: DataTypes.STRING(200) },
+  area:           { type: DataTypes.STRING(100) },
+  sede:           { type: DataTypes.STRING(100) },
+  experiencia:    { type: DataTypes.INTEGER },
+  email:          { type: DataTypes.STRING(150) },
+  bio_corta:      { type: DataTypes.STRING(150) },
+  bio_completa:   { type: DataTypes.TEXT },
+  especialidades: { type: DataTypes.TEXT },   // JSON stringified
+  publicaciones:  { type: DataTypes.TEXT },   // JSON stringified
+  web:            { type: DataTypes.STRING(500) },
+  linkedin:       { type: DataTypes.STRING(500) },
+  orcid:          { type: DataTypes.STRING(50) },
+  foto_url:       { type: DataTypes.STRING(500) },
+  foto_public_id: { type: DataTypes.STRING(200) },  // Cloudinary public_id
+  estado: {
+    type: DataTypes.ENUM('pendiente','aprobado','rechazado'),
+    defaultValue: 'pendiente',
+  },
+  motivo_admin:   { type: DataTypes.TEXT },   // Motivo de aprobación o rechazo
+  revisado_por:   { type: DataTypes.UUID },   // ID del admin que revisó
+  revisado_en:    { type: DataTypes.DATE },
+  email_enviado:  { type: DataTypes.BOOLEAN, defaultValue: false },
+  ip_origen:      { type: DataTypes.STRING(50) },
+}, { tableName: 'solicitudes_perfil', underscored: true });
+
+// ─── HISTORIAL DE ACCIONES ADMIN ─────────────────────────
+// Auditoría completa: quién hizo qué y cuándo en el panel de super admin
+const AccionAdmin = sequelize.define('AccionAdmin', {
+  id:           { type: DataTypes.UUID, defaultValue: DataTypes.UUIDV4, primaryKey: true },
+  admin_id:     { type: DataTypes.UUID, allowNull: false },
+  tipo: {
+    type: DataTypes.ENUM(
+      'aprobar_perfil','rechazar_perfil',
+      'crear_docente','editar_docente','desactivar_docente','reactivar_docente',
+      'eliminar_docente','login_admin','crear_usuario'
+    ),
+    allowNull: false,
+  },
+  descripcion:  { type: DataTypes.TEXT, allowNull: false },
+  entidad_tipo: { type: DataTypes.STRING(50) },  // 'SolicitudPerfil' | 'Usuario'
+  entidad_id:   { type: DataTypes.UUID },
+  metadata:     { type: DataTypes.TEXT },         // JSON extra (IP, datos adicionales)
+}, { tableName: 'acciones_admin', underscored: true, updatedAt: false });
+
 // ═══ RELACIONES ══════════════════════════════════════════
 Sede.hasMany(Curso,       { foreignKey: 'sede_id', as: 'cursos' });
 Curso.belongsTo(Sede,    { foreignKey: 'sede_id', as: 'sede' });
@@ -307,6 +357,10 @@ GaleriaItem.belongsTo(Imagen,      { foreignKey: 'imagen_id', as: 'imagen' });
 GaleriaItem.belongsTo(VideoYoutube,{ foreignKey: 'video_id',  as: 'video' });
 GaleriaItem.belongsTo(Sede,        { foreignKey: 'sede_id',   as: 'sede' });
 
+// Relaciones de los nuevos modelos
+AccionAdmin.belongsTo(Usuario, { foreignKey: 'admin_id', as: 'admin' });
+Usuario.hasMany(AccionAdmin,   { foreignKey: 'admin_id', as: 'acciones' });
+
 module.exports = {
   sequelize,
   Sede, Area, Curso, CursoDocente, DocenteSede,
@@ -316,4 +370,5 @@ module.exports = {
   Categoria, Noticia, Imagen,
   VideoYoutube, NoticiaExterna,
   GaleriaItem, KnowledgeBase, ErrorPattern,
+  SolicitudPerfil, AccionAdmin,
 };

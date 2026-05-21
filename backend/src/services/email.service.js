@@ -162,6 +162,103 @@ const emailService = {
   },
 
   /**
+   * Notificar al super-admin que llegó una solicitud de perfil
+   */
+  async solicitudPerfilPendiente({ adminEmail, docenteNombre, docenteArea, solicitudId }) {
+    try {
+      await transporter.sendMail({
+        from: FROM,
+        to: adminEmail,
+        subject: `[ITS] Nuevo perfil docente pendiente de revisión`,
+        html: plantillaBase(`
+          <h2>Nueva solicitud de perfil docente</h2>
+          <p><strong>${docenteNombre}</strong> ha enviado su perfil para publicarse
+          en el directorio de docentes de la institución.</p>
+          <p><strong>Área:</strong> ${docenteArea || 'Sin especificar'}</p>
+          <span class="badge badge-pendiente">Pendiente de revisión</span>
+          <br><br>
+          <a href="${FRONTEND}/super-admin" class="btn">Revisar en el panel de administración</a>
+          <p style="font-size:13px;color:#6B7280;">
+            Inicia sesión en el panel para aprobar o rechazar el perfil con un motivo.
+          </p>
+        `),
+      });
+      console.log(`📧 Email enviado a admin: solicitud de perfil de "${docenteNombre}"`);
+    } catch (err) {
+      console.error('Error enviando email solicitudPerfilPendiente:', err.message);
+    }
+  },
+
+  /**
+   * Notificar al docente que su perfil fue aprobado
+   */
+  async perfilAprobado({ docenteEmail, docenteNombre, motivo, passwordTemp }) {
+    try {
+      await transporter.sendMail({
+        from: FROM,
+        to: docenteEmail,
+        subject: `[ITS] Tu perfil fue publicado en la página del instituto`,
+        html: plantillaBase(`
+          <h2>¡Tu perfil ya está publicado!</h2>
+          <p>Hola <strong>${docenteNombre}</strong>, el equipo directivo revisó tu perfil
+          y ha sido aprobado y publicado en el directorio de docentes del
+          Instituto Técnico Industrial Santander.</p>
+          <span class="badge badge-aprobada">Perfil publicado</span>
+          <br><br>
+          ${motivo ? `<p><strong>Nota del administrador:</strong> ${motivo}</p>` : ''}
+          ${passwordTemp ? `
+            <p><strong>Tu cuenta de acceso al panel:</strong><br>
+            Email: ${docenteEmail}<br>
+            Contraseña temporal: <code style="background:#F3F4F6;padding:3px 8px;
+              border-radius:4px;font-family:monospace;">${passwordTemp}</code><br>
+            <span style="color:#DC2626;font-size:13px;">
+              Por seguridad, cámbiala al iniciar sesión por primera vez.
+            </span></p>` : ''}
+          <a href="${FRONTEND}/docentes" class="btn">Ver directorio de docentes</a>
+        `),
+      });
+      console.log(`📧 Email enviado a docente: perfil aprobado "${docenteNombre}"`);
+    } catch (err) {
+      console.error('Error enviando email perfilAprobado:', err.message);
+    }
+  },
+
+  /**
+   * Notificar al docente que su perfil fue rechazado con motivo
+   */
+  async perfilRechazado({ docenteEmail, docenteNombre, motivo }) {
+    try {
+      await transporter.sendMail({
+        from: FROM,
+        to: docenteEmail,
+        subject: `[ITS] Tu perfil necesita ajustes antes de publicarse`,
+        html: plantillaBase(`
+          <h2>Tu perfil necesita algunas correcciones</h2>
+          <p>Hola <strong>${docenteNombre}</strong>, el equipo directivo revisó tu
+          solicitud de perfil y encontró algunos puntos que necesitan ajuste
+          antes de publicarse.</p>
+          <span class="badge badge-rechazada">Requiere correcciones</span>
+          <br><br>
+          <p><strong>Motivo indicado por el administrador:</strong></p>
+          <blockquote style="border-left:4px solid #A94455;padding:12px 16px;
+            background:#fff5f7;border-radius:4px;margin:0;color:#374151;">
+            ${motivo}
+          </blockquote>
+          <br>
+          <a href="${FRONTEND}/docentes/registro" class="btn">Actualizar y reenviar mi perfil</a>
+          <p style="font-size:13px;color:#6B7280;">
+            Puedes volver a llenar el formulario con los ajustes indicados.
+            Tu nueva solicitud llegará de inmediato al administrador.
+          </p>
+        `),
+      });
+      console.log(`📧 Email enviado a docente: perfil rechazado "${docenteNombre}"`);
+    } catch (err) {
+      console.error('Error enviando email perfilRechazado:', err.message);
+    }
+  },
+
+  /**
    * Verificar que el servicio de email está configurado
    */
   async verificar() {
