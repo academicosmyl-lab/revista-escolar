@@ -33,18 +33,22 @@
   <div class="reg-hero-scroll" aria-hidden="true">
     <span class="reg-scroll-texto">Completa tu perfil</span>
     <div class="reg-scroll-flecha">
-      <svg class="reg-scroll-svg" viewBox="0 0 24 36" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <!-- línea vertical -->
-        <line x1="12" y1="0" x2="12" y2="20" stroke="rgba(212,168,83,0.5)" stroke-width="1.5" stroke-linecap="round"/>
-        <!-- chevron animado 1 -->
-        <polyline class="reg-chev reg-chev-1" points="6,20 12,27 18,20"
-                  stroke="rgba(212,168,83,0.9)" stroke-width="1.8"
-                  stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-        <!-- chevron animado 2 (un poco más abajo, sale desfasado) -->
-        <polyline class="reg-chev reg-chev-2" points="6,26 12,33 18,26"
-                  stroke="rgba(212,168,83,0.45)" stroke-width="1.5"
-                  stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-      </svg>
+      <!-- línea -->
+      <div class="reg-scroll-linea"></div>
+      <!-- flecha 1 — rebota -->
+      <div class="reg-scroll-chev reg-scroll-chev-a">
+        <svg viewBox="0 0 18 10" fill="none" width="18">
+          <polyline points="1,1 9,9 17,1" stroke="rgba(212,168,83,0.95)"
+                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <!-- flecha 2 — rebota con delay -->
+      <div class="reg-scroll-chev reg-scroll-chev-b">
+        <svg viewBox="0 0 18 10" fill="none" width="18">
+          <polyline points="1,1 9,9 17,1" stroke="rgba(212,168,83,0.45)"
+                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
     </div>
   </div>
 </section>
