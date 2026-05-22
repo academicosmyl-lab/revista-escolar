@@ -48,7 +48,7 @@ export class DocentesRegistro implements OnInit, AfterViewInit, OnDestroy {
     'P_SECRETARIA','P_TECNOLOGIA','P_CAFETERIA','P_ASEO','P_VIGILANCIA','P_OTROS',
   ]);
 
-  readonly sedes = ['Sede Principal', 'Ciudadela', 'Divino Niño'];
+  readonly sedes = ['Sede Bachillerato', 'Sede Primaria', 'Sede Los Suaces'];
 
   // Cargadas desde la API en ngOnInit — se actualiza cuando alguien agrega "Otra"
   areas = signal<string[]>([]);
