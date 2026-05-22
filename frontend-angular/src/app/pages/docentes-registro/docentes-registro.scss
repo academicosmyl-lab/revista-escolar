@@ -188,17 +188,30 @@ $radius-lg:   20px;
   color: rgba(212,168,83,0.45);
 }
 
-@keyframes scrollBounce {
-  0%, 100% { transform: translateY(0); opacity: 0.4; }
-  50%       { transform: translateY(7px); opacity: 1; }
+@keyframes scrollDrop {
+  0%   { transform: translateY(-4px); opacity: 0; }
+  40%  { opacity: 1; }
+  80%  { transform: translateY(5px);  opacity: 0; }
+  100% { transform: translateY(5px);  opacity: 0; }
 }
 
 .reg-scroll-flecha {
-  width: 1px;
+  width: 24px;
   height: 36px;
-  background: linear-gradient(to bottom, rgba(212,168,83,0.7), transparent);
-  animation: scrollBounce 2s ease-in-out infinite;
 }
+
+.reg-scroll-svg {
+  width: 24px;
+  height: 36px;
+  overflow: visible;
+}
+
+// Cada chevron cae en cascada con diferente delay
+.reg-chev {
+  animation: scrollDrop 1.8s ease-in-out infinite;
+}
+.reg-chev-1 { animation-delay: 0s; }
+.reg-chev-2 { animation-delay: 0.28s; }
 
 // ══════════════════════════════════════════════════════════
 //  ESTADO ÉXITO
