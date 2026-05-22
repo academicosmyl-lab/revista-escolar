@@ -1,0 +1,82 @@
+@if (visible()) {
+  <!-- Fondo oscuro bloqueante — no se puede hacer clic detrás -->
+  <div class="ck-backdrop" role="dialog" aria-modal="true"
+       aria-labelledby="ckTitulo" aria-describedby="ckDesc">
+
+    <div class="ck-panel">
+
+      <!-- Escudo / identidad -->
+      <div class="ck-brand">
+        <div class="ck-escudo" aria-hidden="true">
+          <svg viewBox="0 0 36 36" fill="none" width="36">
+            <circle cx="18" cy="18" r="17" stroke="rgba(212,168,83,0.5)" stroke-width="1.5"/>
+            <text x="18" y="23" text-anchor="middle" font-size="14"
+                  fill="rgba(212,168,83,0.9)" font-family="serif" font-weight="900">✦</text>
+          </svg>
+        </div>
+        <span class="ck-inst">Instituto Técnico Industrial · Fusagasugá</span>
+      </div>
+
+      <!-- Texto principal -->
+      <h2 class="ck-titulo" id="ckTitulo">Valoramos tu privacidad</h2>
+      <p class="ck-desc" id="ckDesc">
+        Esta revista digital puede usar cookies de análisis para entender
+        cómo navegan nuestros lectores y mejorar los contenidos institucionales.
+        Tu información <strong>nunca se vende ni se comparte</strong> con terceros.
+      </p>
+
+      <!-- Detalle desplegable -->
+      <button type="button" class="ck-ver-mas" (click)="detallando.set(!detallando())">
+        {{ detallando() ? 'Ocultar detalle' : '¿Qué cookies usamos?' }}
+        <svg viewBox="0 0 12 8" fill="none" width="11"
+             [style.transform]="detallando() ? 'rotate(180deg)' : 'rotate(0)'">
+          <polyline points="1,1 6,7 11,1" stroke="currentColor"
+                    stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+
+      @if (detallando()) {
+        <div class="ck-detalle">
+          <div class="ck-detalle-item">
+            <div class="ck-detalle-icon ck-detalle-icon--verde">
+              <svg viewBox="0 0 16 16" fill="currentColor" width="12">
+                <path fill-rule="evenodd" d="M8 1a7 7 0 100 14A7 7 0 008 1zm3.707 5.293a1 1 0 00-1.414-1.414L7 8.172 5.707 6.879a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+              </svg>
+            </div>
+            <div>
+              <strong>Cookies esenciales</strong> — siempre activas
+              <p>Permiten que la revista cargue correctamente. Sin estas, el sitio no funciona.</p>
+            </div>
+          </div>
+          <div class="ck-detalle-item">
+            <div class="ck-detalle-icon ck-detalle-icon--ambar">
+              <svg viewBox="0 0 16 16" fill="currentColor" width="12">
+                <path d="M8 1a7 7 0 100 14A7 7 0 008 1zm1 10H7V7h2v4zm0-6H7V3h2v2z"/>
+              </svg>
+            </div>
+            <div>
+              <strong>Cookies analíticas</strong> — opcionales
+              <p>Nos ayudan a saber qué noticias son más leídas para mejorar los contenidos. No te identifican personalmente.</p>
+            </div>
+          </div>
+        </div>
+      }
+
+      <!-- Acciones -->
+      <div class="ck-acciones">
+        <button type="button" class="ck-btn-secundario" (click)="soloEsenciales()">
+          Solo esenciales
+        </button>
+        <button type="button" class="ck-btn-primario" (click)="aceptarTodo()">
+          Aceptar todo
+        </button>
+      </div>
+
+      <p class="ck-nota">
+        Al continuar sin elegir, se usarán solo las cookies esenciales.
+        Puedes cambiar tu preferencia en cualquier momento borrando la caché del navegador.
+      </p>
+
+    </div>
+  </div>
+}

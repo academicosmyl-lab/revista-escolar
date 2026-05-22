@@ -1,0 +1,209 @@
+// ══════════════════════════════════════════════════════════
+//  COOKIE CONSENT — Banner institucional ITI
+// ══════════════════════════════════════════════════════════
+
+$vino:   #7B2D3F;
+$vino2:  #A94455;
+$gold:   #D4A853;
+$dark:   #0f0a0b;
+$text:   #1a1f2e;
+$dim:    #6b7280;
+
+// Fondo oscuro que bloquea toda la pantalla
+.ck-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(10, 4, 6, 0.72);
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+  display: flex;
+  align-items: flex-end;       // panel pegado al fondo
+  justify-content: center;
+  padding: 0 1rem 1.5rem;
+  animation: ckFadeIn 0.3s ease;
+
+  @media (min-width: 600px) {
+    padding-bottom: 2rem;
+  }
+}
+
+@keyframes ckFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+// Panel blanco
+.ck-panel {
+  background: #fff;
+  border-radius: 16px;
+  padding: 1.75rem 1.5rem 1.4rem;
+  max-width: 600px;
+  width: 100%;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.28), 0 2px 8px rgba(0,0,0,0.12);
+  animation: ckSlideUp 0.32s cubic-bezier(0.22, 1, 0.36, 1);
+  border-top: 3px solid $vino;
+}
+
+@keyframes ckSlideUp {
+  from { transform: translateY(24px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+
+// Identidad institucional
+.ck-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 1rem;
+}
+
+.ck-escudo {
+  width: 36px;
+  height: 36px;
+  background: $vino;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.ck-inst {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: $vino;
+}
+
+// Título
+.ck-titulo {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: $text;
+  margin: 0 0 0.55rem;
+  letter-spacing: -0.01em;
+}
+
+// Descripción
+.ck-desc {
+  font-size: 0.84rem;
+  color: $dim;
+  line-height: 1.65;
+  margin: 0 0 0.9rem;
+
+  strong { color: $text; font-weight: 600; }
+}
+
+// Botón "¿qué cookies usamos?"
+.ck-ver-mas {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: $vino2;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  margin-bottom: 0.9rem;
+  transition: color 0.15s;
+
+  svg { transition: transform 0.2s ease; flex-shrink: 0; }
+  &:hover { color: $vino; }
+}
+
+// Detalle de cookies
+.ck-detalle {
+  background: #f8f9fc;
+  border: 1px solid #e8eaf0;
+  border-radius: 10px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.ck-detalle-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.65rem;
+  font-size: 0.8rem;
+  color: $dim;
+  line-height: 1.55;
+
+  strong { color: $text; display: block; font-weight: 700; font-size: 0.82rem; }
+  p { margin: 0.1rem 0 0; }
+}
+
+.ck-detalle-icon {
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 1px;
+
+  &--verde { background: rgba(22,163,74,0.1); color: #16a34a; }
+  &--ambar { background: rgba(245,158,11,0.12); color: #b45309; }
+}
+
+// Botones de acción
+.ck-acciones {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.75rem;
+
+  @media (max-width: 400px) { flex-direction: column; }
+}
+
+.ck-btn-primario {
+  flex: 1;
+  min-width: 140px;
+  padding: 0.7rem 1.25rem;
+  background: $vino;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 700;
+  cursor: pointer;
+  letter-spacing: 0.02em;
+  transition: background 0.18s, transform 0.12s;
+
+  &:hover  { background: $vino2; }
+  &:active { transform: scale(0.97); }
+}
+
+.ck-btn-secundario {
+  flex: 1;
+  min-width: 120px;
+  padding: 0.7rem 1.25rem;
+  background: #fff;
+  color: $text;
+  border: 1.5px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+
+  &:hover { border-color: $vino; color: $vino; background: rgba(123,45,63,0.04); }
+}
+
+// Nota pequeña al pie
+.ck-nota {
+  font-size: 0.7rem;
+  color: #9ca3af;
+  line-height: 1.6;
+  margin: 0;
+  text-align: center;
+}

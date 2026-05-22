@@ -2,11 +2,12 @@ import { Component, inject, OnInit, AfterViewInit, DestroyRef } from '@angular/c
 import { RouterOutlet } from '@angular/router';
 import { Navbar } from './navbar/navbar';
 import { Footer } from './shared/footer/footer'; // CAMBIO ARCH-UI: FooterComponent compartido
+import { CookieConsent } from './shared/cookie-consent/cookie-consent';
 import { ApiService } from './services/api.service';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, Navbar, Footer],
+  imports: [RouterOutlet, Navbar, Footer, CookieConsent],
   templateUrl: './app.html',
   styleUrl: './app.scss'
 })
