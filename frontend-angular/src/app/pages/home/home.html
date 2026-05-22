@@ -52,21 +52,31 @@
       @for (v of videos; track v.titulo; let i = $index) {
         <div class="video-cine-card" [class.playing]="v.playing"
              [style]="'--ca:' + v.colorA + ';--cb:' + v.colorB"
-             (click)="!v.playing && toggleVideo(v, $event)">
+             (click)="toggleVideo(v, $event)">
           @if (v.playing) {
-            <button class="video-cine-cerrar" (click)="v.playing = false; $event.stopPropagation()">✕</button>
+            <button class="video-cine-cerrar" (click)="cerrarVideo(v, $event)" title="Cerrar video">✕</button>
             <iframe class="video-cine-iframe" [src]="v.safeUrl"
               frameborder="0" scrolling="no" allowfullscreen="true"
               allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share">
             </iframe>
           } @else {
+            <!-- Badge VIDEO -->
+            <span class="video-cine-badge">
+              <svg viewBox="0 0 16 16" fill="currentColor" width="10" style="margin-right:3px">
+                <path d="M1 4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v1.5l2-1.5v7l-2-1.5V12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V4z"/>
+              </svg>
+              VIDEO
+            </span>
             <div class="video-cine-num">0{{ i + 1 }}</div>
+            <!-- Botón play con pulso -->
             <div class="video-cine-play">
+              <div class="video-cine-pulse"></div>
               <span class="video-cine-tri"></span>
             </div>
             <div class="video-cine-info">
               <div class="video-cine-linea"></div>
               <span class="video-cine-titulo">{{ v.titulo }}</span>
+              <span class="video-cine-clic">Clic para reproducir</span>
             </div>
           }
         </div>

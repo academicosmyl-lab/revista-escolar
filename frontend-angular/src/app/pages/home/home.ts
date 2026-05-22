@@ -1,5 +1,5 @@
 // CAMBIO ARCH-UI: motion.js — animaciones revolucionarias con scroll/inView/stagger
-import { Component, OnInit, AfterViewInit, signal, computed, inject, ChangeDetectionStrategy, NgZone } from '@angular/core';
+import { Component, OnInit, AfterViewInit, signal, computed, inject, ChangeDetectionStrategy, ChangeDetectorRef, NgZone } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
@@ -19,8 +19,7 @@ export class Home implements OnInit, AfterViewInit {
   // CAMBIO ARCH-UI: ApiService inyectado para cargar noticias reales del backend
   private api       = inject(ApiService);
   private sanitizer = inject(DomSanitizer);
-  // NgZone: necesario para correr event listeners de motion.js FUERA de Angular
-  // Esto evita que Angular ejecute detección de cambios en cada frame de animación
+  private cdr       = inject(ChangeDetectorRef);
   private zone      = inject(NgZone);
 
   /* ── Noticias del API real ──────────────────────────── */
@@ -129,10 +128,11 @@ export class Home implements OnInit, AfterViewInit {
           : (raw.rows ?? raw.noticias ?? []);
         this.noticiasHome.set(lista);
         this.cargandoNoticias.set(false);
+        this.cdr.markForCheck();
       },
       error: () => {
-        // Si el backend no responde, simplemente no mostramos noticias (sin romper la página)
         this.cargandoNoticias.set(false);
+        this.cdr.markForCheck();
       },
     });
   }
@@ -141,6 +141,13 @@ export class Home implements OnInit, AfterViewInit {
     e.stopPropagation();
     this.videos.forEach(other => { if (other !== v) other.playing = false; });
     v.playing = !v.playing;
+    this.cdr.markForCheck();
+  }
+
+  cerrarVideo(v: typeof this.videos[0], e: MouseEvent) {
+    e.stopPropagation();
+    v.playing = false;
+    this.cdr.markForCheck();
   }
 
   abrirCertificado() {

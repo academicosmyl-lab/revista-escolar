@@ -28,14 +28,15 @@ export class App implements OnInit, AfterViewInit {
     const onMove = (e: MouseEvent) => {
       dot.style.opacity = '1';
       ring.style.opacity = '1';
-      dot.style.left = (e.clientX - 4) + 'px';
-      dot.style.top  = (e.clientY - 4) + 'px';
+      // El CSS ya hace translate(-50%,-50%) → solo pasamos la coordenada exacta
+      dot.style.left = e.clientX + 'px';
+      dot.style.top  = e.clientY + 'px';
       cancelAnimationFrame(rafId);
       rafId = requestAnimationFrame(() => {
-        rx += (e.clientX - rx) * 0.12;
-        ry += (e.clientY - ry) * 0.12;
-        ring.style.left = (rx - 19) + 'px';
-        ring.style.top  = (ry - 19) + 'px';
+        rx += (e.clientX - rx) * 0.10;   // inercia suave: 10% por frame
+        ry += (e.clientY - ry) * 0.10;
+        ring.style.left = rx + 'px';
+        ring.style.top  = ry + 'px';
       });
     };
     const onEnter = () => { dot.style.opacity = '1'; ring.style.opacity = '1'; };
