@@ -1,37 +1,35 @@
-// CAMBIO ARCH-UI: estilos del footer movidos de home.scss a su propio componente
-// ViewEncapsulation.Emulated de Angular los scopa automáticamente con un atributo
-// único, evitando conflictos con otras páginas.
+// ══════════════════════════════════════════════════════════
+//  FOOTER — Diseño claro institucional ITI
+// ══════════════════════════════════════════════════════════
 
-@keyframes footerGradiente {
-  0%, 100% { background-position: 0% 50%; }
-  50%       { background-position: 100% 50%; }
-}
-
-// Forzar texto negro en todos los hijos — el fondo oscuro
-// aplica contraste suficiente solo en pantallas calibradas
-:host .footer,
-:host .footer span,
-:host .footer p,
-:host .footer h3,
-:host .footer h4,
-:host .footer div {
-  color: #000 !important;
-}
+$vino:    #7B2D3F;
+$vino2:   #A94455;
+$gold:    #D4A853;
+$text:    #1a1f2e;
+$dim:     #5a6478;
+$border:  #e2e6ef;
+$bg:      #f4f5f9;
 
 .footer {
-  background: linear-gradient(-45deg, #2a0f1a, #0d1f35, #0f1e15, #1e0c16, #0a1628, #2a0f1a);
-  background-size: 400% 400%;
-  animation: footerGradiente 14s ease infinite;
-  border-top: 3px solid #A94455;
-  padding: 3.5rem 2rem 1.5rem;
+  background: $bg;
+  border-top: 3px solid $vino;
+  padding: 3.5rem 2rem 0;
   position: relative;
+  color: $text;
 
+  // línea dorada decorativa bajo el borde vinotinto
   &::before {
     content: '';
     position: absolute;
     top: 3px; left: 0; right: 0;
     height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(212,168,83,0.5) 30%, rgba(212,168,83,0.5) 70%, transparent);
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(212,168,83,0.45) 30%,
+      rgba(212,168,83,0.45) 70%,
+      transparent
+    );
     pointer-events: none;
   }
 }
@@ -47,86 +45,160 @@
   @media (max-width: 540px)  { grid-template-columns: 1fr; gap: 2rem; }
 }
 
+// ── Marca ────────────────────────────────────────────────
 .footer-brand {
   @media (max-width: 1024px) { grid-column: span 2; }
   @media (max-width: 540px)  { grid-column: span 1; }
 }
 
-.footer-logo { height: 80px; margin-bottom: 0.75rem; display: block; }
+.footer-logo {
+  height: 72px;
+  width: auto;
+  margin-bottom: 0.85rem;
+  display: block;
+}
 
 .footer-nombre {
   font-family: 'Playfair Display', serif;
-  font-size: 1.1rem; font-weight: 700; color: #000; margin: 0 0 0.2rem;
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: $text;
+  margin: 0 0 0.2rem;
 }
 
 .footer-lema {
-  font-family: 'Source Sans 3', sans-serif;
-  font-size: 0.7rem; font-weight: 700; letter-spacing: 0.15em;
-  text-transform: uppercase; color: #000; margin: 0 0 0.9rem;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: $vino;
+  margin: 0 0 0.9rem;
 }
 
 .footer-desc {
-  font-family: 'Source Sans 3', sans-serif;
-  font-size: 0.93rem; font-weight: 700; color: #000; line-height: 1.75; max-width: 300px; margin: 0;
+  font-size: 0.88rem;
+  color: $dim;
+  line-height: 1.7;
+  max-width: 290px;
+  margin: 0;
 }
 
+// ── Columnas ─────────────────────────────────────────────
 .footer-col-titulo {
-  font-family: 'Source Sans 3', sans-serif;
-  font-size: 0.75rem; font-weight: 700; letter-spacing: 0.18em;
-  text-transform: uppercase; color: #000 !important;
-  margin: 0 0 1.1rem; padding-bottom: 0.5rem;
-  border-bottom: 1px solid rgba(212,168,83,0.2);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: $vino;
+  margin: 0 0 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1.5px solid rgba(123,45,63,0.18);
 }
 
-.footer-links { display: flex; flex-direction: column; gap: 0.55rem; }
+// ── Links de navegación ──────────────────────────────────
+.footer-links {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
 
 .footer-link {
-  font-family: 'Source Sans 3', sans-serif;
-  font-size: 0.98rem; font-weight: 700; color: #000; text-decoration: none; transition: color 0.2s;
-  &:hover { color: #D4A853; }
+  font-size: 0.92rem;
+  font-weight: 500;
+  color: $dim;
+  text-decoration: none;
+  transition: color 0.18s, padding-left 0.18s;
+
+  &:hover {
+    color: $vino;
+    padding-left: 4px;
+  }
 }
 
-.footer-datos { display: flex; flex-direction: column; gap: 0.9rem; }
+// ── Datos de contacto ────────────────────────────────────
+.footer-datos {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
 
 .footer-dato {
-  display: flex; flex-direction: column; gap: 0.15rem;
-  font-family: 'Source Sans 3', sans-serif;
-  font-size: 0.83rem; font-weight: 700; color: #000; line-height: 1.6;
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  font-size: 0.83rem;
+  color: $dim;
+  line-height: 1.6;
 }
 
 .footer-dato-label {
-  font-size: 0.72rem; font-weight: 700; letter-spacing: 0.12em;
-  text-transform: uppercase; color: #000;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: $text;
 }
 
 .footer-email {
-  color: #000; font-weight: 700; text-decoration: none; font-size: 0.9rem;
-  transition: color 0.2s; word-break: break-all;
-  &:hover { color: #D4A853; }
+  color: $vino;
+  font-weight: 600;
+  text-decoration: none;
+  font-size: 0.85rem;
+  word-break: break-all;
+  transition: color 0.18s;
+
+  &:hover { color: $vino2; text-decoration: underline; }
 }
 
+// ── Mapa ─────────────────────────────────────────────────
 .footer-mapa-wrap {
-  width: 100%; height: 160px; overflow: hidden;
-  border: 1px solid rgba(212,168,83,0.2); margin-bottom: 0.6rem;
+  width: 100%;
+  height: 155px;
+  overflow: hidden;
+  border-radius: 8px;
+  border: 1.5px solid $border;
+  margin-bottom: 0.55rem;
 }
 
 .footer-mapa {
-  width: 100%; height: 100%; border: none; display: block;
-  filter: grayscale(0.35) contrast(1.05);
+  width: 100%;
+  height: 100%;
+  border: none;
+  display: block;
+  filter: grayscale(0.25) contrast(1.05);
 }
 
 .footer-mapa-link {
-  font-family: 'Source Sans 3', sans-serif;
-  font-size: 0.82rem; font-weight: 700; color: #000; text-decoration: none; letter-spacing: 0.04em;
-  transition: color 0.2s;
-  &:hover { color: #D4A853; }
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: $vino;
+  text-decoration: none;
+  letter-spacing: 0.03em;
+  transition: color 0.18s;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+
+  &::after { content: ' ↗'; font-size: 0.75rem; }
+  &:hover { color: $vino2; text-decoration: underline; }
 }
 
+// ── Pie de página ─────────────────────────────────────────
 .footer-copy {
-  max-width: 1280px; margin: 0 auto;
-  border-top: 1px solid rgba(26,26,46,0.15); padding-top: 1.2rem;
-  display: flex; justify-content: space-between; flex-wrap: wrap; gap: 0.4rem;
-  font-family: 'Source Sans 3', sans-serif; font-size: 0.7rem; font-weight: 700; color: #000 !important;
+  max-width: 1280px;
+  margin: 0 auto;
+  border-top: 1px solid $border;
+  padding: 1.1rem 0 1.4rem;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  font-size: 0.7rem;
+  color: #9ca3af;
 }
 
-.footer-web { color: #000; font-weight: 700; }
+.footer-web {
+  color: $vino;
+  font-weight: 600;
+  font-size: 0.7rem;
+}
