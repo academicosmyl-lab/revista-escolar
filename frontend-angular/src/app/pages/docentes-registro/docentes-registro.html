@@ -398,9 +398,10 @@
         } @else {
           <h2 class="reg-sec-titulo">Tu historia</h2>
           <p class="reg-sec-desc">
-            Escribe con naturalidad, no como un CV.
-            Usa minúsculas si quieres — la revisión automática corregirá
-            tildes y mayúsculas antes de enviar.
+            ¿Quién eres como docente? Escribe en primera persona y con naturalidad:
+            qué enseñas, qué te motiva y cómo trabajas con tus estudiantes.
+            No hace falta ser formal — la revisión automática corregirá
+            ortografía y tildes antes de publicar.
           </p>
         }
       </div>
@@ -481,8 +482,9 @@
         } @else {
           <h2 class="reg-sec-titulo">Especialidades</h2>
           <p class="reg-sec-desc">
-            Etiquetas que aparecen en tu perfil. Máximo 5.
-            Presiona Enter o coma para agregar cada una.
+            ¿Qué temas o habilidades te definen como profesional?
+            Escribe una y presiona Enter o coma para agregarla. Máximo 5.
+            Ej: Robótica, Cálculo diferencial, Inglés conversacional, Emprendimiento...
           </p>
         }
       </div>
@@ -523,32 +525,61 @@
         <span class="reg-sec-num">05</span>
         <h2 class="reg-sec-titulo">Publicaciones <span class="reg-sec-opcional">(opcional)</span></h2>
         <p class="reg-sec-desc">
-          Artículos, ponencias, manuales o investigaciones.
-          Esto posiciona la institución como centro de producción intelectual.
+          ¿Has escrito artículos, ponencias, manuales o investigaciones?
+          Agrégalos para que aparezcan en tu perfil público y visibilicen
+          la producción académica del ITI.
+          Si aún no tienes, marca la opción correspondiente.
         </p>
       </div>
       <div class="reg-campos">
         <div class="reg-campo reg-campo-full">
-          @for (pub of publicaciones(); track $index; let i = $index) {
-            <div class="reg-pub-item">
-              <div class="reg-pub-num">{{ i + 1 }}</div>
-              <div class="reg-pub-campos">
-                <input type="text" class="reg-input reg-pub-titulo"
-                       placeholder="Título de la publicación"
-                       [ngModel]="pub.titulo" (ngModelChange)="updatePub(i,'titulo',$event)" maxlength="200">
-                <div class="reg-pub-fila2">
-                  <input type="number" class="reg-input reg-pub-anio" placeholder="Año"
-                         min="1990" max="2030" [ngModel]="pub.anio" (ngModelChange)="updatePub(i,'anio',$event)">
-                  <input type="url" class="reg-input reg-pub-link" placeholder="Link  https://..."
-                         [ngModel]="pub.link" (ngModelChange)="updatePub(i,'link',$event)" maxlength="300">
+
+          <!-- Toggle "No tengo publicaciones" -->
+          <label class="reg-sin-pub-toggle"
+                 [class.reg-sin-pub-toggle--activo]="sinPublicaciones()">
+            <input type="checkbox" class="reg-sin-pub-check"
+                   [ngModel]="sinPublicaciones()"
+                   (ngModelChange)="sinPublicaciones.set($event); publicaciones.set([])">
+            <span class="reg-sin-pub-mark" aria-hidden="true">
+              <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2.5" width="10">
+                <polyline points="2,7 5.5,10.5 12,3"/>
+              </svg>
+            </span>
+            <span class="reg-sin-pub-texto">No tengo publicaciones</span>
+          </label>
+
+          <!-- Lista de publicaciones (oculta si marcó "No tengo") -->
+          @if (!sinPublicaciones()) {
+            @for (pub of publicaciones(); track $index; let i = $index) {
+              <div class="reg-pub-item">
+                <div class="reg-pub-num">{{ i + 1 }}</div>
+                <div class="reg-pub-campos">
+                  <input type="text" class="reg-input reg-pub-titulo"
+                         placeholder="Título de la publicación o material"
+                         [ngModel]="pub.titulo" (ngModelChange)="updatePub(i,'titulo',$event)" maxlength="200" autocomplete="off">
+                  <div class="reg-pub-fila2">
+                    <input type="number" class="reg-input reg-pub-anio" placeholder="Año"
+                           min="1990" max="2030" [ngModel]="pub.anio" (ngModelChange)="updatePub(i,'anio',$event)" autocomplete="off">
+                    <input type="url" class="reg-input reg-pub-link" placeholder="Enlace  https://..."
+                           [ngModel]="pub.link" (ngModelChange)="updatePub(i,'link',$event)" maxlength="300" autocomplete="off">
+                  </div>
                 </div>
+                <button type="button" class="reg-pub-x" (click)="quitarPublicacion(i)" title="Quitar publicación">✕</button>
               </div>
-              <button type="button" class="reg-pub-x" (click)="quitarPublicacion(i)">✕</button>
+            }
+            <button type="button" class="reg-agregar-pub" (click)="agregarPublicacion()">
+              <span class="reg-agregar-icono">+</span> Agregar publicación
+            </button>
+          } @else {
+            <div class="reg-sin-pub-nota">
+              <svg viewBox="0 0 20 20" fill="currentColor" width="16">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+              </svg>
+              Sin publicaciones — tu perfil se publicará sin esta sección.
+              Puedes actualizarlo en cualquier momento.
             </div>
           }
-          <button type="button" class="reg-agregar-pub" (click)="agregarPublicacion()">
-            <span class="reg-agregar-icono">+</span> Agregar publicación
-          </button>
+
         </div>
       </div>
     </section>

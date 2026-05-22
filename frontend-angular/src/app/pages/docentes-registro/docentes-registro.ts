@@ -76,7 +76,8 @@ export class DocentesRegistro implements OnInit, AfterViewInit, OnDestroy {
   nuevaEspecialidad = signal('');
 
   // ── Publicaciones ───────────────────────────────────────
-  publicaciones = signal<Publicacion[]>([]);
+  publicaciones    = signal<Publicacion[]>([]);
+  sinPublicaciones = signal(false);
 
   // ── Redes ───────────────────────────────────────────────
   web      = signal('');
