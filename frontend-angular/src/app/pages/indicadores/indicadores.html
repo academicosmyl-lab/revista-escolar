@@ -1,96 +1,596 @@
-<!-- HERO INDICADORES -->
-<section class="ind-hero">
-  <div class="ind-hero-inner">
-    <div class="ind-hero-texto">
-      <div class="ind-etiqueta">Panel de Indicadores</div>
-      <h1 class="ind-titulo">Dashboards Institucionales</h1>
-      <p class="ind-desc">
-        Métricas en tiempo real del Instituto Técnico Industrial.
-        Datos de publicaciones, participación docente, galería y visitas.
-      </p>
-    </div>
-    <div class="ind-hero-acciones">
-      <a href="/api/v1/admin/exportar" target="_blank" class="ind-btn-excel">
-        Exportar a Excel / Power BI
-      </a>
-      <span class="ind-actualizado">Actualización en tiempo real · SSE</span>
-    </div>
-  </div>
-</section>
+<!-- ═══════════════════════════════════════════════════════════════
+     DASHBOARD DE INDICADORES ACADÉMICOS
+     Instituto Técnico Industrial Santander
+     ═══════════════════════════════════════════════════════════════ -->
 
-<!-- TARJETAS RESUMEN -->
-<section class="ind-resumen">
-  <div class="ind-resumen-inner">
-    @for (t of tarjetas; track t.label) {
-      <div class="ind-tarjeta ind-tarjeta-{{ t.color }}">
-        <div class="ind-tarjeta-valor">{{ t.valor }}</div>
-        <div class="ind-tarjeta-label">{{ t.label }}</div>
+<div class="ind-root">
+
+  <!-- ── HERO ─────────────────────────────────────────────────────────────── -->
+  <header class="ind-hero">
+    <div class="ind-hero-inner">
+      <div class="ind-hero-texto">
+        <span class="ind-etiqueta">Indicadores Académicos 2025</span>
+        <h1 class="ind-titulo">Dashboard Institucional</h1>
+        <p class="ind-desc">
+          Instituto Técnico Industrial Santander · Análisis de resultados académicos
+          por sede, jornada, grado y área de conocimiento.
+        </p>
       </div>
-    }
-  </div>
-</section>
+      <div class="ind-hero-badge">
+        <span class="ind-badge-num">{{ metadata().sedes.length }}</span>
+        <span class="ind-badge-label">Sedes</span>
+      </div>
+    </div>
+  </header>
 
-<!-- DASHBOARDS POWER BI -->
-<section class="ind-dashboards">
-  <div class="ind-dashboards-inner">
-    <div class="linea-dorada"></div>
-    <h2 class="ind-seccion-titulo">Dashboards Power BI</h2>
-    <p class="ind-seccion-desc">
-      Conecta tus reportes de Power BI pegando la URL de publicación de cada informe.
-      Los reportes se muestran en iframe embebido con acceso público o con cuenta institucional.
-    </p>
+  <!-- ── TABS DE MODO ──────────────────────────────────────────────────────── -->
+  <nav class="ind-tabs">
+    <button class="ind-tab" [class.activo]="modo() === 'panorama'"
+            (click)="cambiarModo('panorama')">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+        <rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/>
+      </svg>
+      Panorama
+    </button>
+    <button class="ind-tab" [class.activo]="modo() === 'comparacion'"
+            (click)="cambiarModo('comparacion')">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+      </svg>
+      Comparación
+    </button>
+    <button class="ind-tab" [class.activo]="modo() === 'individual'"
+            (click)="cambiarModo('individual')">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+        <circle cx="12" cy="7" r="4"/>
+      </svg>
+      Individual
+    </button>
+  </nav>
 
-    <div class="ind-grid">
-      @for (d of dashboards; track d.titulo) {
-        <div class="ind-card">
-          @if (d.embedUrl) {
-            <iframe [src]="d.embedUrl" class="ind-iframe" frameborder="0" allowFullScreen="true"></iframe>
-          } @else {
-            <div class="ind-placeholder">
-              <div class="ind-placeholder-linea"></div>
-              <strong>{{ d.titulo }}</strong>
-              <span class="ind-placeholder-hint">Pega la URL de publicación de Power BI</span>
-              <code class="ind-placeholder-code">app.powerbi.com/reportEmbed?...</code>
+  <div class="ind-body">
+
+    <!-- ══════════════════════════════════════════════════════════════════════
+         PANEL DE FILTROS
+         ══════════════════════════════════════════════════════════════════════ -->
+    <aside class="ind-filtros">
+      <div class="ind-filtros-header">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
+        </svg>
+        Filtros
+      </div>
+
+      <!-- Filtros PANORAMA -->
+      @if (modo() === 'panorama') {
+        <div class="ind-filtro-grupo">
+          <label class="ind-filtro-label">Sede</label>
+          <select class="ind-select" [value]="filtroSede()"
+                  (change)="onSedeChange($any($event.target).value)">
+            <option value="">Todas las sedes</option>
+            @for (s of metadata().sedes; track s) {
+              <option [value]="s">{{ s }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="ind-filtro-grupo">
+          <label class="ind-filtro-label">Jornada</label>
+          <select class="ind-select" [value]="filtroJornada()"
+                  (change)="onJornadaChange($any($event.target).value)">
+            <option value="">Todas las jornadas</option>
+            @for (j of metadata().jornadas; track j) {
+              <option [value]="j">{{ j }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="ind-filtro-grupo">
+          <label class="ind-filtro-label">Grado</label>
+          <select class="ind-select" [value]="filtroGrado()"
+                  (change)="onGradoChange($any($event.target).value)">
+            <option value="">Todos los grados</option>
+            @for (g of metadata().grados; track g) {
+              <option [value]="g">{{ g }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="ind-filtro-grupo">
+          <label class="ind-filtro-label">Grupo</label>
+          <select class="ind-select" [value]="filtroGrupo()"
+                  (change)="onGrupoChange($any($event.target).value)">
+            <option value="">Todos los grupos</option>
+            @for (g of metadata().grupos; track g) {
+              <option [value]="g">{{ g }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="ind-filtro-grupo">
+          <label class="ind-filtro-label">Período base</label>
+          <select class="ind-select" [value]="filtroPeriodo()"
+                  (change)="onPeriodoChange($any($event.target).value)">
+            <option value="ac">Acumulado</option>
+            <option value="p1">Período 1</option>
+            <option value="p2">Período 2</option>
+            <option value="p3">Período 3</option>
+          </select>
+        </div>
+      }
+
+      <!-- Filtros COMPARACIÓN -->
+      @if (modo() === 'comparacion') {
+        <div class="ind-filtro-grupo">
+          <label class="ind-filtro-label">Comparar por</label>
+          <select class="ind-select" [value]="tipoComparacion()"
+                  (change)="onTipoComparChange($any($event.target).value)">
+            <option value="grado">Grado vs Grado</option>
+            <option value="grupo">Grupo vs Grupo</option>
+            <option value="area">Área vs Área</option>
+          </select>
+        </div>
+
+        @if (tipoComparacion() !== 'area') {
+          <div class="ind-filtro-grupo">
+            <label class="ind-filtro-label">Sede (opcional)</label>
+            <select class="ind-select" [value]="filtroSede()"
+                    (change)="filtroSede.set($any($event.target).value)">
+              <option value="">Todas</option>
+              @for (s of metadata().sedes; track s) {
+                <option [value]="s">{{ s }}</option>
+              }
+            </select>
+          </div>
+        }
+
+        <div class="ind-filtro-grupo">
+          <label class="ind-filtro-label">
+            {{ tipoComparacion() === 'area' ? 'Área A' : tipoComparacion() === 'grado' ? 'Grado A' : 'Grupo A' }}
+          </label>
+          <select class="ind-select" [value]="comparA()"
+                  (change)="comparA.set($any($event.target).value)">
+            <option value="">Seleccionar...</option>
+            @for (o of opcionesComparA(); track o) {
+              <option [value]="o">{{ o }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="ind-filtro-grupo">
+          <label class="ind-filtro-label">
+            {{ tipoComparacion() === 'area' ? 'Área B' : tipoComparacion() === 'grado' ? 'Grado B' : 'Grupo B' }}
+          </label>
+          <select class="ind-select" [value]="comparB()"
+                  (change)="comparB.set($any($event.target).value)">
+            <option value="">Seleccionar...</option>
+            @for (o of opcionesComparB(); track o) {
+              <option [value]="o">{{ o }}</option>
+            }
+          </select>
+        </div>
+
+        <button class="ind-btn-comparar" (click)="cargarComparacion()"
+                [disabled]="!comparA() || !comparB()">
+          Comparar
+        </button>
+      }
+
+      <!-- Filtros INDIVIDUAL -->
+      @if (modo() === 'individual') {
+        <div class="ind-filtro-grupo">
+          <label class="ind-filtro-label">Buscar estudiante</label>
+          <input class="ind-input-busca" type="text" placeholder="Escriba el nombre..."
+                 [value]="queryBusqueda()"
+                 (input)="queryBusqueda.set($any($event.target).value)"
+                 (keyup.enter)="buscarEstudiante()" />
+          <button class="ind-btn-buscar" (click)="buscarEstudiante()">Buscar</button>
+        </div>
+
+        @if (buscandoEstudiante()) {
+          <p class="ind-buscando">Buscando...</p>
+        }
+
+        @if (resultadosBusca().length > 0) {
+          <ul class="ind-resultados">
+            @for (r of resultadosBusca(); track r.nombre) {
+              <li class="ind-resultado-item" (click)="seleccionarEstudiante(r)">
+                <span class="ind-resultado-nombre">{{ r.nombre }}</span>
+                <span class="ind-resultado-meta">{{ r.grado }} · {{ r.sede }}</span>
+              </li>
+            }
+          </ul>
+        }
+
+        @if (estudianteSeleccionado()) {
+          <div class="ind-est-info">
+            <div class="ind-est-nombre">{{ estudianteSeleccionado()!.nombre }}</div>
+            <div class="ind-est-meta">
+              {{ estudianteSeleccionado()!.grado }} · Grupo {{ estudianteSeleccionado()!.grupo }}
             </div>
-          }
-          <div class="ind-card-info">
-            <h3 class="ind-card-titulo">{{ d.titulo }}</h3>
-            <p class="ind-card-desc">{{ d.descripcion }}</p>
+            <div class="ind-est-meta">{{ estudianteSeleccionado()!.sede }} · {{ estudianteSeleccionado()!.jornada }}</div>
+          </div>
+        }
+      }
+    </aside>
+
+    <!-- ══════════════════════════════════════════════════════════════════════
+         CONTENIDO PRINCIPAL
+         ══════════════════════════════════════════════════════════════════════ -->
+    <main class="ind-main">
+
+      <!-- Estado cargando -->
+      @if (cargando()) {
+        <div class="ind-cargando">
+          <div class="ind-spinner"></div>
+          <span>Cargando datos...</span>
+        </div>
+      }
+
+      <!-- Error -->
+      @if (error()) {
+        <div class="ind-error">{{ error() }}</div>
+      }
+
+      <!-- ── KPI CARDS (siempre visibles en panorama e individual) ─────────── -->
+      @if (modo() !== 'comparacion' && resumen()) {
+        <div class="ind-kpis">
+          <div class="ind-kpi">
+            <div class="ind-kpi-valor azul">{{ resumen()!.totalEstudiantes | number }}</div>
+            <div class="ind-kpi-label">Estudiantes</div>
+          </div>
+          <div class="ind-kpi">
+            <div class="ind-kpi-valor" [style.color]="colorPromedio()">
+              {{ resumen()!.promedioGeneral !== null ? (resumen()!.promedioGeneral | number:'1.2-2') : '—' }}
+            </div>
+            <div class="ind-kpi-label">Promedio General</div>
+            <div class="ind-kpi-badge" [style.background]="colorPromedio()">
+              {{ etiquetaProm(resumen()!.promedioGeneral) }}
+            </div>
+          </div>
+          <div class="ind-kpi">
+            <div class="ind-kpi-valor rojo">
+              {{ resumen()!.pctRiesgo !== null ? resumen()!.pctRiesgo + '%' : '—' }}
+            </div>
+            <div class="ind-kpi-label">En riesgo (&lt;3.0)</div>
+          </div>
+          <div class="ind-kpi">
+            <div class="ind-kpi-valor ambar ind-area-critica">
+              {{ resumen()!.areaCritica ?? '—' }}
+            </div>
+            <div class="ind-kpi-label">Área crítica</div>
+            @if (resumen()!.promedioAreaCritica) {
+              <div class="ind-kpi-badge rojo-bg">
+                {{ resumen()!.promedioAreaCritica | number:'1.2-2' }}
+              </div>
+            }
           </div>
         </div>
       }
-    </div>
 
-    <!-- Instrucciones Power BI -->
-    <div class="ind-instrucciones">
-      <h3 class="ind-inst-titulo">¿Cómo conectar un reporte de Power BI?</h3>
-      <ol class="ind-inst-lista">
-        <li>Abre tu reporte en <strong>Power BI Service</strong> (app.powerbi.com)</li>
-        <li>Clic en <strong>Archivo → Publicar en web</strong></li>
-        <li>Copia la URL del iframe generado</li>
-        <li>Dásela a Ronald para configurarla en el sistema</li>
-      </ol>
-      <div class="ind-inst-nota">
-        <strong>Alternativa sin Power BI:</strong> La plataforma genera sus propias gráficas
-        con Chart.js usando los datos reales de la base de datos del instituto (FASE 10).
-      </div>
-    </div>
-  </div>
-</section>
+      <!-- ════════════════════════════════════════════════════════════════════
+           MODO: PANORAMA
+           ════════════════════════════════════════════════════════════════════ -->
+      @if (modo() === 'panorama') {
 
-<!-- EXPORTAR DATOS -->
-<section class="ind-datos">
-  <div class="ind-datos-inner">
-    <div class="linea-vinotinto"></div>
-    <h2 class="ind-seccion-titulo">Exportar Datos</h2>
-    <p class="ind-seccion-desc">Descarga los datos en Excel para análisis en Power BI Desktop, Google Sheets o cualquier herramienta.</p>
-    <div class="ind-export-grid">
-      @for (e of exportar; track e.tipo) {
-        <a href="/api/v1/admin/exportar?tipo={{ e.tipo }}" target="_blank" class="ind-export-card">
-          <strong>{{ e.label }}</strong>
-          <span class="ind-export-formato">Excel · .xlsx</span>
-        </a>
+        <!-- Promedios por área -->
+        @if (areasProm().length > 0) {
+          <div class="ind-card-grafica">
+            <div class="ind-card-header">
+              <h2 class="ind-card-titulo">Promedios por Área</h2>
+              <span class="ind-card-sub">Escala 1.0 – 5.0 · Rojo = por debajo de 3.0</span>
+            </div>
+            <apx-chart
+              [series]="chartBarrasOptions().series"
+              [chart]="chartBarrasOptions().chart"
+              [xaxis]="chartBarrasOptions().xaxis"
+              [yaxis]="chartBarrasOptions().yaxis"
+              [colors]="chartBarrasOptions().colors"
+              [dataLabels]="chartBarrasOptions().dataLabels"
+              [plotOptions]="chartBarrasOptions().plotOptions"
+              [legend]="chartBarrasOptions().legend"
+              [grid]="chartBarrasOptions().grid"
+              [tooltip]="chartBarrasOptions().tooltip"
+              [theme]="{ mode: 'dark' }">
+            </apx-chart>
+          </div>
+        }
+
+        <!-- Evolución P1 → P2 → P3 -->
+        @if (evolucion().length > 0) {
+          <div class="ind-card-grafica">
+            <div class="ind-card-header">
+              <h2 class="ind-card-titulo">Evolución por Períodos</h2>
+              <span class="ind-card-sub">Tendencia P1 → P2 → P3 (máx. 6 áreas)</span>
+            </div>
+            <apx-chart
+              [series]="chartLineaOptions().series"
+              [chart]="chartLineaOptions().chart"
+              [xaxis]="chartLineaOptions().xaxis"
+              [yaxis]="chartLineaOptions().yaxis"
+              [stroke]="chartLineaOptions().stroke"
+              [fill]="chartLineaOptions().fill"
+              [markers]="chartLineaOptions().markers"
+              [legend]="chartLineaOptions().legend"
+              [grid]="chartLineaOptions().grid"
+              [tooltip]="chartLineaOptions().tooltip"
+              [theme]="{ mode: 'dark' }">
+            </apx-chart>
+          </div>
+        }
+
+        <!-- Heatmap grado × área -->
+        @if (heatmap() && heatmap()!.grados.length > 0) {
+          <div class="ind-card-grafica ind-card-full">
+            <div class="ind-card-header">
+              <h2 class="ind-card-titulo">Mapa de Calor: Grado × Área</h2>
+              <span class="ind-card-sub">Verde ≥ 4.0 · Ámbar 3.0–3.9 · Rojo &lt; 3.0</span>
+            </div>
+            <apx-chart
+              [series]="chartHeatmapOptions()!.series"
+              [chart]="chartHeatmapOptions()!.chart"
+              [plotOptions]="chartHeatmapOptions()!.plotOptions"
+              [dataLabels]="chartHeatmapOptions()!.dataLabels"
+              [xaxis]="chartHeatmapOptions()!.xaxis"
+              [yaxis]="chartHeatmapOptions()!.yaxis"
+              [legend]="chartHeatmapOptions()!.legend"
+              [tooltip]="chartHeatmapOptions()!.tooltip"
+              [theme]="{ mode: 'dark' }">
+            </apx-chart>
+          </div>
+        }
+
+        <!-- Ranking -->
+        @if (ranking()) {
+          <div class="ind-dos-col">
+            <!-- Top 10 -->
+            <div class="ind-card-grafica">
+              <div class="ind-card-header">
+                <h2 class="ind-card-titulo">Top 10 Mejores</h2>
+                <span class="ind-card-sub verde">Por acumulado final</span>
+              </div>
+              @if (ranking()!.top10.length > 0) {
+                <apx-chart
+                  [series]="chartRankingOptions()!.series"
+                  [chart]="chartRankingOptions()!.chart"
+                  [colors]="chartRankingOptions()!.colors"
+                  [plotOptions]="chartRankingOptions()!.plotOptions"
+                  [xaxis]="chartRankingOptions()!.xaxis"
+                  [yaxis]="chartRankingOptions()!.yaxis"
+                  [dataLabels]="chartRankingOptions()!.dataLabels"
+                  [grid]="chartRankingOptions()!.grid"
+                  [legend]="chartRankingOptions()!.legend"
+                  [tooltip]="chartRankingOptions()!.tooltip"
+                  [theme]="{ mode: 'dark' }">
+                </apx-chart>
+              } @else {
+                <p class="ind-vacio">Sin datos</p>
+              }
+            </div>
+
+            <!-- Bottom 10 -->
+            <div class="ind-card-grafica">
+              <div class="ind-card-header">
+                <h2 class="ind-card-titulo">Estudiantes en Riesgo</h2>
+                <span class="ind-card-sub rojo">Requieren atención prioritaria</span>
+              </div>
+              <ul class="ind-ranking-lista">
+                @for (e of ranking()!.bottom10; track e.nombre; let i = $index) {
+                  <li class="ind-ranking-item riesgo">
+                    <span class="ind-ranking-pos">{{ i + 1 }}</span>
+                    <div class="ind-ranking-info">
+                      <span class="ind-ranking-nombre">{{ e.nombre }}</span>
+                      <span class="ind-ranking-meta">{{ e.grado }} · {{ e.sede }}</span>
+                    </div>
+                    <span class="ind-ranking-nota" [style.color]="colorProm(e.acum)">
+                      {{ e.acum | number:'1.2-2' }}
+                    </span>
+                  </li>
+                }
+              </ul>
+            </div>
+          </div>
+        }
       }
-    </div>
+
+      <!-- ════════════════════════════════════════════════════════════════════
+           MODO: COMPARACIÓN
+           ════════════════════════════════════════════════════════════════════ -->
+      @if (modo() === 'comparacion') {
+
+        @if (!comparacion()) {
+          <div class="ind-placeholder-modo">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#334155" stroke-width="1.5">
+              <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+            </svg>
+            <p>Selecciona el tipo de comparación y los dos valores en el panel de filtros, luego haz clic en <strong>Comparar</strong>.</p>
+          </div>
+        }
+
+        @if (comparacion()) {
+          <div class="ind-card-grafica ind-card-full">
+            <div class="ind-card-header">
+              <h2 class="ind-card-titulo">
+                {{ comparacion()!.etiquetaA }} vs {{ comparacion()!.etiquetaB }}
+              </h2>
+              <span class="ind-card-sub">Promedio acumulado por área o período</span>
+            </div>
+            <apx-chart
+              [series]="chartComparOptions()!.series"
+              [chart]="chartComparOptions()!.chart"
+              [colors]="chartComparOptions()!.colors"
+              [plotOptions]="chartComparOptions()!.plotOptions"
+              [xaxis]="chartComparOptions()!.xaxis"
+              [yaxis]="chartComparOptions()!.yaxis"
+              [legend]="chartComparOptions()!.legend"
+              [dataLabels]="chartComparOptions()!.dataLabels"
+              [grid]="chartComparOptions()!.grid"
+              [tooltip]="chartComparOptions()!.tooltip"
+              [theme]="{ mode: 'dark' }">
+            </apx-chart>
+          </div>
+
+          <!-- Tabla de diferencias -->
+          <div class="ind-card-grafica ind-card-full">
+            <div class="ind-card-header">
+              <h2 class="ind-card-titulo">Diferencia por categoría</h2>
+            </div>
+            <div class="ind-tabla-resp">
+              <table class="ind-tabla">
+                <thead>
+                  <tr>
+                    <th>Categoría</th>
+                    <th>{{ comparacion()!.etiquetaA }}</th>
+                    <th>{{ comparacion()!.etiquetaB }}</th>
+                    <th>Diferencia</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (cat of (comparacion()!.areas ?? comparacion()!.periodos ?? []); track cat; let i = $index) {
+                    <tr>
+                      <td>{{ cat }}</td>
+                      <td [style.color]="colorProm(comparacion()!.promediosA[i])">
+                        {{ comparacion()!.promediosA[i] !== null ? (comparacion()!.promediosA[i] | number:'1.2-2') : '—' }}
+                      </td>
+                      <td [style.color]="colorProm(comparacion()!.promediosB[i])">
+                        {{ comparacion()!.promediosB[i] !== null ? (comparacion()!.promediosB[i] | number:'1.2-2') : '—' }}
+                      </td>
+                      <td>
+                        @if (comparacion()!.promediosA[i] !== null && comparacion()!.promediosB[i] !== null) {
+                          <span [style.color]="(comparacion()!.promediosA[i]! - comparacion()!.promediosB[i]!) >= 0 ? '#16A34A' : '#DC2626'">
+                            {{ (comparacion()!.promediosA[i]! - comparacion()!.promediosB[i]!) | number:'+1.2-2' }}
+                          </span>
+                        } @else {
+                          <span>—</span>
+                        }
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          </div>
+        }
+      }
+
+      <!-- ════════════════════════════════════════════════════════════════════
+           MODO: INDIVIDUAL
+           ════════════════════════════════════════════════════════════════════ -->
+      @if (modo() === 'individual') {
+
+        @if (!estudianteSeleccionado()) {
+          <div class="ind-placeholder-modo">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#334155" stroke-width="1.5">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+              <circle cx="12" cy="7" r="4"/>
+            </svg>
+            <p>Busca un estudiante por nombre en el panel lateral para ver su perfil académico completo.</p>
+          </div>
+        }
+
+        @if (perfil()) {
+          <!-- Encabezado del perfil -->
+          <div class="ind-perfil-header">
+            <div class="ind-perfil-avatar">
+              {{ perfil()!.nombre.charAt(0) }}
+            </div>
+            <div class="ind-perfil-datos">
+              <h2 class="ind-perfil-nombre">{{ perfil()!.nombre }}</h2>
+              <div class="ind-perfil-meta">
+                {{ perfil()!.grado }} · Grupo {{ perfil()!.grupo }} ·
+                {{ perfil()!.sede }} · {{ perfil()!.jornada }}
+              </div>
+            </div>
+            <div class="ind-perfil-kpis">
+              @if (perfil()!.acumFinal !== null) {
+                <div class="ind-perfil-kpi">
+                  <span class="ind-perfil-kpi-val"
+                        [style.color]="colorProm(perfil()!.acumFinal)">
+                    {{ perfil()!.acumFinal | number:'1.2-2' }}
+                  </span>
+                  <span class="ind-perfil-kpi-label">Acum. Final</span>
+                </div>
+              }
+              @if (perfil()!.puesto !== null) {
+                <div class="ind-perfil-kpi">
+                  <span class="ind-perfil-kpi-val azul">{{ perfil()!.puesto }}</span>
+                  <span class="ind-perfil-kpi-label">Puesto</span>
+                </div>
+              }
+            </div>
+          </div>
+
+          <div class="ind-dos-col">
+            <!-- Radar / Spider -->
+            <div class="ind-card-grafica">
+              <div class="ind-card-header">
+                <h2 class="ind-card-titulo">Perfil por Área</h2>
+                <span class="ind-card-sub">P1, P2, P3 y acumulado</span>
+              </div>
+              @if (chartRadarOptions()) {
+                <apx-chart
+                  [series]="chartRadarOptions()!.series"
+                  [chart]="chartRadarOptions()!.chart"
+                  [colors]="chartRadarOptions()!.colors"
+                  [stroke]="chartRadarOptions()!.stroke"
+                  [fill]="chartRadarOptions()!.fill"
+                  [markers]="chartRadarOptions()!.markers"
+                  [xaxis]="chartRadarOptions()!.xaxis"
+                  [yaxis]="chartRadarOptions()!.yaxis"
+                  [legend]="chartRadarOptions()!.legend"
+                  [tooltip]="chartRadarOptions()!.tooltip"
+                  [theme]="{ mode: 'dark' }">
+                </apx-chart>
+              }
+            </div>
+
+            <!-- Tabla de notas -->
+            <div class="ind-card-grafica">
+              <div class="ind-card-header">
+                <h2 class="ind-card-titulo">Notas por Área</h2>
+              </div>
+              <div class="ind-tabla-resp">
+                <table class="ind-tabla">
+                  <thead>
+                    <tr>
+                      <th>Área</th>
+                      <th>P1</th>
+                      <th>P2</th>
+                      <th>P3</th>
+                      <th>Acum</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @for (r of perfil()!.radar; track r.area) {
+                      <tr>
+                        <td class="ind-area-nombre">{{ r.area }}</td>
+                        <td [style.color]="colorProm(r.p1)">{{ r.p1 !== null ? (r.p1 | number:'1.1-1') : '—' }}</td>
+                        <td [style.color]="colorProm(r.p2)">{{ r.p2 !== null ? (r.p2 | number:'1.1-1') : '—' }}</td>
+                        <td [style.color]="colorProm(r.p3)">{{ r.p3 !== null ? (r.p3 | number:'1.1-1') : '—' }}</td>
+                        <td [style.color]="colorProm(r.ac)"><strong>{{ r.ac !== null ? (r.ac | number:'1.1-1') : '—' }}</strong></td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        }
+      }
+
+      <!-- Estado vacío (sin datos cargados aún) -->
+      @if (!cargando() && !error() && modo() === 'panorama' && areasProm().length === 0 && !resumen()) {
+        <div class="ind-placeholder-modo">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#334155" stroke-width="1.5">
+            <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/>
+            <line x1="12" y1="16" x2="12.01" y2="16"/>
+          </svg>
+          <p>Cargando datos desde los archivos Excel... Si persiste, verifica que el backend esté corriendo y los archivos estén en <code>datos-indicadores/</code>.</p>
+        </div>
+      }
+
+    </main>
   </div>
-</section>
+</div>

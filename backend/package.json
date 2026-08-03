@@ -30,7 +30,8 @@
     "sequelize": "^6.37.3",
     "sharp": "^0.33.3",
     "sqlite3": "^5.1.7",
-    "uuid": "^9.0.1"
+    "uuid": "^9.0.1",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "eslint": "^8.57.0",
@@ -43,7 +44,9 @@
   },
   "jest": {
     "testEnvironment": "node",
-    "testMatch": ["**/src/__tests__/**/*.test.js"],
+    "testMatch": [
+      "**/src/__tests__/**/*.test.js"
+    ],
     "forceExit": true,
     "testTimeout": 15000
   }
