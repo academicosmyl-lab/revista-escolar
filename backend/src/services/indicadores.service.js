@@ -9,7 +9,7 @@ const fs   = require('fs');
 const XLSX = require('xlsx');
 
 // ── Ruta de los archivos ─────────────────────────────────────────────────────
-const DATOS_DIR = path.join(__dirname, '../../../datos-indicadores');
+const DATOS_DIR = path.join(__dirname, '../../datos-indicadores');
 
 // ── Cache global ─────────────────────────────────────────────────────────────
 /** @type {Array<EstudianteRow>} */
