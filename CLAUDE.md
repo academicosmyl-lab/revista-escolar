@@ -136,7 +136,7 @@ revista-escolar/
 ## 5. MÓDULO INDICADORES ACADÉMICOS
 
 ### Datos
-- **Carpeta:** `datos-indicadores/` (en la raíz del repo)
+- **Carpeta:** `backend/datos-indicadores/` (dentro del backend para Render)
 - **Formato nombres:** `2025_SEDE_JORNADA.xlsx`
 - **Estudiantes:** ~2449 registros en 3 sedes
 - **Sedes:** General Santander · Los Sauces · Técnico Industrial
