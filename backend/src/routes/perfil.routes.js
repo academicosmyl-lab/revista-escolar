@@ -330,28 +330,34 @@ router.put('/mio/datos', autenticar, async (req, res, next) => {
   } catch (err) { next(err); }
 });
 
-// POST /api/v1/perfil/mio/foto — subir foto de perfil (1 imagen)
-router.post('/mio/foto', autenticar, upload.single('foto'), async (req, res, next) => {
+// POST /api/v1/perfil/mio/foto — subir foto de perfil (1 imagen) → Cloudinary
+router.post('/mio/foto', autenticar, uploadMem.single('foto'), async (req, res, next) => {
   try {
     if (!req.file) throw crearError('Debes subir una imagen', 400);
 
     let perfil = await PerfilDocente.findOne({ where: { usuario_id: req.usuario.id } });
     if (!perfil) perfil = await PerfilDocente.create({ usuario_id: req.usuario.id });
 
-    // Guardar imagen y procesar con agente de galería
+    // Subir a Cloudinary (nunca guardar en el servidor local)
+    const result = await cloudinaryService.uploadBuffer(
+      req.file.buffer,
+      req.file.mimetype,
+      `perfiles-docentes/${req.usuario.id}`
+    );
+
     const imagen = await Imagen.create({
-      perfil_id: perfil.id,
-      filename: req.file.filename,
-      url: `/uploads/${req.file.filename}`,
-      alt_text: `Foto de ${req.usuario.nombre}`,
-      tamaño_bytes: req.file.size,
-      es_portada: true,
+      perfil_id:        perfil.id,
+      filename:         result.public_id,
+      url:              result.secure_url,
+      alt_text:         `Foto de ${req.usuario.nombre}`,
+      tamaño_bytes:     req.file.size,
+      es_portada:       true,
+      procesada_por_ia: false,
     });
 
-    // Actualizar URL en perfil
-    await perfil.update({ foto_url: `/uploads/${req.file.filename}` });
+    await perfil.update({ foto_url: result.secure_url });
 
-    res.json({ foto_url: perfil.foto_url, imagen });
+    res.json({ foto_url: result.secure_url, imagen });
   } catch (err) { next(err); }
 });
 
