@@ -175,6 +175,22 @@
   }
 }
 
+.nav-link-publicar {
+  background: #1E40AF;
+  color: #fff !important;
+  border-radius: 6px;
+  padding: 6px 14px !important;
+  font-weight: 700 !important;
+  border-bottom: none !important;
+  &:hover { background: #3B82F6; }
+  &.nav-activo { background: #3B82F6; border-bottom: none !important; }
+
+  @media (max-width: 768px) {
+    width: auto;
+    text-align: center;
+  }
+}
+
 .its-btn-nav {
   font-size: 0.72rem !important;
 

@@ -35,6 +35,10 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/indicadores/indicadores').then(m => m.Indicadores),
   },
   {
+    path: 'publicar',
+    loadComponent: () => import('./pages/publicar/publicar').then(m => m.Publicar),
+  },
+  {
     path: 'login',
     loadComponent: () => import('./pages/login/login').then(m => m.Login),
   },

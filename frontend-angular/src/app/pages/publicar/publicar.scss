@@ -1,0 +1,558 @@
+// ── Paleta ────────────────────────────────────────────────
+$azul:    #1E40AF;
+$azul-cl: #3B82F6;
+$ambar:   #F59E0B;
+$bg:      #0F172A;
+$card:    #1E293B;
+$borde:   #334155;
+$texto:   #F1F5F9;
+$muted:   #94A3B8;
+$verde:   #10B981;
+$rojo:    #EF4444;
+
+// ── Animación entrada ─────────────────────────────────────
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.animate-in {
+  animation: fadeUp .35s ease both;
+}
+
+// ── Página ────────────────────────────────────────────────
+.publicar-page {
+  min-height: 100vh;
+  background: $bg;
+  color: $texto;
+  padding-bottom: 80px;
+}
+
+// ── Hero ──────────────────────────────────────────────────
+.hero {
+  background: linear-gradient(135deg, #0F172A 0%, #1E3A8A 60%, #1E293B 100%);
+  padding: 64px 24px 48px;
+  text-align: center;
+  border-bottom: 1px solid $borde;
+}
+
+.hero-inner {
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+.hero-badge {
+  display: inline-block;
+  background: rgba($ambar, .15);
+  color: $ambar;
+  border: 1px solid rgba($ambar, .3);
+  border-radius: 20px;
+  padding: 4px 16px;
+  font-size: .8rem;
+  font-weight: 600;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  margin-bottom: 16px;
+}
+
+.hero h1 {
+  font-size: clamp(1.8rem, 5vw, 2.8rem);
+  font-weight: 800;
+  color: $texto;
+  margin: 0 0 12px;
+  line-height: 1.1;
+}
+
+.hero p {
+  color: $muted;
+  font-size: 1rem;
+  line-height: 1.6;
+  margin: 0;
+}
+
+// ── Éxito ─────────────────────────────────────────────────
+.exito-wrap {
+  display: flex;
+  justify-content: center;
+  padding: 80px 24px;
+}
+
+.exito-card {
+  background: $card;
+  border: 1px solid rgba($verde, .3);
+  border-radius: 16px;
+  padding: 48px 40px;
+  text-align: center;
+  max-width: 480px;
+  width: 100%;
+}
+
+.exito-icono { font-size: 3rem; margin-bottom: 16px; }
+
+.exito-card h2 {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: $verde;
+  margin: 0 0 12px;
+}
+
+.exito-card p {
+  color: $muted;
+  margin: 0 0 28px;
+  line-height: 1.6;
+}
+
+// ── Contenedor del formulario ─────────────────────────────
+.form-wrap {
+  max-width: 640px;
+  margin: 40px auto 0;
+  padding: 0 16px;
+}
+
+// ── Stepper ───────────────────────────────────────────────
+.stepper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 32px;
+  gap: 0;
+}
+
+.step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.step-num {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: $borde;
+  color: $muted;
+  font-weight: 700;
+  font-size: .9rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all .25s;
+}
+
+.step.activo .step-num {
+  background: $azul;
+  color: #fff;
+}
+
+.step.actual .step-num {
+  background: $azul-cl;
+  box-shadow: 0 0 0 4px rgba($azul-cl, .25);
+}
+
+.step-label {
+  font-size: .72rem;
+  color: $muted;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  white-space: nowrap;
+}
+
+.step.activo .step-label { color: $texto; }
+
+.step-linea {
+  flex: 1;
+  height: 2px;
+  background: $borde;
+  margin: 0 8px;
+  margin-bottom: 20px;
+  transition: background .25s;
+  max-width: 80px;
+
+  &.activa { background: $azul; }
+}
+
+// ── Card del formulario ───────────────────────────────────
+.form-card {
+  background: $card;
+  border: 1px solid $borde;
+  border-radius: 16px;
+  padding: 32px 28px;
+}
+
+.form-titulo {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: $texto;
+  margin: 0 0 28px;
+}
+
+// ── Campos ────────────────────────────────────────────────
+.campo {
+  margin-bottom: 24px;
+
+  label {
+    display: block;
+    font-size: .85rem;
+    font-weight: 600;
+    color: $muted;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+  }
+
+  input, select, textarea {
+    width: 100%;
+    background: #0F172A;
+    border: 1px solid $borde;
+    border-radius: 8px;
+    color: $texto;
+    font-size: .95rem;
+    padding: 12px 14px;
+    transition: border .2s;
+    box-sizing: border-box;
+    font-family: inherit;
+
+    &::placeholder { color: #475569; }
+
+    &:focus {
+      outline: none;
+      border-color: $azul-cl;
+      box-shadow: 0 0 0 3px rgba($azul-cl, .15);
+    }
+  }
+
+  textarea { resize: vertical; min-height: 120px; }
+
+  select { appearance: none; cursor: pointer; }
+}
+
+// ── Roles ─────────────────────────────────────────────────
+.roles-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.rol-btn {
+  padding: 10px 18px;
+  border-radius: 8px;
+  border: 1px solid $borde;
+  background: #0F172A;
+  color: $muted;
+  font-size: .875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all .2s;
+
+  &:hover { border-color: $azul-cl; color: $texto; }
+
+  &.seleccionado {
+    background: rgba($azul, .25);
+    border-color: $azul-cl;
+    color: $azul-cl;
+    font-weight: 600;
+  }
+}
+
+// ── Tipo de contenido ─────────────────────────────────────
+.tipo-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.tipo-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 20px 12px;
+  border-radius: 10px;
+  border: 1px solid $borde;
+  background: #0F172A;
+  color: $muted;
+  cursor: pointer;
+  transition: all .2s;
+  font-size: .875rem;
+
+  &:hover { border-color: $azul-cl; }
+
+  &.seleccionado {
+    background: rgba($azul, .2);
+    border-color: $azul-cl;
+    color: $texto;
+  }
+}
+
+.tipo-icono { font-size: 1.6rem; }
+
+// ── Upload de imágenes ────────────────────────────────────
+.upload-zone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  border: 2px dashed $borde;
+  border-radius: 10px;
+  padding: 28px;
+  cursor: pointer;
+  transition: border .2s;
+  color: $muted;
+  font-size: .875rem;
+  text-align: center;
+
+  &:hover { border-color: $azul-cl; color: $texto; }
+}
+
+.upload-icono { font-size: 2rem; }
+
+.preview-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.preview-item {
+  position: relative;
+  border-radius: 8px;
+  overflow: hidden;
+  aspect-ratio: 1;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+}
+
+.quitar-btn {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: rgba(0,0,0,.7);
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  font-size: .7rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+
+  &:hover { background: $rojo; }
+}
+
+// ── YouTube preview ───────────────────────────────────────
+.yt-preview {
+  margin-top: 12px;
+  position: relative;
+  border-radius: 8px;
+  overflow: hidden;
+  max-width: 280px;
+
+  img { width: 100%; display: block; }
+}
+
+.yt-badge {
+  position: absolute;
+  bottom: 8px;
+  left: 8px;
+  background: rgba(0,0,0,.8);
+  color: #fff;
+  font-size: .75rem;
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-weight: 600;
+}
+
+// ── Toggle ────────────────────────────────────────────────
+.toggle-campo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  background: #0F172A;
+  border: 1px solid $borde;
+  border-radius: 10px;
+  padding: 16px;
+}
+
+.toggle-info { flex: 1; }
+
+.toggle-titulo {
+  display: block;
+  font-weight: 600;
+  color: $texto;
+  font-size: .9rem;
+  margin-bottom: 4px;
+}
+
+.toggle-desc {
+  display: block;
+  font-size: .8rem;
+  color: $muted;
+  line-height: 1.4;
+}
+
+.toggle-btn {
+  width: 48px;
+  height: 26px;
+  border-radius: 13px;
+  background: $borde;
+  border: none;
+  cursor: pointer;
+  position: relative;
+  flex-shrink: 0;
+  transition: background .2s;
+
+  &.activo { background: $verde; }
+}
+
+.toggle-thumb {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #fff;
+  transition: left .2s;
+
+  .activo & { left: 25px; }
+}
+
+// ── Resumen ───────────────────────────────────────────────
+.resumen-card {
+  background: rgba($azul, .08);
+  border: 1px solid rgba($azul, .2);
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 20px;
+
+  h3 {
+    font-size: .85rem;
+    font-weight: 700;
+    color: $azul-cl;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    margin: 0 0 12px;
+  }
+
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  li {
+    font-size: .875rem;
+    color: $texto;
+
+    strong { color: $muted; margin-right: 4px; }
+  }
+}
+
+// ── Error ─────────────────────────────────────────────────
+.error-msg {
+  background: rgba($rojo, .1);
+  border: 1px solid rgba($rojo, .3);
+  border-radius: 8px;
+  color: $rojo;
+  padding: 12px 16px;
+  font-size: .875rem;
+  margin-bottom: 16px;
+}
+
+.cargando-txt {
+  color: $muted;
+  font-style: italic;
+  font-size: .875rem;
+  margin: 0;
+}
+
+// ── Navegación del formulario ─────────────────────────────
+.form-nav {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  margin-top: 8px;
+}
+
+// ── Botones ───────────────────────────────────────────────
+.btn-primary {
+  background: $azul;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 28px;
+  font-size: .95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background .2s, opacity .2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+
+  &:hover:not(:disabled) { background: $azul-cl; }
+
+  &:disabled {
+    opacity: .45;
+    cursor: not-allowed;
+  }
+}
+
+.btn-secundario {
+  background: transparent;
+  color: $muted;
+  border: 1px solid $borde;
+  border-radius: 8px;
+  padding: 12px 20px;
+  font-size: .95rem;
+  cursor: pointer;
+  transition: all .2s;
+
+  &:hover { border-color: $azul-cl; color: $texto; }
+}
+
+.btn-enviar { min-width: 160px; justify-content: center; }
+
+// ── Spinner ───────────────────────────────────────────────
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255,255,255,.3);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin .7s linear infinite;
+  flex-shrink: 0;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+// ── Responsive ────────────────────────────────────────────
+@media (max-width: 480px) {
+  .form-card { padding: 24px 16px; }
+
+  .tipo-grid { grid-template-columns: 1fr 1fr; }
+
+  .tipo-grid .tipo-btn:last-child { grid-column: 1 / -1; }
+
+  .stepper { gap: 0; }
+
+  .step-linea { max-width: 40px; }
+
+  .form-nav { flex-direction: column-reverse; }
+
+  .btn-primary, .btn-secundario { width: 100%; justify-content: center; }
+}

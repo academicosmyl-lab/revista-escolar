@@ -1,0 +1,327 @@
+<div class="publicar-page">
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-inner">
+      <span class="hero-badge">Revista Institucional</span>
+      <h1>Comparte tu historia</h1>
+      <p>Envía noticias, eventos o imágenes de tu aula.<br>El rector las revisará y las publicará en la revista.</p>
+    </div>
+  </section>
+
+  <!-- ÉXITO -->
+  @if (enviado()) {
+    <section class="exito-wrap">
+      <div class="exito-card">
+        <div class="exito-icono">✅</div>
+        <h2>¡Enviado con éxito!</h2>
+        <p>Tu contenido fue recibido y está pendiente de revisión. El rector lo aprobará pronto.</p>
+        <button class="btn-primary" (click)="reiniciar()">Enviar otro contenido</button>
+      </div>
+    </section>
+  }
+
+  <!-- FORMULARIO -->
+  @if (!enviado()) {
+    <section class="form-wrap">
+
+      <!-- Indicador de pasos -->
+      <div class="stepper">
+        <div class="step" [class.activo]="paso() >= 1" [class.actual]="paso() === 1">
+          <span class="step-num">1</span>
+          <span class="step-label">Quién eres</span>
+        </div>
+        <div class="step-linea" [class.activa]="paso() >= 2"></div>
+        <div class="step" [class.activo]="paso() >= 2" [class.actual]="paso() === 2">
+          <span class="step-num">2</span>
+          <span class="step-label">Tu contenido</span>
+        </div>
+        <div class="step-linea" [class.activa]="paso() >= 3"></div>
+        <div class="step" [class.activo]="paso() >= 3" [class.actual]="paso() === 3">
+          <span class="step-num">3</span>
+          <span class="step-label">Sede y envío</span>
+        </div>
+      </div>
+
+      <!-- ─── PASO 1: Quién eres ─────────────────────────── -->
+      @if (paso() === 1) {
+        <div class="form-card animate-in">
+          <h2 class="form-titulo">¿Quién eres?</h2>
+
+          <div class="campo">
+            <label for="nombre">Nombre completo *</label>
+            <input
+              id="nombre"
+              type="text"
+              placeholder="Ej: María González"
+              [ngModel]="nombre()"
+              (ngModelChange)="nombre.set($event)"
+              autocomplete="name"
+            />
+          </div>
+
+          <div class="campo">
+            <label>Rol en la institución *</label>
+            <div class="roles-grid">
+              @for (r of roles; track r.valor) {
+                <button
+                  type="button"
+                  class="rol-btn"
+                  [class.seleccionado]="rol() === r.valor"
+                  (click)="seleccionarRol(r.valor)"
+                >
+                  {{ r.etiqueta }}
+                </button>
+              }
+            </div>
+          </div>
+
+          @if (rol() === 'OTRO') {
+            <div class="campo">
+              <label for="otro-rol">Especifica tu rol</label>
+              <input
+                id="otro-rol"
+                type="text"
+                placeholder="Ej: Estudiante, padre de familia..."
+                [ngModel]="otroRol()"
+                (ngModelChange)="otroRol.set($event)"
+              />
+            </div>
+          }
+
+          @if (esDocente()) {
+            <div class="campo">
+              <label for="area">Área que enseñas</label>
+              <select
+                id="area"
+                [ngModel]="area()"
+                (ngModelChange)="area.set($event)"
+              >
+                <option value="">— Selecciona un área —</option>
+                @for (a of areas; track a) {
+                  <option [value]="a">{{ a }}</option>
+                }
+              </select>
+            </div>
+          }
+
+          <div class="form-nav">
+            <button
+              class="btn-primary"
+              [disabled]="!paso1Valido()"
+              (click)="irPaso(2)"
+            >
+              Continuar →
+            </button>
+          </div>
+        </div>
+      }
+
+      <!-- ─── PASO 2: Tu contenido ──────────────────────── -->
+      @if (paso() === 2) {
+        <div class="form-card animate-in">
+          <h2 class="form-titulo">¿Qué quieres compartir?</h2>
+
+          <div class="campo">
+            <label for="titulo">Título *</label>
+            <input
+              id="titulo"
+              type="text"
+              placeholder="Ej: Festival de ciencias del grado décimo"
+              [ngModel]="titulo()"
+              (ngModelChange)="titulo.set($event)"
+              maxlength="200"
+            />
+          </div>
+
+          <div class="campo">
+            <label for="descripcion">Descripción *</label>
+            <textarea
+              id="descripcion"
+              rows="5"
+              placeholder="Cuéntanos qué pasó, qué se celebró, o qué quieres comunicar..."
+              [ngModel]="descripcion()"
+              (ngModelChange)="descripcion.set($event)"
+            ></textarea>
+          </div>
+
+          <!-- Tipo de contenido -->
+          <div class="campo">
+            <label>Tipo de contenido</label>
+            <div class="tipo-grid">
+              <button
+                type="button"
+                class="tipo-btn"
+                [class.seleccionado]="tipo() === 'texto'"
+                (click)="seleccionarTipo('texto')"
+              >
+                <span class="tipo-icono">📝</span>
+                <span>Solo texto</span>
+              </button>
+              <button
+                type="button"
+                class="tipo-btn"
+                [class.seleccionado]="tipo() === 'imagenes'"
+                (click)="seleccionarTipo('imagenes')"
+              >
+                <span class="tipo-icono">📸</span>
+                <span>Imágenes</span>
+              </button>
+              <button
+                type="button"
+                class="tipo-btn"
+                [class.seleccionado]="tipo() === 'video'"
+                (click)="seleccionarTipo('video')"
+              >
+                <span class="tipo-icono">▶️</span>
+                <span>Video YouTube</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Upload de imágenes -->
+          @if (tipo() === 'imagenes') {
+            <div class="campo">
+              <label>Imágenes * (máx. 5 fotos, JPG/PNG/WEBP)</label>
+              <label class="upload-zone" for="img-input">
+                <span class="upload-icono">📂</span>
+                <span>Haz clic para seleccionar fotos</span>
+                <input
+                  id="img-input"
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp"
+                  multiple
+                  hidden
+                  (change)="onImagenes($event)"
+                />
+              </label>
+              @if (previewUrls().length > 0) {
+                <div class="preview-grid">
+                  @for (url of previewUrls(); track url; let i = $index) {
+                    <div class="preview-item">
+                      <img [src]="url" [alt]="'Imagen ' + (i+1)" />
+                      <button class="quitar-btn" type="button" (click)="quitarImagen(i)">✕</button>
+                    </div>
+                  }
+                </div>
+              }
+            </div>
+          }
+
+          <!-- URL de YouTube -->
+          @if (tipo() === 'video') {
+            <div class="campo">
+              <label for="yt-url">URL del video de YouTube *</label>
+              <input
+                id="yt-url"
+                type="url"
+                placeholder="https://www.youtube.com/watch?v=..."
+                [ngModel]="urlYoutube()"
+                (ngModelChange)="urlYoutube.set($event)"
+              />
+              @if (youtubePreviewId()) {
+                <div class="yt-preview">
+                  <img
+                    [src]="'https://img.youtube.com/vi/' + youtubePreviewId() + '/mqdefault.jpg'"
+                    alt="Vista previa del video"
+                  />
+                  <span class="yt-badge">▶ Vista previa detectada</span>
+                </div>
+              }
+            </div>
+          }
+
+          <div class="form-nav">
+            <button class="btn-secundario" (click)="irPaso(1)">← Atrás</button>
+            <button
+              class="btn-primary"
+              [disabled]="!paso2Valido()"
+              (click)="irPaso(3)"
+            >
+              Continuar →
+            </button>
+          </div>
+        </div>
+      }
+
+      <!-- ─── PASO 3: Sede y envío ───────────────────────── -->
+      @if (paso() === 3) {
+        <div class="form-card animate-in">
+          <h2 class="form-titulo">Último paso</h2>
+
+          <div class="campo">
+            <label for="sede">¿A qué sede pertenece este contenido?</label>
+            @if (cargandoSedes()) {
+              <p class="cargando-txt">Cargando sedes...</p>
+            } @else {
+              <select
+                id="sede"
+                [ngModel]="sedeSeleccionada()"
+                (ngModelChange)="sedeSeleccionada.set($event)"
+              >
+                <option value="">— Todas las sedes / No aplica —</option>
+                @for (s of sedes(); track s.id) {
+                  <option [value]="s.nombre">{{ s.nombre }}</option>
+                }
+              </select>
+            }
+          </div>
+
+          @if (esRector()) {
+            <div class="campo toggle-campo">
+              <div class="toggle-info">
+                <span class="toggle-titulo">Destacar en página principal</span>
+                <span class="toggle-desc">Marca esto si quieres que este contenido aparezca en la portada de la revista.</span>
+              </div>
+              <button
+                type="button"
+                class="toggle-btn"
+                [class.activo]="paraPortada()"
+                (click)="paraPortada.set(!paraPortada())"
+                [attr.aria-pressed]="paraPortada()"
+              >
+                <span class="toggle-thumb"></span>
+              </button>
+            </div>
+          }
+
+          <!-- Resumen del envío -->
+          <div class="resumen-card">
+            <h3>Resumen de tu envío</h3>
+            <ul>
+              <li><strong>De:</strong> {{ nombre() }} ({{ rol() }})</li>
+              @if (area()) { <li><strong>Área:</strong> {{ area() }}</li> }
+              <li><strong>Título:</strong> {{ titulo() }}</li>
+              <li><strong>Tipo:</strong>
+                {{ tipo() === 'imagenes' ? '📸 ' + imagenes.length + ' imagen(es)' :
+                   tipo() === 'video'    ? '▶️ Video de YouTube' : '📝 Solo texto' }}
+              </li>
+              @if (sedeSeleccionada()) { <li><strong>Sede:</strong> {{ sedeSeleccionada() }}</li> }
+            </ul>
+          </div>
+
+          @if (errorMsg()) {
+            <div class="error-msg">{{ errorMsg() }}</div>
+          }
+
+          <div class="form-nav">
+            <button class="btn-secundario" (click)="irPaso(2)">← Atrás</button>
+            <button
+              class="btn-primary btn-enviar"
+              [disabled]="enviando()"
+              (click)="enviar()"
+            >
+              @if (enviando()) {
+                <span class="spinner"></span> Enviando...
+              } @else {
+                Enviar a la revista
+              }
+            </button>
+          </div>
+        </div>
+      }
+
+    </section>
+  }
+
+</div>

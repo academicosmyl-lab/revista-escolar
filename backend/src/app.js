@@ -30,6 +30,7 @@ const superAdminRoutes       = require('./routes/super-admin.routes');
 const formularioRoutes       = require('./routes/formulario.routes');
 const areasRoutes            = require('./routes/areas.routes');
 const indicadoresRoutes      = require('./routes/indicadores.routes');
+const publicarRoutes         = require('./routes/publicar.routes');
 
 const app = express();
 
@@ -100,6 +101,7 @@ app.use('/api/v1/super-admin',      superAdminRoutes);
 app.use('/api/v1/formulario',       formularioRoutes);
 app.use('/api/v1/areas',           areasRoutes);
 app.use('/api/v1/indicadores',    indicadoresRoutes);
+app.use('/api/v1/publicar',       publicarRoutes);
 
 // ── Errores ───────────────────────────────────────────────
 app.use(errorHandler);

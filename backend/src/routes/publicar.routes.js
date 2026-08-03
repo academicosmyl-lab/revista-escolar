@@ -1,0 +1,152 @@
+/**
+ * routes/publicar.routes.js
+ * Endpoint público para envío de contenido a la revista.
+ * Cualquier persona puede enviar — el rector/admin aprueba antes de publicar.
+ * Sin autenticación requerida.
+ */
+const { Router } = require('express');
+const { Noticia, Imagen, Sede, Usuario } = require('../models');
+const cloudinary = require('../services/cloudinary.service');
+const emailService = require('../services/email.service');
+const multer = require('multer');
+
+const router = Router();
+
+// Multer en memoria — las imágenes van directo a Cloudinary
+const uploadMem = multer({
+  storage: multer.memoryStorage(),
+  fileFilter: (req, file, cb) => {
+    const ok = ['image/jpeg','image/png','image/webp'].includes(file.mimetype);
+    cb(ok ? null : new Error('Solo JPG, PNG o WEBP'), ok);
+  },
+  limits: { fileSize: 5 * 1024 * 1024, files: 5 },
+});
+
+// Helper para extraer ID de YouTube de cualquier URL
+function extraerYoutubeId(url) {
+  if (!url) return null;
+  const match = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/);
+  return match ? match[1] : null;
+}
+
+// Helper respuesta
+const ok  = (res, data, msg = '') => res.json({ ok: true, data, mensaje: msg });
+const err = (res, msg, code = 400) => res.status(code).json({ ok: false, error: msg });
+
+// GET /api/v1/publicar/sedes — lista de sedes para el formulario
+router.get('/sedes', async (req, res) => {
+  try {
+    const sedes = await Sede.findAll({
+      where: { activa: true },
+      attributes: ['id','nombre','slug'],
+      order: [['nombre','ASC']],
+    });
+    ok(res, sedes);
+  } catch (e) {
+    err(res, e.message, 500);
+  }
+});
+
+// POST /api/v1/publicar — enviar contenido a la revista
+router.post('/', uploadMem.array('imagenes', 5), async (req, res) => {
+  try {
+    const {
+      nombre_enviado,
+      rol_enviado,
+      area_enviada,
+      titulo,
+      descripcion,
+      tipo_contenido,   // 'imagenes' | 'video' | 'texto'
+      url_youtube,
+      sede_nombre,
+      para_portada,
+    } = req.body;
+
+    // Validación básica
+    if (!nombre_enviado?.trim()) return err(res, 'El nombre es requerido');
+    if (!titulo?.trim())         return err(res, 'El título es requerido');
+    if (!descripcion?.trim())    return err(res, 'La descripción es requerida');
+    if (!tipo_contenido)         return err(res, 'El tipo de contenido es requerido');
+
+    if (tipo_contenido === 'video') {
+      const ytId = extraerYoutubeId(url_youtube);
+      if (!ytId) return err(res, 'URL de YouTube inválida o no reconocida');
+    }
+
+    // Buscar usuario admin/rector para usar como autor (FK requerida)
+    const adminUser = await Usuario.findOne({
+      where: { rol: 'ADMIN', activo: true },
+      order: [['createdAt', 'ASC']],
+    });
+    if (!adminUser) return err(res, 'Error de configuración del servidor', 500);
+
+    // Construir contenido enriquecido con metadata del enviador
+    const areaInfo = area_enviada ? ` | Área: ${area_enviada}` : '';
+    const sedeInfo = sede_nombre  ? ` | Sede: ${sede_nombre}` : '';
+    const metadataHeader = `📋 ENVIADO POR: ${nombre_enviado.trim()} (${rol_enviado || 'Sin especificar'}${areaInfo}${sedeInfo})\n\n`;
+
+    let contenidoYoutube = '';
+    if (tipo_contenido === 'video' && url_youtube) {
+      const ytId = extraerYoutubeId(url_youtube);
+      contenidoYoutube = `\n\n🎬 VIDEO: https://www.youtube.com/watch?v=${ytId}`;
+    }
+
+    // Buscar sede en BD si se especificó
+    let sedeId = null;
+    if (sede_nombre) {
+      const sedeReg = await Sede.findOne({ where: { nombre: sede_nombre, activa: true } });
+      if (sedeReg) sedeId = sedeReg.id;
+    }
+
+    // Crear la noticia en estado pendiente
+    const noticia = await Noticia.create({
+      titulo:       titulo.trim(),
+      resumen:      `Enviado por: ${nombre_enviado.trim()} (${rol_enviado || 'Personal'})`,
+      contenido:    metadataHeader + descripcion.trim() + contenidoYoutube,
+      estado:       'pendiente',
+      destacada:    para_portada === 'true' || para_portada === true,
+      autor_id:     adminUser.id,
+      sede_id:      sedeId,
+    });
+
+    // Subir imágenes a Cloudinary si se enviaron
+    if (req.files && req.files.length > 0) {
+      const uploads = await Promise.all(
+        req.files.map(async (file, i) => {
+          const result = await cloudinary.subirImagen(file.buffer, 'noticias');
+          return Imagen.create({
+            noticia_id:  noticia.id,
+            filename:    result.public_id,
+            url:         result.secure_url,
+            alt_text:    `${titulo} - imagen ${i + 1}`,
+            es_portada:  i === 0,
+            tamaño_bytes: file.size,
+          });
+        })
+      );
+    }
+
+    // Notificar al admin por email (fail silencioso si falla)
+    try {
+      const adminEmail = process.env.ADMIN_EMAIL;
+      if (adminEmail) {
+        await emailService.noticiaPendiente({
+          adminEmail,
+          docenteNombre: nombre_enviado.trim(),
+          noticiaId:     noticia.id,
+          noticiaTitulo: titulo.trim(),
+          sedeName:      sede_nombre || 'Sin especificar',
+        });
+      }
+    } catch (emailErr) {
+      console.error('publicar: email falló (no crítico):', emailErr.message);
+    }
+
+    ok(res, { id: noticia.id }, 'Tu contenido fue enviado. El rector lo revisará antes de publicarlo.');
+  } catch (e) {
+    console.error('publicar POST error:', e);
+    err(res, 'Error al enviar el contenido. Inténtalo de nuevo.', 500);
+  }
+});
+
+module.exports = router;
