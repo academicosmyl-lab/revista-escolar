@@ -99,6 +99,7 @@ interface PerfilEstudiante {
 }
 
 interface Metadata {
+  anios: string[];
   sedes: string[];
   jornadas: string[];
   grados: string[];
@@ -137,6 +138,7 @@ export class Indicadores implements OnInit {
   modo = signal<Modo>('panorama');
 
   // ── Filtros ─────────────────────────────────────────────────────────────────
+  filtroAnio    = signal<string>('');
   filtroSede    = signal<string>('');
   filtroJornada = signal<string>('');
   filtroGrado   = signal<string>('');
@@ -156,7 +158,7 @@ export class Indicadores implements OnInit {
 
   // ── Metadata ────────────────────────────────────────────────────────────────
   metadata = signal<Metadata>({
-    sedes: [], jornadas: [], grados: [], grupos: [], areas: [], listo: false,
+    anios: [], sedes: [], jornadas: [], grados: [], grupos: [], areas: [], listo: false,
   });
 
   // ── Datos ───────────────────────────────────────────────────────────────────
@@ -513,6 +515,15 @@ export class Indicadores implements OnInit {
   }
 
   // ── Eventos de filtros ───────────────────────────────────────────────────────
+  onAnioChange(v: string) {
+    this.filtroAnio.set(v);
+    this.filtroSede.set('');
+    this.filtroJornada.set('');
+    this.filtroGrado.set('');
+    this.filtroGrupo.set('');
+    this.recargarMetadataYDatos();
+  }
+
   onSedeChange(v: string) {
     this.filtroSede.set(v);
     this.filtroJornada.set('');
@@ -581,6 +592,7 @@ export class Indicadores implements OnInit {
   // ── Helpers ──────────────────────────────────────────────────────────────────
   buildParams(): Record<string, string> {
     const p: Record<string, string> = {};
+    if (this.filtroAnio())    p['anio']    = this.filtroAnio();
     if (this.filtroSede())    p['sede']    = this.filtroSede();
     if (this.filtroJornada()) p['jornada'] = this.filtroJornada();
     if (this.filtroGrado())   p['grado']   = this.filtroGrado();

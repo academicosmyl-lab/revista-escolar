@@ -15,6 +15,7 @@ const err = (res, msg, code = 500) => res.status(code).json({ ok: false, error: 
 // Extraer filtros comunes del query
 function parseFiltros(q) {
   return {
+    anio:    q.anio    || null,
     sede:    q.sede    || null,
     jornada: q.jornada || null,
     grado:   q.grado   || null,
@@ -30,6 +31,7 @@ router.get('/metadata', (req, res) => {
   try {
     const { sede, jornada, grado } = req.query;
     ok(res, {
+      anios:    svc.getAnios(),
       sedes:    svc.getSedes(),
       jornadas: svc.getJornadas(sede),
       grados:   svc.getGrados(sede, jornada),

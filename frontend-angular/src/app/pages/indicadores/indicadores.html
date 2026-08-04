@@ -65,6 +65,18 @@
 
       <!-- Filtros PANORAMA -->
       @if (modo() === 'panorama') {
+        @if (metadata().anios.length > 1) {
+          <div class="ind-filtro-grupo">
+            <label class="ind-filtro-label">Año lectivo</label>
+            <select class="ind-select" [value]="filtroAnio()"
+                    (change)="onAnioChange($any($event.target).value)">
+              <option value="">Todos los años</option>
+              @for (a of metadata().anios; track a) {
+                <option [value]="a">{{ a }}</option>
+              }
+            </select>
+          </div>
+        }
         <div class="ind-filtro-grupo">
           <label class="ind-filtro-label">Sede</label>
           <select class="ind-select" [value]="filtroSede()"

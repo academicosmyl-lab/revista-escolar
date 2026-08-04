@@ -322,6 +322,7 @@ cargarTodosLosExcel();
 // ── Helpers de filtrado ───────────────────────────────────────────────────────
 function aplicarFiltros(filtros = {}) {
   return CACHE.filter(e => {
+    if (filtros.anio    && e.anio    !== filtros.anio)    return false;
     if (filtros.sede    && e.sede    !== filtros.sede)    return false;
     if (filtros.jornada && e.jornada !== filtros.jornada) return false;
     if (filtros.grado   && e.grado   !== filtros.grado)   return false;
@@ -350,6 +351,10 @@ function todasLasAreas(estudiantes) {
 }
 
 // ── API pública del servicio ──────────────────────────────────────────────────
+
+function getAnios() {
+  return [...new Set(CACHE.map(e => e.anio))].filter(Boolean).sort().reverse();
+}
 
 function getSedes() {
   return [...new Set(CACHE.map(e => e.sede))].filter(Boolean).sort();
@@ -614,6 +619,7 @@ function estaListo() {
 }
 
 module.exports = {
+  getAnios,
   getSedes,
   getJornadas,
   getGrados,
