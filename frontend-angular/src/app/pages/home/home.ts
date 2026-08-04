@@ -35,19 +35,8 @@ export class Home implements OnInit, AfterViewInit {
   // Skeletons: array de 4 elementos para mostrar mientras carga
   skeletons = Array(4);
 
-  /* ── Videos institucionales ─────────────────────────── */
-  videos: { url: string; safeUrl: SafeResourceUrl | null; titulo: string; colorA: string; colorB: string; playing: boolean; }[] = [
-    {
-      url: 'https://www.facebook.com/plugins/video.php?href=https%3A%2F%2Fwww.facebook.com%2Freel%2F1194470712637926&show_text=false',
-      safeUrl: null, titulo: 'Salida pedagógica Tierra Alta',
-      colorA: '#7B1D2C', colorB: '#2a0a10', playing: false,
-    },
-    {
-      url: 'https://www.facebook.com/plugins/video.php?href=https%3A%2F%2Fwww.facebook.com%2Freel%2F909732821901936&show_text=false',
-      safeUrl: null, titulo: 'Conmemoración del Día del Síndrome de Down',
-      colorA: '#1A5C3A', colorB: '#0a1f14', playing: false,
-    },
-  ];
+  /* ── Video institucional YouTube ────────────────────── */
+  videoYT: SafeResourceUrl | null = null;
 
   /* ── Partículas doradas hero ────────────────────────── */
   particulas = Array.from({ length: 22 }, (_, i) => ({
@@ -105,9 +94,9 @@ export class Home implements OnInit, AfterViewInit {
     this.fbSrc = this.sanitizer.bypassSecurityTrustResourceUrl(
       'https://www.facebook.com/plugins/page.php?href=https%3A%2F%2Fwww.facebook.com%2Fitifusagasugaoficial&tabs=timeline&width=500&height=680&small_header=true&adapt_container_width=true&hide_cover=false&show_facepile=false'
     );
-    this.videos.forEach(v => {
-      v.safeUrl = this.sanitizer.bypassSecurityTrustResourceUrl(v.url + '&autoplay=1');
-    });
+    this.videoYT = this.sanitizer.bypassSecurityTrustResourceUrl(
+      'https://www.youtube.com/embed/Yz4sq_s8-wA?rel=0&modestbranding=1&color=white'
+    );
   }
 
   /* ── Ciclo de vida ──────────────────────────────────── */
@@ -135,19 +124,6 @@ export class Home implements OnInit, AfterViewInit {
         this.cdr.markForCheck();
       },
     });
-  }
-
-  toggleVideo(v: typeof this.videos[0], e: MouseEvent) {
-    e.stopPropagation();
-    this.videos.forEach(other => { if (other !== v) other.playing = false; });
-    v.playing = !v.playing;
-    this.cdr.markForCheck();
-  }
-
-  cerrarVideo(v: typeof this.videos[0], e: MouseEvent) {
-    e.stopPropagation();
-    v.playing = false;
-    this.cdr.markForCheck();
   }
 
   abrirCertificado() {
