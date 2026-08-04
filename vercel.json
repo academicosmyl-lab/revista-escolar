@@ -1,0 +1,8 @@
+{
+  "buildCommand": "cd frontend-angular && npm install && npm run build",
+  "outputDirectory": "frontend-angular/dist/frontend-angular/browser",
+  "installCommand": "echo 'no root install'",
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
+}
