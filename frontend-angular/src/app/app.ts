@@ -20,47 +20,38 @@ export class App implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
-    const dot  = document.getElementById('cursorDot')!;
-    const ring = document.getElementById('cursorRing')!;
+    const aura = document.getElementById('cursorRing')!;
     let rx = 0, ry = 0;
     let rafId = 0;
 
     const onMove = (e: MouseEvent) => {
-      dot.style.opacity = '1';
-      ring.style.opacity = '1';
-      // El CSS ya hace translate(-50%,-50%) → solo pasamos la coordenada exacta
-      dot.style.left = e.clientX + 'px';
-      dot.style.top  = e.clientY + 'px';
+      aura.style.opacity = '1';
       cancelAnimationFrame(rafId);
       rafId = requestAnimationFrame(() => {
-        rx += (e.clientX - rx) * 0.10;   // inercia suave: 10% por frame
-        ry += (e.clientY - ry) * 0.10;
-        ring.style.left = rx + 'px';
-        ring.style.top  = ry + 'px';
+        rx += (e.clientX - rx) * 0.12;
+        ry += (e.clientY - ry) * 0.12;
+        aura.style.left = rx + 'px';
+        aura.style.top  = ry + 'px';
       });
     };
-    const onEnter = () => { dot.style.opacity = '1'; ring.style.opacity = '1'; };
-    const onLeave = () => { dot.style.opacity = '0'; ring.style.opacity = '0'; };
+    const onLeave = () => { aura.style.opacity = '0'; };
     const onOver  = (e: MouseEvent) => {
       if ((e.target as HTMLElement).closest('a, button, [role="button"], .video-preview-card'))
-        ring.classList.add('cursor-hover');
+        aura.classList.add('cursor-hover');
     };
     const onOut   = (e: MouseEvent) => {
       if ((e.target as HTMLElement).closest('a, button, [role="button"], .video-preview-card'))
-        ring.classList.remove('cursor-hover');
+        aura.classList.remove('cursor-hover');
     };
 
     document.addEventListener('mousemove',  onMove);
-    document.addEventListener('mouseenter', onEnter);
     document.addEventListener('mouseleave', onLeave);
     document.addEventListener('mouseover',  onOver);
     document.addEventListener('mouseout',   onOut);
 
-    // CAMBIO ARCH-UI: DestroyRef limpia los listeners cuando Angular destruye el componente
     this.destroyRef.onDestroy(() => {
       cancelAnimationFrame(rafId);
       document.removeEventListener('mousemove',  onMove);
-      document.removeEventListener('mouseenter', onEnter);
       document.removeEventListener('mouseleave', onLeave);
       document.removeEventListener('mouseover',  onOver);
       document.removeEventListener('mouseout',   onOut);
