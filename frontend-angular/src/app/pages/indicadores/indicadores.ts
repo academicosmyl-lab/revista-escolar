@@ -426,6 +426,8 @@ export class Indicadores implements OnInit {
 
   // ── Carga datos ──────────────────────────────────────────────────────────────
   cargarMetadata() {
+    this.cargando.set(true);
+    this.error.set(null);
     this.api.get<{ ok: boolean; data: Metadata }>(
       '/indicadores/metadata',
       this.buildParams()
@@ -433,8 +435,12 @@ export class Indicadores implements OnInit {
       next: ({ data }) => {
         this.metadata.set(data);
         if (this.modo() === 'panorama') this.cargarPanorama();
+        else this.cargando.set(false);
       },
-      error: () => this.error.set('No se pudo cargar la metadata de indicadores.'),
+      error: () => {
+        this.cargando.set(false);
+        this.error.set('No se pudo conectar con el backend. Verifica que esté corriendo.');
+      },
     });
   }
 

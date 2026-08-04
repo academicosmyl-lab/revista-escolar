@@ -592,14 +592,15 @@
         }
       }
 
-      <!-- Estado vacío (sin datos cargados aún) -->
+      <!-- Estado vacío (sin datos tras cargar) -->
       @if (!cargando() && !error() && modo() === 'panorama' && areasProm().length === 0 && !resumen()) {
         <div class="ind-placeholder-modo">
           <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#334155" stroke-width="1.5">
             <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/>
             <line x1="12" y1="16" x2="12.01" y2="16"/>
           </svg>
-          <p>Cargando datos desde los archivos Excel... Si persiste, verifica que el backend esté corriendo y los archivos estén en <code>datos-indicadores/</code>.</p>
+          <p>No se recibieron datos. El servidor puede tardar ~30 s en iniciar.</p>
+          <button class="ind-btn-reintentar" (click)="cargarMetadata()">Reintentar</button>
         </div>
       }
 
