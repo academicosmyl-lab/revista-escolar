@@ -36,7 +36,9 @@ export class Home implements OnInit, AfterViewInit {
   skeletons = Array(4);
 
   /* ── Video institucional YouTube ────────────────────── */
-  videoYT: SafeResourceUrl | null = null;
+  readonly videoYTId = 'Yz4sq_s8-wA';
+  readonly videoYTLink = 'https://youtu.be/Yz4sq_s8-wA';
+  readonly videoYTThumb = 'https://img.youtube.com/vi/Yz4sq_s8-wA/maxresdefault.jpg';
 
   /* ── Partículas doradas hero ────────────────────────── */
   particulas = Array.from({ length: 22 }, (_, i) => ({
@@ -93,9 +95,6 @@ export class Home implements OnInit, AfterViewInit {
     // mapaSrc se movió a FooterComponent donde corresponde
     this.fbSrc = this.sanitizer.bypassSecurityTrustResourceUrl(
       'https://www.facebook.com/plugins/page.php?href=https%3A%2F%2Fwww.facebook.com%2Fitifusagasugaoficial&tabs=timeline&width=500&height=680&small_header=true&adapt_container_width=true&hide_cover=false&show_facepile=false'
-    );
-    this.videoYT = this.sanitizer.bypassSecurityTrustResourceUrl(
-      'https://www.youtube.com/embed/Yz4sq_s8-wA?rel=0&modestbranding=1&color=white'
     );
   }
 
