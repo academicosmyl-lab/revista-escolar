@@ -12,6 +12,40 @@
   to   { opacity: 1; }
 }
 
+@keyframes nos-border-flow {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes nos-accent-grow {
+  from { transform: scaleY(0); }
+  to   { transform: scaleY(1); }
+}
+
+@keyframes nos-verse-in {
+  from {
+    opacity: 0;
+    transform: translateX(-22px);
+    filter: blur(5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+    filter: blur(0px);
+  }
+}
+
+@keyframes nos-shimmer-gold {
+  0%   { background-position: 200% center; }
+  100% { background-position: -200% center; }
+}
+
+@keyframes nos-glow-pulse {
+  0%, 100% { opacity: 0.5; transform: scale(1); }
+  50%       { opacity: 1;   transform: scale(1.04); }
+}
+
 .nos-page {
   min-height: 100vh;
   background: var(--crema);
@@ -94,30 +128,104 @@
 }
 
 .nos-lema-box {
+  position: relative;
   display: inline-flex;
   flex-direction: column;
-  gap: 0.3rem;
-  background: rgba(255, 255, 255, 0.12);
-  backdrop-filter: blur(8px);
-  border: 1px solid rgba(255, 255, 255, 0.22);
-  border-left: 4px solid #D4A853;
-  padding: 1.6rem 2.2rem;
-  border-radius: 10px;
-  font-style: italic;
-  font-size: 1.08rem;
-  line-height: 1.7;
-  margin-bottom: 1.2rem;
-  text-align: left;
+  gap: 0.75rem;
   max-width: 580px;
-  margin-left: auto;
-  margin-right: auto;
+  margin: 0 auto 1.5rem;
+  padding: 2rem 2.4rem 2rem 3rem;
+  border-radius: 20px;
+  text-align: left;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(20px);
+  animation: nos-lema-float 7s ease-in-out infinite;
+
+  // Borde con gradiente animado
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 20px;
+    padding: 1.5px;
+    background: linear-gradient(135deg, #D4A853, rgba(255,255,255,0.25), #A94455, rgba(255,255,255,0.1), #D4A853);
+    background-size: 300% 300%;
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    animation: nos-border-flow 5s ease infinite;
+    pointer-events: none;
+  }
+
+  // Halo de luz detrás
+  &::after {
+    content: '';
+    position: absolute;
+    inset: -24px;
+    background: radial-gradient(ellipse at center, rgba(212,168,83,0.14) 0%, transparent 68%);
+    border-radius: 40px;
+    z-index: -1;
+    animation: nos-glow-pulse 5s ease-in-out infinite;
+    pointer-events: none;
+  }
 }
 
-.nos-lema-verso--bold {
+// Línea de acento vertical que se dibuja hacia abajo
+.nos-lema-acento {
+  position: absolute;
+  left: 1.4rem;
+  top: 1.6rem;
+  bottom: 1.6rem;
+  width: 2px;
+  border-radius: 1px;
+  background: linear-gradient(to bottom, #D4A853 60%, rgba(212,168,83,0.15));
+  transform-origin: top center;
+  transform: scaleY(0);
+  animation: nos-accent-grow 0.7s cubic-bezier(0.22, 1, 0.36, 1) 0.15s forwards;
+}
+
+// Cada verso se desliza desde la izquierda con stagger via --i
+.nos-lema-verso {
+  display: flex;
+  align-items: baseline;
+  gap: 0.65rem;
+  font-style: italic;
+  font-size: 1rem;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.88);
+  opacity: 0;
+  animation: nos-verse-in 0.65s cubic-bezier(0.22, 1, 0.36, 1)
+             calc(0.3s + (var(--i, 1) - 1) * 0.28s) forwards;
+}
+
+// Número de verso
+.nos-num {
+  font-size: 0.58rem;
   font-weight: 700;
+  letter-spacing: 0.12em;
+  color: rgba(212, 168, 83, 0.5);
   font-style: normal;
-  color: #D4A853;
+  font-family: 'Source Sans 3', sans-serif;
+  flex-shrink: 0;
+  align-self: center;
+  user-select: none;
+}
+
+// Último verso — shimmer dorado después de aparecer
+.nos-lema-verso--bold {
+  font-style: normal;
+  font-size: 1.18rem;
+  font-weight: 700;
   font-family: 'Playfair Display', serif;
+  background: linear-gradient(90deg, #D4A853 0%, #fff 28%, #D4A853 52%, #fff 76%, #D4A853 100%);
+  background-size: 300% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  opacity: 0;
+  animation:
+    nos-verse-in       0.65s cubic-bezier(0.22, 1, 0.36, 1) calc(0.3s + 3 * 0.28s) forwards,
+    nos-shimmer-gold   4s   linear                          infinite                 1.8s;
 }
 
 .nos-lema-oficial {
