@@ -1,37 +1,54 @@
 /* ═══════════════════════════════════════════════════════════════
    DASHBOARD INDICADORES ACADÉMICOS
-   Paleta: #0F172A fondo · #1E293B cards · #1E40AF azul · #F59E0B ámbar
+   Paleta institucional ITS Santander — fondo claro
+   Vinotinto · Verde · Dorado · Azul institucional
    ═══════════════════════════════════════════════════════════════ */
 
-// ── Variables ──────────────────────────────────────────────────────────────────
-$bg:       #0F172A;
-$card:     #1E293B;
-$card2:    #0F2040;
-$azul:     #1E40AF;
-$azul-l:   #3B82F6;
-$ambar:    #F59E0B;
-$rojo:     #DC2626;
-$verde:    #16A34A;
-$texto:    #E2E8F0;
-$subtexto: #94A3B8;
-$borde:    #1E3A5F;
-$radio:    12px;
-$trans:    200ms ease;
+// ── Variables institucionales ──────────────────────────────────────────────────
+$bg:        #F5F7FA;
+$card:      #FFFFFF;
+$vinotinto: #A94455;
+$vinotinto-d: #7B2D3F;
+$verde:     #3A7D5C;
+$verde-l:   #4FA97A;
+$dorado:    #D4A853;
+$dorado-l:  #F0C96A;
+$azul:      #4A7FB5;
+$azul-l:    #6B9FD4;
+$rojo:      #C0392B;
+$texto:     #2C3E50;
+$subtexto:  #6B7280;
+$borde:     #E5E7EB;
+$borde-l:   #F3F4F6;
+$radio:     12px;
+$trans:     200ms ease;
+$sombra:    0 2px 12px rgba(44, 62, 80, 0.08);
+$sombra-h:  0 8px 28px rgba(44, 62, 80, 0.14);
 
 // ── Reset base ─────────────────────────────────────────────────────────────────
 .ind-root {
   background: $bg;
   min-height: 100vh;
   color: $texto;
-  font-family: 'Inter', 'Source Sans 3', system-ui, sans-serif;
+  font-family: 'Source Sans 3', system-ui, sans-serif;
 }
 
 // ── HERO ───────────────────────────────────────────────────────────────────────
 .ind-hero {
-  background: linear-gradient(135deg, #0a1628 0%, #1a2f5a 50%, #0F172A 100%);
-  border-bottom: 2px solid;
-  border-image: linear-gradient(90deg, $azul, $ambar) 1;
+  background: linear-gradient(135deg, $vinotinto-d 0%, $vinotinto 55%, #C45567 100%);
+  border-bottom: 3px solid $dorado;
   padding: 3rem 2rem 2.5rem;
+  position: relative;
+  overflow: hidden;
+
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 0; right: 0;
+    width: 320px; height: 100%;
+    background: linear-gradient(135deg, transparent 40%, rgba($dorado, 0.08) 100%);
+    pointer-events: none;
+  }
 
   @media (max-width: 640px) { padding: 2rem 1rem 1.5rem; }
 }
@@ -43,18 +60,17 @@ $trans:    200ms ease;
   justify-content: space-between;
   align-items: flex-start;
   gap: 2rem;
+  position: relative;
+  z-index: 1;
 
-  @media (max-width: 640px) {
-    flex-direction: column;
-    gap: 1rem;
-  }
+  @media (max-width: 640px) { flex-direction: column; gap: 1rem; }
 }
 
 .ind-etiqueta {
   font-size: 0.68rem;
-  letter-spacing: 0.15em;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: $ambar;
+  color: $dorado-l;
   font-weight: 700;
   margin-bottom: 0.75rem;
 }
@@ -63,54 +79,56 @@ $trans:    200ms ease;
   font-size: clamp(1.6rem, 3.5vw, 2.4rem);
   font-weight: 900;
   line-height: 1.15;
-  background: linear-gradient(135deg, #fff 0%, $azul-l 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: #fff;
   margin-bottom: 0.6rem;
+  font-family: 'Playfair Display', Georgia, serif;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.2);
 }
 
 .ind-desc {
   font-size: 0.88rem;
-  color: $subtexto;
+  color: rgba(255,255,255,0.78);
   line-height: 1.6;
   max-width: 520px;
 }
 
 .ind-hero-badge {
-  background: rgba($azul, 0.15);
-  border: 1px solid rgba($azul-l, 0.3);
+  background: rgba(255,255,255,0.12);
+  border: 1px solid rgba($dorado-l, 0.4);
   border-radius: $radio;
   padding: 1rem 1.5rem;
   text-align: center;
   min-width: 80px;
   flex-shrink: 0;
+  backdrop-filter: blur(4px);
 }
 
 .ind-badge-num {
   display: block;
   font-size: 2.2rem;
   font-weight: 900;
-  color: $azul-l;
+  color: $dorado-l;
   line-height: 1;
+  font-family: 'Playfair Display', serif;
 }
 
 .ind-badge-label {
-  font-size: 0.7rem;
+  font-size: 0.68rem;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: $subtexto;
+  color: rgba(255,255,255,0.65);
   margin-top: 0.3rem;
 }
 
 // ── TABS ───────────────────────────────────────────────────────────────────────
 .ind-tabs {
   display: flex;
-  background: #0a1628;
+  background: $card;
   border-bottom: 1px solid $borde;
   padding: 0 2rem;
   gap: 0.25rem;
   overflow-x: auto;
+  box-shadow: $sombra;
 
   @media (max-width: 480px) { padding: 0 1rem; }
 }
@@ -119,7 +137,7 @@ $trans:    200ms ease;
   display: flex;
   align-items: center;
   gap: 0.4rem;
-  padding: 0.85rem 1.25rem;
+  padding: 0.9rem 1.25rem;
   background: transparent;
   border: none;
   border-bottom: 3px solid transparent;
@@ -132,16 +150,15 @@ $trans:    200ms ease;
   white-space: nowrap;
 
   svg { flex-shrink: 0; }
-
-  &:hover { color: $texto; }
+  &:hover { color: $vinotinto; }
 
   &.activo {
-    color: $azul-l;
-    border-bottom-color: $azul;
+    color: $vinotinto;
+    border-bottom-color: $vinotinto;
   }
 }
 
-// ── BODY (sidebar + main) ──────────────────────────────────────────────────────
+// ── BODY ───────────────────────────────────────────────────────────────────────
 .ind-body {
   max-width: 1280px;
   margin: 0 auto;
@@ -151,10 +168,7 @@ $trans:    200ms ease;
   gap: 1.5rem;
   align-items: start;
 
-  @media (max-width: 900px) {
-    grid-template-columns: 1fr;
-    padding: 1rem;
-  }
+  @media (max-width: 900px) { grid-template-columns: 1fr; padding: 1rem; }
 }
 
 // ── FILTROS SIDEBAR ────────────────────────────────────────────────────────────
@@ -165,6 +179,7 @@ $trans:    200ms ease;
   padding: 1.25rem;
   position: sticky;
   top: 1rem;
+  box-shadow: $sombra;
 
   @media (max-width: 900px) {
     position: static;
@@ -178,23 +193,20 @@ $trans:    200ms ease;
   display: flex;
   align-items: center;
   gap: 0.4rem;
-  font-size: 0.72rem;
+  font-size: 0.7rem;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: $subtexto;
+  color: $vinotinto;
   font-weight: 700;
   margin-bottom: 1rem;
   padding-bottom: 0.75rem;
-  border-bottom: 1px solid $borde;
+  border-bottom: 2px solid $dorado;
 
-  @media (max-width: 900px) {
-    grid-column: 1 / -1;
-  }
+  @media (max-width: 900px) { grid-column: 1 / -1; }
 }
 
 .ind-filtro-grupo {
   margin-bottom: 0.875rem;
-
   @media (max-width: 900px) { margin-bottom: 0; }
 }
 
@@ -210,7 +222,7 @@ $trans:    200ms ease;
 
 .ind-select {
   width: 100%;
-  background: #0a1628;
+  background: $bg;
   border: 1px solid $borde;
   border-radius: 8px;
   color: $texto;
@@ -218,17 +230,18 @@ $trans:    200ms ease;
   font-size: 0.82rem;
   padding: 0.5rem 0.75rem;
   cursor: pointer;
-  transition: border-color $trans;
+  transition: border-color $trans, box-shadow $trans;
   outline: none;
 
-  &:focus { border-color: $azul-l; }
-
-  option { background: #0a1628; }
+  &:focus {
+    border-color: $vinotinto;
+    box-shadow: 0 0 0 3px rgba($vinotinto, 0.1);
+  }
 }
 
 .ind-input-busca {
   width: 100%;
-  background: #0a1628;
+  background: $bg;
   border: 1px solid $borde;
   border-radius: 8px;
   color: $texto;
@@ -236,19 +249,21 @@ $trans:    200ms ease;
   font-size: 0.82rem;
   padding: 0.5rem 0.75rem;
   outline: none;
-  transition: border-color $trans;
+  transition: border-color $trans, box-shadow $trans;
   box-sizing: border-box;
   margin-bottom: 0.5rem;
 
-  &:focus { border-color: $azul-l; }
-
-  &::placeholder { color: $subtexto; }
+  &:focus {
+    border-color: $vinotinto;
+    box-shadow: 0 0 0 3px rgba($vinotinto, 0.1);
+  }
+  &::placeholder { color: #B0B8C1; }
 }
 
 .ind-btn-buscar,
 .ind-btn-comparar {
   width: 100%;
-  background: $azul;
+  background: $vinotinto;
   color: #fff;
   border: none;
   border-radius: 8px;
@@ -257,23 +272,20 @@ $trans:    200ms ease;
   font-weight: 700;
   padding: 0.55rem 0;
   cursor: pointer;
-  transition: background $trans, transform $trans;
+  transition: background $trans, transform $trans, box-shadow $trans;
   letter-spacing: 0.04em;
 
   &:hover:not(:disabled) {
-    background: $azul-l;
+    background: $vinotinto-d;
     transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba($vinotinto, 0.3);
   }
-
-  &:disabled {
-    opacity: 0.4;
-    cursor: not-allowed;
-  }
+  &:disabled { opacity: 0.4; cursor: not-allowed; }
 }
 
 .ind-btn-comparar {
   margin-top: 0.75rem;
-  background: linear-gradient(135deg, $azul, #152e7a);
+  background: linear-gradient(135deg, $vinotinto, $vinotinto-d);
 }
 
 .ind-buscando {
@@ -292,16 +304,17 @@ $trans:    200ms ease;
   overflow: hidden;
   max-height: 240px;
   overflow-y: auto;
+  box-shadow: $sombra;
 }
 
 .ind-resultado-item {
   padding: 0.6rem 0.75rem;
   cursor: pointer;
-  border-bottom: 1px solid $borde;
+  border-bottom: 1px solid $borde-l;
   transition: background $trans;
 
   &:last-child { border-bottom: none; }
-  &:hover { background: rgba($azul, 0.15); }
+  &:hover { background: rgba($vinotinto, 0.06); }
 }
 
 .ind-resultado-nombre {
@@ -320,8 +333,9 @@ $trans:    200ms ease;
 
 .ind-est-info {
   margin-top: 1rem;
-  background: rgba($azul, 0.1);
-  border: 1px solid rgba($azul-l, 0.3);
+  background: rgba($vinotinto, 0.05);
+  border: 1px solid rgba($vinotinto, 0.2);
+  border-left: 3px solid $vinotinto;
   border-radius: 8px;
   padding: 0.75rem;
 }
@@ -356,29 +370,29 @@ $trans:    200ms ease;
   border-radius: $radio;
   color: $subtexto;
   font-size: 0.88rem;
+  box-shadow: $sombra;
 }
 
 .ind-spinner {
   width: 24px;
   height: 24px;
   border: 2px solid $borde;
-  border-top-color: $azul-l;
+  border-top-color: $vinotinto;
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
   flex-shrink: 0;
 }
 
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
+@keyframes spin { to { transform: rotate(360deg); } }
 
 // ── ERROR ──────────────────────────────────────────────────────────────────────
 .ind-error {
   padding: 1rem 1.25rem;
-  background: rgba($rojo, 0.1);
-  border: 1px solid rgba($rojo, 0.3);
+  background: rgba($rojo, 0.06);
+  border: 1px solid rgba($rojo, 0.25);
+  border-left: 4px solid $rojo;
   border-radius: $radio;
-  color: #f87171;
+  color: $rojo;
   font-size: 0.88rem;
 }
 
@@ -400,19 +414,20 @@ $trans:    200ms ease;
   text-align: center;
   position: relative;
   overflow: hidden;
+  box-shadow: $sombra;
   transition: transform $trans, box-shadow $trans;
 
   &::before {
     content: '';
     position: absolute;
     top: 0; left: 0; right: 0;
-    height: 2px;
-    background: linear-gradient(90deg, $azul, $ambar);
+    height: 3px;
+    background: linear-gradient(90deg, $vinotinto, $dorado);
   }
 
   &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+    transform: translateY(-3px);
+    box-shadow: $sombra-h;
   }
 }
 
@@ -422,9 +437,10 @@ $trans:    200ms ease;
   line-height: 1;
   margin-bottom: 0.4rem;
   transition: color $trans;
+  font-family: 'Playfair Display', serif;
 
-  &.azul  { color: $azul-l; }
-  &.ambar { color: $ambar; }
+  &.azul  { color: $azul; }
+  &.ambar { color: $dorado; }
   &.rojo  { color: $rojo; }
   &.verde { color: $verde; }
 }
@@ -452,7 +468,6 @@ $trans:    200ms ease;
   font-size: 0.68rem;
   font-weight: 700;
   color: #fff;
-  opacity: 0.9;
 
   &.rojo-bg { background: $rojo; }
 }
@@ -463,6 +478,7 @@ $trans:    200ms ease;
   border: 1px solid $borde;
   border-radius: $radio;
   padding: 1.5rem;
+  box-shadow: $sombra;
   animation: fadeUp 0.4s ease both;
 
   &.ind-card-full { grid-column: 1 / -1; }
@@ -480,12 +496,26 @@ $trans:    200ms ease;
   flex-wrap: wrap;
   gap: 0.5rem;
   margin-bottom: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid $borde-l;
 }
 
 .ind-card-titulo {
   font-size: 1rem;
   font-weight: 700;
   color: $texto;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+
+  &::before {
+    content: '';
+    display: inline-block;
+    width: 3px;
+    height: 1em;
+    background: $vinotinto;
+    border-radius: 2px;
+  }
 }
 
 .ind-card-sub {
@@ -512,7 +542,7 @@ $trans:    200ms ease;
   margin: 0;
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.4rem;
 }
 
 .ind-ranking-item {
@@ -520,30 +550,31 @@ $trans:    200ms ease;
   align-items: center;
   gap: 0.75rem;
   padding: 0.6rem 0.75rem;
-  background: rgba(#0a1628, 0.5);
+  background: $bg;
   border-radius: 8px;
-  border: 1px solid $borde;
-  transition: background $trans;
+  border: 1px solid $borde-l;
+  transition: background $trans, border-color $trans;
 
-  &:hover { background: rgba($azul, 0.08); }
+  &:hover {
+    background: rgba($vinotinto, 0.04);
+    border-color: rgba($vinotinto, 0.2);
+  }
 
   &.riesgo {
     border-left: 3px solid $rojo;
+    background: rgba($rojo, 0.03);
   }
 }
 
 .ind-ranking-pos {
   font-size: 0.75rem;
   font-weight: 700;
-  color: $subtexto;
+  color: $dorado;
   min-width: 20px;
   text-align: right;
 }
 
-.ind-ranking-info {
-  flex: 1;
-  min-width: 0;
-}
+.ind-ranking-info { flex: 1; min-width: 0; }
 
 .ind-ranking-nombre {
   display: block;
@@ -568,9 +599,7 @@ $trans:    200ms ease;
 }
 
 // ── TABLA ──────────────────────────────────────────────────────────────────────
-.ind-tabla-resp {
-  overflow-x: auto;
-}
+.ind-tabla-resp { overflow-x: auto; }
 
 .ind-tabla {
   width: 100%;
@@ -583,22 +612,21 @@ $trans:    200ms ease;
     font-size: 0.68rem;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: $subtexto;
-    border-bottom: 1px solid $borde;
+    color: $vinotinto;
+    border-bottom: 2px solid $dorado;
     font-weight: 700;
+    background: $bg;
   }
 
   td {
     padding: 0.55rem 0.75rem;
-    border-bottom: 1px solid rgba($borde, 0.5);
+    border-bottom: 1px solid $borde-l;
     color: $texto;
     vertical-align: middle;
   }
 
   tr:last-child td { border-bottom: none; }
-
-  tr:hover td { background: rgba($azul, 0.05); }
-
+  tr:hover td { background: rgba($vinotinto, 0.03); }
   td:first-child { color: $subtexto; }
 }
 
@@ -618,17 +646,15 @@ $trans:    200ms ease;
   border-radius: $radio;
   padding: 1.5rem;
   flex-wrap: wrap;
-
-  &::before {
-    display: none;
-  }
+  box-shadow: $sombra;
+  border-top: 3px solid $vinotinto;
 }
 
 .ind-perfil-avatar {
   width: 56px;
   height: 56px;
   border-radius: 50%;
-  background: linear-gradient(135deg, $azul, $azul-l);
+  background: linear-gradient(135deg, $vinotinto, $dorado);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -636,23 +662,19 @@ $trans:    200ms ease;
   font-weight: 900;
   color: #fff;
   flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba($vinotinto, 0.3);
 }
 
-.ind-perfil-datos {
-  flex: 1;
-  min-width: 200px;
-}
+.ind-perfil-datos { flex: 1; min-width: 200px; }
 
 .ind-perfil-nombre {
   font-size: 1.1rem;
   font-weight: 700;
   margin-bottom: 0.25rem;
+  color: $texto;
 }
 
-.ind-perfil-meta {
-  font-size: 0.78rem;
-  color: $subtexto;
-}
+.ind-perfil-meta { font-size: 0.78rem; color: $subtexto; }
 
 .ind-perfil-kpis {
   display: flex;
@@ -660,17 +682,16 @@ $trans:    200ms ease;
   flex-shrink: 0;
 }
 
-.ind-perfil-kpi {
-  text-align: center;
-}
+.ind-perfil-kpi { text-align: center; }
 
 .ind-perfil-kpi-val {
   display: block;
   font-size: 1.8rem;
   font-weight: 900;
   line-height: 1;
+  font-family: 'Playfair Display', serif;
 
-  &.azul { color: $azul-l; }
+  &.azul { color: $vinotinto; }
 }
 
 .ind-perfil-kpi-label {
@@ -681,7 +702,7 @@ $trans:    200ms ease;
   margin-top: 0.2rem;
 }
 
-// ── PLACEHOLDER MODO ───────────────────────────────────────────────────────────
+// ── PLACEHOLDER / ESTADO VACÍO ─────────────────────────────────────────────────
 .ind-placeholder-modo {
   display: flex;
   flex-direction: column;
@@ -690,10 +711,11 @@ $trans:    200ms ease;
   gap: 1rem;
   min-height: 280px;
   background: $card;
-  border: 1px dashed $borde;
+  border: 2px dashed $borde;
   border-radius: $radio;
   padding: 3rem 2rem;
   text-align: center;
+  box-shadow: $sombra;
 
   p {
     color: $subtexto;
@@ -702,28 +724,32 @@ $trans:    200ms ease;
     line-height: 1.6;
   }
 
-  strong { color: $azul-l; }
+  strong { color: $vinotinto; }
 
   .ind-btn-reintentar {
     margin-top: 0.5rem;
-    padding: 0.5rem 1.5rem;
-    background: $azul;
+    padding: 0.5rem 1.75rem;
+    background: $vinotinto;
     color: #fff;
     border: none;
     border-radius: 8px;
     font-size: 0.88rem;
+    font-weight: 600;
     cursor: pointer;
-    transition: background 0.2s;
-    &:hover { background: $azul-l; }
+    transition: background 0.2s, box-shadow 0.2s;
+    &:hover {
+      background: $vinotinto-d;
+      box-shadow: 0 4px 12px rgba($vinotinto, 0.3);
+    }
   }
 
   code {
     font-family: monospace;
-    background: rgba($azul, 0.1);
+    background: rgba($vinotinto, 0.08);
     padding: 0.1rem 0.35rem;
     border-radius: 4px;
     font-size: 0.82rem;
-    color: $ambar;
+    color: $vinotinto;
   }
 }
 

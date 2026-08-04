@@ -109,14 +109,14 @@ interface Metadata {
 }
 
 // ── Paleta institucional ──────────────────────────────────────────────────────
-const C_AZUL    = '#1E40AF';
-const C_AMBAR   = '#F59E0B';
-const C_ROJO    = '#DC2626';
-const C_VERDE   = '#16A34A';
-const C_FONDO   = '#0F172A';
-const C_CARD    = '#1E293B';
-const C_TEXTO   = '#E2E8F0';
-const C_SUBTEXT = '#94A3B8';
+const C_AZUL    = '#A94455'; // vinotinto — primario
+const C_AMBAR   = '#D4A853'; // dorado institucional
+const C_ROJO    = '#C0392B'; // alerta bajo rendimiento
+const C_VERDE   = '#3A7D5C'; // verde institucional
+const C_FONDO   = '#F5F7FA'; // fondo crema
+const C_CARD    = '#FFFFFF'; // cards blancas
+const C_TEXTO   = '#2C3E50'; // texto oscuro
+const C_SUBTEXT = '#6B7280'; // subtexto gris
 
 const APEX_THEME = {
   background: C_CARD,
@@ -223,15 +223,15 @@ export class Indicadores implements OnInit {
         bar: { borderRadius: 4, distributed: true },
       } as ApexPlotOptions,
       legend: { show: false } as ApexLegend,
-      grid: { borderColor: '#1E3A5F' } as ApexGrid,
-      tooltip: { theme: 'dark' } as ApexTooltip,
+      grid: { borderColor: '#E5E7EB' } as ApexGrid,
+      tooltip: { theme: 'light' } as ApexTooltip,
     };
   });
 
   // ── Gráfica: evolución P1→P2→P3 (líneas) ────────────────────────────────────
   chartLineaOptions = computed(() => {
     const datos = this.evolucion().slice(0, 6); // máx 6 series para legibilidad
-    const colores = [C_AZUL, C_AMBAR, C_VERDE, C_ROJO, '#8B5CF6', '#06B6D4'];
+    const colores = [C_AZUL, C_AMBAR, C_VERDE, '#4A7FB5', '#7C5CBF', '#2980B9'];
     return {
       series: datos.map((d, i) => ({
         name: d.area,
@@ -262,8 +262,8 @@ export class Indicadores implements OnInit {
         labels: { colors: C_TEXTO },
         position: 'bottom' as const,
       } as ApexLegend,
-      grid: { borderColor: '#1E3A5F' } as ApexGrid,
-      tooltip: { theme: 'dark' } as ApexTooltip,
+      grid: { borderColor: '#E5E7EB' } as ApexGrid,
+      tooltip: { theme: 'light' } as ApexTooltip,
     };
   });
 
@@ -302,7 +302,7 @@ export class Indicadores implements OnInit {
       } as ApexXAxis,
       yaxis: { labels: { style: { colors: C_SUBTEXT } } } as ApexYAxis,
       legend: { labels: { colors: C_TEXTO } } as ApexLegend,
-      tooltip: { theme: 'dark' } as ApexTooltip,
+      tooltip: { theme: 'light' } as ApexTooltip,
     };
   });
 
@@ -341,8 +341,8 @@ export class Indicadores implements OnInit {
         formatter: (v: number) => v.toFixed(1),
         style: { fontSize: '10px', colors: [C_TEXTO] },
       } as ApexDataLabels,
-      grid: { borderColor: '#1E3A5F' } as ApexGrid,
-      tooltip: { theme: 'dark' } as ApexTooltip,
+      grid: { borderColor: '#E5E7EB' } as ApexGrid,
+      tooltip: { theme: 'light' } as ApexTooltip,
     };
   });
 
@@ -379,8 +379,8 @@ export class Indicadores implements OnInit {
         formatter: (v: number) => v.toFixed(2),
         style: { fontSize: '10px', colors: [C_TEXTO] },
       } as ApexDataLabels,
-      grid: { borderColor: '#1E3A5F' } as ApexGrid,
-      tooltip: { theme: 'dark' } as ApexTooltip,
+      grid: { borderColor: '#E5E7EB' } as ApexGrid,
+      tooltip: { theme: 'light' } as ApexTooltip,
       legend: { show: false } as ApexLegend,
     };
   });
@@ -402,7 +402,7 @@ export class Indicadores implements OnInit {
         dropShadow: { enabled: true, blur: 1, left: 1, top: 1 },
       } as ApexChart,
       theme: APEX_THEME,
-      colors: [C_AZUL, C_AMBAR, C_VERDE, '#8B5CF6'],
+      colors: [C_AZUL, C_AMBAR, C_VERDE, '#4A7FB5'],
       stroke: { width: 2 } as ApexStroke,
       fill: { opacity: 0.15 } as ApexFill,
       markers: { size: 4 },
@@ -415,7 +415,7 @@ export class Indicadores implements OnInit {
         labels: { colors: C_TEXTO },
         position: 'bottom' as const,
       } as ApexLegend,
-      tooltip: { theme: 'dark' } as ApexTooltip,
+      tooltip: { theme: 'light' } as ApexTooltip,
     };
   });
 
