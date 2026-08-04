@@ -1,0 +1,205 @@
+<div class="nos-page">
+
+  <!-- ══════════════════════════════════════════════════════
+       HERO — Identidad institucional
+  ══════════════════════════════════════════════════════ -->
+  <section class="nos-hero">
+    <div class="nos-hero-bg-pattern"></div>
+    <div class="nos-hero-inner">
+      <span class="nos-hero-badge">Acuerdo 008 · 15 julio 2026</span>
+      <h1 class="nos-hero-titulo">Instituto Técnico Industrial</h1>
+      <p class="nos-hero-sub">de Fusagasugá · Cundinamarca</p>
+      <div class="nos-lema-box">
+        <span class="nos-lema-verso">En nuestras manos nace el porvenir,</span>
+        <span class="nos-lema-verso">en nuestra mente, el arte de construir.</span>
+        <span class="nos-lema-verso">Somos orgullo, somos ideal,</span>
+        <span class="nos-lema-verso nos-lema-verso--bold">Instituto Técnico Industrial</span>
+      </div>
+      <p class="nos-lema-oficial">"Construyendo Sociedad"</p>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════
+       MISIÓN Y VISIÓN
+  ══════════════════════════════════════════════════════ -->
+  <section class="nos-section nos-mv-section">
+    <div class="nos-container">
+      <div class="nos-mv-grid">
+
+        <!-- Misión -->
+        <div class="nos-mv-card">
+          <div class="nos-mv-icon">📌</div>
+          <h2 class="nos-mv-titulo">Misión</h2>
+          <p class="nos-mv-texto">
+            Formar estudiantes capaces de transformar su realidad mediante conocimiento técnico e integral,
+            con responsabilidad social, ética y compromiso humano. Promovemos la innovación, creatividad
+            y excelencia académica como herramientas para el desarrollo local, regional y nacional.
+          </p>
+          <div class="nos-tags">
+            @for (tag of misionTags; track tag) {
+              <span class="nos-tag">{{ tag }}</span>
+            }
+          </div>
+        </div>
+
+        <!-- Visión -->
+        <div class="nos-mv-card">
+          <div class="nos-mv-icon">🚀</div>
+          <h2 class="nos-mv-titulo">Visión</h2>
+          <p class="nos-mv-texto">
+            Ser el Instituto Técnico Industrial líder en la región, reconocido por formar profesionales
+            competentes, innovadores y comprometidos con la construcción de una sociedad más justa,
+            equitativa y productiva. Una institución que articula la educación técnica con las necesidades
+            del entorno, generando impacto social y desarrollo sostenible.
+          </p>
+          <div class="nos-tags">
+            @for (tag of visionTags; track tag) {
+              <span class="nos-tag">{{ tag }}</span>
+            }
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════
+       STRIP IDENTIDAD
+  ══════════════════════════════════════════════════════ -->
+  <section class="nos-identidad-strip">
+    <div class="nos-container">
+      <div class="nos-identidad-grid">
+        <div class="nos-identidad-item">
+          <span class="nos-identidad-label">Como nos vemos</span>
+          <p>Institución de educación técnica industrial con tradición, identidad y compromiso con la excelencia académica.</p>
+        </div>
+        <div class="nos-identidad-divider"></div>
+        <div class="nos-identidad-item">
+          <span class="nos-identidad-label">Como nos identificamos</span>
+          <p>Líderes en formación técnica industrial, educación integral, innovación e inclusión.</p>
+        </div>
+        <div class="nos-identidad-divider"></div>
+        <div class="nos-identidad-item">
+          <span class="nos-identidad-label">Nuestro compromiso</span>
+          <p>Formación integral de estudiantes con excelencia académica, educación técnica y responsabilidad social.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════
+       VALORES INSTITUCIONALES
+  ══════════════════════════════════════════════════════ -->
+  <section class="nos-section">
+    <div class="nos-container">
+      <div class="nos-section-header">
+        <h2 class="nos-section-titulo">Valores Institucionales</h2>
+        <p class="nos-section-desc">Los pilares que guían nuestra comunidad educativa día a día</p>
+      </div>
+      <div class="nos-valores-grid">
+        @for (valor of valores; track valor.nombre) {
+          <div class="nos-valor-card">
+            <span class="nos-valor-icono">{{ valor.icono }}</span>
+            <h3 class="nos-valor-nombre">{{ valor.nombre }}</h3>
+            <p class="nos-valor-desc">{{ valor.descripcion }}</p>
+          </div>
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════
+       PRINCIPIOS PEDAGÓGICOS
+  ══════════════════════════════════════════════════════ -->
+  <section class="nos-section nos-section--alt">
+    <div class="nos-container">
+      <div class="nos-section-header">
+        <h2 class="nos-section-titulo">Principios Pedagógicos</h2>
+        <p class="nos-section-desc">El enfoque educativo que transforma vidas y construye futuro</p>
+      </div>
+      <div class="nos-principios-grid">
+        @for (p of principios; track p.nombre) {
+          <div class="nos-principio-card">
+            <h3 class="nos-principio-nombre">{{ p.nombre }}</h3>
+            <p class="nos-principio-desc">{{ p.descripcion }}</p>
+          </div>
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════
+       ¿QUÉ NOS HACE ESPECIALES?
+  ══════════════════════════════════════════════════════ -->
+  <section class="nos-section">
+    <div class="nos-container">
+      <div class="nos-section-header">
+        <h2 class="nos-section-titulo">¿Qué nos hace especiales?</h2>
+        <p class="nos-section-desc">Las razones por las que somos reconocidos en la región</p>
+      </div>
+      <div class="nos-especiales-grid">
+        @for (item of especiales; track item) {
+          <div class="nos-especial-item">
+            <span class="nos-especial-star">★</span>
+            <p>{{ item }}</p>
+          </div>
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════
+       CONTACTO Y ACUERDOS
+  ══════════════════════════════════════════════════════ -->
+  <section class="nos-section nos-section--alt">
+    <div class="nos-container">
+      <div class="nos-section-header">
+        <h2 class="nos-section-titulo">Información de Contacto</h2>
+        <p class="nos-section-desc">Estamos ubicados en el corazón de Fusagasugá</p>
+      </div>
+
+      <div class="nos-contacto-grid">
+        <a href="https://wa.me/573123798520" target="_blank" rel="noopener noreferrer" class="nos-contacto-card nos-contacto-card--link">
+          <span class="nos-contacto-icono">📞</span>
+          <span class="nos-contacto-label">Teléfono</span>
+          <span class="nos-contacto-valor">312 379 8520</span>
+        </a>
+        <a href="mailto:rectoria@itifusagasuga.com" class="nos-contacto-card nos-contacto-card--link">
+          <span class="nos-contacto-icono">✉️</span>
+          <span class="nos-contacto-label">Correo Rectoría</span>
+          <span class="nos-contacto-valor">rectoria&#64;itifusagasuga.com</span>
+        </a>
+        <div class="nos-contacto-card">
+          <span class="nos-contacto-icono">📍</span>
+          <span class="nos-contacto-label">Dirección</span>
+          <span class="nos-contacto-valor">Carrera 6 # 16-02<br>Barrio Balmoral, Fusagasugá</span>
+        </div>
+        <div class="nos-contacto-card">
+          <span class="nos-contacto-icono">🏛️</span>
+          <span class="nos-contacto-label">NIT</span>
+          <span class="nos-contacto-valor">890680335-8</span>
+        </div>
+      </div>
+
+      <!-- Acuerdos oficiales -->
+      <div class="nos-acuerdos">
+        <div class="nos-acuerdo-badge">
+          <span class="nos-acuerdo-num">006</span>
+          <div class="nos-acuerdo-info">
+            <strong>Acuerdo 006</strong>
+            <span>4 junio 2026 · Adopción del PEI</span>
+          </div>
+        </div>
+        <div class="nos-acuerdo-badge">
+          <span class="nos-acuerdo-num">008</span>
+          <div class="nos-acuerdo-info">
+            <strong>Acuerdo 008</strong>
+            <span>15 julio 2026 · Adopción del Lema Institucional</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+</div>

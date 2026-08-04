@@ -5,12 +5,12 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
+import { AuthService } from '../../services/auth.service';
 
 interface Sede { id: string; nombre: string; slug: string; }
 
-type Paso = 1 | 2 | 3;
+type Paso = 1 | 2;
 type TipoContenido = 'imagenes' | 'video' | 'texto';
-type RolForm = 'DOCENTE' | 'RECTOR' | 'COORDINADOR' | 'PERSONAL' | 'OTRO';
 
 @Component({
   selector: 'app-publicar',
@@ -22,38 +22,11 @@ type RolForm = 'DOCENTE' | 'RECTOR' | 'COORDINADOR' | 'PERSONAL' | 'OTRO';
 export class Publicar {
   private http = inject(HttpClient);
   private base = environment.apiUrl;
+  readonly auth = inject(AuthService);
 
-  // ── Navegación entre pasos ───────────────────────────────
   paso = signal<Paso>(1);
 
-  // ── Paso 1: Quién eres ──────────────────────────────────
-  nombre      = signal('');
-  rol         = signal<RolForm>('DOCENTE');
-  area        = signal('');
-  otroRol     = signal('');
-
-  readonly roles: { valor: RolForm; etiqueta: string }[] = [
-    { valor: 'DOCENTE',      etiqueta: 'Docente' },
-    { valor: 'RECTOR',       etiqueta: 'Rector/a' },
-    { valor: 'COORDINADOR',  etiqueta: 'Coordinador/a' },
-    { valor: 'PERSONAL',     etiqueta: 'Personal administrativo' },
-    { valor: 'OTRO',         etiqueta: 'Otro' },
-  ];
-
-  readonly areas = [
-    'Artística','Ciencias Naturales','Ciencias Sociales','Corte y Confección',
-    'Diseño Digital','Educación Física','Electricidad','Electrónica',
-    'Electrónica Industrial','Emprendimiento','Español y Literatura',
-    'Ética y Valores','Filosofía','Física','Historia y Geografía',
-    'Inglés Comunicativo','Matemáticas','Mecánica Industrial',
-    'Medios Audiovisuales','Orientación Escolar','Química','Religión',
-    'Sistemas','Técnica Industrial','Tecnología e Informática',
-  ];
-
-  esDocente = computed(() => this.rol() === 'DOCENTE');
-  esRector  = computed(() => this.rol() === 'RECTOR');
-
-  // ── Paso 2: El contenido ────────────────────────────────
+  // ── Paso 1: El contenido ────────────────────────────────
   titulo      = signal('');
   descripcion = signal('');
   tipo        = signal<TipoContenido>('texto');
@@ -61,44 +34,29 @@ export class Publicar {
   imagenes: File[] = [];
   previewUrls = signal<string[]>([]);
 
-  // ── Paso 3: Sede y portada ──────────────────────────────
-  sedes         = signal<Sede[]>([]);
+  // ── Paso 2: Sede y portada ──────────────────────────────
+  sedes            = signal<Sede[]>([]);
   sedeSeleccionada = signal('');
-  paraPortada   = signal(false);
-  cargandoSedes = signal(false);
+  paraPortada      = signal(false);
+  cargandoSedes    = signal(false);
 
   // ── Estado del envío ────────────────────────────────────
   enviando  = signal(false);
   enviado   = signal(false);
   errorMsg  = signal('');
 
-  // ── Validaciones ────────────────────────────────────────
-  paso1Valido = computed(() =>
-    this.nombre().trim().length >= 3 &&
-    this.rol().length > 0
-  );
-
-  paso2Valido = computed(() => {
+  paso1Valido = computed(() => {
     if (!this.titulo().trim() || !this.descripcion().trim()) return false;
     if (this.tipo() === 'video') return this.urlYoutube().trim().length > 5;
     if (this.tipo() === 'imagenes') return this.imagenes.length > 0;
     return true;
   });
 
-  // ── Métodos ─────────────────────────────────────────────
   irPaso(p: Paso) {
     if (p === 2 && !this.paso1Valido()) return;
-    if (p === 3 && !this.paso2Valido()) {
-      if (this.sedes().length === 0) this.cargarSedes();
-      return;
-    }
-    if (p === 3 && this.sedes().length === 0) this.cargarSedes();
+    if (p === 2 && this.sedes().length === 0) this.cargarSedes();
     this.errorMsg.set('');
     this.paso.set(p);
-  }
-
-  seleccionarRol(r: RolForm) {
-    this.rol.set(r);
   }
 
   seleccionarTipo(t: TipoContenido) {
@@ -145,15 +103,12 @@ export class Publicar {
     this.errorMsg.set('');
 
     const fd = new FormData();
-    fd.append('nombre_enviado', this.nombre().trim());
-    fd.append('rol_enviado',    this.rol() === 'OTRO' ? this.otroRol().trim() : this.rol());
-    if (this.area()) fd.append('area_enviada', this.area());
     fd.append('titulo',         this.titulo().trim());
     fd.append('descripcion',    this.descripcion().trim());
     fd.append('tipo_contenido', this.tipo());
-    if (this.tipo() === 'video')    fd.append('url_youtube',  this.urlYoutube().trim());
+    if (this.tipo() === 'video')     fd.append('url_youtube',  this.urlYoutube().trim());
     if (this.sedeSeleccionada())     fd.append('sede_nombre',  this.sedeSeleccionada());
-    fd.append('para_portada',       String(this.paraPortada()));
+    fd.append('para_portada',        String(this.paraPortada()));
     if (this.tipo() === 'imagenes') {
       this.imagenes.forEach(f => fd.append('imagenes', f));
     }
@@ -172,9 +127,6 @@ export class Publicar {
 
   reiniciar() {
     this.paso.set(1);
-    this.nombre.set('');
-    this.rol.set('DOCENTE');
-    this.area.set('');
     this.titulo.set('');
     this.descripcion.set('');
     this.tipo.set('texto');

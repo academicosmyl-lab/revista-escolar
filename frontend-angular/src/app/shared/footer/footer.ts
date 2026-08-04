@@ -18,8 +18,9 @@ export class Footer {
     { label: 'Inicio',   path: '/'         },
     { label: 'Revista',  path: '/noticias' },
     { label: 'Galería',  path: '/galeria'  },
-    { label: 'Docentes', path: '/docentes' },
-    { label: 'Sedes',    path: '/sedes'    },
+    { label: 'Docentes',  path: '/docentes'  },
+    { label: 'Sedes',     path: '/sedes'     },
+    { label: 'Nosotros',  path: '/nosotros'  },
   ];
 
   // SafeResourceUrl: Angular exige marcar URLs de iframes como "confiables"

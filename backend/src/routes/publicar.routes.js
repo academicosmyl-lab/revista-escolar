@@ -1,14 +1,14 @@
 /**
  * routes/publicar.routes.js
- * Endpoint público para envío de contenido a la revista.
- * Cualquier persona puede enviar — el rector/admin aprueba antes de publicar.
- * Sin autenticación requerida.
+ * Publicación de contenido — requiere login.
+ * El rector/admin aprueba antes de publicar en la revista.
  */
 const { Router } = require('express');
-const { Noticia, Imagen, Sede, Usuario } = require('../models');
+const { Noticia, Imagen, Sede } = require('../models');
 const cloudinary = require('../services/cloudinary.service');
 const emailService = require('../services/email.service');
 const multer = require('multer');
+const { autenticar, puedePublicar } = require('../middlewares/auth.middleware');
 
 const router = Router();
 
@@ -47,13 +47,10 @@ router.get('/sedes', async (req, res) => {
   }
 });
 
-// POST /api/v1/publicar — enviar contenido a la revista
-router.post('/', uploadMem.array('imagenes', 5), async (req, res) => {
+// POST /api/v1/publicar — enviar contenido a la revista (requiere login)
+router.post('/', autenticar, puedePublicar, uploadMem.array('imagenes', 5), async (req, res) => {
   try {
     const {
-      nombre_enviado,
-      rol_enviado,
-      area_enviada,
       titulo,
       descripcion,
       tipo_contenido,   // 'imagenes' | 'video' | 'texto'
@@ -63,27 +60,18 @@ router.post('/', uploadMem.array('imagenes', 5), async (req, res) => {
     } = req.body;
 
     // Validación básica
-    if (!nombre_enviado?.trim()) return err(res, 'El nombre es requerido');
-    if (!titulo?.trim())         return err(res, 'El título es requerido');
-    if (!descripcion?.trim())    return err(res, 'La descripción es requerida');
-    if (!tipo_contenido)         return err(res, 'El tipo de contenido es requerido');
+    if (!titulo?.trim())      return err(res, 'El título es requerido');
+    if (!descripcion?.trim()) return err(res, 'La descripción es requerida');
+    if (!tipo_contenido)      return err(res, 'El tipo de contenido es requerido');
 
     if (tipo_contenido === 'video') {
       const ytId = extraerYoutubeId(url_youtube);
       if (!ytId) return err(res, 'URL de YouTube inválida o no reconocida');
     }
 
-    // Buscar usuario admin/rector para usar como autor (FK requerida)
-    const adminUser = await Usuario.findOne({
-      where: { rol: 'ADMIN', activo: true },
-      order: [['createdAt', 'ASC']],
-    });
-    if (!adminUser) return err(res, 'Error de configuración del servidor', 500);
-
-    // Construir contenido enriquecido con metadata del enviador
-    const areaInfo = area_enviada ? ` | Área: ${area_enviada}` : '';
-    const sedeInfo = sede_nombre  ? ` | Sede: ${sede_nombre}` : '';
-    const metadataHeader = `📋 ENVIADO POR: ${nombre_enviado.trim()} (${rol_enviado || 'Sin especificar'}${areaInfo}${sedeInfo})\n\n`;
+    // Construir contenido enriquecido con metadata del usuario autenticado
+    const sedeInfo = sede_nombre ? ` | Sede: ${sede_nombre}` : '';
+    const metadataHeader = `📋 ENVIADO POR: ${req.usuario.nombre} (${req.usuario.rol}${sedeInfo})\n\n`;
 
     let contenidoYoutube = '';
     if (tipo_contenido === 'video' && url_youtube) {
@@ -101,11 +89,11 @@ router.post('/', uploadMem.array('imagenes', 5), async (req, res) => {
     // Crear la noticia en estado pendiente
     const noticia = await Noticia.create({
       titulo:       titulo.trim(),
-      resumen:      `Enviado por: ${nombre_enviado.trim()} (${rol_enviado || 'Personal'})`,
+      resumen:      `Enviado por: ${req.usuario.nombre} (${req.usuario.rol})`,
       contenido:    metadataHeader + descripcion.trim() + contenidoYoutube,
       estado:       'pendiente',
       destacada:    para_portada === 'true' || para_portada === true,
-      autor_id:     adminUser.id,
+      autor_id:     req.usuario.id,
       sede_id:      sedeId,
     });
 
@@ -132,7 +120,7 @@ router.post('/', uploadMem.array('imagenes', 5), async (req, res) => {
       if (adminEmail) {
         await emailService.noticiaPendiente({
           adminEmail,
-          docenteNombre: nombre_enviado.trim(),
+          docenteNombre: req.usuario.nombre,
           noticiaId:     noticia.id,
           noticiaTitulo: titulo.trim(),
           sedeName:      sede_nombre || 'Sin especificar',

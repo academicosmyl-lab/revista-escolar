@@ -31,11 +31,16 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/sedes/sedes').then(m => m.Sedes),
   },
   {
+    path: 'nosotros',
+    loadComponent: () => import('./pages/nosotros/nosotros').then(m => m.Nosotros),
+  },
+  {
     path: 'indicadores',
     loadComponent: () => import('./pages/indicadores/indicadores').then(m => m.Indicadores),
   },
   {
     path: 'publicar',
+    canActivate: [authGuard],
     loadComponent: () => import('./pages/publicar/publicar').then(m => m.Publicar),
   },
   {
