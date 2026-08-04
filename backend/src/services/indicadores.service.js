@@ -23,45 +23,32 @@ function esGrupoSensible(nombreHoja) {
 }
 
 // ── Parser del nombre de archivo ──────────────────────────────────────────────
-// Formato: 2025_SEDE_JORNADA.xlsx  o  2025_SEDE_JORNADA_CICLOS.xlsx
-function parsearNombreArchivo(nombreArchivo) {
-  // quitar extensión
-  const base = nombreArchivo.replace(/\.xlsx$/i, '');
-  const partes = base.split('_');
+// Formato nuevo: carpeta=año, archivo="SEDE_JORNADA (N).xlsx" o "SEDE_JORNADA.xlsx"
+function parsearNombreArchivo(nombreArchivo, anio) {
+  // Quitar extensión y sufijo numérico tipo " (18)"
+  const base = nombreArchivo
+    .replace(/\.xlsx$/i, '')
+    .replace(/\s*\(\d+\)\s*$/, '')
+    .trim();
 
-  const anio = partes[0] || '2025';
+  // Separar en sede y jornada por el primer "_"
+  const idx = base.indexOf('_');
+  const sedeParte    = (idx === -1 ? base         : base.slice(0, idx)).trim().toUpperCase();
+  const jornadaParte = (idx === -1 ? 'DESCONOCIDA': base.slice(idx + 1)).trim().toUpperCase();
 
-  // Sedes conocidas
-  const SEDES = {
-    'GENERAL-SANTANDER': 'General Santander',
-    'SAUCES':            'Los Sauces',
-    'TECNICO-INDUSTRIAL': 'Técnico Industrial',
-  };
-
+  // Normalizar sede
   let sede = 'Desconocida';
-  let jornada = 'Desconocida';
-  let sedeClave = '';
+  if (sedeParte.includes('GENERAL'))                                  sede = 'General Santander';
+  else if (sedeParte.includes('SAUCES'))                              sede = 'Los Sauces';
+  else if (sedeParte.includes('TÉCNICO') || sedeParte.includes('TECNICO')) sede = 'Técnico Industrial';
 
-  for (const clave of Object.keys(SEDES)) {
-    const idx = base.indexOf(clave);
-    if (idx !== -1) {
-      sede      = SEDES[clave];
-      sedeClave = clave;
-      // La jornada es lo que viene DESPUÉS de la clave de sede
-      const resto = base.slice(idx + clave.length + 1); // +1 por el "_"
-      // Puede ser "MAÑANA", "TARDE", "UNICA", "FIN-DE-SEMANA_CICLOS-III-IV", "NOCTURNA_CICLOS-II-III-IV"
-      const primerGuion = resto.indexOf('_');
-      jornada = primerGuion === -1 ? resto : resto.slice(0, primerGuion);
-      // Normalizar
-      jornada = jornada
-        .replace('MAÑANA',       'Mañana')
-        .replace('TARDE',        'Tarde')
-        .replace('UNICA',        'Única')
-        .replace('FIN-DE-SEMANA','Fin de Semana')
-        .replace('NOCTURNA',     'Nocturna');
-      break;
-    }
-  }
+  // Normalizar jornada
+  let jornada = 'Desconocida';
+  if      (jornadaParte.includes('FIN DE SEMANA') || jornadaParte.includes('FIN-DE-SEMANA')) jornada = 'Fin de Semana';
+  else if (jornadaParte.includes('NOCTURNA'))  jornada = 'Nocturna';
+  else if (jornadaParte.includes('MAÑANA') || jornadaParte.includes('MANANA')) jornada = 'Mañana';
+  else if (jornadaParte.includes('TARDE'))     jornada = 'Tarde';
+  else if (jornadaParte.includes('UNICA') || jornadaParte.includes('ÚNICA'))   jornada = 'Única';
 
   return { anio, sede, jornada };
 }
@@ -227,6 +214,7 @@ function parsearEstudiante(fila, areas, metadatos) {
 }
 
 // ── Cargar todos los Excel ────────────────────────────────────────────────────
+// Estructura: datos-indicadores/{año}/{SEDE_JORNADA.xlsx}
 function cargarTodosLosExcel() {
   if (!fs.existsSync(DATOS_DIR)) {
     console.warn(`[indicadores] Directorio no encontrado: ${DATOS_DIR}`);
@@ -234,86 +222,95 @@ function cargarTodosLosExcel() {
     return;
   }
 
-  const archivos = fs.readdirSync(DATOS_DIR).filter(f => f.endsWith('.xlsx'));
-  if (archivos.length === 0) {
-    console.warn('[indicadores] No se encontraron archivos .xlsx');
+  // Leer subcarpetas que sean años (4 dígitos)
+  const carpetasAnio = fs.readdirSync(DATOS_DIR, { withFileTypes: true })
+    .filter(e => e.isDirectory() && /^\d{4}$/.test(e.name))
+    .map(e => e.name)
+    .sort();
+
+  if (carpetasAnio.length === 0) {
+    console.warn('[indicadores] No se encontraron carpetas de años en datos-indicadores/');
     CACHE_LISTO = true;
     return;
   }
 
-  console.log(`[indicadores] Cargando ${archivos.length} archivos Excel...`);
+  console.log(`[indicadores] Años detectados: ${carpetasAnio.join(', ')}`);
   let totalEstudiantes = 0;
+  let totalArchivos = 0;
 
-  for (const archivo of archivos) {
-    try {
-      const ruta = path.join(DATOS_DIR, archivo);
-      const wb   = XLSX.readFile(ruta, { cellDates: false });
+  for (const anio of carpetasAnio) {
+    const carpetaAnio = path.join(DATOS_DIR, anio);
+    const archivos = fs.readdirSync(carpetaAnio)
+      .filter(f => f.toLowerCase().endsWith('.xlsx'));
 
-      const { anio, sede, jornada } = parsearNombreArchivo(archivo);
+    console.log(`[indicadores] ${anio}: ${archivos.length} archivos`);
 
-      for (const nombreHoja of wb.SheetNames) {
-        try {
-          const ws    = wb.Sheets[nombreHoja];
-          const filas = XLSX.utils.sheet_to_json(ws, { header: 1, defval: null });
+    for (const archivo of archivos) {
+      try {
+        const ruta = path.join(carpetaAnio, archivo);
+        const wb   = XLSX.readFile(ruta, { cellDates: false });
 
-          if (!filas || filas.length < 7) continue;
+        const { sede, jornada } = parsearNombreArchivo(archivo, anio);
+        totalArchivos++;
 
-          const { grado, grupo, sensible } = parsearHoja(nombreHoja);
+        for (const nombreHoja of wb.SheetNames) {
+          try {
+            const ws    = wb.Sheets[nombreHoja];
+            const filas = XLSX.utils.sheet_to_json(ws, { header: 1, defval: null });
 
-          // Buscar la fila de áreas dinámicamente (fila que tiene texto en col 3 y 8)
-          // Normalmente es la fila 4 (índice 4), pero puede variar.
-          let filaAreas = -1;
-          let filaEstudiantes = -1;
-          for (let r = 0; r < Math.min(filas.length, 10); r++) {
-            const f = filas[r];
-            if (!Array.isArray(f)) continue;
-            // La fila de áreas tiene contenido de texto en columna 3 y/o 8
-            if (
-              f[3] && typeof f[3] === 'string' && f[3].trim().length > 2 &&
-              !String(f[3]).trim().toUpperCase().startsWith('P1') &&
-              !String(f[3]).trim().toUpperCase().startsWith('N')
-            ) {
-              filaAreas = r;
+            if (!filas || filas.length < 7) continue;
+
+            const { grado, grupo, sensible } = parsearHoja(nombreHoja);
+
+            let filaAreas = -1;
+            let filaEstudiantes = -1;
+            for (let r = 0; r < Math.min(filas.length, 10); r++) {
+              const f = filas[r];
+              if (!Array.isArray(f)) continue;
+              if (
+                f[3] && typeof f[3] === 'string' && f[3].trim().length > 2 &&
+                !String(f[3]).trim().toUpperCase().startsWith('P1') &&
+                !String(f[3]).trim().toUpperCase().startsWith('N')
+              ) {
+                filaAreas = r;
+              }
+              if (
+                filaAreas !== -1 &&
+                f[1] && typeof f[1] === 'string' &&
+                (f[1].trim().toUpperCase() === 'ESTUDIANTE' || f[0] === 'N')
+              ) {
+                filaEstudiantes = r + 1;
+                break;
+              }
             }
-            // La fila de encabezados tiene "Estudiante" o "N" en columna 1 o 0
-            if (
-              filaAreas !== -1 &&
-              f[1] && typeof f[1] === 'string' &&
-              (f[1].trim().toUpperCase() === 'ESTUDIANTE' || f[0] === 'N')
-            ) {
-              filaEstudiantes = r + 1; // estudiantes empiezan en la siguiente
-              break;
+
+            if (filaAreas === -1) continue;
+            const areas = parsearAreas(filas[filaAreas]);
+            if (areas.length === 0) continue;
+
+            if (filaEstudiantes === -1) filaEstudiantes = filaAreas + 2;
+
+            const metadatos = { anio, sede, jornada, grado, grupo, sensible, archivo, hoja: nombreHoja };
+
+            for (let i = filaEstudiantes; i < filas.length; i++) {
+              const est = parsearEstudiante(filas[i], areas, metadatos);
+              if (est) {
+                CACHE.push(est);
+                totalEstudiantes++;
+              }
             }
+          } catch (errHoja) {
+            console.warn(`[indicadores] Error en hoja "${nombreHoja}" de "${archivo}": ${errHoja.message}`);
           }
-
-          if (filaAreas === -1) continue;
-          const areas = parsearAreas(filas[filaAreas]);
-          if (areas.length === 0) continue;
-
-          // Si no encontramos fila de encabezados, asumir filaAreas + 2
-          if (filaEstudiantes === -1) filaEstudiantes = filaAreas + 2;
-
-          const metadatos = { anio, sede, jornada, grado, grupo, sensible, archivo, hoja: nombreHoja };
-
-          // Estudiantes
-          for (let i = filaEstudiantes; i < filas.length; i++) {
-            const est = parsearEstudiante(filas[i], areas, metadatos);
-            if (est) {
-              CACHE.push(est);
-              totalEstudiantes++;
-            }
-          }
-        } catch (errHoja) {
-          console.warn(`[indicadores] Error en hoja "${nombreHoja}" de "${archivo}": ${errHoja.message}`);
         }
+      } catch (errArchivo) {
+        console.warn(`[indicadores] Error leyendo "${archivo}": ${errArchivo.message}`);
       }
-    } catch (errArchivo) {
-      console.warn(`[indicadores] Error leyendo "${archivo}": ${errArchivo.message}`);
     }
   }
 
   CACHE_LISTO = true;
-  console.log(`[indicadores] Cache lista: ${totalEstudiantes} estudiantes de ${archivos.length} archivos.`);
+  console.log(`[indicadores] Cache lista: ${totalEstudiantes} estudiantes de ${totalArchivos} archivos (${carpetasAnio.length} años).`);
 }
 
 // Inicializar al cargar el módulo
