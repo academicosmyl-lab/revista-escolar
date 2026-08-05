@@ -1,5 +1,5 @@
 import {
-  Component, signal, computed, inject, ChangeDetectionStrategy,
+  Component, OnInit, signal, computed, inject, ChangeDetectionStrategy,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -7,7 +7,8 @@ import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 import { AuthService } from '../../services/auth.service';
 
-interface Sede { id: string; nombre: string; slug: string; }
+interface Sede     { id: string; nombre: string; slug: string; }
+interface Categoria { id: string; nombre: string; color?: string; }
 
 type Paso = 1 | 2;
 type TipoContenido = 'imagenes' | 'video' | 'texto';
@@ -19,7 +20,7 @@ type TipoContenido = 'imagenes' | 'video' | 'texto';
   styleUrl: './publicar.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class Publicar {
+export class Publicar implements OnInit {
   private http = inject(HttpClient);
   private base = environment.apiUrl;
   readonly auth = inject(AuthService);
@@ -34,11 +35,16 @@ export class Publicar {
   imagenes: File[] = [];
   previewUrls = signal<string[]>([]);
 
-  // ── Paso 2: Sede y portada ──────────────────────────────
-  sedes            = signal<Sede[]>([]);
-  sedeSeleccionada = signal('');
-  paraPortada      = signal(false);
-  cargandoSedes    = signal(false);
+  // ── Paso 1 extra: Sede y Categoría ─────────────────────
+  sedes              = signal<Sede[]>([]);
+  sedeSeleccionada   = signal('');
+  cargandoSedes      = signal(false);
+  categorias         = signal<Categoria[]>([]);
+  categoriaId        = signal('');
+  cargandoCategorias = signal(false);
+
+  // ── Paso 2: Portada ────────────────────────────────────
+  paraPortada = signal(false);
 
   // ── Estado del envío ────────────────────────────────────
   enviando  = signal(false);
@@ -47,14 +53,20 @@ export class Publicar {
 
   paso1Valido = computed(() => {
     if (!this.titulo().trim() || !this.descripcion().trim()) return false;
+    if (!this.sedeSeleccionada()) return false;
+    if (!this.categoriaId()) return false;
     if (this.tipo() === 'video') return this.urlYoutube().trim().length > 5;
     if (this.tipo() === 'imagenes') return this.imagenes.length > 0;
     return true;
   });
 
+  ngOnInit() {
+    this.cargarSedes();
+    this.cargarCategorias();
+  }
+
   irPaso(p: Paso) {
     if (p === 2 && !this.paso1Valido()) return;
-    if (p === 2 && this.sedes().length === 0) this.cargarSedes();
     this.errorMsg.set('');
     this.paso.set(p);
   }
@@ -97,6 +109,20 @@ export class Publicar {
     });
   }
 
+  cargarCategorias() {
+    this.cargandoCategorias.set(true);
+    this.http.get<{ ok?: boolean; data: Categoria[] }>(`${this.base}/categorias`).subscribe({
+      next: r => {
+        this.categorias.set(r.data ?? []);
+        this.cargandoCategorias.set(false);
+      },
+      error: () => {
+        this.categorias.set([]);
+        this.cargandoCategorias.set(false);
+      },
+    });
+  }
+
   enviar() {
     if (this.enviando()) return;
     this.enviando.set(true);
@@ -112,6 +138,7 @@ export class Publicar {
     if (this.tipo() === 'imagenes') {
       this.imagenes.forEach(f => fd.append('imagenes', f));
     }
+    if (this.categoriaId()) fd.append('categoria_id', this.categoriaId());
 
     this.http.post<{ ok: boolean; mensaje: string }>(`${this.base}/publicar`, fd).subscribe({
       next: () => {
@@ -134,6 +161,7 @@ export class Publicar {
     this.imagenes = [];
     this.previewUrls.set([]);
     this.sedeSeleccionada.set('');
+    this.categoriaId.set('');
     this.paraPortada.set(false);
     this.enviado.set(false);
     this.errorMsg.set('');

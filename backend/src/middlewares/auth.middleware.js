@@ -29,8 +29,8 @@ function requiereRol(...roles) {
   };
 }
 
-// Puede aprobar/rechazar contenido
-const puedeAprobarContenido = requiereRol('ADMIN', 'RECTOR');
+// Puede aprobar/rechazar contenido — solo Super Admin
+const puedeAprobarContenido = requiereRol('ADMIN');
 
 // Puede gestionar cursos y docentes
 const puedeGestionarCursos = requiereRol('ADMIN', 'RECTOR', 'COORDINADOR');

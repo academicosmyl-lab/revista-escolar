@@ -1,5 +1,5 @@
 import { Component, inject, signal } from '@angular/core';
-import { RouterLink, Router } from '@angular/router';
+import { RouterLink, Router, ActivatedRoute } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
 
@@ -12,6 +12,7 @@ import { AuthService } from '../../services/auth.service';
 export class Login {
   private auth   = inject(AuthService);
   private router = inject(Router);
+  private route  = inject(ActivatedRoute);
 
   email    = '';
   password = '';
@@ -39,6 +40,11 @@ export class Login {
   }
 
   private redirigirPorRol() {
+    const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl');
+    if (returnUrl) {
+      this.router.navigateByUrl(returnUrl);
+      return;
+    }
     const rol = this.auth.rol();
     if (rol === 'ADMIN' || rol === 'RECTOR') {
       this.router.navigate(['/admin']);

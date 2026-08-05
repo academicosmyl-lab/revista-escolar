@@ -7,8 +7,8 @@ import { FormsModule } from '@angular/forms';
 import { TitleCasePipe } from '@angular/common';
 import { ApiService } from '../../services/api.service';
 
-type Tab = 'dashboard' | 'cola' | 'docentes' | 'historial';
-type ModalTipo = 'aprobar' | 'rechazar' | 'crear' | 'editar' | null;
+type Tab = 'dashboard' | 'cola' | 'docentes' | 'historial' | 'publicaciones';
+type ModalTipo = 'aprobar' | 'rechazar' | 'crear' | 'editar' | 'aprobar-pub' | 'rechazar-pub' | null;
 
 interface Solicitud {
   id: string;
@@ -43,9 +43,21 @@ interface AccionAdmin {
   admin?: { nombre: string; };
 }
 
+interface Publicacion {
+  id: string;
+  titulo: string;
+  resumen?: string;
+  estado: 'pendiente' | 'publicada' | 'rechazada';
+  destacada: boolean;
+  createdAt: string;
+  autor?: { nombre: string; rol: string; };
+  imagenes?: { url: string; es_portada: boolean; }[];
+}
+
 interface Stats {
   solicitudes: { pendientes: number; aprobados: number; rechazados: number; };
   docentes:    { total: number; activos: number; };
+  publicacionesPendientes: number;
   ultimasAcciones: AccionAdmin[];
   porArea: { cargo: string; total: number; }[];
 }
@@ -98,14 +110,24 @@ export class SuperAdmin implements OnInit {
   motivo    = signal('');
   motivoErr = signal('');
 
-  /* Formulario "Crear docente" */
+  /* Formulario "Crear usuario" */
   nuevoNombre      = signal('');
   nuevoEmail       = signal('');
   nuevoTitulo      = signal('');
   nuevoArea        = signal('');
   nuevoBio         = signal('');
   nuevoSede        = signal('');
+  nuevoRol         = signal('DOCENTE');
   nuevoCreandoErr  = signal('');
+
+  /* ── Publicaciones ──────────────────────────────────────── */
+  publicaciones: Publicacion[] = [];
+  totalPublicaciones = 0;
+  filtroEstadoPub  = signal<string>('pendiente');
+  pagPublicaciones = signal(1);
+  modalPublicacion = signal<Publicacion | null>(null);
+  motivoPub        = signal('');
+  motivoPubErr     = signal('');
 
   readonly LIMIT = 12;
 
@@ -119,15 +141,17 @@ export class SuperAdmin implements OnInit {
   };
 
   readonly iconoAccion: Record<string, string> = {
-    aprobar_perfil:      '✅',
-    rechazar_perfil:     '❌',
-    crear_docente:       '➕',
-    editar_docente:      '✏️',
-    desactivar_docente:  '🚫',
-    reactivar_docente:   '🔄',
-    eliminar_docente:    '🗑️',
-    login_admin:         '🔐',
-    crear_usuario:       '👤',
+    aprobar_perfil:        '✅',
+    rechazar_perfil:       '❌',
+    crear_docente:         '➕',
+    editar_docente:        '✏️',
+    desactivar_docente:    '🚫',
+    reactivar_docente:     '🔄',
+    eliminar_docente:      '🗑️',
+    login_admin:           '🔐',
+    crear_usuario:         '👤',
+    aprobar_publicacion:   '📰',
+    rechazar_publicacion:  '🚫',
   };
 
   ngOnInit() {
@@ -151,6 +175,7 @@ export class SuperAdmin implements OnInit {
     if (tab === 'cola')                              this.cargarCola();
     if (tab === 'docentes')                          this.cargarDocentes();
     if (tab === 'historial')                         this.cargarHistorial();
+    if (tab === 'publicaciones')                     this.cargarPublicaciones();
   }
 
   /* ── Cola de solicitudes ──────────────────────────────────── */
@@ -237,6 +262,7 @@ export class SuperAdmin implements OnInit {
   abrirCrear() {
     this.nuevoNombre.set(''); this.nuevoEmail.set(''); this.nuevoTitulo.set('');
     this.nuevoArea.set('');   this.nuevoBio.set('');   this.nuevoSede.set('');
+    this.nuevoRol.set('DOCENTE');
     this.nuevoCreandoErr.set('');
     this.modal.set('crear');
   }
@@ -250,6 +276,7 @@ export class SuperAdmin implements OnInit {
     const fd = new FormData();
     fd.append('nombre', this.nuevoNombre());
     fd.append('email',  this.nuevoEmail());
+    fd.append('rol',    this.nuevoRol());
     fd.append('titulo', this.nuevoTitulo());
     fd.append('area',   this.nuevoArea());
     fd.append('bio',    this.nuevoBio());
@@ -279,10 +306,62 @@ export class SuperAdmin implements OnInit {
     });
   }
 
+  /* ── Publicaciones ────────────────────────────────────────── */
+  cargarPublicaciones() {
+    this.cargando.set(true);
+    const params: any = { estado: this.filtroEstadoPub(), page: this.pagPublicaciones(), limit: this.LIMIT };
+    this.api.get<any>('/super-admin/publicaciones', params).subscribe({
+      next:  r => { this.publicaciones = r.data; this.totalPublicaciones = r.total; this.cargando.set(false); this.cdr.markForCheck(); },
+      error: e => { this.error.set(e.mensaje ?? 'Error al cargar publicaciones'); this.cargando.set(false); this.cdr.markForCheck(); },
+    });
+  }
+
+  cambiarFiltroEstadoPub(estado: string) {
+    this.filtroEstadoPub.set(estado); this.pagPublicaciones.set(1); this.cargarPublicaciones();
+  }
+
+  abrirRevisionPub(pub: Publicacion, tipo: 'aprobar-pub' | 'rechazar-pub') {
+    this.modalPublicacion.set(pub);
+    this.modal.set(tipo);
+    this.motivoPub.set('');
+    this.motivoPubErr.set('');
+  }
+
+  confirmarAccionPub() {
+    const pub = this.modalPublicacion();
+    if (!pub) return;
+    if (this.modal() === 'rechazar-pub' && !this.motivoPub().trim()) {
+      this.motivoPubErr.set('El motivo es obligatorio');
+      return;
+    }
+    const accion = this.modal() === 'aprobar-pub' ? 'aprobar' : 'rechazar';
+    const body   = this.modal() === 'rechazar-pub' ? { motivo: this.motivoPub() } : {};
+    this.cargando.set(true);
+    this.api.put<any>(`/super-admin/publicaciones/${pub.id}/${accion}`, body).subscribe({
+      next: r => {
+        this.exito.set(r.mensaje || 'Acción realizada');
+        this.cerrarModal();
+        this.cargarPublicaciones();
+        if (this.stats) this.stats = null;
+        this.cdr.markForCheck();
+      },
+      error: e => {
+        this.motivoPubErr.set(e.mensaje ?? 'Error al procesar');
+        this.cargando.set(false);
+        this.cdr.markForCheck();
+      },
+    });
+  }
+
+  get totalPagesPublicaciones() { return Math.ceil(this.totalPublicaciones / this.LIMIT); }
+  prevPublicaciones() { if (this.pagPublicaciones() > 1) { this.pagPublicaciones.update(p => p - 1); this.cargarPublicaciones(); } }
+  nextPublicaciones() { if (this.pagPublicaciones() < this.totalPagesPublicaciones) { this.pagPublicaciones.update(p => p + 1); this.cargarPublicaciones(); } }
+
   /* ── Helpers ──────────────────────────────────────────────── */
   cerrarModal() {
     this.modal.set(null);
     this.modalItem.set(null);
+    this.modalPublicacion.set(null);
     this.cargando.set(false);
   }
 

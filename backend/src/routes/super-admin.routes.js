@@ -12,7 +12,7 @@ const router  = express.Router();
 const { autenticar, requiereRol } = require('../middlewares/auth.middleware');
 const {
   Usuario, PerfilDocente, SolicitudPerfil,
-  AccionAdmin, Sede,
+  AccionAdmin, Sede, Noticia, Imagen,
 } = require('../models');
 const { emailService }      = require('../services/email.service');
 const { cloudinaryService } = require('../services/cloudinary.service');
@@ -24,12 +24,13 @@ const upload    = multer({ storage: multer.memoryStorage(), limits: { fileSize: 
 // ─── DASHBOARD: ESTADÍSTICAS ──────────────────────────────
 router.get('/stats', soloAdmin, async (req, res) => {
   try {
-    const [pendientes, aprobados, rechazados, totalDocentes, totalActivos] = await Promise.all([
+    const [pendientes, aprobados, rechazados, totalDocentes, totalActivos, pubPendientes] = await Promise.all([
       SolicitudPerfil.count({ where: { estado: 'pendiente' } }),
       SolicitudPerfil.count({ where: { estado: 'aprobado'  } }),
       SolicitudPerfil.count({ where: { estado: 'rechazado' } }),
       Usuario.count({ where: { rol: { [Op.in]: ['DOCENTE','PERSONAL'] } } }),
       Usuario.count({ where: { rol: { [Op.in]: ['DOCENTE','PERSONAL'] }, activo: true } }),
+      Noticia.count({ where: { estado: 'pendiente' } }),
     ]);
 
     // Últimas 5 acciones del historial
@@ -54,6 +55,7 @@ router.get('/stats', soloAdmin, async (req, res) => {
     res.json({
       solicitudes: { pendientes, aprobados, rechazados },
       docentes:    { total: totalDocentes, activos: totalActivos },
+      publicacionesPendientes: pubPendientes,
       ultimasAcciones,
       porArea,
     });
@@ -267,7 +269,9 @@ router.get('/docentes', soloAdmin, async (req, res) => {
 
 // Crear docente manualmente
 router.post('/docentes', soloAdmin, upload.single('foto'), async (req, res) => {
-  const { nombre, email, titulo, area, bio, sede, web, linkedin, orcid } = req.body;
+  const { nombre, email, titulo, area, bio, sede, web, linkedin, orcid, rol: rolInput } = req.body;
+  const rolesPermitidos = ['DOCENTE', 'PERSONAL', 'RECTOR', 'COORDINADOR', 'ORIENTADORA'];
+  const rolFinal = rolesPermitidos.includes(rolInput) ? rolInput : 'DOCENTE';
   if (!nombre?.trim() || !email?.trim()) {
     return res.status(400).json({ error: 'Nombre y email son obligatorios' });
   }
@@ -281,7 +285,7 @@ router.post('/docentes', soloAdmin, upload.single('foto'), async (req, res) => {
     const passTemp = Array.from({ length: 12 }, () => chars[Math.floor(Math.random() * chars.length)]).join('');
     const hash     = await bcrypt.hash(passTemp, 12);
 
-    const usuario = await Usuario.create({ nombre, email, password_hash: hash, rol: 'DOCENTE', activo: true });
+    const usuario = await Usuario.create({ nombre, email, password_hash: hash, rol: rolFinal, activo: true });
 
     // Subir foto a Cloudinary si viene en el request
     let fotoUrl = null;
@@ -319,10 +323,10 @@ router.post('/docentes', soloAdmin, upload.single('foto'), async (req, res) => {
     });
 
     // Email de bienvenida (no bloqueante)
-    emailService.bienvenida({ email, nombre, password: passTemp, rol: 'DOCENTE' })
+    emailService.bienvenida({ email, nombre, password: passTemp, rol: rolFinal })
       .catch(e => console.error('Email bienvenida error:', e.message));
 
-    res.status(201).json({ ok: true, mensaje: `Docente "${nombre}" creado`, usuarioId: usuario.id });
+    res.status(201).json({ ok: true, mensaje: `Usuario "${nombre}" (${rolFinal}) creado`, usuarioId: usuario.id });
   } catch (e) {
     res.status(500).json({ error: e.message });
   }
@@ -449,6 +453,76 @@ router.get('/historial', soloAdmin, async (req, res) => {
     });
     res.json({ total: count, data: rows, page: parseInt(page), totalPages: Math.ceil(count / parseInt(limit)) });
   } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+// ─── GESTIÓN DE PUBLICACIONES ─────────────────────────────
+
+router.get('/publicaciones', soloAdmin, async (req, res) => {
+  const { estado = 'pendiente', page = 1, limit = 15 } = req.query;
+  try {
+    const { count, rows } = await Noticia.findAndCountAll({
+      where: { estado },
+      include: [
+        { model: Usuario, as: 'autor', attributes: ['nombre', 'rol'] },
+        { model: Imagen,  as: 'imagenes', attributes: ['url', 'es_portada'] },
+      ],
+      order: [['createdAt', 'DESC']],
+      limit:  parseInt(limit),
+      offset: (parseInt(page) - 1) * parseInt(limit),
+    });
+    res.json({ total: count, data: rows, page: parseInt(page), totalPages: Math.ceil(count / parseInt(limit)) });
+  } catch (e) {
+    console.error('publicaciones GET error:', e.message);
+    res.status(500).json({ error: e.message });
+  }
+});
+
+router.put('/publicaciones/:id/aprobar', soloAdmin, async (req, res) => {
+  try {
+    const noticia = await Noticia.findByPk(req.params.id);
+    if (!noticia) return res.status(404).json({ error: 'Publicación no encontrada' });
+    if (noticia.estado !== 'pendiente') return res.status(400).json({ error: 'La publicación no está pendiente' });
+
+    await noticia.update({ estado: 'publicada', fecha_publicacion: new Date() });
+
+    await AccionAdmin.create({
+      admin_id:     req.usuario.id,
+      tipo:         'aprobar_publicacion',
+      descripcion:  `Publicación "${noticia.titulo}" aprobada y publicada en la revista`,
+      entidad_tipo: 'Noticia',
+      entidad_id:   noticia.id,
+    });
+
+    res.json({ ok: true, mensaje: `"${noticia.titulo}" publicada en la revista.` });
+  } catch (e) {
+    console.error('publicaciones aprobar error:', e.message);
+    res.status(500).json({ error: e.message });
+  }
+});
+
+router.put('/publicaciones/:id/rechazar', soloAdmin, async (req, res) => {
+  const { motivo } = req.body;
+  if (!motivo?.trim()) return res.status(400).json({ error: 'El motivo de rechazo es obligatorio' });
+  try {
+    const noticia = await Noticia.findByPk(req.params.id);
+    if (!noticia) return res.status(404).json({ error: 'Publicación no encontrada' });
+    if (noticia.estado !== 'pendiente') return res.status(400).json({ error: 'La publicación no está pendiente' });
+
+    await noticia.update({ estado: 'rechazada', motivo_rechazo: motivo.trim() });
+
+    await AccionAdmin.create({
+      admin_id:     req.usuario.id,
+      tipo:         'rechazar_publicacion',
+      descripcion:  `Publicación "${noticia.titulo}" rechazada. Motivo: ${motivo}`,
+      entidad_tipo: 'Noticia',
+      entidad_id:   noticia.id,
+    });
+
+    res.json({ ok: true, mensaje: 'Publicación rechazada.' });
+  } catch (e) {
+    console.error('publicaciones rechazar error:', e.message);
     res.status(500).json({ error: e.message });
   }
 });

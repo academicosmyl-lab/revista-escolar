@@ -29,6 +29,13 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
         Gestión docentes
       </button>
+      <button class="sa-nav-item" [class.active]="tabActiva() === 'publicaciones'" (click)="irA('publicaciones')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        Publicaciones
+        @if (stats && stats.publicacionesPendientes > 0) {
+          <span class="sa-badge">{{ stats.publicacionesPendientes }}</span>
+        }
+      </button>
       <button class="sa-nav-item" [class.active]="tabActiva() === 'historial'" (click)="irA('historial')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
         Historial
@@ -94,6 +101,11 @@
               <span class="sa-widget-num">{{ stats.docentes.activos }}</span>
               <span class="sa-widget-label">Docentes activos</span>
               <span class="sa-widget-hint">de {{ stats.docentes.total }} totales</span>
+            </div>
+            <div class="sa-widget sa-widget-warn" style="cursor:pointer" (click)="irA('publicaciones')">
+              <span class="sa-widget-num">{{ stats.publicacionesPendientes }}</span>
+              <span class="sa-widget-label">Publicaciones pendientes</span>
+              <button class="sa-widget-cta">Revisar →</button>
             </div>
           </div>
 
@@ -370,6 +382,102 @@
       </div>
     }
 
+    <!-- ══════════════════════════════════ TAB: PUBLICACIONES -->
+    @if (tabActiva() === 'publicaciones') {
+      <div class="sa-page">
+        <header class="sa-page-header">
+          <h1 class="sa-page-title">Publicaciones</h1>
+          <p class="sa-page-sub">Revisa y aprueba el contenido enviado por el equipo docente</p>
+        </header>
+
+        <div class="sa-toolbar">
+          <div class="sa-filter-tabs">
+            @for (e of ['pendiente','publicada','rechazada']; track e) {
+              <button class="sa-filter-tab" [class.active]="filtroEstadoPub() === e" (click)="cambiarFiltroEstadoPub(e)">
+                {{ e === 'pendiente' ? 'Pendiente' : e === 'publicada' ? 'Publicada' : 'Rechazada' }}
+              </button>
+            }
+          </div>
+        </div>
+
+        @if (cargando()) {
+          <div class="sa-loading"><div class="sa-spinner"></div></div>
+        }
+
+        @if (!cargando() && publicaciones.length === 0) {
+          <div class="sa-empty-state">
+            <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.5" width="56"><circle cx="32" cy="32" r="28"/><path d="M32 20v12M32 40v2"/></svg>
+            <p>No hay publicaciones {{ filtroEstadoPub() === 'pendiente' ? 'pendientes' : filtroEstadoPub() + 's' }}</p>
+          </div>
+        }
+
+        <div class="sa-table-wrap">
+          @if (publicaciones.length > 0) {
+            <table class="sa-table">
+              <thead>
+                <tr>
+                  <th>Publicación</th>
+                  <th>Enviada por</th>
+                  <th>Fecha</th>
+                  <th>Estado</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (pub of publicaciones; track pub.id) {
+                  <tr>
+                    <td class="sa-td-docente">
+                      @if (pub.imagenes && pub.imagenes.length > 0) {
+                        <img [src]="pub.imagenes[0].url" [alt]="pub.titulo" class="sa-doc-avatar" style="object-fit:cover;border-radius:6px">
+                      } @else {
+                        <div class="sa-doc-avatar-placeholder" style="border-radius:6px">📄</div>
+                      }
+                      <div>
+                        <span class="sa-doc-nombre">{{ pub.titulo }}</span>
+                        @if (pub.resumen) {
+                          <span style="display:block;font-size:0.75rem;color:#888;margin-top:2px">{{ pub.resumen }}</span>
+                        }
+                      </div>
+                    </td>
+                    <td>
+                      <span>{{ pub.autor?.nombre ?? '—' }}</span>
+                      @if (pub.autor?.rol) {
+                        <span class="sa-rol-chip" style="display:block;margin-top:4px;font-size:0.7rem">{{ pub.autor!.rol }}</span>
+                      }
+                    </td>
+                    <td class="sa-td-email">{{ formatFecha(pub.createdAt) }}</td>
+                    <td>
+                      <span class="sa-status-chip"
+                        [class.activo]="pub.estado === 'publicada'"
+                        [class.inactivo]="pub.estado === 'rechazada'"
+                        [style.background]="pub.estado === 'pendiente' ? '#FEF3C7' : ''"
+                        [style.color]="pub.estado === 'pendiente' ? '#92400E' : ''">
+                        {{ pub.estado }}
+                      </span>
+                    </td>
+                    <td class="sa-td-actions">
+                      @if (pub.estado === 'pendiente') {
+                        <button class="sa-btn sa-btn-ok" style="margin-right:6px;font-size:0.78rem;padding:5px 10px" (click)="abrirRevisionPub(pub, 'aprobar-pub')">Aprobar</button>
+                        <button class="sa-btn sa-btn-err" style="font-size:0.78rem;padding:5px 10px" (click)="abrirRevisionPub(pub, 'rechazar-pub')">Rechazar</button>
+                      }
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          }
+        </div>
+
+        @if (totalPagesPublicaciones > 1) {
+          <div class="sa-pag">
+            <button class="sa-pag-btn" [disabled]="pagPublicaciones() <= 1" (click)="prevPublicaciones()">‹ Anterior</button>
+            <span class="sa-pag-info">{{ pagPublicaciones() }} / {{ totalPagesPublicaciones }}</span>
+            <button class="sa-pag-btn" [disabled]="pagPublicaciones() >= totalPagesPublicaciones" (click)="nextPublicaciones()">Siguiente ›</button>
+          </div>
+        }
+      </div>
+    }
+
     <!-- ════════════════════════════════════════ TAB: HISTORIAL -->
     @if (tabActiva() === 'historial') {
       <div class="sa-page">
@@ -530,12 +638,71 @@
   </div>
 }
 
-<!-- Modal: Crear docente -->
+<!-- Modal: Aprobar / Rechazar publicación -->
+@if (modal() === 'aprobar-pub' || modal() === 'rechazar-pub') {
+  <div class="sa-modal-backdrop" (click)="cerrarModal()">
+    <div class="sa-modal" (click)="$event.stopPropagation()">
+      <div class="sa-modal-header" [class.aprobar]="modal() === 'aprobar-pub'" [class.rechazar]="modal() === 'rechazar-pub'">
+        <h2>{{ modal() === 'aprobar-pub' ? '✅ Publicar en la revista' : '❌ Rechazar publicación' }}</h2>
+        <button class="sa-modal-close" (click)="cerrarModal()">✕</button>
+      </div>
+
+      @if (modalPublicacion(); as pub) {
+        <div class="sa-modal-body">
+          <div class="sa-modal-info">
+            @if (pub.imagenes && pub.imagenes.length > 0) {
+              <img [src]="pub.imagenes[0].url" [alt]="pub.titulo" class="sa-modal-foto" style="border-radius:8px;object-fit:cover">
+            } @else {
+              <div class="sa-modal-foto-placeholder">📄</div>
+            }
+            <div class="sa-modal-info-text">
+              <p class="sa-modal-nombre">{{ pub.titulo }}</p>
+              @if (pub.autor) { <p class="sa-modal-sub">Enviado por: {{ pub.autor.nombre }} ({{ pub.autor.rol }})</p> }
+              <p class="sa-modal-sub">{{ formatFecha(pub.createdAt) }}</p>
+            </div>
+          </div>
+
+          @if (modal() === 'aprobar-pub') {
+            <div class="sa-modal-notice sa-modal-notice-ok">
+              Al aprobar, este contenido quedará visible en la sección de noticias de la revista.
+            </div>
+          } @else {
+            <div class="sa-modal-notice sa-modal-notice-err">
+              Al rechazar, el contenido no se publicará. Explica el motivo para que el autor pueda corregirlo.
+            </div>
+            <label class="sa-label" for="motivo-pub-input">
+              Motivo del rechazo <span class="sa-required">*</span>
+            </label>
+            <textarea id="motivo-pub-input" class="sa-textarea" rows="3"
+              placeholder="Ej: Las imágenes no tienen la calidad mínima requerida."
+              [value]="motivoPub()"
+              (input)="motivoPub.set($any($event.target).value); motivoPubErr.set('')">
+            </textarea>
+            @if (motivoPubErr()) {
+              <p class="sa-field-err">{{ motivoPubErr() }}</p>
+            }
+          }
+        </div>
+
+        <div class="sa-modal-footer">
+          <button class="sa-btn sa-btn-ghost" (click)="cerrarModal()" [disabled]="cargando()">Cancelar</button>
+          <button class="sa-btn" [class.sa-btn-ok]="modal() === 'aprobar-pub'" [class.sa-btn-err]="modal() === 'rechazar-pub'"
+            (click)="confirmarAccionPub()" [disabled]="cargando()">
+            @if (cargando()) { <span class="sa-btn-spinner"></span> }
+            {{ modal() === 'aprobar-pub' ? 'Confirmar publicación' : 'Confirmar rechazo' }}
+          </button>
+        </div>
+      }
+    </div>
+  </div>
+}
+
+<!-- Modal: Crear usuario -->
 @if (modal() === 'crear') {
   <div class="sa-modal-backdrop" (click)="cerrarModal()">
     <div class="sa-modal sa-modal-wide" (click)="$event.stopPropagation()">
       <div class="sa-modal-header sa-modal-header-neutral">
-        <h2>➕ Crear docente manualmente</h2>
+        <h2>➕ Crear usuario</h2>
         <button class="sa-modal-close" (click)="cerrarModal()">✕</button>
       </div>
 
@@ -550,6 +717,17 @@
             <label class="sa-label" for="c-email">Correo institucional <span class="sa-required">*</span></label>
             <input id="c-email" class="sa-input" type="email" placeholder="docente@itssantander.edu.co"
               [value]="nuevoEmail()" (input)="nuevoEmail.set($any($event.target).value)">
+          </div>
+          <div class="sa-field">
+            <label class="sa-label" for="c-rol">Rol <span class="sa-required">*</span></label>
+            <select id="c-rol" class="sa-input sa-select"
+              [value]="nuevoRol()" (change)="nuevoRol.set($any($event.target).value)">
+              <option value="DOCENTE">Docente</option>
+              <option value="PERSONAL">Personal / Administrativo</option>
+              <option value="COORDINADOR">Coordinador/a</option>
+              <option value="ORIENTADORA">Orientador/a</option>
+              <option value="RECTOR">Rector</option>
+            </select>
           </div>
           <div class="sa-field">
             <label class="sa-label" for="c-titulo">Título profesional</label>
@@ -584,7 +762,7 @@
         }
 
         <p class="sa-modal-hint">
-          Se creará la cuenta con una contraseña temporal que el docente deberá cambiar en su primer ingreso.
+          Se creará la cuenta con una contraseña temporal enviada por correo. El usuario debe cambiarla en su primer ingreso.
         </p>
       </div>
 
@@ -592,7 +770,7 @@
         <button class="sa-btn sa-btn-ghost" (click)="cerrarModal()" [disabled]="cargando()">Cancelar</button>
         <button class="sa-btn sa-btn-primary" (click)="crearDocente()" [disabled]="cargando()">
           @if (cargando()) { <span class="sa-btn-spinner"></span> }
-          Crear docente
+          Crear usuario
         </button>
       </div>
     </div>

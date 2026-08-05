@@ -66,6 +66,44 @@
             ></textarea>
           </div>
 
+          <!-- Sede (obligatoria) -->
+          <div class="campo">
+            <label for="sede">Sede <span class="requerido">*</span></label>
+            @if (cargandoSedes()) {
+              <p class="cargando-txt">Cargando sedes...</p>
+            } @else {
+              <select
+                id="sede"
+                [ngModel]="sedeSeleccionada()"
+                (ngModelChange)="sedeSeleccionada.set($event)"
+              >
+                <option value="" disabled selected>Selecciona la sede...</option>
+                @for (s of sedes(); track s.id) {
+                  <option [value]="s.nombre">{{ s.nombre }}</option>
+                }
+              </select>
+            }
+          </div>
+
+          <!-- Área o materia (obligatoria) -->
+          <div class="campo">
+            <label for="categoria">Área o materia <span class="requerido">*</span></label>
+            @if (cargandoCategorias()) {
+              <p class="cargando-txt">Cargando áreas...</p>
+            } @else {
+              <select
+                id="categoria"
+                [ngModel]="categoriaId()"
+                (ngModelChange)="categoriaId.set($event)"
+              >
+                <option value="" disabled selected>Selecciona el área...</option>
+                @for (c of categorias(); track c.id) {
+                  <option [value]="c.id">{{ c.nombre }}</option>
+                }
+              </select>
+            }
+          </div>
+
           <!-- Tipo de contenido -->
           <div class="campo">
             <label>Tipo de contenido</label>
@@ -168,24 +206,6 @@
       @if (paso() === 2) {
         <div class="form-card animate-in">
           <h2 class="form-titulo">Último paso</h2>
-
-          <div class="campo">
-            <label for="sede">¿A qué sede pertenece este contenido?</label>
-            @if (cargandoSedes()) {
-              <p class="cargando-txt">Cargando sedes...</p>
-            } @else {
-              <select
-                id="sede"
-                [ngModel]="sedeSeleccionada()"
-                (ngModelChange)="sedeSeleccionada.set($event)"
-              >
-                <option value="">— Todas las sedes / No aplica —</option>
-                @for (s of sedes(); track s.id) {
-                  <option [value]="s.nombre">{{ s.nombre }}</option>
-                }
-              </select>
-            }
-          </div>
 
           @if (auth.esRector()) {
             <div class="campo toggle-campo">
