@@ -113,10 +113,7 @@ export class SuperAdmin implements OnInit {
   /* Formulario "Crear usuario" */
   nuevoNombre      = signal('');
   nuevoEmail       = signal('');
-  nuevoTitulo      = signal('');
   nuevoArea        = signal('');
-  nuevoBio         = signal('');
-  nuevoSede        = signal('');
   nuevoRol         = signal('DOCENTE');
   nuevoCreandoErr  = signal('');
 
@@ -260,16 +257,15 @@ export class SuperAdmin implements OnInit {
   }
 
   abrirCrear() {
-    this.nuevoNombre.set(''); this.nuevoEmail.set(''); this.nuevoTitulo.set('');
-    this.nuevoArea.set('');   this.nuevoBio.set('');   this.nuevoSede.set('');
-    this.nuevoRol.set('DOCENTE');
+    this.nuevoNombre.set(''); this.nuevoEmail.set('');
+    this.nuevoArea.set('');   this.nuevoRol.set('DOCENTE');
     this.nuevoCreandoErr.set('');
     this.modal.set('crear');
   }
 
   crearDocente() {
     if (!this.nuevoNombre().trim() || !this.nuevoEmail().trim()) {
-      this.nuevoCreandoErr.set('Nombre y email son obligatorios');
+      this.nuevoCreandoErr.set('Nombre y correo son obligatorios');
       return;
     }
     this.cargando.set(true);
@@ -277,10 +273,7 @@ export class SuperAdmin implements OnInit {
     fd.append('nombre', this.nuevoNombre());
     fd.append('email',  this.nuevoEmail());
     fd.append('rol',    this.nuevoRol());
-    fd.append('titulo', this.nuevoTitulo());
-    fd.append('area',   this.nuevoArea());
-    fd.append('bio',    this.nuevoBio());
-    fd.append('sede',   this.nuevoSede());
+    if (this.nuevoRol() === 'DOCENTE') fd.append('area', this.nuevoArea());
 
     this.api.postFormData<any>('/super-admin/docentes', fd).subscribe({
       next:  r => {

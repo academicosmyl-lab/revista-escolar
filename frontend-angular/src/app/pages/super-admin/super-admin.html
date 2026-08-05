@@ -708,15 +708,10 @@
 
       <div class="sa-modal-body">
         <div class="sa-form-grid">
-          <div class="sa-field">
+          <div class="sa-field sa-field-full">
             <label class="sa-label" for="c-nombre">Nombre completo <span class="sa-required">*</span></label>
             <input id="c-nombre" class="sa-input" type="text" placeholder="Ej: María García López"
               [value]="nuevoNombre()" (input)="nuevoNombre.set($any($event.target).value)">
-          </div>
-          <div class="sa-field">
-            <label class="sa-label" for="c-email">Correo institucional <span class="sa-required">*</span></label>
-            <input id="c-email" class="sa-input" type="email" placeholder="docente@itssantander.edu.co"
-              [value]="nuevoEmail()" (input)="nuevoEmail.set($any($event.target).value)">
           </div>
           <div class="sa-field">
             <label class="sa-label" for="c-rol">Rol <span class="sa-required">*</span></label>
@@ -729,31 +724,17 @@
               <option value="RECTOR">Rector</option>
             </select>
           </div>
-          <div class="sa-field">
-            <label class="sa-label" for="c-titulo">Título profesional</label>
-            <input id="c-titulo" class="sa-input" type="text" placeholder="Ej: Licenciado en Matemáticas"
-              [value]="nuevoTitulo()" (input)="nuevoTitulo.set($any($event.target).value)">
-          </div>
-          <div class="sa-field">
-            <label class="sa-label" for="c-area">Área / Cargo</label>
-            <input id="c-area" class="sa-input" type="text" placeholder="Ej: Docente de Ciencias Naturales"
-              [value]="nuevoArea()" (input)="nuevoArea.set($any($event.target).value)">
-          </div>
-          <div class="sa-field">
-            <label class="sa-label" for="c-sede">Sede</label>
-            <select id="c-sede" class="sa-input sa-select"
-              [value]="nuevoSede()" (change)="nuevoSede.set($any($event.target).value)">
-              <option value="">Seleccionar sede…</option>
-              <option value="Principal">Sede Principal</option>
-              <option value="Ciudadela">Ciudadela</option>
-              <option value="Divino">Divino Niño</option>
-            </select>
-          </div>
+          @if (nuevoRol() === 'DOCENTE') {
+            <div class="sa-field">
+              <label class="sa-label" for="c-area">Área o materia <span class="sa-required">*</span></label>
+              <input id="c-area" class="sa-input" type="text" placeholder="Ej: Ciencias Naturales"
+                [value]="nuevoArea()" (input)="nuevoArea.set($any($event.target).value)">
+            </div>
+          }
           <div class="sa-field sa-field-full">
-            <label class="sa-label" for="c-bio">Biografía corta</label>
-            <textarea id="c-bio" class="sa-textarea" rows="3" placeholder="Breve descripción del docente…"
-              [value]="nuevoBio()" (input)="nuevoBio.set($any($event.target).value)">
-            </textarea>
+            <label class="sa-label" for="c-email">Correo institucional <span class="sa-required">*</span></label>
+            <input id="c-email" class="sa-input" type="email" placeholder="usuario@itssantander.edu.co"
+              [value]="nuevoEmail()" (input)="nuevoEmail.set($any($event.target).value)">
           </div>
         </div>
 
