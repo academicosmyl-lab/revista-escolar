@@ -25,6 +25,8 @@ import {
   ApexGrid,
 } from 'ng-apexcharts';
 import { ApiService } from '../../services/api.service';
+import { AuthService } from '../../services/auth.service';
+import { Router }      from '@angular/router';
 
 // ── Tipos inline ──────────────────────────────────────────────────────────────
 type Modo = 'panorama' | 'comparacion' | 'individual';
@@ -127,12 +129,15 @@ const APEX_THEME = {
   selector: 'app-indicadores',
   standalone: true,
   imports: [CommonModule, FormsModule, NgApexchartsModule],
+  // RouterLink no se importa aquí — usamos Router.navigate() en el TS
   templateUrl: './indicadores.html',
   styleUrl: './indicadores.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Indicadores implements OnInit {
-  private api = inject(ApiService);
+  private api    = inject(ApiService);
+  readonly auth  = inject(AuthService);
+  private router = inject(Router);
 
   // ── Modo activo ─────────────────────────────────────────────────────────────
   modo = signal<Modo>('panorama');
@@ -605,6 +610,10 @@ export class Indicadores implements OnInit {
     if (this.filtroGrupo())   p['grupo']   = this.filtroGrupo();
     if (this.filtroPeriodo()) p['periodo'] = this.filtroPeriodo();
     return p;
+  }
+
+  irAlLogin() {
+    this.router.navigate(['/login'], { queryParams: { returnUrl: '/indicadores' } });
   }
 
   colorProm(v: number | null | undefined): string {

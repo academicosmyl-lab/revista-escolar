@@ -702,6 +702,65 @@ $sombra-h:  0 8px 28px rgba(44, 62, 80, 0.14);
   margin-top: 0.2rem;
 }
 
+// ── MURO DE LOGIN (datos privados) ────────────────────────────────────────────
+.ind-login-wall {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  min-height: 320px;
+  background: $card;
+  border: 2px solid $borde;
+  border-radius: $radio;
+  padding: 3rem 2rem;
+  text-align: center;
+  box-shadow: $sombra;
+
+  &-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 80px;
+    height: 80px;
+    background: rgba($vinotinto, 0.08);
+    border-radius: 50%;
+    color: $vinotinto;
+  }
+
+  &-titulo {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: $texto;
+    margin: 0;
+  }
+
+  &-desc {
+    color: $subtexto;
+    font-size: 0.88rem;
+    max-width: 400px;
+    line-height: 1.65;
+    margin: 0;
+  }
+
+  &-btn {
+    margin-top: 0.5rem;
+    padding: 0.65rem 2rem;
+    background: $vinotinto;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s, box-shadow 0.2s;
+    &:hover {
+      background: $vinotinto-d;
+      box-shadow: 0 4px 12px rgba($vinotinto, 0.3);
+    }
+  }
+}
+
 // ── PLACEHOLDER / ESTADO VACÍO ─────────────────────────────────────────────────
 .ind-placeholder-modo {
   display: flex;
