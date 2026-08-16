@@ -20,6 +20,11 @@ router.get('/noticias', async (req, res, next) => {
     const { estado, pagina = 1, limite = 20 } = req.query;
     const where = estado ? { estado } : {};
 
+    // Rector solo ve noticias de su sede
+    if (req.usuario.rol === 'RECTOR' && req.usuario.sede_id) {
+      where.sede_id = req.usuario.sede_id;
+    }
+
     const { count, rows } = await Noticia.findAndCountAll({
       where,
       include: [
