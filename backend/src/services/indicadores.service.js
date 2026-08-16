@@ -160,10 +160,10 @@ function parsearEstudiante(fila, areas, metadatos) {
   const notas = {};
   for (const area of areas) {
     const c = area.colInicio;
-    const p1 = typeof fila[c]   === 'number' ? fila[c]   : null;
-    const p2 = typeof fila[c+1] === 'number' ? fila[c+1] : null;
-    const p3 = typeof fila[c+2] === 'number' ? fila[c+2] : null;
-    const ac = typeof fila[c+3] === 'number' ? fila[c+3] : null;
+    const p1 = typeof fila[c]   === 'number' && fila[c]   > 0 ? fila[c]   : null;
+    const p2 = typeof fila[c+1] === 'number' && fila[c+1] > 0 ? fila[c+1] : null;
+    const p3 = typeof fila[c+2] === 'number' && fila[c+2] > 0 ? fila[c+2] : null;
+    const ac = typeof fila[c+3] === 'number' && fila[c+3] > 0 ? fila[c+3] : null;
     notas[area.nombre] = { p1, p2, p3, ac };
   }
 
