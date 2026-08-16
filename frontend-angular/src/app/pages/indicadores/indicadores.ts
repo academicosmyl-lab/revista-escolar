@@ -237,10 +237,23 @@ export class Indicadores implements OnInit {
   chartLineaOptions = computed(() => {
     const datos = this.evolucion().slice(0, 6); // máx 6 series para legibilidad
     const colores = [C_AZUL, C_AMBAR, C_VERDE, '#4A7FB5', '#7C5CBF', '#2980B9'];
+    // Solo mostrar períodos que tengan datos reales (no mostrar P2/P3 si aún no ocurrieron)
+    const tieneP1 = datos.some(d => d.p1 !== null);
+    const tieneP2 = datos.some(d => d.p2 !== null);
+    const tieneP3 = datos.some(d => d.p3 !== null);
+    const periodos = [
+      ...(tieneP1 ? ['Período 1'] : []),
+      ...(tieneP2 ? ['Período 2'] : []),
+      ...(tieneP3 ? ['Período 3'] : []),
+    ];
     return {
       series: datos.map((d, i) => ({
         name: d.area,
-        data: [d.p1 ?? 0, d.p2 ?? 0, d.p3 ?? 0],
+        data: [
+          ...(tieneP1 ? [d.p1 ?? 0] : []),
+          ...(tieneP2 ? [d.p2 ?? 0] : []),
+          ...(tieneP3 ? [d.p3 ?? 0] : []),
+        ],
         color: colores[i % colores.length],
       })) as ApexAxisChartSeries,
       chart: {
@@ -250,7 +263,7 @@ export class Indicadores implements OnInit {
       } as ApexChart,
       theme: APEX_THEME,
       xaxis: {
-        categories: ['Período 1', 'Período 2', 'Período 3'],
+        categories: periodos,
         labels: { style: { colors: C_SUBTEXT } },
       } as ApexXAxis,
       yaxis: {
@@ -394,13 +407,19 @@ export class Indicadores implements OnInit {
   chartRadarOptions = computed(() => {
     const p = this.perfil();
     if (!p) return null;
+    // Solo incluir series de períodos con datos reales
+    const tieneP1 = p.radar.some(r => r.p1 !== null);
+    const tieneP2 = p.radar.some(r => r.p2 !== null);
+    const tieneP3 = p.radar.some(r => r.p3 !== null);
+    const tieneAc = p.radar.some(r => r.ac !== null);
+    const series: any[] = [
+      ...(tieneP1 ? [{ name: 'P1',   data: p.radar.map(r => r.p1 ?? 0) }] : []),
+      ...(tieneP2 ? [{ name: 'P2',   data: p.radar.map(r => r.p2 ?? 0) }] : []),
+      ...(tieneP3 ? [{ name: 'P3',   data: p.radar.map(r => r.p3 ?? 0) }] : []),
+      ...(tieneAc ? [{ name: 'Acum', data: p.radar.map(r => r.ac ?? 0) }] : []),
+    ];
     return {
-      series: [
-        { name: 'P1', data: p.radar.map(r => r.p1 ?? 0) },
-        { name: 'P2', data: p.radar.map(r => r.p2 ?? 0) },
-        { name: 'P3', data: p.radar.map(r => r.p3 ?? 0) },
-        { name: 'Acum', data: p.radar.map(r => r.ac ?? 0) },
-      ] as ApexAxisChartSeries,
+      series: series as ApexAxisChartSeries,
       chart: {
         type: 'radar' as const, height: 380, background: C_CARD,
         toolbar: { show: false },
@@ -630,3 +649,4 @@ export class Indicadores implements OnInit {
     return 'Alto';
   }
 }
+
