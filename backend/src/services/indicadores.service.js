@@ -119,28 +119,42 @@ function esNombreDeArea(nombre) {
   return n.length >= 3;
 }
 
-function parsearAreas(filaAreas) {
+function parsearAreas(filaAreas, filaHeaders) {
   const areas = [];
   if (!Array.isArray(filaAreas)) return areas;
-  // Columna 3 = índice 3, luego +5 cada vez
-  for (let col = 3; col < filaAreas.length; col += 5) {
-    const nombre = filaAreas[col];
-    if (nombre && typeof nombre === 'string' && nombre.trim()) {
-      // Limpiar sufijos como " (100 %)", " (100%)", " (%)"
-      const nombreLimpio = nombre.trim()
-        .replace(/\s*\(\s*\d*\s*%\s*\)/g, '')
-        .replace(/\s+/g, ' ')
-        .trim()
-        .toUpperCase();
-      // Parar cuando llegamos a columnas de resumen finales
-      if (
-        nombreLimpio.includes('MATPERD') ||
-        nombreLimpio === 'ACUM FINAL' ||
-        nombreLimpio === 'PUESTO FINAL'
-      ) break;
-      if (esNombreDeArea(nombreLimpio)) {
-        areas.push({ nombre: nombreLimpio, colInicio: col });
+
+  // Detectar formato por la fila de encabezados:
+  // Multi-período (5 cols/área): encabezados tienen P2, P3 → áreas cada 5 cols desde col 3
+  // Período único (1 col/área):  solo P1 → áreas consecutivas desde col 2
+  const headers = Array.isArray(filaHeaders) ? filaHeaders : [];
+  const esMultiPeriodo = headers.some(h =>
+    typeof h === 'string' && /\bP[23]\b|\bP[23]\s*[-–]/i.test(h.trim())
+  );
+
+  const limpiar = s => s.trim()
+    .replace(/\s*\(\s*\d*\s*%\s*\)/g, '')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .toUpperCase();
+
+  if (esMultiPeriodo) {
+    // Áreas cada 5 columnas a partir de col 3
+    for (let col = 3; col < filaAreas.length; col += 5) {
+      const nombre = filaAreas[col];
+      if (nombre && typeof nombre === 'string' && nombre.trim()) {
+        const n = limpiar(nombre);
+        if (n.includes('MATPERD') || n === 'ACUM FINAL' || n === 'PUESTO FINAL') break;
+        if (esNombreDeArea(n)) areas.push({ nombre: n, colInicio: col, singlePeriod: false });
       }
+    }
+  } else {
+    // Áreas consecutivas a partir de col 2 (formato período único)
+    for (let col = 2; col < filaAreas.length; col++) {
+      const nombre = filaAreas[col];
+      if (!nombre || typeof nombre !== 'string' || !nombre.trim()) continue;
+      const n = limpiar(nombre);
+      if (n.includes('MATPERD') || n.includes('PUESTO') || n === 'ACUM FINAL') break;
+      if (esNombreDeArea(n)) areas.push({ nombre: n, colInicio: col, singlePeriod: true });
     }
   }
   return areas;
@@ -158,46 +172,58 @@ function parsearEstudiante(fila, areas, metadatos) {
   const discapacidad = fila[2] ? String(fila[2]).trim() : null;
 
   const notas = {};
+  const esSinglePeriod = areas.length > 0 && areas[0].singlePeriod;
+
   for (const area of areas) {
     const c = area.colInicio;
-    const p1 = typeof fila[c]   === 'number' && fila[c]   > 0 ? fila[c]   : null;
-    const p2 = typeof fila[c+1] === 'number' && fila[c+1] > 0 ? fila[c+1] : null;
-    const p3 = typeof fila[c+2] === 'number' && fila[c+2] > 0 ? fila[c+2] : null;
-    const ac = typeof fila[c+3] === 'number' && fila[c+3] > 0 ? fila[c+3] : null;
-    notas[area.nombre] = { p1, p2, p3, ac };
+    if (area.singlePeriod) {
+      // Período único: solo columna P1
+      const p1 = typeof fila[c] === 'number' && fila[c] > 0 ? fila[c] : null;
+      notas[area.nombre] = { p1, p2: null, p3: null, ac: p1 };
+    } else {
+      const p1 = typeof fila[c]   === 'number' && fila[c]   > 0 ? fila[c]   : null;
+      const p2 = typeof fila[c+1] === 'number' && fila[c+1] > 0 ? fila[c+1] : null;
+      const p3 = typeof fila[c+2] === 'number' && fila[c+2] > 0 ? fila[c+2] : null;
+      const ac = typeof fila[c+3] === 'number' && fila[c+3] > 0 ? fila[c+3] : null;
+      notas[area.nombre] = { p1, p2, p3, ac };
+    }
   }
 
-  // Acumulado final: buscar desde el final el primer número decimal >1 y <6
-  // Estructura al final: [..., MatPerd, AcumFinal, PuestoFinal, (null)]
-  // Trabajar al revés ignorando nulls
   let acumFinal = null;
   let puestoFinal = null;
-  const tail = fila.slice(-6).filter(v => v !== null);
-  // tail típico: [MatPerd(entero), AcumFinal(decimal), PuestoFinal(entero)]
-  // o puede variar. Buscar el acumulado como primer decimal en rango 0-5
-  const numericos = tail.filter(v => typeof v === 'number');
-  if (numericos.length >= 2) {
-    // El Puesto Final es un entero positivo grande, el AcumFinal es decimal 0-5
-    // Buscar el último valor entre 0 y 5.5 con decimales como AcumFinal
-    // y el siguiente como puesto
-    for (let k = numericos.length - 1; k >= 0; k--) {
-      const v = numericos[k];
-      if (v > 0 && v <= 5.5 && !Number.isInteger(v)) {
-        acumFinal  = parseFloat(v.toFixed(3));
-        // El puesto es el siguiente número entero
-        const siguiente = numericos[k + 1];
-        if (siguiente && Number.isInteger(siguiente) && siguiente > 0) {
-          puestoFinal = siguiente;
-        }
-        break;
-      }
-    }
-    // Si no encontramos decimal, intentar último número >0 y <=5.5
-    if (acumFinal === null) {
+
+  if (esSinglePeriod) {
+    // Período único: acumFinal = promedio de notas P1 de todas las áreas
+    const grades = Object.values(notas).map(n => n.p1).filter(v => v !== null);
+    acumFinal = grades.length
+      ? parseFloat((grades.reduce((a, b) => a + b, 0) / grades.length).toFixed(3))
+      : null;
+    // Puesto: último entero positivo después de la última área
+    const lastAreaCol = areas[areas.length - 1].colInicio;
+    const afterAreas = fila.slice(lastAreaCol + 1).filter(v => typeof v === 'number' && Number.isInteger(v) && v > 0);
+    puestoFinal = afterAreas.length > 0 ? afterAreas[afterAreas.length - 1] : null;
+  } else {
+    // Acumulado final multi-período: buscar desde el final el primer decimal en rango 0-5.5
+    const tail = fila.slice(-6).filter(v => v !== null);
+    const numericos = tail.filter(v => typeof v === 'number');
+    if (numericos.length >= 2) {
       for (let k = numericos.length - 1; k >= 0; k--) {
-        if (numericos[k] > 0 && numericos[k] <= 5.5) {
-          acumFinal = parseFloat(numericos[k].toFixed(3));
+        const v = numericos[k];
+        if (v > 0 && v <= 5.5 && !Number.isInteger(v)) {
+          acumFinal = parseFloat(v.toFixed(3));
+          const siguiente = numericos[k + 1];
+          if (siguiente && Number.isInteger(siguiente) && siguiente > 0) {
+            puestoFinal = siguiente;
+          }
           break;
+        }
+      }
+      if (acumFinal === null) {
+        for (let k = numericos.length - 1; k >= 0; k--) {
+          if (numericos[k] > 0 && numericos[k] <= 5.5) {
+            acumFinal = parseFloat(numericos[k].toFixed(3));
+            break;
+          }
         }
       }
     }
@@ -285,7 +311,7 @@ function cargarTodosLosExcel() {
             }
 
             if (filaAreas === -1) continue;
-            const areas = parsearAreas(filas[filaAreas]);
+            const areas = parsearAreas(filas[filaAreas], filas[filaAreas + 1]);
             if (areas.length === 0) continue;
 
             if (filaEstudiantes === -1) filaEstudiantes = filaAreas + 2;
