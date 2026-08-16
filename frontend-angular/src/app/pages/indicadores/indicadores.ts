@@ -238,9 +238,9 @@ export class Indicadores implements OnInit {
     const datos = this.evolucion().slice(0, 6); // máx 6 series para legibilidad
     const colores = [C_AZUL, C_AMBAR, C_VERDE, '#4A7FB5', '#7C5CBF', '#2980B9'];
     // Solo mostrar períodos que tengan datos reales (no mostrar P2/P3 si aún no ocurrieron)
-    const tieneP1 = datos.some(d => d.p1 !== null);
-    const tieneP2 = datos.some(d => d.p2 !== null);
-    const tieneP3 = datos.some(d => d.p3 !== null);
+    const tieneP1 = datos.some(d => d.p1 !== null && d.p1 > 0);
+    const tieneP2 = datos.some(d => d.p2 !== null && d.p2 > 0);
+    const tieneP3 = datos.some(d => d.p3 !== null && d.p3 > 0);
     const periodos = [
       ...(tieneP1 ? ['Período 1'] : []),
       ...(tieneP2 ? ['Período 2'] : []),
@@ -408,10 +408,10 @@ export class Indicadores implements OnInit {
     const p = this.perfil();
     if (!p) return null;
     // Solo incluir series de períodos con datos reales
-    const tieneP1 = p.radar.some(r => r.p1 !== null);
-    const tieneP2 = p.radar.some(r => r.p2 !== null);
-    const tieneP3 = p.radar.some(r => r.p3 !== null);
-    const tieneAc = p.radar.some(r => r.ac !== null);
+    const tieneP1 = p.radar.some(r => r.p1 !== null && r.p1 > 0);
+    const tieneP2 = p.radar.some(r => r.p2 !== null && r.p2 > 0);
+    const tieneP3 = p.radar.some(r => r.p3 !== null && r.p3 > 0);
+    const tieneAc = p.radar.some(r => r.ac !== null && r.ac > 0);
     const series: any[] = [
       ...(tieneP1 ? [{ name: 'P1',   data: p.radar.map(r => r.p1 ?? 0) }] : []),
       ...(tieneP2 ? [{ name: 'P2',   data: p.radar.map(r => r.p2 ?? 0) }] : []),
