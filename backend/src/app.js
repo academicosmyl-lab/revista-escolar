@@ -45,10 +45,11 @@ app.use(cors({
     if (!origin) return callback(null, true);
     const allowed = [
       process.env.FRONTEND_URL,
+      process.env.FRONTEND_URL_ALT,
       'http://localhost:4200',
       'http://localhost:4000',
     ].filter(Boolean);
-    if (allowed.includes(origin) || origin.endsWith('.vercel.app')) {
+    if (allowed.includes(origin)) {
       return callback(null, true);
     }
     callback(null, false);
@@ -65,10 +66,12 @@ if (process.env.NODE_ENV !== 'test') {
     max: 150,
     message: { error: 'Demasiadas solicitudes. Intenta más tarde.' },
   }));
+  // Auth: máximo 5 intentos por minuto para dificultar fuerza bruta
   app.use('/api/v1/auth', rateLimit({
     windowMs: 60 * 1000,
-    max: 10,
-    message: { error: 'Demasiados intentos de login.' },
+    max: 5,
+    skipSuccessfulRequests: true,
+    message: { error: 'Demasiados intentos de login. Espera un minuto.' },
   }));
 }
 
