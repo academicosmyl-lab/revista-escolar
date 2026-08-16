@@ -17,6 +17,10 @@ node_modules/
 backend/uploads/*
 !backend/uploads/.gitkeep
 
+# Datos académicos — contienen info personal de estudiantes (LOPD)
+backend/datos-indicadores/**/*.xlsx
+backend/datos-indicadores/**/*.xls
+
 # Builds
 dist/
 build/
