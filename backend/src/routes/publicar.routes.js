@@ -22,6 +22,11 @@ const uploadMem = multer({
   limits: { fileSize: 5 * 1024 * 1024, files: 5 },
 });
 
+// Elimina etiquetas HTML para prevenir XSS almacenado
+function sanitize(str) {
+  return String(str || '').replace(/<[^>]*>/g, '').trim();
+}
+
 // Helper para extraer ID de YouTube de cualquier URL
 function extraerYoutubeId(url) {
   if (!url) return null;
@@ -51,18 +56,24 @@ router.get('/sedes', async (req, res) => {
 router.post('/', autenticar, puedePublicar, uploadMem.array('imagenes', 5), async (req, res) => {
   try {
     const {
-      titulo,
-      descripcion,
-      tipo_contenido,   // 'imagenes' | 'video' | 'texto'
+      titulo: tituloRaw,
+      descripcion: descripcionRaw,
+      tipo_contenido,
       url_youtube,
       sede_nombre,
       para_portada,
     } = req.body;
 
+    const titulo      = sanitize(tituloRaw);
+    const descripcion = sanitize(descripcionRaw);
+
     // Validación básica
-    if (!titulo?.trim())      return err(res, 'El título es requerido');
-    if (!descripcion?.trim()) return err(res, 'La descripción es requerida');
-    if (!tipo_contenido)      return err(res, 'El tipo de contenido es requerido');
+    if (!titulo)         return err(res, 'El título es requerido');
+    if (!descripcion)    return err(res, 'La descripción es requerida');
+    if (!tipo_contenido) return err(res, 'El tipo de contenido es requerido');
+
+    if (titulo.length > 200)       return err(res, 'El título no puede superar 200 caracteres');
+    if (descripcion.length > 5000) return err(res, 'La descripción no puede superar 5000 caracteres');
 
     if (tipo_contenido === 'video') {
       const ytId = extraerYoutubeId(url_youtube);
@@ -70,7 +81,7 @@ router.post('/', autenticar, puedePublicar, uploadMem.array('imagenes', 5), asyn
     }
 
     // Construir contenido enriquecido con metadata del usuario autenticado
-    const sedeInfo = sede_nombre ? ` | Sede: ${sede_nombre}` : '';
+    const sedeInfo = sede_nombre ? ` | Sede: ${sanitize(sede_nombre)}` : '';
     const metadataHeader = `📋 ENVIADO POR: ${req.usuario.nombre} (${req.usuario.rol}${sedeInfo})\n\n`;
 
     let contenidoYoutube = '';
@@ -82,32 +93,32 @@ router.post('/', autenticar, puedePublicar, uploadMem.array('imagenes', 5), asyn
     // Buscar sede en BD si se especificó
     let sedeId = null;
     if (sede_nombre) {
-      const sedeReg = await Sede.findOne({ where: { nombre: sede_nombre, activa: true } });
+      const sedeReg = await Sede.findOne({ where: { nombre: sanitize(sede_nombre), activa: true } });
       if (sedeReg) sedeId = sedeReg.id;
     }
 
     // Crear la noticia en estado pendiente
     const noticia = await Noticia.create({
-      titulo:       titulo.trim(),
-      resumen:      `Enviado por: ${req.usuario.nombre} (${req.usuario.rol})`,
-      contenido:    metadataHeader + descripcion.trim() + contenidoYoutube,
-      estado:       'pendiente',
-      destacada:    para_portada === 'true' || para_portada === true,
-      autor_id:     req.usuario.id,
-      sede_id:      sedeId,
+      titulo,
+      resumen:   `Enviado por: ${req.usuario.nombre} (${req.usuario.rol})`,
+      contenido: metadataHeader + descripcion + contenidoYoutube,
+      estado:    'pendiente',
+      destacada:  para_portada === 'true' || para_portada === true,
+      autor_id:  req.usuario.id,
+      sede_id:   sedeId,
     });
 
     // Subir imágenes a Cloudinary si se enviaron
     if (req.files && req.files.length > 0) {
-      const uploads = await Promise.all(
+      await Promise.all(
         req.files.map(async (file, i) => {
           const result = await cloudinary.subirImagen(file.buffer, 'noticias');
           return Imagen.create({
-            noticia_id:  noticia.id,
-            filename:    result.public_id,
-            url:         result.secure_url,
-            alt_text:    `${titulo} - imagen ${i + 1}`,
-            es_portada:  i === 0,
+            noticia_id:   noticia.id,
+            filename:     result.public_id,
+            url:          result.secure_url,
+            alt_text:     `${titulo} - imagen ${i + 1}`,
+            es_portada:   i === 0,
             tamaño_bytes: file.size,
           });
         })
@@ -122,7 +133,7 @@ router.post('/', autenticar, puedePublicar, uploadMem.array('imagenes', 5), asyn
           adminEmail,
           docenteNombre: req.usuario.nombre,
           noticiaId:     noticia.id,
-          noticiaTitulo: titulo.trim(),
+          noticiaTitulo: titulo,
           sedeName:      sede_nombre || 'Sin especificar',
         });
       }
