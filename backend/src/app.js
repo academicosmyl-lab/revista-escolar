@@ -44,6 +44,8 @@ app.use(cors({
   origin: (origin, callback) => {
     if (!origin) return callback(null, true);
     const allowed = [
+      'https://revista-escolar-zeta.vercel.app',
+      'https://academicosmyl-lab.github.io',
       process.env.FRONTEND_URL,
       process.env.FRONTEND_URL_ALT,
       'http://localhost:4200',
