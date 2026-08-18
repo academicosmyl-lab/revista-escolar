@@ -40,18 +40,22 @@ app.use(helmet({
   crossOriginEmbedderPolicy: false,
 }));
 
+const CORS_ALLOWED = [
+  'https://revista-escolar-zeta.vercel.app',
+  'https://academicosmyl-lab.github.io',
+  process.env.FRONTEND_URL,
+  process.env.FRONTEND_URL_ALT,
+  'http://localhost:4200',
+  'http://localhost:4000',
+].filter(Boolean);
+
+console.log('🌐 CORS orígenes permitidos:', CORS_ALLOWED);
+
 app.use(cors({
   origin: (origin, callback) => {
     if (!origin) return callback(null, true);
-    const allowed = [
-      'https://revista-escolar-zeta.vercel.app',
-      'https://academicosmyl-lab.github.io',
-      process.env.FRONTEND_URL,
-      process.env.FRONTEND_URL_ALT,
-      'http://localhost:4200',
-      'http://localhost:4000',
-    ].filter(Boolean);
-    if (allowed.includes(origin)) {
+    // Lista exacta + cualquier preview de Vercel
+    if (CORS_ALLOWED.includes(origin) || /^https:\/\/[a-z0-9-]+-academicosmyl-lab\.vercel\.app$/.test(origin)) {
       return callback(null, true);
     }
     callback(null, false);
