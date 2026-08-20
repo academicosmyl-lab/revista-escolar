@@ -322,7 +322,8 @@
         <div class="reg-campo reg-campo-full">
           <label class="reg-label" for="fNombre">Nombre completo <span class="reg-req">*</span></label>
           <input id="fNombre" type="text" class="reg-input" autocomplete="new-password"
-                 placeholder="Ej: Carlos Alberto Rodríguez Pérez"
+                 placeholder="Ej: Carlos Alberto Rodríguez Pérez" readonly
+                 (focus)="$any($event.target).removeAttribute('readonly')"
                  [ngModel]="nombre()" (ngModelChange)="nombre.set($event)"
                  (blur)="onBlurNombre()" required maxlength="80">
         </div>
@@ -342,7 +343,8 @@
           <div class="reg-campo">
             <label class="reg-label" for="fTitulo">Título académico <span class="reg-req">*</span></label>
             <input id="fTitulo" type="text" class="reg-input" autocomplete="new-password"
-                   placeholder="Ej: Licenciado en Artes Plásticas, Ing. de Sistemas..."
+                   placeholder="Ej: Licenciado en Artes Plásticas, Ing. de Sistemas..." readonly
+                   (focus)="$any($event.target).removeAttribute('readonly')"
                    [ngModel]="titulo()" (ngModelChange)="titulo.set($event)"
                    (blur)="onBlurTitulo()" maxlength="80">
           </div>
@@ -381,7 +383,8 @@
             @if (esPersonal()) { Email de contacto } @else { Email institucional }
           </label>
           <input id="fEmail" type="email" class="reg-input" autocomplete="new-password"
-                 [placeholder]="esPersonal() ? 'Ej: micorreo@gmail.com' : 'Ej: jrodriguez@itssantander.edu.co'"
+                 [placeholder]="esPersonal() ? 'Ej: micorreo@gmail.com' : 'Ej: jrodriguez@itssantander.edu.co'" readonly
+                 (focus)="$any($event.target).removeAttribute('readonly')"
                  [ngModel]="email()" (ngModelChange)="email.set($event)"
                  (blur)="onBlurEmail()" maxlength="100">
         </div>
