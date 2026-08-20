@@ -321,7 +321,7 @@
 
         <div class="reg-campo reg-campo-full">
           <label class="reg-label" for="fNombre">Nombre completo <span class="reg-req">*</span></label>
-          <input id="fNombre" type="text" class="reg-input" autocomplete="off"
+          <input id="fNombre" type="text" class="reg-input" autocomplete="new-password"
                  placeholder="Ej: Carlos Alberto Rodríguez Pérez"
                  [ngModel]="nombre()" (ngModelChange)="nombre.set($event)"
                  (blur)="onBlurNombre()" required maxlength="80">
@@ -341,7 +341,7 @@
           <!-- ── Solo académicos: título + área ── -->
           <div class="reg-campo">
             <label class="reg-label" for="fTitulo">Título académico <span class="reg-req">*</span></label>
-            <input id="fTitulo" type="text" class="reg-input" autocomplete="off"
+            <input id="fTitulo" type="text" class="reg-input" autocomplete="new-password"
                    placeholder="Ej: Licenciado en Artes Plásticas, Ing. de Sistemas..."
                    [ngModel]="titulo()" (ngModelChange)="titulo.set($event)"
                    (blur)="onBlurTitulo()" maxlength="80">
@@ -365,7 +365,7 @@
                 <input id="fOtraArea" type="text" class="reg-input reg-input-otra-area"
                        placeholder="Ej: Mecánica Automotriz, Artes Plásticas, Música..."
                        [ngModel]="otraArea()" (ngModelChange)="otraArea.set($event)"
-                       (blur)="onBlurOtraArea()" maxlength="80" autocomplete="off">
+                       (blur)="onBlurOtraArea()" maxlength="80" autocomplete="new-password">
                 <span class="reg-otra-area-hint">
                   <svg viewBox="0 0 16 16" fill="currentColor" width="11"><path d="M8 1a7 7 0 100 14A7 7 0 008 1zm.75 10.5h-1.5v-1.5h1.5v1.5zm0-3h-1.5V4.5h1.5V8.5z"/></svg>
                   Esta área se agregará a la lista para que futuros registros la puedan seleccionar.
@@ -380,7 +380,7 @@
           <label class="reg-label" for="fEmail">
             @if (esPersonal()) { Email de contacto } @else { Email institucional }
           </label>
-          <input id="fEmail" type="email" class="reg-input" autocomplete="off"
+          <input id="fEmail" type="email" class="reg-input" autocomplete="new-password"
                  [placeholder]="esPersonal() ? 'Ej: micorreo@gmail.com' : 'Ej: jrodriguez@itssantander.edu.co'"
                  [ngModel]="email()" (ngModelChange)="email.set($event)"
                  (blur)="onBlurEmail()" maxlength="100">
@@ -434,7 +434,7 @@
               Presentación profesional breve — visible en tu tarjeta pública <span class="reg-req">*</span>
             }
           </label>
-          <textarea id="fBioCorta" class="reg-textarea reg-textarea-sm" autocomplete="off"
+          <textarea id="fBioCorta" class="reg-textarea reg-textarea-sm" autocomplete="new-password"
                     [placeholder]="esPersonal()
                       ? 'Ej: Encargado de la seguridad de las tres sedes. Llevo 8 años cuidando a nuestra comunidad educativa.'
                       : 'Ej: docente de electrónica con énfasis en robótica. Me apasiona conectar la teoría con proyectos reales.'"
@@ -454,7 +454,7 @@
               Presentación completa — se muestra en tu perfil
             }
           </label>
-          <textarea id="fBioFull" class="reg-textarea reg-textarea-lg" autocomplete="off"
+          <textarea id="fBioFull" class="reg-textarea reg-textarea-lg" autocomplete="new-password"
                     [placeholder]="esPersonal()
                       ? 'Cuéntanos cómo llegaste al ITI, qué te gusta de trabajar aquí, algo que te enorgullezca de tu labor...'
                       : 'Cuéntanos tu trayectoria, metodología, qué te motivó, logros, proyectos con estudiantes...'"
