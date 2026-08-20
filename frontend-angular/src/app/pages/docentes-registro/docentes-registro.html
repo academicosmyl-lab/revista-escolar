@@ -515,17 +515,13 @@
               }
             </div>
           }
-          @if (especialidades().length < 5) {
-            <div class="reg-tag-input-wrap">
-              <input type="text" class="reg-input" autocomplete="off" placeholder="Ej: Arduino, Robótica, Álgebra..."
-                     [ngModel]="nuevaEspecialidad()" (ngModelChange)="nuevaEspecialidad.set($event)"
-                     (keydown)="onTagKey($event)" maxlength="40">
-              <button type="button" class="reg-tag-agregar" (click)="agregarEspecialidad()"
-                      [disabled]="!nuevaEspecialidad().trim()">+ Agregar</button>
-            </div>
-          } @else {
-            <p class="reg-tags-max">Máximo de 5 especialidades alcanzado.</p>
-          }
+          <div class="reg-tag-input-wrap">
+            <input type="text" class="reg-input" autocomplete="off" placeholder="Ej: Arduino, Robótica, Álgebra..."
+                   [ngModel]="nuevaEspecialidad()" (ngModelChange)="nuevaEspecialidad.set($event)"
+                   (keydown)="onTagKey($event)" maxlength="40">
+            <button type="button" class="reg-tag-agregar" (click)="agregarEspecialidad()"
+                    [disabled]="!nuevaEspecialidad().trim()">+ Agregar</button>
+          </div>
         </div>
       </div>
     </section>
