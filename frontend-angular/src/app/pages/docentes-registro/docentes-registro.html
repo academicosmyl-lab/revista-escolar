@@ -179,7 +179,11 @@
 }
 
 <main class="reg-form-wrap">
-  <form class="reg-form" (ngSubmit)="enviar()" novalidate>
+  <form class="reg-form" (ngSubmit)="enviar()" novalidate autocomplete="off">
+    <!-- honeypot: Chrome llena estos en lugar de los campos reales -->
+    <input type="text"     style="position:absolute;opacity:0;pointer-events:none;height:0;width:0;border:0" tabindex="-1" aria-hidden="true">
+    <input type="email"    style="position:absolute;opacity:0;pointer-events:none;height:0;width:0;border:0" tabindex="-1" aria-hidden="true">
+    <input type="password" style="position:absolute;opacity:0;pointer-events:none;height:0;width:0;border:0" tabindex="-1" aria-hidden="true">
 
     <!-- ══════════════════════════════════════════
          SECCIÓN 00 — ROL (obligatorio, desbloquea el resto)
@@ -320,8 +324,8 @@
       <div class="reg-campos">
 
         <div class="reg-campo reg-campo-full">
-          <label class="reg-label" for="fNombre">Nombre completo <span class="reg-req">*</span></label>
-          <input id="fNombre" type="text" class="reg-input" autocomplete="new-password"
+          <label class="reg-label" for="r_nc">Nombre completo <span class="reg-req">*</span></label>
+          <input id="r_nc" type="text" class="reg-input" autocomplete="new-password"
                  placeholder="Ej: Carlos Alberto Rodríguez Pérez" readonly
                  (focus)="$any($event.target).removeAttribute('readonly')"
                  [ngModel]="nombre()" (ngModelChange)="nombre.set($event)"
@@ -341,8 +345,8 @@
         @if (!esPersonal()) {
           <!-- ── Solo académicos: título + área ── -->
           <div class="reg-campo">
-            <label class="reg-label" for="fTitulo">Título académico <span class="reg-req">*</span></label>
-            <input id="fTitulo" type="text" class="reg-input" autocomplete="new-password"
+            <label class="reg-label" for="r_ta">Título académico <span class="reg-req">*</span></label>
+            <input id="r_ta" type="text" class="reg-input" autocomplete="new-password"
                    placeholder="Ej: Licenciado en Artes Plásticas, Ing. de Sistemas..." readonly
                    (focus)="$any($event.target).removeAttribute('readonly')"
                    [ngModel]="titulo()" (ngModelChange)="titulo.set($event)"
@@ -379,10 +383,10 @@
 
         <!-- ── Todos los roles: email + tiempo en la institución ── -->
         <div class="reg-campo">
-          <label class="reg-label" for="fEmail">
+          <label class="reg-label" for="r_em">
             @if (esPersonal()) { Email de contacto } @else { Email institucional }
           </label>
-          <input id="fEmail" type="email" class="reg-input" autocomplete="new-password"
+          <input id="r_em" type="text" inputmode="email" class="reg-input" autocomplete="new-password"
                  [placeholder]="esPersonal() ? 'Ej: micorreo@gmail.com' : 'Ej: jrodriguez@itssantander.edu.co'" readonly
                  (focus)="$any($event.target).removeAttribute('readonly')"
                  [ngModel]="email()" (ngModelChange)="email.set($event)"
