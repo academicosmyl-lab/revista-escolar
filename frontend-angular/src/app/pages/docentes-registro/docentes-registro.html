@@ -332,6 +332,7 @@
           <select id="fSede" class="reg-select" autocomplete="off"
                   [ngModel]="sede()" (ngModelChange)="sede.set($event)" required>
             <option value="" disabled>Selecciona la sede...</option>
+            <option value="Todas las sedes">Todas las sedes</option>
             @for (s of sedes; track s) { <option [value]="s">{{ s }}</option> }
           </select>
         </div>
