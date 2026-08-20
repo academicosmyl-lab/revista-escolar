@@ -126,7 +126,7 @@ export class DocentesRegistro implements OnInit, AfterViewInit, OnDestroy {
 
   // ── Contadores ──────────────────────────────────────────
   bioShortLeft = computed(() => 140 - this.bioCorta().length);
-  bioFullLeft  = computed(() => 600 - this.bioCompleta().length);
+
 
   // ── Validación por rol ──────────────────────────────────
   get formValido(): boolean {

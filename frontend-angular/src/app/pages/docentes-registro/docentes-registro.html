@@ -459,10 +459,7 @@
                       ? 'Cuéntanos cómo llegaste al ITI, qué te gusta de trabajar aquí, algo que te enorgullezca de tu labor...'
                       : 'Cuéntanos tu trayectoria, metodología, qué te motivó, logros, proyectos con estudiantes...'"
                     [ngModel]="bioCompleta()" (ngModelChange)="bioCompleta.set($event)"
-                    (blur)="onBlurBioCompleta()" maxlength="600"></textarea>
-          <div class="reg-contador" [class.reg-contador-warn]="bioFullLeft() <= 30">
-            {{ bioFullLeft() }} caracteres restantes
-          </div>
+                    (blur)="onBlurBioCompleta()"></textarea>
         </div>
 
         <!-- Botón revisión IA -->
