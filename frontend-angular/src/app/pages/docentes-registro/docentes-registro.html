@@ -179,11 +179,7 @@
 }
 
 <main class="reg-form-wrap">
-  <form class="reg-form" (ngSubmit)="enviar()" novalidate autocomplete="off">
-    <!-- honeypot: Chrome llena estos en lugar de los campos reales -->
-    <input type="text"     style="position:absolute;opacity:0;pointer-events:none;height:0;width:0;border:0" tabindex="-1" aria-hidden="true">
-    <input type="email"    style="position:absolute;opacity:0;pointer-events:none;height:0;width:0;border:0" tabindex="-1" aria-hidden="true">
-    <input type="password" style="position:absolute;opacity:0;pointer-events:none;height:0;width:0;border:0" tabindex="-1" aria-hidden="true">
+  <div class="reg-form">
 
     <!-- ══════════════════════════════════════════
          SECCIÓN 00 — ROL (obligatorio, desbloquea el resto)
@@ -665,7 +661,7 @@
            y recibirás confirmación por email cuando esté publicado.</p>
         <p class="reg-submit-nota-req">Campos marcados con <span class="reg-req">*</span> son obligatorios.</p>
       </div>
-      <button type="submit" class="reg-btn-submit" [disabled]="!formValido || enviando()">
+      <button type="button" class="reg-btn-submit" (click)="enviar()" [disabled]="!formValido || enviando()">
         @if (enviando()) {
           <span class="reg-btn-spinner"></span>
           @if (modoInicio() === 'editando') { Guardando cambios... } @else { Enviando tu perfil... }
@@ -678,7 +674,7 @@
 
     } <!-- /rolSeleccionado -->
 
-  </form>
+  </div>
 </main>
 } <!-- /modoInicio nuevo|editando -->
 
