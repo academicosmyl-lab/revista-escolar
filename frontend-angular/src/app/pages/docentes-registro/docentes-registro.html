@@ -342,7 +342,7 @@
           <div class="reg-campo">
             <label class="reg-label" for="fTitulo">Título académico <span class="reg-req">*</span></label>
             <input id="fTitulo" type="text" class="reg-input" autocomplete="off"
-                   placeholder="Ej: Licenciado en Matemáticas"
+                   placeholder="Ej: Licenciado en Artes Plásticas, Ing. de Sistemas..."
                    [ngModel]="titulo()" (ngModelChange)="titulo.set($event)"
                    (blur)="onBlurTitulo()" maxlength="80">
           </div>
@@ -381,7 +381,7 @@
             @if (esPersonal()) { Email de contacto } @else { Email institucional }
           </label>
           <input id="fEmail" type="email" class="reg-input" autocomplete="off"
-                 [placeholder]="esPersonal() ? 'tucorreo@ejemplo.com' : 'nombre@itssantander.edu.co'"
+                 [placeholder]="esPersonal() ? 'Ej: micorreo@gmail.com' : 'Ej: jrodriguez@itssantander.edu.co'"
                  [ngModel]="email()" (ngModelChange)="email.set($event)"
                  (blur)="onBlurEmail()" maxlength="100">
         </div>
