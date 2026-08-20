@@ -125,7 +125,7 @@ export class DocentesRegistro implements OnInit, AfterViewInit, OnDestroy {
   esAcademico           = computed(() => !this.esPersonal());
 
   // ── Contadores ──────────────────────────────────────────
-  bioShortLeft = computed(() => 140 - this.bioCorta().length);
+  bioShortLeft = computed(() => 500 - this.bioCorta().length);
 
 
   // ── Validación por rol ──────────────────────────────────

@@ -439,8 +439,8 @@
                       ? 'Ej: Encargado de la seguridad de las tres sedes. Llevo 8 años cuidando a nuestra comunidad educativa.'
                       : 'Ej: docente de electrónica con énfasis en robótica. Me apasiona conectar la teoría con proyectos reales.'"
                     [ngModel]="bioCorta()" (ngModelChange)="bioCorta.set($event)"
-                    (blur)="onBlurBioCorta()" maxlength="140" [required]="!esPersonal()"></textarea>
-          <div class="reg-contador" [class.reg-contador-warn]="bioShortLeft() <= 15">
+                    (blur)="onBlurBioCorta()" maxlength="500" [required]="!esPersonal()"></textarea>
+          <div class="reg-contador" [class.reg-contador-warn]="bioShortLeft() <= 30">
             {{ bioShortLeft() }} caracteres restantes
           </div>
         </div>
