@@ -376,7 +376,7 @@ export class DocentesRegistro implements OnInit, AfterViewInit, OnDestroy {
   // ══════════════════════════════════════════════════════
   agregarEspecialidad() {
     const v = this.nuevaEspecialidad().trim();
-    if (!v || this.especialidades().includes(v) || this.especialidades().length >= 5) return;
+    if (!v || this.especialidades().includes(v)) return;
     this.especialidades.update(arr => [...arr, v]);
     this.nuevaEspecialidad.set('');
   }
