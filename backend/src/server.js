@@ -70,7 +70,7 @@ async function iniciar() {
       console.log(`
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 🏫  Instituto Técnico Industrial Santander
-📰  Revista Digital v3.0 — ${process.env.NODE_ENV}
+📰  Revista Digital v4.0 — ${process.env.NODE_ENV}
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 🚀  Servidor: http://localhost:${PORT}
 🔗  Health:   http://localhost:${PORT}/api/v1/health
