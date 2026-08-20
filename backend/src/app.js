@@ -68,6 +68,19 @@ app.use(cors({
   credentials: true,
 }));
 
+// ── Parsers ───────────────────────────────────────────────
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+
+// ── Archivos estáticos ─────────────────────────────────────
+app.use('/public', (req, res, next) => {
+  res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
+  next();
+}, express.static(path.join(__dirname, '../public')));
+
+// ── Health (antes del rate limiter para que Render pueda verificar el deploy) ──
+app.use('/api/v1',                   healthRoutes);
+
 // Rate limiting (desactivado en test para no interferir)
 if (process.env.NODE_ENV !== 'test') {
   app.use('/api/', rateLimit({
@@ -84,18 +97,7 @@ if (process.env.NODE_ENV !== 'test') {
   }));
 }
 
-// ── Parsers ───────────────────────────────────────────────
-app.use(express.json({ limit: '10mb' }));
-app.use(express.urlencoded({ extended: true, limit: '10mb' }));
-
-// ── Archivos estáticos ─────────────────────────────────────
-app.use('/public', (req, res, next) => {
-  res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
-  next();
-}, express.static(path.join(__dirname, '../public')));
-
 // ── Rutas ─────────────────────────────────────────────────
-app.use('/api/v1',                   healthRoutes);
 app.use('/api/v1/auth',              authRoutes);
 app.use('/api/v1/noticias',          noticiasRoutes);
 app.use('/api/v1/categorias',        categoriasRoutes);
