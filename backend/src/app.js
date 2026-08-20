@@ -34,6 +34,9 @@ const publicarRoutes         = require('./routes/publicar.routes');
 
 const app = express();
 
+// Render y Cloudflare actúan como proxy — necesario para express-rate-limit
+app.set('trust proxy', 1);
+
 // ── Seguridad ─────────────────────────────────────────────
 app.use(helmet({
   contentSecurityPolicy: false,
