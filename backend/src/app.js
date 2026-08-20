@@ -86,13 +86,14 @@ if (process.env.NODE_ENV !== 'test') {
   app.use('/api/', rateLimit({
     windowMs: 15 * 60 * 1000,
     max: 150,
+    validate: { xForwardedForHeader: false },
     message: { error: 'Demasiadas solicitudes. Intenta más tarde.' },
   }));
-  // Auth: máximo 5 intentos por minuto para dificultar fuerza bruta
   app.use('/api/v1/auth', rateLimit({
     windowMs: 60 * 1000,
     max: 5,
     skipSuccessfulRequests: true,
+    validate: { xForwardedForHeader: false },
     message: { error: 'Demasiados intentos de login. Espera un minuto.' },
   }));
 }
