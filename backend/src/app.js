@@ -57,8 +57,10 @@ console.log('🌐 CORS orígenes permitidos:', CORS_ALLOWED);
 app.use(cors({
   origin: (origin, callback) => {
     if (!origin) return callback(null, true);
-    // Lista exacta + cualquier preview de Vercel
-    if (CORS_ALLOWED.includes(origin) || /^https:\/\/[a-z0-9-]+-academicosmyl-lab\.vercel\.app$/.test(origin)) {
+    // Lista exacta + cualquier preview de Vercel del proyecto revista-escolar
+    if (CORS_ALLOWED.includes(origin) ||
+        /^https:\/\/revista-escolar[a-z0-9-]*\.vercel\.app$/.test(origin) ||
+        /^https:\/\/[a-z0-9-]+-academicosmyl-lab\.vercel\.app$/.test(origin)) {
       return callback(null, true);
     }
     callback(null, false);
