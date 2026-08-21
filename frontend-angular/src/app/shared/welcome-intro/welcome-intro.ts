@@ -119,10 +119,11 @@ export class WelcomeIntro implements AfterViewInit, OnDestroy {
 
   // ── Shield geometry ───────────────────────────────────────────────────────
 
+  private get mobile() { return this.W < 600; }
   private get cx() { return this.W / 2; }
-  private get cy() { return this.H * 0.45; }
-  private get sw() { return Math.min(this.W * 0.62, 380); }
-  private get sh() { return this.sw * 1.25; }
+  private get cy() { return this.mobile ? this.H * 0.42 : this.H * 0.45; }
+  private get sw() { return this.mobile ? this.W * 0.92 : Math.min(this.W * 0.62, 380); }
+  private get sh() { return this.mobile ? this.H * 0.78 : this.sw * 1.25; }
 
   private buildShieldPoints(): void {
     const { cx, cy, sw, sh } = this;
