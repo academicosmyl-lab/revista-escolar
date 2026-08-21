@@ -1,3 +1,8 @@
+<!-- Experiencia de bienvenida — solo en primera visita -->
+@if (showIntro) {
+  <app-welcome-intro></app-welcome-intro>
+}
+
 <!-- Barra de progreso de scroll — gradiente institucional vinotinto→dorado→verde -->
 <div class="scroll-progress" id="scrollProgress" aria-hidden="true"></div>
 
@@ -5,9 +10,7 @@
 <div class="cursor-aura" id="cursorRing"></div>
 
 <app-navbar></app-navbar>
-<!-- CAMBIO ARCH-UI: router-outlet renderiza la página activa -->
 <router-outlet></router-outlet>
-<!-- CAMBIO ARCH-UI: Footer fuera del router-outlet → aparece en TODAS las páginas -->
 <app-footer></app-footer>
 <!-- Banner de cookies — aparece en primer visita, bloquea scroll hasta aceptar -->
 <app-cookie-consent></app-cookie-consent>

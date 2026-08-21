@@ -1,19 +1,25 @@
 import { Component, inject, OnInit, AfterViewInit, DestroyRef } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { Navbar } from './navbar/navbar';
-import { Footer } from './shared/footer/footer'; // CAMBIO ARCH-UI: FooterComponent compartido
+import { Footer } from './shared/footer/footer';
 import { CookieConsent } from './shared/cookie-consent/cookie-consent';
+import { WelcomeIntro } from './shared/welcome-intro/welcome-intro';
 import { ApiService } from './services/api.service';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, Navbar, Footer, CookieConsent],
+  imports: [RouterOutlet, Navbar, Footer, CookieConsent, WelcomeIntro],
   templateUrl: './app.html',
   styleUrl: './app.scss'
 })
 export class App implements OnInit, AfterViewInit {
-  private api       = inject(ApiService);
-  private destroyRef = inject(DestroyRef); // CAMBIO ARCH-UI: evita memory leak al destruir el componente
+  private api        = inject(ApiService);
+  private destroyRef = inject(DestroyRef);
+
+  readonly showIntro = (() => {
+    try { return !localStorage.getItem('itis_90_intro'); }
+    catch { return false; }
+  })();
 
   ngOnInit() {
     this.api.get('/health').subscribe({ error: () => {} });

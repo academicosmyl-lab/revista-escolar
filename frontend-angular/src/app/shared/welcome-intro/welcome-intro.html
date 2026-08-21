@@ -1,0 +1,50 @@
+@if (visible()) {
+<div
+  class="wi-overlay"
+  [class.wi--out]="fadingOut()"
+  role="dialog"
+  aria-modal="true"
+  aria-label="Celebración 90 años Instituto Técnico Industrial Santander"
+>
+  <!-- Vignette -->
+  <div class="wi-vignette" aria-hidden="true"></div>
+
+  <!-- Canvas de partículas -->
+  <canvas #particleCanvas class="wi-canvas" aria-hidden="true"></canvas>
+
+  <!-- Contenido central -->
+  <div class="wi-stage">
+
+    <!-- 90 AÑOS -->
+    <div class="wi-block wi-block--anni" [class.wi--show]="showText90()">
+      <div class="wi-burst" aria-hidden="true"></div>
+      <p class="wi-num">90</p>
+      <p class="wi-years">AÑOS</p>
+    </div>
+
+    <!-- Divisor dorado -->
+    <div class="wi-divider" [class.wi--show]="showDivider()" aria-hidden="true"></div>
+
+    <!-- Nombre institución -->
+    <div class="wi-block wi-block--name" [class.wi--show]="showTitle()">
+      <h1 class="wi-name">Instituto Técnico Industrial</h1>
+      <p class="wi-sub" [class.wi--show]="showSub()">
+        Santander &nbsp;·&nbsp; 1936 – 2026
+      </p>
+    </div>
+
+  </div>
+
+  <!-- Botón omitir -->
+  @if (showSkip()) {
+  <button class="wi-skip" (click)="skip()" aria-label="Omitir introducción">
+    Omitir
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+      <path d="M2 7H12M8.5 3.5L12 7L8.5 10.5" stroke="currentColor" stroke-width="1.4"
+            stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </button>
+  }
+
+</div>
+}
