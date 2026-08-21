@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { Component, ChangeDetectionStrategy, AfterViewInit } from '@angular/core';
 
 @Component({
   selector: 'app-nosotros',
@@ -7,17 +7,17 @@ import { Component, ChangeDetectionStrategy } from '@angular/core';
   styleUrl: './nosotros.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class Nosotros {
+export class Nosotros implements AfterViewInit {
 
   readonly valores = [
-    { icono: '⭐', nombre: 'Excelencia',            descripcion: 'Búsqueda constante de la calidad en lo académico, técnico y humano. Compromiso con la mejora continua.' },
-    { icono: '📋', nombre: 'Disciplina',             descripcion: 'Formación de hábitos de responsabilidad, orden y autorregulación para la vida personal y profesional.' },
-    { icono: '🤝', nombre: 'Servicio',               descripcion: 'Disposición de aportar conocimiento y habilidades técnicas al servicio de la comunidad y la sociedad.' },
-    { icono: '👥', nombre: 'Liderazgo',              descripcion: 'Capacidad de guiar, inspirar e influir positivamente en el desarrollo de proyectos transformadores.' },
-    { icono: '💡', nombre: 'Innovación',             descripcion: 'Creatividad y disposición para proponer soluciones nuevas y prácticas a los problemas reales.' },
-    { icono: '✅', nombre: 'Integridad',             descripcion: 'Actuación ética, honesta y coherente entre lo que se dice y lo que se hace.' },
-    { icono: '🌍', nombre: 'Inclusión',              descripcion: 'Aceptación y valoración de la diversidad, asegurando oportunidades para todos.' },
-    { icono: '🌱', nombre: 'Responsabilidad Social', descripcion: 'Compromiso con el bienestar colectivo y el desarrollo sostenible de la comunidad.' },
+    { nombre: 'Excelencia',            descripcion: 'Búsqueda constante de la calidad en lo académico, técnico y humano. Compromiso con la mejora continua.' },
+    { nombre: 'Disciplina',             descripcion: 'Formación de hábitos de responsabilidad, orden y autorregulación para la vida personal y profesional.' },
+    { nombre: 'Servicio',               descripcion: 'Disposición de aportar conocimiento y habilidades técnicas al servicio de la comunidad y la sociedad.' },
+    { nombre: 'Liderazgo',              descripcion: 'Capacidad de guiar, inspirar e influir positivamente en el desarrollo de proyectos transformadores.' },
+    { nombre: 'Innovación',             descripcion: 'Creatividad y disposición para proponer soluciones nuevas y prácticas a los problemas reales.' },
+    { nombre: 'Integridad',             descripcion: 'Actuación ética, honesta y coherente entre lo que se dice y lo que se hace.' },
+    { nombre: 'Inclusión',              descripcion: 'Aceptación y valoración de la diversidad, asegurando oportunidades para todos.' },
+    { nombre: 'Responsabilidad Social', descripcion: 'Compromiso con el bienestar colectivo y el desarrollo sostenible de la comunidad.' },
   ];
 
   readonly principios = [
@@ -41,4 +41,16 @@ export class Nosotros {
 
   readonly misionTags = ['Formación técnica integral', 'Transformación social', 'Responsabilidad social', 'Innovación', 'Excelencia académica'];
   readonly visionTags = ['Liderazgo regional', 'Profesionales competentes', 'Innovación', 'Compromiso social', 'Desarrollo sostenible'];
+
+  numStr(i: number): string { return String(i + 1).padStart(2, '0'); }
+
+  ngAfterViewInit() {
+    const observer = new IntersectionObserver(
+      entries => entries.forEach(e => {
+        if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); }
+      }),
+      { threshold: 0.1 }
+    );
+    document.querySelectorAll('.nos-reveal').forEach(el => observer.observe(el));
+  }
 }

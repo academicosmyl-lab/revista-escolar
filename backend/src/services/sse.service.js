@@ -26,18 +26,37 @@ const sseService = {
     clientes.set(clienteId, res);
     console.log(`📡 SSE: cliente conectado [${clienteId}] — total: ${clientes.size}`);
 
-    // Ping cada 30 segundos para mantener la conexión viva
+    const limpiar = () => {
+      clearInterval(ping);
+      clearTimeout(timeout);
+      clientes.delete(clienteId);
+    };
+
+    // Ping con try/catch — si falla la escritura, limpia inmediatamente
     const ping = setInterval(() => {
-      res.write(`event: ping\ndata: ${JSON.stringify({ ts: Date.now() })}\n\n`);
+      try {
+        res.write(`event: ping\ndata: ${JSON.stringify({ ts: Date.now() })}\n\n`);
+      } catch {
+        limpiar();
+        console.log(`📡 SSE: ping fallido, cliente removido [${clienteId}] — total: ${clientes.size}`);
+      }
     }, 30000);
 
+    // Timeout de 5 min: el cliente debe reconectarse (evita acumulación de memoria en Render)
+    const timeout = setTimeout(() => {
+      try { res.end(); } catch { /* ya cerrado */ }
+      limpiar();
+      console.log(`📡 SSE: timeout 5 min, cliente removido [${clienteId}] — total: ${clientes.size}`);
+    }, 5 * 60 * 1000);
+
     // Mensaje inicial de confirmación
-    res.write(`event: conectado\ndata: ${JSON.stringify({ clienteId, mensaje: 'Conectado a la Revista ITS' })}\n\n`);
+    try {
+      res.write(`event: conectado\ndata: ${JSON.stringify({ clienteId, mensaje: 'Conectado a la Revista ITS' })}\n\n`);
+    } catch { limpiar(); return; }
 
     // Limpiar al desconectar
     req.on('close', () => {
-      clearInterval(ping);
-      clientes.delete(clienteId);
+      limpiar();
       console.log(`📡 SSE: cliente desconectado [${clienteId}] — total: ${clientes.size}`);
     });
   },

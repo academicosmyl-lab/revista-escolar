@@ -13,6 +13,14 @@ const { sincronizarNoticiasExternas } = require('./jobs/noticias-externas.job');
 
 const PORT = process.env.PORT || 3000;
 
+// Evitar que errores no manejados derriben el proceso en Render
+process.on('uncaughtException', err => {
+  console.error('❌ uncaughtException (proceso sigue):', err.message, err.stack);
+});
+process.on('unhandledRejection', (reason) => {
+  console.error('❌ unhandledRejection (proceso sigue):', reason);
+});
+
 async function iniciar() {
   try {
     // Sincronizar base de datos
@@ -83,7 +91,10 @@ async function iniciar() {
       console.log('⏰ Iniciando cron de noticias externas...');
       setTimeout(() => {
         sincronizarNoticiasExternas().catch(e => console.error('Error noticias externas:', e.message));
-        setInterval(sincronizarNoticiasExternas, 60 * 60 * 1000);
+        setInterval(
+          () => sincronizarNoticiasExternas().catch(e => console.error('Error noticias externas interval:', e.message)),
+          60 * 60 * 1000
+        );
       }, 5000);
     }
 

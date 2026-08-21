@@ -28,8 +28,12 @@
       <div class="nos-mv-grid">
 
         <!-- Misión -->
-        <div class="nos-mv-card">
-          <div class="nos-mv-icon">📌</div>
+        <div class="nos-mv-card nos-reveal">
+          <div class="nos-mv-icon-wrap">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" width="26" height="26">
+              <circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/>
+            </svg>
+          </div>
           <h2 class="nos-mv-titulo">Misión</h2>
           <p class="nos-mv-texto">
             Formar estudiantes capaces de transformar su realidad mediante conocimiento técnico e integral,
@@ -44,8 +48,12 @@
         </div>
 
         <!-- Visión -->
-        <div class="nos-mv-card">
-          <div class="nos-mv-icon">🚀</div>
+        <div class="nos-mv-card nos-reveal" style="transition-delay:0.12s">
+          <div class="nos-mv-icon-wrap">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" width="26" height="26">
+              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+            </svg>
+          </div>
           <h2 class="nos-mv-titulo">Visión</h2>
           <p class="nos-mv-texto">
             Ser el Instituto Técnico Industrial líder en la región, reconocido por formar profesionales
@@ -93,14 +101,14 @@
   ══════════════════════════════════════════════════════ -->
   <section class="nos-section">
     <div class="nos-container">
-      <div class="nos-section-header">
+      <div class="nos-section-header nos-reveal">
         <h2 class="nos-section-titulo">Valores Institucionales</h2>
         <p class="nos-section-desc">Los pilares que guían nuestra comunidad educativa día a día</p>
       </div>
       <div class="nos-valores-grid">
-        @for (valor of valores; track valor.nombre) {
-          <div class="nos-valor-card">
-            <span class="nos-valor-icono">{{ valor.icono }}</span>
+        @for (valor of valores; track valor.nombre; let i = $index) {
+          <div class="nos-valor-card nos-reveal" [style.transition-delay]="(i % 4) * 0.07 + 's'">
+            <div class="nos-valor-num">{{ numStr(i) }}</div>
             <h3 class="nos-valor-nombre">{{ valor.nombre }}</h3>
             <p class="nos-valor-desc">{{ valor.descripcion }}</p>
           </div>
@@ -114,13 +122,14 @@
   ══════════════════════════════════════════════════════ -->
   <section class="nos-section nos-section--alt">
     <div class="nos-container">
-      <div class="nos-section-header">
+      <div class="nos-section-header nos-reveal">
         <h2 class="nos-section-titulo">Principios Pedagógicos</h2>
         <p class="nos-section-desc">El enfoque educativo que transforma vidas y construye futuro</p>
       </div>
       <div class="nos-principios-grid">
-        @for (p of principios; track p.nombre) {
-          <div class="nos-principio-card">
+        @for (p of principios; track p.nombre; let i = $index) {
+          <div class="nos-principio-card nos-reveal" [style.transition-delay]="(i % 3) * 0.1 + 's'">
+            <div class="nos-principio-idx">{{ numStr(i) }}</div>
             <h3 class="nos-principio-nombre">{{ p.nombre }}</h3>
             <p class="nos-principio-desc">{{ p.descripcion }}</p>
           </div>
@@ -134,14 +143,16 @@
   ══════════════════════════════════════════════════════ -->
   <section class="nos-section">
     <div class="nos-container">
-      <div class="nos-section-header">
+      <div class="nos-section-header nos-reveal">
         <h2 class="nos-section-titulo">¿Qué nos hace especiales?</h2>
         <p class="nos-section-desc">Las razones por las que somos reconocidos en la región</p>
       </div>
       <div class="nos-especiales-grid">
-        @for (item of especiales; track item) {
-          <div class="nos-especial-item">
-            <span class="nos-especial-star">★</span>
+        @for (item of especiales; track item; let i = $index) {
+          <div class="nos-especial-item nos-reveal" [style.transition-delay]="(i % 2) * 0.1 + 's'">
+            <svg class="nos-especial-icon" viewBox="0 0 16 16" fill="currentColor" width="14">
+              <path fill-rule="evenodd" d="M8 1a7 7 0 100 14A7 7 0 008 1zm3.707 5.293a1 1 0 00-1.414-1.414L7 8.172 5.707 6.879a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+            </svg>
             <p>{{ item }}</p>
           </div>
         }
@@ -154,36 +165,52 @@
   ══════════════════════════════════════════════════════ -->
   <section class="nos-section nos-section--alt">
     <div class="nos-container">
-      <div class="nos-section-header">
+      <div class="nos-section-header nos-reveal">
         <h2 class="nos-section-titulo">Información de Contacto</h2>
         <p class="nos-section-desc">Estamos ubicados en el corazón de Fusagasugá</p>
       </div>
 
       <div class="nos-contacto-grid">
-        <a href="https://wa.me/573123798520" target="_blank" rel="noopener noreferrer" class="nos-contacto-card nos-contacto-card--link">
-          <span class="nos-contacto-icono">📞</span>
+        <a href="https://wa.me/573123798520" target="_blank" rel="noopener noreferrer" class="nos-contacto-card nos-contacto-card--link nos-reveal">
+          <span class="nos-contacto-icono">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" width="24">
+              <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81 19.79 19.79 0 01.07 1.18 2 2 0 012.06 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/>
+            </svg>
+          </span>
           <span class="nos-contacto-label">Teléfono</span>
           <span class="nos-contacto-valor">312 379 8520</span>
         </a>
-        <a href="mailto:rectoria@itifusagasuga.com" class="nos-contacto-card nos-contacto-card--link">
-          <span class="nos-contacto-icono">✉️</span>
+        <a href="mailto:rectoria@itifusagasuga.com" class="nos-contacto-card nos-contacto-card--link nos-reveal" style="transition-delay:0.07s">
+          <span class="nos-contacto-icono">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" width="24">
+              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/>
+            </svg>
+          </span>
           <span class="nos-contacto-label">Correo Rectoría</span>
           <span class="nos-contacto-valor">rectoria&#64;itifusagasuga.com</span>
         </a>
-        <div class="nos-contacto-card">
-          <span class="nos-contacto-icono">📍</span>
+        <div class="nos-contacto-card nos-reveal" style="transition-delay:0.14s">
+          <span class="nos-contacto-icono">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" width="24">
+              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/>
+            </svg>
+          </span>
           <span class="nos-contacto-label">Dirección</span>
           <span class="nos-contacto-valor">Carrera 6 # 16-02<br>Barrio Balmoral, Fusagasugá</span>
         </div>
-        <div class="nos-contacto-card">
-          <span class="nos-contacto-icono">🏛️</span>
+        <div class="nos-contacto-card nos-reveal" style="transition-delay:0.21s">
+          <span class="nos-contacto-icono">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" width="24">
+              <rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/>
+            </svg>
+          </span>
           <span class="nos-contacto-label">NIT</span>
           <span class="nos-contacto-valor">890680335-8</span>
         </div>
       </div>
 
       <!-- Acuerdos oficiales -->
-      <div class="nos-acuerdos">
+      <div class="nos-acuerdos nos-reveal">
         <div class="nos-acuerdo-badge">
           <span class="nos-acuerdo-num">006</span>
           <div class="nos-acuerdo-info">

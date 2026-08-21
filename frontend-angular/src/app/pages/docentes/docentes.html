@@ -69,7 +69,7 @@
     @if (docentesFiltrados.length > 0) {
       <div class="doc-grid">
         @for (d of docentesFiltrados; track d.id; let i = $index) {
-          <div class="doc-card" [style.--i]="i">
+          <div class="doc-card" [style.--i]="i" (click)="abrirPanel(d)">
 
             <!-- Foto: inicial visible siempre, foto encima al cargar -->
             <div class="doc-card-foto-wrap">
@@ -83,6 +83,9 @@
             <!-- Datos del docente -->
             <div class="doc-card-body">
               <div class="doc-card-nombre">{{ d.usuario.nombre }}</div>
+              @if (d.titulo) {
+                <div class="doc-card-titulo">{{ d.titulo }}</div>
+              }
               @if (d.cargo) {
                 <div class="doc-card-cargo">{{ d.cargo }}</div>
               }
@@ -93,9 +96,13 @@
                   }
                 </div>
               }
+              @if (d.bio) {
+                <p class="doc-card-bio">{{ d.bio }}</p>
+              }
               @if (sedeNombres(d)) {
                 <div class="doc-card-sedes">{{ sedeNombres(d) }}</div>
               }
+              <div class="doc-card-ver">Ver perfil →</div>
             </div>
 
           </div>
@@ -111,3 +118,118 @@
   }
 
 </div>
+
+<!-- ═══════════════════════════════════════════════════════
+     PANEL LATERAL — perfil completo
+═══════════════════════════════════════════════════════ -->
+@if (panelDocente) {
+  <div class="doc-panel-overlay" (click)="cerrarSiOverlay($event)">
+    <aside class="doc-panel">
+
+      <!-- Botón cerrar -->
+      <button class="doc-panel-cerrar" (click)="cerrarPanel()" aria-label="Cerrar">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20">
+          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+
+      <!-- Cabecera del perfil -->
+      <div class="doc-panel-header">
+        <div class="doc-panel-foto-wrap">
+          <div class="doc-panel-inicial">{{ inicial(panelDocente.usuario.nombre) }}</div>
+          @if (panelDocente.fotoUrl) {
+            <img class="doc-panel-foto" [src]="panelDocente.fotoUrl"
+                 [alt]="panelDocente.usuario.nombre"
+                 (load)="onFotoLoad($event)" (error)="onFotoError($event)">
+          }
+        </div>
+        <div class="doc-panel-rol-badge">{{ panelDocente.usuario.rol }}</div>
+        <h2 class="doc-panel-nombre">{{ panelDocente.usuario.nombre }}</h2>
+        @if (panelDocente.titulo) {
+          <p class="doc-panel-titulo">{{ panelDocente.titulo }}</p>
+        }
+        @if (panelDocente.cargo) {
+          <p class="doc-panel-cargo">{{ panelDocente.cargo }}</p>
+        }
+        @if (sedeNombres(panelDocente)) {
+          <p class="doc-panel-sedes">{{ sedeNombres(panelDocente) }}</p>
+        }
+        <!-- Links externos -->
+        <div class="doc-panel-links">
+          @if (panelDocente.urlLinkedin) {
+            <a [href]="panelDocente.urlLinkedin" target="_blank" rel="noopener" class="doc-panel-link">
+              LinkedIn
+            </a>
+          }
+          @if (panelDocente.urlBlog) {
+            <a [href]="panelDocente.urlBlog" target="_blank" rel="noopener" class="doc-panel-link">
+              Blog
+            </a>
+          }
+        </div>
+      </div>
+
+      <!-- Cuerpo del perfil -->
+      <div class="doc-panel-body">
+
+        @if (panelDocente.bio) {
+          <div class="doc-panel-seccion">
+            <div class="doc-panel-sec-titulo">Acerca de</div>
+            <p class="doc-panel-bio">{{ panelDocente.bio }}</p>
+          </div>
+        }
+
+        @if (panelDocente.areas && panelDocente.areas.length > 0) {
+          <div class="doc-panel-seccion">
+            <div class="doc-panel-sec-titulo">Áreas de enseñanza</div>
+            <div class="doc-panel-chips">
+              @for (area of panelDocente.areas; track area) {
+                <span class="doc-chip-area">{{ area }}</span>
+              }
+            </div>
+          </div>
+        }
+
+        @if (panelDocente.logros && panelDocente.logros.length > 0) {
+          <div class="doc-panel-seccion">
+            <div class="doc-panel-sec-titulo">Logros y reconocimientos</div>
+            <ul class="doc-panel-logros">
+              @for (logro of panelDocente.logros; track logro) {
+                <li>{{ logro }}</li>
+              }
+            </ul>
+          </div>
+        }
+
+        <!-- Publicaciones del docente -->
+        <div class="doc-panel-seccion">
+          <div class="doc-panel-sec-titulo">Publicaciones en la Revista</div>
+          @if (cargandoPanel) {
+            <div class="doc-panel-sk-list">
+              @for (s of [1,2,3]; track s) {
+                <div class="doc-panel-sk-item"></div>
+              }
+            </div>
+          } @else if (panelNoticias.length > 0) {
+            <ul class="doc-panel-noticias">
+              @for (n of panelNoticias; track n.id) {
+                <li class="doc-panel-noticia">
+                  @if (n.imagenes?.[0]?.url) {
+                    <img class="doc-panel-noticia-img" [src]="n.imagenes[0].url" [alt]="n.titulo">
+                  }
+                  <div class="doc-panel-noticia-data">
+                    <span class="doc-panel-noticia-titulo">{{ n.titulo }}</span>
+                    <span class="doc-panel-noticia-fecha">{{ formatFecha(n.fecha_publicacion ?? n.createdAt) }}</span>
+                  </div>
+                </li>
+              }
+            </ul>
+          } @else {
+            <p class="doc-panel-sin-noticias">Este docente aún no tiene publicaciones en la revista.</p>
+          }
+        </div>
+
+      </div>
+    </aside>
+  </div>
+}

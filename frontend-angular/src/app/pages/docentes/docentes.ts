@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ApiService } from '../../services/api.service';
 import { PerfilDocente, Sede } from '../../models';
@@ -10,7 +10,7 @@ import { PerfilDocente, Sede } from '../../models';
   styleUrl: './docentes.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class Docentes implements OnInit {
+export class Docentes implements OnInit, OnDestroy {
   private api = inject(ApiService);
   private cdr = inject(ChangeDetectorRef);
 
@@ -24,9 +24,18 @@ export class Docentes implements OnInit {
   busqueda    = '';
   sedeActiva: string | null = null;
 
+  // ── Panel lateral ────────────────────────────────────────
+  panelDocente: PerfilDocente | null = null;
+  panelNoticias: any[] = [];
+  cargandoPanel = false;
+
   ngOnInit() {
     this.cargarSedes();
     this.cargarDocentes();
+  }
+
+  ngOnDestroy() {
+    if (this.panelDocente) document.body.style.overflow = '';
   }
 
   private cargarSedes() {
@@ -73,6 +82,43 @@ export class Docentes implements OnInit {
     );
   }
 
+  // ── Acciones del panel ────────────────────────────────────
+  abrirPanel(d: PerfilDocente) {
+    this.panelDocente  = d;
+    this.panelNoticias = [];
+    this.cargandoPanel = true;
+    document.body.style.overflow = 'hidden';
+    this.cdr.markForCheck();
+
+    this.api.get<any>(`/perfil/${d.id}`).subscribe({
+      next: r => {
+        const det = r.docente ?? r;
+        this.panelNoticias = det.noticias ?? [];
+        this.cargandoPanel = false;
+        this.cdr.markForCheck();
+      },
+      error: () => {
+        this.cargandoPanel = false;
+        this.cdr.markForCheck();
+      },
+    });
+  }
+
+  cerrarPanel() {
+    this.panelDocente  = null;
+    this.panelNoticias = [];
+    this.cargandoPanel = false;
+    document.body.style.overflow = '';
+    this.cdr.markForCheck();
+  }
+
+  cerrarSiOverlay(e: MouseEvent) {
+    if ((e.target as HTMLElement).classList.contains('doc-panel-overlay')) {
+      this.cerrarPanel();
+    }
+  }
+
+  // ── Helpers ───────────────────────────────────────────────
   inicial(nombre: string): string { return nombre.charAt(0).toUpperCase(); }
 
   onFotoLoad(event: Event) {
@@ -85,5 +131,10 @@ export class Docentes implements OnInit {
 
   sedeNombres(d: PerfilDocente): string {
     return d.sedes?.map(s => s.nombre).join(' · ') ?? '';
+  }
+
+  formatFecha(fecha: string): string {
+    if (!fecha) return '';
+    return new Date(fecha).toLocaleDateString('es-CO', { day: 'numeric', month: 'long', year: 'numeric' });
   }
 }

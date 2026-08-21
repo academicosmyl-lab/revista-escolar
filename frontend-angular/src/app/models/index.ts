@@ -83,7 +83,11 @@ export interface PerfilDocente {
   bio?: string;
   cargo?: string;
   fotoUrl?: string;
+  titulo?: string;
   areas?: string[];
+  logros?: string[];
+  urlBlog?: string | null;
+  urlLinkedin?: string | null;
   sedes?: Sede[];
 }
 

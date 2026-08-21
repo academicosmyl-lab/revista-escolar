@@ -258,11 +258,12 @@ router.get('/docentes', async (req, res, next) => {
   } catch (err) { next(err); }
 });
 
-// GET /api/v1/perfil/:id — perfil público completo de un docente
+// GET /api/v1/perfil/:id — perfil público completo (cualquier rol con perfil_publico)
 router.get('/:id', async (req, res, next) => {
   try {
+    const rolesPublicos = ['RECTOR', 'COORDINADOR', 'ORIENTADORA', 'DOCENTE'];
     const docente = await Usuario.findOne({
-      where: { id: req.params.id, rol: 'DOCENTE', activo: true },
+      where: { id: req.params.id, rol: rolesPublicos, activo: true },
       attributes: ['id', 'nombre', 'email'],
       include: [
         {
