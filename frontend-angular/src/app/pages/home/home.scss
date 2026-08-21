@@ -1,3 +1,21 @@
+/* ── BANNER COLD-START ───────────────────────────────── */
+.servidor-despertando {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  background: rgba(212, 168, 83, 0.12);
+  border: 1px solid rgba(212, 168, 83, 0.35);
+  border-radius: 8px;
+  padding: 0.65rem 1.25rem;
+  margin: 0 auto 1.5rem;
+  max-width: 700px;
+  font-size: 0.85rem;
+  color: #D4A853;
+  animation: fadeIn 0.4s ease;
+
+  .sd-icono { font-size: 1rem; flex-shrink: 0; }
+}
+
 /* ── BOTÓN FLOTANTE FACEBOOK ─────────────────────────── */
 .fb-flotante {
   position: fixed;

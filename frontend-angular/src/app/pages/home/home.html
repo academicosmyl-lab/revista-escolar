@@ -205,6 +205,14 @@
 
 </section>
 
+<!-- Banner cold-start: solo aparece si el backend tarda más de 5 segundos -->
+@if (servidorLento()) {
+  <div class="servidor-despertando">
+    <span class="sd-icono">⏳</span>
+    <span>El servidor está despertando… carga lista en unos segundos.</span>
+  </div>
+}
+
 <!-- NOTICIAS RECIENTES — datos reales del API (CAMBIO ARCH-UI) -->
 <section class="noticias-seccion">
   <div class="seccion-header reveal">

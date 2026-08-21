@@ -23,9 +23,8 @@ export class Home implements OnInit, AfterViewInit {
   private zone      = inject(NgZone);
 
   /* ── Noticias del API real ──────────────────────────── */
-  // CAMBIO ARCH-UI: reemplaza noticiasEjemplo (picsum.photos hardcodeado)
-  // Signal: un contenedor reactivo — cuando cambia, Angular actualiza la vista automáticamente
   cargandoNoticias = signal(true);
+  servidorLento    = signal(false);  // true si el backend tarda >5s (cold start de Render)
   noticiasHome     = signal<Noticia[]>([]);
 
   // computed: se recalcula solo cuando noticiasHome() cambia
@@ -107,19 +106,32 @@ export class Home implements OnInit, AfterViewInit {
   // SOLO modifica home.ts — NO toca noticias.ts ni la ruta /noticias
   private cargarNoticiasHome() {
     this.cargandoNoticias.set(true);
+    this.servidorLento.set(false);
+
+    // Si el backend tarda más de 5s, muestra el aviso de cold start
+    const timer = setTimeout(() => {
+      if (this.cargandoNoticias()) {
+        this.servidorLento.set(true);
+        this.cdr.markForCheck();
+      }
+    }, 5000);
+
     this.api.get<any>('/noticias', { estado: 'publicada', limit: 5 }).subscribe({
       next: r => {
-        // El backend puede devolver la data en distintos formatos — manejamos ambos
+        clearTimeout(timer);
         const raw = r.data ?? r;
         const lista: Noticia[] = Array.isArray(raw)
           ? raw
           : (raw.rows ?? raw.noticias ?? []);
         this.noticiasHome.set(lista);
         this.cargandoNoticias.set(false);
+        this.servidorLento.set(false);
         this.cdr.markForCheck();
       },
       error: () => {
+        clearTimeout(timer);
         this.cargandoNoticias.set(false);
+        this.servidorLento.set(false);
         this.cdr.markForCheck();
       },
     });
