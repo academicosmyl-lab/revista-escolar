@@ -7,6 +7,28 @@
   </div>
 </div>
 
+<!-- BANNER DOCENTE CTA -->
+<div class="doc-banner">
+  <div class="doc-banner-inner">
+    <p class="doc-banner-pregunta">¿Eres parte del equipo docente del ITIS?</p>
+    <div class="doc-banner-acciones">
+      <a routerLink="/docentes/registro" class="doc-banner-btn doc-banner-btn--primario">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+          <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+        </svg>
+        Registrarme como docente
+      </a>
+      <button class="doc-banner-btn doc-banner-btn--secundario" (click)="abrirModal()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+          <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/>
+          <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/>
+        </svg>
+        Ya estoy inscrito — Publicar
+      </button>
+    </div>
+  </div>
+</div>
+
 <!-- BARRA DE CONTROLES -->
 <div class="doc-controles">
   <div class="doc-controles-inner">
@@ -122,6 +144,57 @@
 <!-- ═══════════════════════════════════════════════════════
      PANEL LATERAL — perfil completo
 ═══════════════════════════════════════════════════════ -->
+<!-- ═══════════════════════════════════════════════════════
+     MODAL — ¿Qué deseas compartir?
+═══════════════════════════════════════════════════════ -->
+@if (modalPublicar) {
+  <div class="doc-modal-overlay" (click)="cerrarSiModalOverlay($event)">
+    <div class="doc-modal">
+      <button class="doc-modal-cerrar" (click)="cerrarModal()" aria-label="Cerrar">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18">
+          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+      <h2 class="doc-modal-titulo">¿Qué deseas compartir?</h2>
+      <p class="doc-modal-sub">Selecciona el tipo de contenido. Serás redirigido al formulario.</p>
+      <div class="doc-modal-opciones">
+
+        <button class="doc-modal-opcion" (click)="irAFormulario('noticia')">
+          <span class="doc-modal-icono">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" width="28">
+              <path d="M4 6h16M4 10h16M4 14h10M4 18h8"/>
+            </svg>
+          </span>
+          <span class="doc-modal-opcion-nombre">Noticia</span>
+          <span class="doc-modal-opcion-desc">Un hecho noticioso del colegio</span>
+        </button>
+
+        <button class="doc-modal-opcion" (click)="irAFormulario('historia')">
+          <span class="doc-modal-icono">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" width="28">
+              <path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/>
+            </svg>
+          </span>
+          <span class="doc-modal-opcion-nombre">Historia</span>
+          <span class="doc-modal-opcion-desc">Tu experiencia personal en el ITIS</span>
+        </button>
+
+        <button class="doc-modal-opcion" (click)="irAFormulario('fotos')">
+          <span class="doc-modal-icono">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" width="28">
+              <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/>
+              <polyline points="21 15 16 10 5 21"/>
+            </svg>
+          </span>
+          <span class="doc-modal-opcion-nombre">Fotos</span>
+          <span class="doc-modal-opcion-desc">Imágenes y momentos del colegio</span>
+        </button>
+
+      </div>
+    </div>
+  </div>
+}
+
 @if (panelDocente) {
   <div class="doc-panel-overlay" (click)="cerrarSiOverlay($event)">
     <aside class="doc-panel">
@@ -201,31 +274,45 @@
           </div>
         }
 
-        <!-- Publicaciones del docente -->
+        <!-- Publicaciones — timeline últimos 3 meses -->
         <div class="doc-panel-seccion">
-          <div class="doc-panel-sec-titulo">Publicaciones en la Revista</div>
+          <div class="doc-panel-sec-titulo">Publicaciones · últimos 3 meses</div>
           @if (cargandoPanel) {
             <div class="doc-panel-sk-list">
               @for (s of [1,2,3]; track s) {
                 <div class="doc-panel-sk-item"></div>
               }
             </div>
-          } @else if (panelNoticias.length > 0) {
-            <ul class="doc-panel-noticias">
-              @for (n of panelNoticias; track n.id) {
-                <li class="doc-panel-noticia">
-                  @if (n.imagenes?.[0]?.url) {
-                    <img class="doc-panel-noticia-img" [src]="n.imagenes[0].url" [alt]="n.titulo">
-                  }
-                  <div class="doc-panel-noticia-data">
-                    <span class="doc-panel-noticia-titulo">{{ n.titulo }}</span>
-                    <span class="doc-panel-noticia-fecha">{{ formatFecha(n.fecha_publicacion ?? n.createdAt) }}</span>
+          } @else if (gruposTimeline.length > 0) {
+            <div class="doc-tl">
+              @for (grupo of gruposTimeline; track grupo.mes) {
+                <div class="doc-tl-grupo">
+                  <div class="doc-tl-mes">
+                    <span class="doc-tl-mes-dot"></span>
+                    {{ grupo.mes }}
                   </div>
-                </li>
+                  <div class="doc-tl-items">
+                    @for (n of grupo.items; track n.id) {
+                      <div class="doc-tl-item">
+                        <span class="doc-tl-tipo">NOTICIA</span>
+                        <div class="doc-tl-info">
+                          <span class="doc-tl-titulo">{{ n.titulo }}</span>
+                          <span class="doc-tl-fecha">
+                            {{ formatFecha(n.fecha_publicacion ?? n.createdAt) }}
+                            &nbsp;·&nbsp;
+                            <span [class]="'doc-tl-estado doc-tl-estado--' + (n.estado ?? 'publicada')">
+                              {{ n.estado === 'pendiente' ? '⏳ En revisión' : '✓ Publicada' }}
+                            </span>
+                          </span>
+                        </div>
+                      </div>
+                    }
+                  </div>
+                </div>
               }
-            </ul>
+            </div>
           } @else {
-            <p class="doc-panel-sin-noticias">Este docente aún no tiene publicaciones en la revista.</p>
+            <p class="doc-panel-sin-noticias">Sin publicaciones en los últimos 3 meses.</p>
           }
         </div>
 
