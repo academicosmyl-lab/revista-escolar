@@ -12,7 +12,7 @@ interface Particle {
   ex: number; ey: number;
   size: number; alpha: number;
   hue: number; twinkle: number; speed: number;
-  outline: boolean;  // true = borde del escudo (más brillante)
+  outline: boolean;
 }
 
 @Component({
@@ -80,12 +80,13 @@ export class WelcomeIntro implements AfterViewInit, OnDestroy {
       this.rafId = requestAnimationFrame(() => this.tick());
     });
 
-    this.sched(1200,  () => this.showSkip.set(true));
-    this.sched(6800,  () => this.showText90.set(true));
-    this.sched(7800,  () => this.showDivider.set(true));
-    this.sched(8300,  () => this.showTitle.set(true));
-    this.sched(9200,  () => this.showSub.set(true));
-    this.sched(13000, () => this.dismiss());
+    // Timings ajustados: escudo visible desde ~2.8s, texto desde ~5.2s
+    this.sched(1000,  () => this.showSkip.set(true));
+    this.sched(5200,  () => this.showText90.set(true));
+    this.sched(6100,  () => this.showDivider.set(true));
+    this.sched(6600,  () => this.showTitle.set(true));
+    this.sched(7500,  () => this.showSub.set(true));
+    this.sched(12000, () => this.dismiss());
   }
 
   skip(): void { this.dismiss(); }
@@ -120,10 +121,10 @@ export class WelcomeIntro implements AfterViewInit, OnDestroy {
   // ── Shield geometry ───────────────────────────────────────────────────────
 
   private get mobile() { return this.W < 600; }
-  private get cx() { return this.W / 2; }
-  private get cy() { return this.mobile ? this.H * 0.42 : this.H * 0.45; }
-  private get sw() { return this.mobile ? this.W * 0.92 : Math.min(this.W * 0.62, 380); }
-  private get sh() { return this.mobile ? this.H * 0.78 : this.sw * 1.25; }
+  private get cx()     { return this.W / 2; }
+  private get cy()     { return this.mobile ? this.H * 0.42 : this.H * 0.45; }
+  private get sw()     { return this.mobile ? this.W * 0.92 : Math.min(this.W * 0.62, 380); }
+  private get sh()     { return this.mobile ? this.H * 0.78 : this.sw * 1.25; }
 
   private buildShieldPoints(): void {
     const { cx, cy, sw, sh } = this;
@@ -131,9 +132,9 @@ export class WelcomeIntro implements AfterViewInit, OnDestroy {
     this.buildOutlinePoints(cx, cy, sw, sh);
   }
 
-  // Partículas de relleno interior (OffscreenCanvas + isPointInPath)
+  // El arco empieza en 48% del alto → forma de escudo clásico más pronunciada
   private buildFillPoints(cx: number, cy: number, sw: number, sh: number): void {
-    const step = this.W < 600 ? 12 : 8;   // paso más fino → más densidad
+    const step = this.mobile ? 14 : 9;
     const pad  = 4;
     const pts: { x: number; y: number }[] = [];
     const jitter = (v: number) => v + (Math.random() - 0.5) * step * 0.35;
@@ -142,16 +143,16 @@ export class WelcomeIntro implements AfterViewInit, OnDestroy {
       const p = new Path2D();
       p.moveTo(pad + sw * 0.08, pad);
       p.lineTo(pad + sw * 0.92, pad);
-      p.lineTo(pad + sw * 0.92, pad + sh * 0.62);
+      p.lineTo(pad + sw * 0.92, pad + sh * 0.48);   // arco empieza en 48%
       p.bezierCurveTo(
-        pad + sw * 0.92, pad + sh * 0.84,
-        pad + sw * 0.64, pad + sh * 0.96,
+        pad + sw * 0.92, pad + sh * 0.76,
+        pad + sw * 0.63, pad + sh * 0.93,
         pad + sw * 0.50, pad + sh
       );
       p.bezierCurveTo(
-        pad + sw * 0.36, pad + sh * 0.96,
-        pad + sw * 0.08, pad + sh * 0.84,
-        pad + sw * 0.08, pad + sh * 0.62
+        pad + sw * 0.37, pad + sh * 0.93,
+        pad + sw * 0.08, pad + sh * 0.76,
+        pad + sw * 0.08, pad + sh * 0.48
       );
       p.closePath();
       return p;
@@ -172,29 +173,23 @@ export class WelcomeIntro implements AfterViewInit, OnDestroy {
       for (let ly = 0; ly <= sh; ly += step) {
         for (let lx = 0; lx <= sw; lx += step) {
           const nx = lx / sw, ny = ly / sh;
-          const inside = ny <= 0.62
+          const inside = ny <= 0.48
             ? nx >= 0.08 && nx <= 0.92
-            : Math.abs(nx - 0.5) <= 0.42 * (1 - Math.pow((ny - 0.62) / 0.38, 2));
+            : Math.abs(nx - 0.5) <= 0.42 * (1 - Math.pow((ny - 0.48) / 0.52, 2));
           if (inside) pts.push({ x: jitter(cx - sw / 2 + lx), y: jitter(cy - sh / 2 + ly) });
         }
       }
     }
-
     this.fillPts = pts;
   }
 
-  // Partículas de contorno — muestreo sobre las curvas bezier del borde
+  // Contorno: muestrea cada 4px sobre los bordes bezier del escudo
   private buildOutlinePoints(cx: number, cy: number, sw: number, sh: number): void {
     const pts: { x: number; y: number }[] = [];
-    const J = 1.5; // jitter muy pequeño para mantener la línea definida
+    const J = 1.2;
     const j = () => (Math.random() - 0.5) * J;
+    const toC = (lx: number, ly: number) => ({ x: cx - sw / 2 + lx + j(), y: cy - sh / 2 + ly + j() });
 
-    const toC = (lx: number, ly: number) => ({
-      x: cx - sw / 2 + lx + j(),
-      y: cy - sh / 2 + ly + j()
-    });
-
-    // Muestrea una línea recta con N pasos
     const line = (x0: number, y0: number, x1: number, y1: number, n: number) => {
       for (let i = 0; i <= n; i++) {
         const t = i / n;
@@ -202,13 +197,9 @@ export class WelcomeIntro implements AfterViewInit, OnDestroy {
       }
     };
 
-    // Muestrea una curva bezier cúbica con N pasos
     const bezier = (
-      x0: number, y0: number,
-      cx1: number, cy1: number,
-      cx2: number, cy2: number,
-      x1: number, y1: number,
-      n: number
+      x0: number, y0: number, cx1: number, cy1: number,
+      cx2: number, cy2: number, x1: number, y1: number, n: number
     ) => {
       for (let i = 0; i <= n; i++) {
         const t = i / n, u = 1 - t;
@@ -219,16 +210,12 @@ export class WelcomeIntro implements AfterViewInit, OnDestroy {
       }
     };
 
-    // Borde superior
-    line(sw*0.08, 0,       sw*0.92, 0,       Math.ceil(sw * 0.84 / 5));
-    // Borde derecho
-    line(sw*0.92, 0,       sw*0.92, sh*0.62, Math.ceil(sh * 0.62 / 5));
-    // Arco inferior derecho
-    bezier(sw*0.92, sh*0.62,  sw*0.92, sh*0.84,  sw*0.64, sh*0.96,  sw*0.50, sh, 48);
-    // Arco inferior izquierdo
-    bezier(sw*0.50, sh,       sw*0.36, sh*0.96,  sw*0.08, sh*0.84,  sw*0.08, sh*0.62, 48);
-    // Borde izquierdo
-    line(sw*0.08, sh*0.62,  sw*0.08, 0,       Math.ceil(sh * 0.62 / 5));
+    const N = 4; // muestrea cada 4px
+    line(sw*0.08, 0,        sw*0.92, 0,        Math.ceil(sw * 0.84 / N));
+    line(sw*0.92, 0,        sw*0.92, sh*0.48,  Math.ceil(sh * 0.48 / N));
+    bezier(sw*0.92, sh*0.48,  sw*0.92, sh*0.76,  sw*0.63, sh*0.93,  sw*0.50, sh,       64);
+    bezier(sw*0.50, sh,       sw*0.37, sh*0.93,  sw*0.08, sh*0.76,  sw*0.08, sh*0.48,  64);
+    line(sw*0.08, sh*0.48,  sw*0.08, 0,        Math.ceil(sh * 0.48 / N));
 
     this.outlinePts = pts;
   }
@@ -238,20 +225,19 @@ export class WelcomeIntro implements AfterViewInit, OnDestroy {
   private buildParticles(): void {
     const makeP = (sp: { x: number; y: number }, outline: boolean): Particle => {
       const ang  = Math.random() * Math.PI * 2;
-      const dist = 150 + Math.random() * Math.max(this.W, this.H) * 0.45;
+      const dist = 140 + Math.random() * Math.max(this.W, this.H) * 0.44;
       const eAng = ang + Math.PI + (Math.random() - 0.5) * 0.9;
       return {
         x: sp.x + Math.cos(ang) * dist, ox: sp.x + Math.cos(ang) * dist,
         y: sp.y + Math.sin(ang) * dist, oy: sp.y + Math.sin(ang) * dist,
         tx: sp.x, ty: sp.y,
-        ex: sp.x + Math.cos(eAng) * (200 + Math.random() * 380),
-        ey: sp.y + Math.sin(eAng) * (200 + Math.random() * 380),
-        // Outline: más grandes, más brillantes, tono más amarillo-blanco
-        size:    outline ? 1.2 + Math.random() * 1.6  : 0.6 + Math.random() * 1.8,
-        alpha:   outline ? 0.75 + Math.random() * 0.25 : 0.35 + Math.random() * 0.50,
-        hue:     outline ? Math.random() * 18 - 5      : Math.random() * 40 - 12,
+        ex: sp.x + Math.cos(eAng) * (180 + Math.random() * 360),
+        ey: sp.y + Math.sin(eAng) * (180 + Math.random() * 360),
+        size:    outline ? 1.4 + Math.random() * 1.8  : 0.6 + Math.random() * 1.6,
+        alpha:   outline ? 0.88 + Math.random() * 0.12 : 0.35 + Math.random() * 0.45,
+        hue:     outline ? Math.random() * 16 - 4      : Math.random() * 38 - 12,
         twinkle: Math.random() * Math.PI * 2,
-        speed:   outline ? 0.65 + Math.random() * 0.6  : 0.45 + Math.random() * 0.8,
+        speed:   outline ? 0.7 + Math.random() * 0.5   : 0.4 + Math.random() * 0.8,
         outline
       };
     };
@@ -279,12 +265,13 @@ export class WelcomeIntro implements AfterViewInit, OnDestroy {
     ctx.fillStyle = bg;
     ctx.fillRect(0, 0, this.W, this.H);
 
-    const T0 = 800;   // scatter → converge
-    const T1 = 4500;  // converge → formed
-    const T2 = 6200;  // formed → explode  (ampliado para que se vea más)
-    const T3 = 7900;  // explode end
+    // Fases (ms desde inicio de animación)
+    const T0 = 400;   // scatter → converge
+    const T1 = 2800;  // converge → formado   (rápido: solo 2.4s)
+    const T2 = 5800;  // formado → explosión  (3s de escudo visible)
+    const T3 = 7200;  // explosión termina
 
-    // Dibuja fill primero, luego outline (encima) para que brille
+    // Fill primero, outline encima
     for (const p of this.particles) {
       if (!p.outline) this.drawOne(ctx, p, t, now, T0, T1, T2, T3);
     }
@@ -292,9 +279,9 @@ export class WelcomeIntro implements AfterViewInit, OnDestroy {
       if (p.outline)  this.drawOne(ctx, p, t, now, T0, T1, T2, T3);
     }
 
-    // Glow central durante fase formada
-    if (t > T1 - 500 && t < T2 + 500) {
-      const fade = Math.min((t - (T1 - 500)) / 700, (T2 + 500 - t) / 700, 1);
+    // Glow central en fase formada
+    if (t > T1 - 400 && t < T2 + 400) {
+      const fade = Math.min((t - (T1 - 400)) / 600, (T2 + 400 - t) / 600, 1);
       this.drawGlow(ctx, this.cx, this.cy, Math.min(this.W * 0.28, 200), fade * 0.20);
     }
 
@@ -312,13 +299,13 @@ export class WelcomeIntro implements AfterViewInit, OnDestroy {
 
     if (t < T0) {
       px = p.ox; py = p.oy;
-      a  = this.easeOut(t / 500) * p.alpha * 0.4;
+      a  = this.easeOut(t / 400) * p.alpha * 0.4;
     } else if (t < T1) {
       const f  = Math.min((t - T0) / (T1 - T0) * p.speed, 1);
       const fc = this.easeInOut(f);
       px = p.ox + (p.tx - p.ox) * fc;
       py = p.oy + (p.ty - p.oy) * fc;
-      a  = (0.18 + fc * 0.82) * p.alpha;
+      a  = (0.15 + fc * 0.85) * p.alpha;
     } else if (t < T2) {
       px = p.tx; py = p.ty;
       a  = p.alpha * (Math.sin(now * 0.0026 + p.twinkle) * 0.15 + 0.85);
@@ -344,11 +331,10 @@ export class WelcomeIntro implements AfterViewInit, OnDestroy {
     if (a < 0.012) return;
 
     if (outline) {
-      // Halo exterior suave (doble halo para outline)
-      const haloR = size * 8;
+      const haloR = size * 9;
       const halo  = ctx.createRadialGradient(x, y, 0, x, y, haloR);
-      halo.addColorStop(0,   `hsla(${50 + hue}, 100%, 95%, ${a * 0.55})`);
-      halo.addColorStop(0.4, `hsla(${46 + hue},  98%, 72%, ${a * 0.28})`);
+      halo.addColorStop(0,   `hsla(${50 + hue}, 100%, 96%, ${a * 0.6})`);
+      halo.addColorStop(0.4, `hsla(${46 + hue},  98%, 74%, ${a * 0.3})`);
       halo.addColorStop(1,   'transparent');
       ctx.beginPath();
       ctx.arc(x, y, haloR, 0, Math.PI * 2);
@@ -356,21 +342,18 @@ export class WelcomeIntro implements AfterViewInit, OnDestroy {
       ctx.fill();
     }
 
-    // Glow principal
-    const r = size * (outline ? 4.5 : 3.5);
+    const r = size * (outline ? 5 : 3.5);
     const g = ctx.createRadialGradient(x, y, 0, x, y, r);
-    g.addColorStop(0,    `hsla(${45 + hue}, 100%, 93%, ${a})`);
-    g.addColorStop(0.35, `hsla(${42 + hue},  96%, 65%, ${a * 0.55})`);
+    g.addColorStop(0,    `hsla(${45 + hue}, 100%, 94%, ${a})`);
+    g.addColorStop(0.35, `hsla(${42 + hue},  96%, 66%, ${a * 0.55})`);
     g.addColorStop(1,    'transparent');
     ctx.beginPath();
     ctx.arc(x, y, r, 0, Math.PI * 2);
     ctx.fillStyle = g;
     ctx.fill();
 
-    // Núcleo brillante
-    const coreR = size * (outline ? 0.65 : 0.4);
     ctx.beginPath();
-    ctx.arc(x, y, coreR, 0, Math.PI * 2);
+    ctx.arc(x, y, size * (outline ? 0.7 : 0.4), 0, Math.PI * 2);
     ctx.fillStyle = `hsla(${outline ? 58 : 56}, 100%, 98%, ${a})`;
     ctx.fill();
   }
