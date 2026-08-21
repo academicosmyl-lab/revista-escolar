@@ -121,7 +121,7 @@ export class WelcomeIntro implements AfterViewInit, OnDestroy {
 
   private get cx() { return this.W / 2; }
   private get cy() { return this.H * 0.45; }
-  private get sw() { return Math.min(this.W * 0.50, 260); }
+  private get sw() { return Math.min(this.W * 0.62, 380); }
   private get sh() { return this.sw * 1.25; }
 
   private buildShieldPoints(): void {
