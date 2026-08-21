@@ -16,10 +16,7 @@ export class App implements OnInit, AfterViewInit {
   private api        = inject(ApiService);
   private destroyRef = inject(DestroyRef);
 
-  readonly showIntro = (() => {
-    try { return !localStorage.getItem('itis_90_intro'); }
-    catch { return false; }
-  })();
+  readonly showIntro = true;
 
   ngOnInit() {
     this.api.get('/health').subscribe({ error: () => {} });

@@ -95,7 +95,6 @@ export class WelcomeIntro implements AfterViewInit, OnDestroy {
     this.fadingOut.set(true);
     cancelAnimationFrame(this.rafId);
     this.timers.forEach(clearTimeout);
-    try { localStorage.setItem('itis_90_intro', '1'); } catch {}
     this.timers.push(window.setTimeout(() => this.visible.set(false), 900));
   }
 
