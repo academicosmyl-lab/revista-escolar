@@ -65,7 +65,7 @@
 
 ### Backend
 - **Framework:** Express.js + Node.js 20
-- **Base de datos:** SQLite con Sequelize ORM
+- **Base de datos:** PostgreSQL (Neon) con Sequelize ORM — migrado desde SQLite el 2026-08-21
 - **Imágenes:** Cloudinary (nunca guardar en el servidor local)
 - **Excel:** `xlsx` npm package para leer datos de indicadores académicos
 - **Email:** Nodemailer + Gmail SMTP
@@ -83,7 +83,7 @@
 ### Despliegue (todo gratuito)
 - **Backend:** Render.com free tier (arranca en ~30s si inactivo)
 - **Frontend:** Vercel free tier (deploy automático)
-- **Base de datos:** SQLite persistente en Render (disco efímero — reinicia con cada deploy)
+- **Base de datos:** PostgreSQL en Neon (persistente — nunca se pierde con deploys)
 - **Imágenes:** Cloudinary free tier (25 GB)
 - **CI/CD:** GitHub Actions → push a main despliega automático
 
@@ -215,6 +215,9 @@ EMAIL_FROM=academicosmyl@gmail.com
 ADMIN_EMAIL=academicosmyl@gmail.com
 PORT=10000
 NODE_ENV=production
+# PostgreSQL — Neon (NUNCA en el repositorio)
+DB_DIALECT=postgres
+DATABASE_URL=<connection string de Neon — solo en Render dashboard>
 ```
 
 ---
