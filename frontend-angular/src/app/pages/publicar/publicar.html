@@ -14,8 +14,13 @@
     <section class="exito-wrap">
       <div class="exito-card">
         <div class="exito-icono">✅</div>
-        <h2>¡Enviado con éxito!</h2>
-        <p>Tu contenido fue recibido y está pendiente de revisión. El rector lo aprobará pronto.</p>
+        <h2>{{ mensajeExito() }}</h2>
+        <p>{{ descripcionExito() }}</p>
+        @if (auth.esAdmin()) {
+          <a href="/super-admin" style="display:inline-block;margin-bottom:12px;color:#7C3AED;font-weight:600;">
+            → Ver en el panel de administración
+          </a><br>
+        }
         <button class="btn-primary" (click)="reiniciar()">Enviar otro contenido</button>
       </div>
     </section>

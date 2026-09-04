@@ -51,6 +51,11 @@ export class Publicar implements OnInit {
   enviado   = signal(false);
   errorMsg  = signal('');
 
+  mensajeExito     = computed(() => this.auth.esAdmin() ? '¡Publicado en la revista!' : '¡Enviado con éxito!');
+  descripcionExito = computed(() => this.auth.esAdmin()
+    ? 'Tu contenido ya está visible en la revista.'
+    : 'Tu contenido fue recibido y está pendiente de revisión. El rector lo aprobará pronto.');
+
   paso1Valido = computed(() => {
     if (!this.titulo().trim() || !this.descripcion().trim()) return false;
     if (!this.sedeSeleccionada()) return false;
