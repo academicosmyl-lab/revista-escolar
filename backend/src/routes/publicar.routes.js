@@ -97,19 +97,23 @@ router.post('/', autenticar, puedePublicar, uploadMem.array('imagenes', 5), asyn
       if (sedeReg) sedeId = sedeReg.id;
     }
 
-    // Crear la noticia en estado pendiente
+    // ADMIN y RECTOR se auto-publican; los demás quedan en pendiente
+    const autoPublicar = ['ADMIN', 'RECTOR'].includes(req.usuario.rol);
     const noticia = await Noticia.create({
       titulo,
       resumen:   `Enviado por: ${req.usuario.nombre} (${req.usuario.rol})`,
       contenido: metadataHeader + descripcion + contenidoYoutube,
-      estado:    'pendiente',
+      estado:    autoPublicar ? 'publicada' : 'pendiente',
       destacada:  para_portada === 'true' || para_portada === true,
       autor_id:  req.usuario.id,
       sede_id:   sedeId,
     });
 
-    // Responder al usuario inmediatamente — imágenes y email en segundo plano
-    ok(res, { id: noticia.id }, 'Tu contenido fue enviado. El rector lo revisará antes de publicarlo.');
+    // Responder inmediatamente — imágenes y email en segundo plano
+    const msg = autoPublicar
+      ? '¡Publicado! Ya aparece en la revista.'
+      : 'Tu contenido fue enviado. El rector lo revisará antes de publicarlo.';
+    ok(res, { id: noticia.id }, msg);
 
     // ── BACKGROUND: subir imágenes a Cloudinary (no bloquea la respuesta) ──
     if (req.files && req.files.length > 0) {
