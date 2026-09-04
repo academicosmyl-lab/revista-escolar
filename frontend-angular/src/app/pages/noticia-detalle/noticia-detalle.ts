@@ -22,11 +22,11 @@ export class NoticiaDetalle implements OnInit {
   ngOnInit() {
     this.route.paramMap.subscribe(params => {
       const id = params.get('id');
-      if (id) this.cargar(+id);
+      if (id) this.cargar(id);
     });
   }
 
-  private cargar(id: number) {
+  private cargar(id: string) {
     this.cargando = true;
     this.error    = '';
     this.noticia  = null;
