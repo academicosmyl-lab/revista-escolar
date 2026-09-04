@@ -143,8 +143,8 @@ router.post('/', autenticar, puedePublicar, uploadMem.array('imagenes', 5), asyn
 
     ok(res, { id: noticia.id }, 'Tu contenido fue enviado. El rector lo revisará antes de publicarlo.');
   } catch (e) {
-    console.error('publicar POST error:', e);
-    err(res, 'Error al enviar el contenido. Inténtalo de nuevo.', 500);
+    console.error('publicar POST error:', e.message, e.stack);
+    err(res, e.message || 'Error al enviar el contenido. Inténtalo de nuevo.', 500);
   }
 });
 
