@@ -41,15 +41,11 @@ const err = (res, msg, code = 400) => res.status(code).json({ ok: false, error: 
 // GET /api/v1/publicar/mis-noticias — noticias propias (cualquier estado)
 router.get('/mis-noticias', autenticar, async (req, res) => {
   try {
-    const { Categoria, Imagen } = require('../models');
-    const noticias = await require('../models').Noticia.findAll({
+    const noticias = await Noticia.findAll({
       where:   { autor_id: req.usuario.id },
-      include: [
-        { model: Imagen,    as: 'imagenes',  attributes: ['url','es_portada'], required: false },
-        { model: Categoria, as: 'categoria', attributes: ['nombre'],           required: false },
-      ],
-      order: [['created_at', 'DESC']],
-      limit: 20,
+      include: [{ model: Imagen, as: 'imagenes', attributes: ['url','es_portada'], required: false }],
+      order:   [['created_at', 'DESC']],
+      limit:   20,
     });
     res.json({ ok: true, total: noticias.length, data: noticias });
   } catch (e) {
@@ -126,7 +122,9 @@ router.post('/', autenticar, puedePublicar, uploadMem.array('imagenes', 5), asyn
       destacada:  para_portada === 'true' || para_portada === true,
       autor_id:  req.usuario.id,
       sede_id:   sedeId,
+      fecha_publicacion: autoPublicar ? new Date() : null,
     });
+    console.log(`✅ Noticia creada: id=${noticia.id} titulo="${titulo}" estado=${noticia.estado} autor=${req.usuario.email}`);
 
     // Responder inmediatamente — imágenes y email en segundo plano
     const msg = autoPublicar
