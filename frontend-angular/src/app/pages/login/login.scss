@@ -8,7 +8,14 @@
   box-shadow: 0 20px 60px rgba(0,0,0,0.2);
   text-align: center;
 }
-.login-logo { height: 72px; margin-bottom: 1.25rem; }
+.login-logo {
+  height: 80px;
+  width: auto;
+  max-width: 100%;
+  object-fit: contain;
+  display: block;
+  margin: 0 auto 1.25rem;
+}
 .login-titulo { font-size: 1.4rem; margin-bottom: 0.25rem; }
 .login-sub {
   font-family: 'Source Sans 3', sans-serif; font-size: 0.85rem;
