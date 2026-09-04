@@ -6,7 +6,7 @@
 const { Router } = require('express');
 const { Noticia, Imagen, Sede } = require('../models');
 const cloudinary = require('../services/cloudinary.service');
-const emailService = require('../services/email.service');
+const { emailService } = require('../services/email.service');
 const multer = require('multer');
 const { autenticar, puedePublicar } = require('../middlewares/auth.middleware');
 
