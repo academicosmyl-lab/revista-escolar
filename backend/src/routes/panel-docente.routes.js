@@ -5,7 +5,7 @@
 const { Router } = require('express');
 const { SeguimientoMateria, DocumentoDocente, Imagen, Curso, Area, Usuario, Noticia, Categoria } = require('../models');
 const { autenticar, requiereRol } = require('../middlewares/auth.middleware');
-const { upload } = require('../middlewares/upload.middleware');
+const { uploadNoticias, uploadDocumento, subirImagen, subirDocumento } = require('../services/cloudinary.service');
 const { galleryAgent } = require('../agents/gallery.agent');
 const { crearError } = require('../middlewares/error.middleware');
 const { excelService } = require('../services/excel.service');
@@ -94,8 +94,8 @@ router.put('/seguimiento/:id', async (req, res, next) => {
   } catch (err) { next(err); }
 });
 
-// POST /api/v1/panel/seguimiento/:id/imagenes — subir imágenes al seguimiento (máx 2)
-router.post('/seguimiento/:id/imagenes', upload.array('imagenes', 2), async (req, res, next) => {
+// POST /api/v1/panel/seguimiento/:id/imagenes — subir imágenes al seguimiento (máx 2) → Cloudinary
+router.post('/seguimiento/:id/imagenes', uploadNoticias.array('imagenes', 2), async (req, res, next) => {
   try {
     const seg = await SeguimientoMateria.findOne({
       where: { id: req.params.id, docente_id: req.usuario.id },
@@ -105,23 +105,31 @@ router.post('/seguimiento/:id/imagenes', upload.array('imagenes', 2), async (req
 
     const imagenes = [];
     for (const file of req.files) {
-      // Agente de galería procesa y coloca la imagen automáticamente
-      const { altText } = await galleryAgent({
-        imagenId: null,  // se actualiza después de crear
-        filename: file.filename,
-        noticiaId: null,
-        sedeId: req.usuario.sede_principal_id,
-        contexto: seg.titulo,
-      }).catch(() => ({ altText: 'Imagen de actividad de clase' }));
+      // Subir a Cloudinary primero
+      const result = await subirImagen(file.buffer, 'seguimiento');
 
+      // Crear registro con alt text provisional
       const imagen = await Imagen.create({
-        seguimiento_id: seg.id,
-        filename: file.filename,
-        url: `/uploads/${file.filename}`,
-        alt_text: altText || 'Imagen de actividad de clase',
-        tamaño_bytes: file.size,
+        seguimiento_id:   seg.id,
+        filename:         result.public_id,
+        url:              result.secure_url,
+        alt_text:         'Imagen de actividad de clase',
+        tamaño_bytes:     file.size,
         procesada_por_ia: true,
       });
+
+      // Agente evalúa y actualiza alt_text + score en segundo plano (no bloquea)
+      if (req.usuario.sede_principal_id) {
+        galleryAgent({
+          imagenId: imagen.id,
+          filename: file.originalname,
+          buffer:   file.buffer,
+          noticiaId: null,
+          sedeId:   req.usuario.sede_principal_id,
+          contexto: seg.titulo,
+        }).catch(e => console.error('galleryAgent seguimiento:', e.message));
+      }
+
       imagenes.push(imagen);
     }
 
@@ -129,22 +137,28 @@ router.post('/seguimiento/:id/imagenes', upload.array('imagenes', 2), async (req
   } catch (err) { next(err); }
 });
 
-// POST /api/v1/panel/documentos — subir documento (PDF, Word, Excel)
-router.post('/documentos', upload.single('documento'), async (req, res, next) => {
+// POST /api/v1/panel/documentos — subir documento o imagen → Cloudinary
+router.post('/documentos', uploadDocumento.single('documento'), async (req, res, next) => {
   try {
     if (!req.file) throw crearError('Debes subir un archivo', 400);
     const { nombre, descripcion, seguimiento_id, publico } = req.body;
 
     const ext = require('path').extname(req.file.originalname).toLowerCase();
-    const tipo = ['.jpg','.jpeg','.png','.webp'].includes(ext) ? 'imagen' : 'documento';
+    const esImagen = ['.jpg', '.jpeg', '.png', '.webp'].includes(ext);
+    const tipo = esImagen ? 'imagen' : 'documento';
+
+    // Subir a Cloudinary (imágenes como webp optimizado, docs como raw)
+    const result = esImagen
+      ? await subirImagen(req.file.buffer, 'seguimiento')
+      : await subirDocumento(req.file.buffer, req.file.originalname);
 
     const doc = await DocumentoDocente.create({
       docente_id:     req.usuario.id,
       seguimiento_id: seguimiento_id || null,
       perfil_id:      null,
       nombre:         nombre || req.file.originalname,
-      filename:       req.file.filename,
-      url:            `/uploads/${req.file.filename}`,
+      filename:       result.public_id,
+      url:            result.secure_url,
       tipo,
       tamaño_bytes:   req.file.size,
       descripcion,

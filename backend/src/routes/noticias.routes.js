@@ -4,7 +4,7 @@
 const { Router } = require('express');
 const { Noticia, Imagen, Categoria, Usuario } = require('../models');
 const { autenticar, requiereRol } = require('../middlewares/auth.middleware');
-const { upload } = require('../middlewares/upload.middleware');
+const { uploadNoticias, subirImagen } = require('../services/cloudinary.service');
 const { coordinador } = require('../agents/coordinator.agent');
 const { crearError } = require('../middlewares/error.middleware');
 const Joi = require('joi');
@@ -119,36 +119,41 @@ router.post('/', autenticar, requiereRol('DOCENTE', 'ADMIN'), async (req, res, n
   } catch (err) { next(err); }
 });
 
-// POST /api/v1/noticias/:id/fotos — subir fotos (máx 2)
-router.post('/:id/fotos', autenticar, upload.array('fotos', 2), async (req, res, next) => {
+// POST /api/v1/noticias/:id/fotos — subir fotos (máx 2) → Cloudinary
+router.post('/:id/fotos', autenticar, uploadNoticias.array('fotos', 2), async (req, res, next) => {
   try {
     const noticia = await Noticia.findByPk(req.params.id);
     if (!noticia) throw crearError('Noticia no encontrada', 404);
     if (noticia.autor_id !== req.usuario.id && req.usuario.rol !== 'ADMIN') {
       throw crearError('No tienes permiso para modificar esta noticia', 403);
     }
+    if (!req.files?.length) throw crearError('Debes subir al menos una imagen', 400);
 
-    const imagenesCreadeas = [];
+    const imagenesCreadas = [];
     for (const file of req.files) {
-      // Generar ALT con IA
+      // Subir a Cloudinary (buffer en memoria → nunca toca disco)
+      const result = await subirImagen(file.buffer, 'noticias');
+
+      // Generar ALT con IA usando el buffer
       const { altText } = await coordinador({
         tipo: 'imagen',
-        datos: { filename: file.filename, noticia_titulo: noticia.titulo },
+        datos: { buffer: file.buffer, filename: file.originalname, noticia_titulo: noticia.titulo },
         usuario: req.usuario,
-      });
+      }).catch(() => ({ altText: `Imagen de ${noticia.titulo}` }));
 
       const imagen = await Imagen.create({
-        noticia_id: noticia.id,
-        filename: file.filename,
-        url: `/uploads/${file.filename}`,
-        alt_text: altText,
-        tamaño_bytes: file.size,
-        es_portada: imagenesCreadeas.length === 0,
+        noticia_id:       noticia.id,
+        filename:         result.public_id,
+        url:              result.secure_url,
+        alt_text:         altText || `Imagen de ${noticia.titulo}`,
+        tamaño_bytes:     file.size,
+        es_portada:       imagenesCreadas.length === 0,
+        procesada_por_ia: true,
       });
-      imagenesCreadeas.push(imagen);
+      imagenesCreadas.push(imagen);
     }
 
-    res.json({ imagenes: imagenesCreadeas });
+    res.json({ imagenes: imagenesCreadas });
   } catch (err) { next(err); }
 });
 

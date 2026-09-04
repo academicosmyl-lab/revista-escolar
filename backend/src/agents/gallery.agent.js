@@ -21,14 +21,15 @@ const SECCIONES = {
 
 /**
  * Procesar nueva imagen: evaluar calidad y ubicar en galería
- * @param {Object} params - { imagenId, filename, noticiaId, sedeId, contexto }
+ * @param {Object} params - { imagenId, filename, buffer, noticiaId, sedeId, contexto }
+ *   buffer — Buffer en memoria (preferido). Si no viene, intenta leer desde disco.
  */
-async function galleryAgent({ imagenId, filename, noticiaId, sedeId, contexto = '' }) {
+async function galleryAgent({ imagenId, filename, buffer, noticiaId, sedeId, contexto = '' }) {
   try {
     console.log(`🖼️  Gallery Agent procesando: ${filename}`);
 
     // 1. Evaluar imagen con IA
-    const evaluacion = await _evaluarImagen(filename, contexto);
+    const evaluacion = await _evaluarImagen(filename, contexto, buffer);
 
     // 2. Actualizar registro de imagen con score y ALT text
     await Imagen.update(
@@ -158,18 +159,24 @@ async function reorganizarGaleria(sedeId) {
 
 // ── HELPERS PRIVADOS ─────────────────────────────────────
 
-async function _evaluarImagen(filename, contexto) {
+async function _evaluarImagen(filename, contexto, buffer = null) {
   try {
-    const imagePath = path.join(__dirname, '../../uploads', filename);
+    let imageBuffer;
+    const ext = path.extname(filename || '').toLowerCase();
+    const mediaType = { '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg', '.png': 'image/png', '.webp': 'image/webp' }[ext] || 'image/jpeg';
 
-    if (!fs.existsSync(imagePath)) {
-      return { score: 0.5, alt_text: 'Imagen de actividad escolar' };
+    if (buffer) {
+      imageBuffer = buffer;
+    } else {
+      // Fallback legacy: leer desde disco
+      const imagePath = path.join(__dirname, '../../uploads', filename);
+      if (!fs.existsSync(imagePath)) {
+        return { score: 0.5, alt_text: 'Imagen de actividad escolar' };
+      }
+      imageBuffer = fs.readFileSync(imagePath);
     }
 
-    const buffer = fs.readFileSync(imagePath);
-    const base64 = buffer.toString('base64');
-    const ext = path.extname(filename).toLowerCase();
-    const mediaType = { '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg', '.png': 'image/png', '.webp': 'image/webp' }[ext] || 'image/jpeg';
+    const base64 = imageBuffer.toString('base64');
 
     const response = await client.messages.create({
       model: process.env.CLAUDE_MODEL || 'claude-sonnet-4-20250514',

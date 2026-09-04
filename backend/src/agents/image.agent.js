@@ -10,24 +10,34 @@ const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
 /**
  * Procesar imagen: generar descripción ALT automática con IA
- * @param {Object} datos - { filepath, filename, noticia_titulo }
+ * @param {Object} datos - { buffer, filename, noticia_titulo }
+ *   buffer   — Buffer en memoria (preferido, sin lectura de disco)
+ *   filename — nombre original (para detectar extensión)
  */
 async function imageAgent(datos, usuario) {
-  const { filepath, filename, noticia_titulo } = datos;
+  const { filename, noticia_titulo, buffer } = datos;
 
   try {
-    // Leer imagen y convertir a base64
-    const imagePath = path.join(__dirname, '../../uploads', filename);
-    const imageBuffer = fs.readFileSync(imagePath);
-    const base64 = imageBuffer.toString('base64');
-
-    // Detectar tipo de imagen
-    const ext = path.extname(filename).toLowerCase();
+    const ext = path.extname(filename || '').toLowerCase();
     const mediaTypeMap = { '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg', '.png': 'image/png', '.webp': 'image/webp' };
     const mediaType = mediaTypeMap[ext] || 'image/jpeg';
 
+    let imageBuffer;
+    if (buffer) {
+      imageBuffer = buffer;
+    } else {
+      // Fallback legacy: leer desde disco (solo para llamadas antiguas)
+      const imagePath = path.join(__dirname, '../../uploads', filename);
+      if (!fs.existsSync(imagePath)) {
+        return { altText: `Imagen de evento escolar — ${noticia_titulo || 'Actividad académica'}`, procesada: false };
+      }
+      imageBuffer = fs.readFileSync(imagePath);
+    }
+
+    const base64 = imageBuffer.toString('base64');
+
     const response = await client.messages.create({
-      model: process.env.CLAUDE_MODEL || 'claude-sonnet-4-20250514',
+      model: process.env.CLAUDE_MODEL_IMAGENES || process.env.CLAUDE_MODEL || 'claude-haiku-4-5-20251001',
       max_tokens: 300,
       messages: [{
         role: 'user',
@@ -53,7 +63,6 @@ Responde SOLO con el texto del ALT, sin comillas ni explicaciones adicionales.`,
 
   } catch (error) {
     console.error('❌ Error en imageAgent:', error.message);
-    // Fallback: ALT genérico
     return {
       altText: `Imagen de evento escolar — ${noticia_titulo || 'Actividad académica'}`,
       procesada: false,
