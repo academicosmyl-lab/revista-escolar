@@ -16,12 +16,29 @@
         <div class="exito-icono">✅</div>
         <h2>{{ mensajeExito() }}</h2>
         <p>{{ descripcionExito() }}</p>
-        @if (auth.esAdmin()) {
-          <a href="/super-admin" style="display:inline-block;margin-bottom:12px;color:#7C3AED;font-weight:600;">
-            → Ver en el panel de administración
-          </a><br>
+        <button class="btn-primary" style="margin-bottom:16px" (click)="reiniciar()">Enviar otro contenido</button>
+
+        @if (misNoticias().length > 0) {
+          <div style="margin-top:16px;text-align:left;border-top:1px solid #eee;padding-top:16px;">
+            <strong style="font-size:0.85rem;color:#555">Tus publicaciones recientes:</strong>
+            @for (n of misNoticias(); track n.id) {
+              <div style="display:flex;align-items:center;gap:10px;margin-top:10px;padding:8px;background:#f9f9f9;border-radius:8px">
+                @if (n.imagenes && n.imagenes.length > 0) {
+                  <img [src]="n.imagenes[0].url" style="width:48px;height:48px;object-fit:cover;border-radius:6px" alt="">
+                } @else {
+                  <div style="width:48px;height:48px;background:#e5e7eb;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:1.2rem">📄</div>
+                }
+                <div>
+                  <div style="font-weight:600;font-size:0.88rem">{{ n.titulo }}</div>
+                  <div style="font-size:0.75rem;margin-top:2px"
+                    [style.color]="n.estado==='publicada' ? '#16a34a' : n.estado==='pendiente' ? '#d97706' : '#dc2626'">
+                    {{ n.estado === 'publicada' ? '✅ Publicada' : n.estado === 'pendiente' ? '⏳ Pendiente de aprobación' : '❌ Rechazada' }}
+                  </div>
+                </div>
+              </div>
+            }
+          </div>
         }
-        <button class="btn-primary" (click)="reiniciar()">Enviar otro contenido</button>
       </div>
     </section>
   }

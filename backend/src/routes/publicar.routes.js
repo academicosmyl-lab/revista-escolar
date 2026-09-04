@@ -38,6 +38,25 @@ function extraerYoutubeId(url) {
 const ok  = (res, data, msg = '') => res.json({ ok: true, data, mensaje: msg });
 const err = (res, msg, code = 400) => res.status(code).json({ ok: false, error: msg });
 
+// GET /api/v1/publicar/mis-noticias — noticias propias (cualquier estado)
+router.get('/mis-noticias', autenticar, async (req, res) => {
+  try {
+    const { Categoria, Imagen } = require('../models');
+    const noticias = await require('../models').Noticia.findAll({
+      where:   { autor_id: req.usuario.id },
+      include: [
+        { model: Imagen,    as: 'imagenes',  attributes: ['url','es_portada'], required: false },
+        { model: Categoria, as: 'categoria', attributes: ['nombre'],           required: false },
+      ],
+      order: [['created_at', 'DESC']],
+      limit: 20,
+    });
+    res.json({ ok: true, total: noticias.length, data: noticias });
+  } catch (e) {
+    res.status(500).json({ ok: false, error: e.message });
+  }
+});
+
 // GET /api/v1/publicar/sedes — lista de sedes para el formulario
 router.get('/sedes', async (req, res) => {
   try {

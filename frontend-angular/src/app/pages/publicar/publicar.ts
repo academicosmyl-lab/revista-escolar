@@ -4,6 +4,7 @@ import {
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
+import { Router } from '@angular/router';
 import { environment } from '../../../environments/environment';
 import { AuthService } from '../../services/auth.service';
 
@@ -21,9 +22,10 @@ type TipoContenido = 'imagenes' | 'video' | 'texto';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Publicar implements OnInit {
-  private http = inject(HttpClient);
-  private base = environment.apiUrl;
-  readonly auth = inject(AuthService);
+  private http   = inject(HttpClient);
+  private router = inject(Router);
+  private base   = environment.apiUrl;
+  readonly auth  = inject(AuthService);
 
   paso = signal<Paso>(1);
 
@@ -53,8 +55,10 @@ export class Publicar implements OnInit {
 
   mensajeExito     = computed(() => this.auth.esAdmin() ? '¡Publicado en la revista!' : '¡Enviado con éxito!');
   descripcionExito = computed(() => this.auth.esAdmin()
-    ? 'Tu contenido ya está visible en la revista.'
+    ? 'Tu contenido ya está visible. Llevándote a la revista...'
     : 'Tu contenido fue recibido y está pendiente de revisión. El rector lo aprobará pronto.');
+
+  misNoticias = signal<any[]>([]);
 
   paso1Valido = computed(() => {
     if (!this.titulo().trim() || !this.descripcion().trim()) return false;
@@ -149,11 +153,23 @@ export class Publicar implements OnInit {
       next: () => {
         this.enviando.set(false);
         this.enviado.set(true);
+        this.cargarMisNoticias();
+        // ADMIN: redirigir al inicio en 3 segundos para ver la noticia publicada
+        if (this.auth.esAdmin()) {
+          setTimeout(() => this.router.navigate(['/']), 3000);
+        }
       },
       error: (e) => {
         this.enviando.set(false);
         this.errorMsg.set(e?.error?.error || 'Error al enviar. Inténtalo de nuevo.');
       },
+    });
+  }
+
+  cargarMisNoticias() {
+    this.http.get<any>(`${this.base}/publicar/mis-noticias`).subscribe({
+      next: r => this.misNoticias.set(r.data ?? []),
+      error: () => {},
     });
   }
 
