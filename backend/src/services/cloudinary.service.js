@@ -62,10 +62,16 @@ async function subirImagen(buffer, tipo = 'noticias', mimetype = 'image/jpeg') {
     ? 'its-santander/seguimiento'
     : 'its-santander/noticias';
 
+  const esNoticia = tipo === 'noticias';
   return subirBuffer(buffer, {
     folder,
     format: 'webp',
-    transformation: [{ quality: 'auto', fetch_format: 'auto' }],
+    transformation: esNoticia
+      ? [
+          { width: 1200, aspect_ratio: '16:9', crop: 'fill', gravity: 'auto' },
+          { quality: 'auto', fetch_format: 'auto' },
+        ]
+      : [{ quality: 'auto', fetch_format: 'auto' }],
     public_id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
     _mimetype: mimetype,
   });
