@@ -31,7 +31,7 @@ router.post('/login', async (req, res, next) => {
     await usuario.update({ ultimo_login: new Date() });
 
     const token = jwt.sign(
-      { id: usuario.id, rol: usuario.rol, email: usuario.email },
+      { id: usuario.id, rol: usuario.rol, email: usuario.email, nombre: usuario.nombre },
       process.env.JWT_SECRET,
       { expiresIn: '12h' }
     );
