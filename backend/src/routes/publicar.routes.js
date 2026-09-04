@@ -108,12 +108,13 @@ router.post('/', autenticar, puedePublicar, uploadMem.array('imagenes', 5), asyn
       sede_id:   sedeId,
     });
 
-    // Subir imágenes a Cloudinary si se enviaron
+    // Subir imágenes a Cloudinary si se enviaron (fallo silencioso — la noticia ya quedó guardada)
     if (req.files && req.files.length > 0) {
-      await Promise.all(
-        req.files.map(async (file, i) => {
+      for (let i = 0; i < req.files.length; i++) {
+        const file = req.files[i];
+        try {
           const result = await cloudinary.subirImagen(file.buffer, 'noticias');
-          return Imagen.create({
+          await Imagen.create({
             noticia_id:   noticia.id,
             filename:     result.public_id,
             url:          result.secure_url,
@@ -121,8 +122,10 @@ router.post('/', autenticar, puedePublicar, uploadMem.array('imagenes', 5), asyn
             es_portada:   i === 0,
             tamaño_bytes: file.size,
           });
-        })
-      );
+        } catch (imgErr) {
+          console.error(`publicar: imagen ${i + 1} falló (no crítico):`, imgErr.message);
+        }
+      }
     }
 
     // Notificar al admin por email (fail silencioso si falla)
