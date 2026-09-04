@@ -108,57 +108,50 @@ router.post('/', autenticar, puedePublicar, uploadMem.array('imagenes', 5), asyn
       sede_id:   sedeId,
     });
 
-    // Subir imágenes a Cloudinary si se enviaron (fallo silencioso — la noticia ya quedó guardada)
-    if (req.files && req.files.length > 0) {
-      const TIMEOUT_MS = 20000;
-      const subirConTimeout = (buffer, tipo) =>
-        Promise.race([
-          cloudinary.subirImagen(buffer, tipo),
-          new Promise((_, reject) =>
-            setTimeout(() => reject(new Error('cloudinary-timeout-20s')), TIMEOUT_MS)
-          ),
-        ]);
+    // Responder al usuario inmediatamente — imágenes y email en segundo plano
+    ok(res, { id: noticia.id }, 'Tu contenido fue enviado. El rector lo revisará antes de publicarlo.');
 
-      const uploads = req.files.map(async (file, i) => {
-        try {
-          const result = await subirConTimeout(file.buffer, 'noticias');
-          await Imagen.create({
-            noticia_id:   noticia.id,
-            filename:     result.public_id,
-            url:          result.secure_url,
-            alt_text:     `${titulo} - imagen ${i + 1}`,
-            es_portada:   i === 0,
-            tamaño_bytes: file.size,
-          });
-        } catch (imgErr) {
-          console.error(`publicar: imagen ${i + 1} falló (no crítico):`, imgErr.message);
+    // ── BACKGROUND: subir imágenes a Cloudinary (no bloquea la respuesta) ──
+    if (req.files && req.files.length > 0) {
+      const noticiaId = noticia.id;
+      const files     = req.files;
+      setImmediate(async () => {
+        for (let i = 0; i < files.length; i++) {
+          try {
+            const result = await cloudinary.subirImagen(files[i].buffer, 'noticias');
+            await Imagen.create({
+              noticia_id:   noticiaId,
+              filename:     result.public_id,
+              url:          result.secure_url,
+              alt_text:     `${titulo} - imagen ${i + 1}`,
+              es_portada:   i === 0,
+              tamaño_bytes: files[i].size,
+            });
+            console.log(`publicar bg: imagen ${i + 1}/${files.length} ok`);
+          } catch (imgErr) {
+            console.error(`publicar bg: imagen ${i + 1} falló:`, imgErr.message);
+          }
         }
       });
-
-      // Máximo 30s para todo el batch de imágenes
-      await Promise.race([
-        Promise.all(uploads),
-        new Promise(resolve => setTimeout(resolve, 30000)),
-      ]);
     }
 
-    // Notificar al admin por email (fail silencioso si falla)
-    try {
-      const adminEmail = process.env.ADMIN_EMAIL;
-      if (adminEmail) {
-        await emailService.noticiaPendiente({
-          adminEmail,
-          docenteNombre: req.usuario.nombre,
-          noticiaId:     noticia.id,
-          noticiaTitulo: titulo,
-          sedeName:      sede_nombre || 'Sin especificar',
-        });
+    // ── BACKGROUND: notificación por email ──
+    setImmediate(async () => {
+      try {
+        const adminEmail = process.env.ADMIN_EMAIL;
+        if (adminEmail) {
+          await emailService.noticiaPendiente({
+            adminEmail,
+            docenteNombre: req.usuario.nombre,
+            noticiaId:     noticia.id,
+            noticiaTitulo: titulo,
+            sedeName:      sede_nombre || 'Sin especificar',
+          });
+        }
+      } catch (emailErr) {
+        console.error('publicar bg: email falló:', emailErr.message);
       }
-    } catch (emailErr) {
-      console.error('publicar: email falló (no crítico):', emailErr.message);
-    }
-
-    ok(res, { id: noticia.id }, 'Tu contenido fue enviado. El rector lo revisará antes de publicarlo.');
+    });
   } catch (e) {
     console.error('publicar POST error:', e.message, e.stack);
     err(res, e.message || 'Error al enviar el contenido. Inténtalo de nuevo.', 500);
