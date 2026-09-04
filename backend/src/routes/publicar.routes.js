@@ -110,10 +110,18 @@ router.post('/', autenticar, puedePublicar, uploadMem.array('imagenes', 5), asyn
 
     // Subir imágenes a Cloudinary si se enviaron (fallo silencioso — la noticia ya quedó guardada)
     if (req.files && req.files.length > 0) {
-      for (let i = 0; i < req.files.length; i++) {
-        const file = req.files[i];
+      const TIMEOUT_MS = 20000;
+      const subirConTimeout = (buffer, tipo) =>
+        Promise.race([
+          cloudinary.subirImagen(buffer, tipo),
+          new Promise((_, reject) =>
+            setTimeout(() => reject(new Error('cloudinary-timeout-20s')), TIMEOUT_MS)
+          ),
+        ]);
+
+      const uploads = req.files.map(async (file, i) => {
         try {
-          const result = await cloudinary.subirImagen(file.buffer, 'noticias');
+          const result = await subirConTimeout(file.buffer, 'noticias');
           await Imagen.create({
             noticia_id:   noticia.id,
             filename:     result.public_id,
@@ -125,7 +133,13 @@ router.post('/', autenticar, puedePublicar, uploadMem.array('imagenes', 5), asyn
         } catch (imgErr) {
           console.error(`publicar: imagen ${i + 1} falló (no crítico):`, imgErr.message);
         }
-      }
+      });
+
+      // Máximo 30s para todo el batch de imágenes
+      await Promise.race([
+        Promise.all(uploads),
+        new Promise(resolve => setTimeout(resolve, 30000)),
+      ]);
     }
 
     // Notificar al admin por email (fail silencioso si falla)

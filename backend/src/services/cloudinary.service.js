@@ -49,7 +49,10 @@ function subirBuffer(buffer, opciones = {}) {
       if (error) reject(error);
       else resolve(result);
     });
-    Readable.from(buffer).pipe(stream);
+    stream.on('error', reject);
+    const readable = Readable.from(buffer);
+    readable.on('error', reject);
+    readable.pipe(stream);
   });
 }
 
