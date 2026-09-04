@@ -527,6 +527,43 @@ router.put('/publicaciones/:id/rechazar', soloAdmin, async (req, res) => {
   }
 });
 
+// DELETE /api/v1/super-admin/publicaciones/:id — eliminar noticia permanentemente
+router.delete('/publicaciones/:id', soloAdmin, async (req, res) => {
+  try {
+    const noticia = await Noticia.findByPk(req.params.id, {
+      include: [{ model: Imagen, as: 'imagenes' }],
+    });
+    if (!noticia) return res.status(404).json({ error: 'Publicación no encontrada' });
+
+    const titulo = noticia.titulo;
+
+    // Eliminar imágenes de Cloudinary primero
+    const { eliminarImagen } = require('../services/cloudinary.service');
+    for (const img of (noticia.imagenes ?? [])) {
+      if (img.filename) {
+        await eliminarImagen(img.filename).catch(e =>
+          console.warn('No se pudo eliminar imagen de Cloudinary:', img.filename, e.message)
+        );
+      }
+    }
+
+    await noticia.destroy(); // Sequelize cascade elimina las imagenes en BD
+
+    await AccionAdmin.create({
+      admin_id:     req.usuario.id,
+      tipo:         'eliminar_docente', // reutilizamos tipo existente del ENUM
+      descripcion:  `Publicación "${titulo}" eliminada permanentemente`,
+      entidad_tipo: 'Noticia',
+      entidad_id:   req.params.id,
+    });
+
+    res.json({ ok: true, mensaje: `"${titulo}" eliminada permanentemente.` });
+  } catch (e) {
+    console.error('publicaciones eliminar error:', e.message);
+    res.status(500).json({ error: e.message });
+  }
+});
+
 // PUT /api/v1/super-admin/usuarios/reset-password — resetear contraseña de cualquier usuario
 router.put('/usuarios/reset-password', async (req, res) => {
   try {

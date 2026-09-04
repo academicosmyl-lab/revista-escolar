@@ -458,8 +458,9 @@
                     <td class="sa-td-actions">
                       @if (pub.estado === 'pendiente') {
                         <button class="sa-btn sa-btn-ok" style="margin-right:6px;font-size:0.78rem;padding:5px 10px" (click)="abrirRevisionPub(pub, 'aprobar-pub')">Aprobar</button>
-                        <button class="sa-btn sa-btn-err" style="font-size:0.78rem;padding:5px 10px" (click)="abrirRevisionPub(pub, 'rechazar-pub')">Rechazar</button>
+                        <button class="sa-btn sa-btn-err" style="margin-right:6px;font-size:0.78rem;padding:5px 10px" (click)="abrirRevisionPub(pub, 'rechazar-pub')">Rechazar</button>
                       }
+                      <button class="sa-btn sa-btn-err" style="font-size:0.78rem;padding:5px 10px;opacity:0.75" title="Eliminar permanentemente" (click)="eliminarPublicacion(pub)">🗑️ Eliminar</button>
                     </td>
                   </tr>
                 }

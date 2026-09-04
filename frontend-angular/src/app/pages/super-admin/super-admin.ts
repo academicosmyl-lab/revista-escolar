@@ -346,6 +346,14 @@ export class SuperAdmin implements OnInit {
     });
   }
 
+  eliminarPublicacion(pub: Publicacion) {
+    if (!confirm(`¿Eliminar permanentemente "${pub.titulo}"? Esta acción no se puede deshacer.`)) return;
+    this.api.delete<any>(`/super-admin/publicaciones/${pub.id}`).subscribe({
+      next:  r => { this.exito.set(r.mensaje || 'Eliminada'); this.cargarPublicaciones(); this.cdr.markForCheck(); },
+      error: e => { this.error.set(e.mensaje ?? 'Error al eliminar'); this.cdr.markForCheck(); },
+    });
+  }
+
   get totalPagesPublicaciones() { return Math.ceil(this.totalPublicaciones / this.LIMIT); }
   prevPublicaciones() { if (this.pagPublicaciones() > 1) { this.pagPublicaciones.update(p => p - 1); this.cargarPublicaciones(); } }
   nextPublicaciones() { if (this.pagPublicaciones() < this.totalPagesPublicaciones) { this.pagPublicaciones.update(p => p + 1); this.cargarPublicaciones(); } }
