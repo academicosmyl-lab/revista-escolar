@@ -45,7 +45,7 @@ export interface Categoria {
 export type EstadoNoticia = 'pendiente' | 'publicada' | 'rechazada';
 
 export interface Noticia {
-  id: number;
+  id: string;
   titulo: string;
   contenido: string;
   resumen?: string;
