@@ -134,23 +134,27 @@ router.post('/', autenticar, puedePublicar, uploadMem.array('imagenes', 5), asyn
 
     // ── BACKGROUND: subir imágenes a Cloudinary (no bloquea la respuesta) ──
     if (req.files && req.files.length > 0) {
-      const noticiaId = noticia.id;
-      const files     = req.files;
+      const noticiaId  = noticia.id;
+      const files      = req.files;
+      const tituloSnap = titulo;
+      console.log(`publicar bg: iniciando upload de ${files.length} imagen(es) para noticia ${noticiaId}`);
+      console.log(`publicar bg: CLOUDINARY configurado=${!!(process.env.CLOUDINARY_CLOUD_NAME && process.env.CLOUDINARY_API_KEY && process.env.CLOUDINARY_API_SECRET)}`);
       setImmediate(async () => {
         for (let i = 0; i < files.length; i++) {
           try {
+            console.log(`publicar bg: subiendo imagen ${i + 1}/${files.length} (${files[i].size} bytes, ${files[i].mimetype})`);
             const result = await cloudinary.subirImagen(files[i].buffer, 'noticias');
             await Imagen.create({
               noticia_id:   noticiaId,
               filename:     result.public_id,
               url:          result.secure_url,
-              alt_text:     `${titulo} - imagen ${i + 1}`,
+              alt_text:     `${tituloSnap} - imagen ${i + 1}`,
               es_portada:   i === 0,
               tamaño_bytes: files[i].size,
             });
-            console.log(`publicar bg: imagen ${i + 1}/${files.length} ok`);
+            console.log(`publicar bg: imagen ${i + 1}/${files.length} guardada → ${result.secure_url}`);
           } catch (imgErr) {
-            console.error(`publicar bg: imagen ${i + 1} falló:`, imgErr.message);
+            console.error(`publicar bg: imagen ${i + 1} FALLÓ: ${imgErr.message} | http_code=${imgErr.http_code ?? 'n/a'}`);
           }
         }
       });

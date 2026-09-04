@@ -19,7 +19,14 @@ const sseService = {
     res.setHeader('Content-Type', 'text/event-stream');
     res.setHeader('Cache-Control', 'no-cache');
     res.setHeader('Connection', 'keep-alive');
-    res.setHeader('Access-Control-Allow-Origin', process.env.FRONTEND_URL || '*');
+    // Reflejar el origen del cliente si es un dominio permitido
+    const reqOrigin = req.headers.origin || '';
+    const sseOrigin = (
+      reqOrigin === 'http://localhost:4200' ||
+      /^https:\/\/revista-escolar[a-z0-9-]*\.vercel\.app$/.test(reqOrigin) ||
+      /^https:\/\/[a-z0-9-]+-academicosmyl-lab\.vercel\.app$/.test(reqOrigin)
+    ) ? reqOrigin : (process.env.FRONTEND_URL || '*');
+    res.setHeader('Access-Control-Allow-Origin', sseOrigin);
     res.flushHeaders();
 
     const clienteId = `${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
