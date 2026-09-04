@@ -527,4 +527,28 @@ router.put('/publicaciones/:id/rechazar', soloAdmin, async (req, res) => {
   }
 });
 
+// PUT /api/v1/super-admin/usuarios/reset-password — resetear contraseña de cualquier usuario
+router.put('/usuarios/reset-password', async (req, res) => {
+  try {
+    const { email, nueva_password } = req.body;
+    if (!email || !nueva_password) {
+      return res.status(400).json({ error: 'email y nueva_password son requeridos' });
+    }
+    if (nueva_password.length < 6) {
+      return res.status(400).json({ error: 'La contraseña debe tener al menos 6 caracteres' });
+    }
+
+    const usuario = await Usuario.findOne({ where: { email: email.trim().toLowerCase() } });
+    if (!usuario) return res.status(404).json({ error: 'Usuario no encontrado' });
+
+    const hash = await bcrypt.hash(nueva_password, 12);
+    await usuario.update({ password_hash: hash });
+
+    res.json({ ok: true, mensaje: `Contraseña de ${usuario.nombre} actualizada correctamente` });
+  } catch (e) {
+    console.error('reset-password error:', e.message);
+    res.status(500).json({ error: e.message });
+  }
+});
+
 module.exports = router;
