@@ -33,7 +33,7 @@ export class NoticiaDetalle implements OnInit {
 
     this.api.get<any>(`/noticias/${id}`).subscribe({
       next: r => {
-        this.noticia  = r.data ?? r;
+        this.noticia  = r.noticia ?? r.data ?? r;
         this.cargando = false;
         this.cargarRelacionadas();
       },
