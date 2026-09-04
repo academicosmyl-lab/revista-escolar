@@ -4,7 +4,8 @@
 const { Router } = require('express');
 const { GaleriaItem, Imagen, VideoYoutube, Sede } = require('../models');
 const { autenticar, requiereRol } = require('../middlewares/auth.middleware');
-const { galleryVideoAgent, reorganizarGaleria } = require('../agents/gallery.agent');
+const { galleryAgent, galleryVideoAgent, reorganizarGaleria } = require('../agents/gallery.agent');
+const { uploadNoticias, subirImagen } = require('../services/cloudinary.service');
 const { crearError } = require('../middlewares/error.middleware');
 const Joi = require('joi');
 
@@ -38,6 +39,50 @@ router.get('/', async (req, res, next) => {
     };
 
     res.json({ galeria, total: items.length });
+  } catch (err) { next(err); }
+});
+
+// POST /api/v1/galeria/fotos — docente sube fotos directo a la galería (máx 5)
+router.post('/fotos', autenticar, uploadNoticias.array('fotos', 5), async (req, res, next) => {
+  try {
+    if (!req.files?.length) throw crearError('Debes subir al menos una imagen', 400);
+
+    const { sede_id, contexto } = req.body;
+    if (!sede_id) throw crearError('Debes indicar la sede', 400);
+
+    const sede = await Sede.findByPk(sede_id);
+    if (!sede) throw crearError('Sede no encontrada', 404);
+
+    const resultado = [];
+    for (const file of req.files) {
+      const result = await subirImagen(file.buffer, 'galeria');
+
+      const imagen = await Imagen.create({
+        filename:         result.public_id,
+        url:              result.secure_url,
+        alt_text:         contexto || 'Imagen institucional',
+        tamaño_bytes:     file.size,
+        procesada_por_ia: true,
+      });
+
+      // Agente evalúa y coloca en sección automáticamente
+      galleryAgent({
+        imagenId: imagen.id,
+        filename: file.originalname,
+        buffer:   file.buffer,
+        noticiaId: null,
+        sedeId:   sede_id,
+        contexto: contexto || 'Actividad institucional del colegio',
+      }).catch(e => console.error('galleryAgent galeria/fotos:', e.message));
+
+      resultado.push({ imagen, sede: sede.nombre });
+    }
+
+    res.status(201).json({
+      ok: true,
+      imagenes: resultado,
+      mensaje: `${resultado.length} foto${resultado.length > 1 ? 's subidas' : ' subida'} a la galería de ${sede.nombre}.`,
+    });
   } catch (err) { next(err); }
 });
 

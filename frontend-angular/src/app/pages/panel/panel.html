@@ -17,19 +17,15 @@
           <div class="pan-user-rol">{{ auth.usuario()?.rol }}</div>
         </div>
       </div>
-      <a routerLink="/" class="pan-btn-revista">Ir a la Revista</a>
+      <a routerLink="/" class="pan-btn-revista">Ver Revista</a>
       <button class="pan-btn-salir" (click)="auth.logout()">Salir</button>
     </div>
   </div>
 </header>
 
-<!-- MENSAJES -->
-@if (exito()) {
-  <div class="pan-alerta-exito">{{ exito() }}</div>
-}
-@if (error()) {
-  <div class="pan-alerta-error">{{ error() }}</div>
-}
+<!-- ALERTAS GLOBALES -->
+@if (exito()) { <div class="pan-alerta-exito">{{ exito() }}</div> }
+@if (error()) { <div class="pan-alerta-error">{{ error() }}</div> }
 
 <!-- MAIN -->
 <main class="pan-main">
@@ -56,10 +52,13 @@
     </div>
   }
 
-  <!-- ACCIONES RÁPIDAS -->
+  <!-- ACCIONES PRINCIPALES -->
   <div class="pan-acciones">
-    <button class="ITI-btn-primario" (click)="mostrarFormNoticia = !mostrarFormNoticia">
-      {{ mostrarFormNoticia ? 'Cancelar' : 'Escribir nueva noticia' }}
+    <button class="ITI-btn-primario" (click)="mostrarFormNoticia = !mostrarFormNoticia; mostrarSubidaFotos = false">
+      {{ mostrarFormNoticia ? 'Cancelar noticia' : '+ Escribir noticia' }}
+    </button>
+    <button class="pan-btn-fotos" (click)="abrirSubidaFotos(); mostrarFormNoticia = false">
+      📷 Subir fotos
     </button>
     <a routerLink="/docentes" class="pan-link-perfil">Ver mi perfil público</a>
   </div>
@@ -71,24 +70,20 @@
         <div class="linea-vinotinto"></div>
         <h2 class="pan-form-titulo">Nueva noticia para la revista</h2>
       </div>
-
       <form class="pan-form" (ngSubmit)="crearNoticia()">
         <div class="pan-campo">
-          <label for="titulo">Título de la noticia <span class="pan-req">*</span></label>
+          <label for="titulo">Título <span class="pan-req">*</span></label>
           <input id="titulo" class="input-ITI" type="text" [(ngModel)]="nueva.titulo"
-                 name="titulo" placeholder="Ej: Estudiantes del ITI ganan olimpiada de matemáticas"
-                 maxlength="200">
+                 name="titulo" placeholder="Ej: Estudiantes del ITI ganan olimpiada de matemáticas" maxlength="200">
           <span class="pan-hint">{{ nueva.titulo.length }}/200 caracteres (mín. 5)</span>
         </div>
-
         <div class="pan-campo">
           <label for="contenido">Contenido <span class="pan-req">*</span></label>
           <textarea id="contenido" class="input-ITI pan-textarea" rows="8"
                     [(ngModel)]="nueva.contenido" name="contenido"
-                    placeholder="Escribe tu noticia aquí. Si activas la IA, Claude la mejorará antes de enviarla a revisión. Escribe al menos lo esencial: qué pasó, quiénes participaron, qué logros se obtuvieron..."></textarea>
+                    placeholder="Escribe tu noticia aquí. Si activas la IA, Claude la mejorará antes de enviarla a revisión..."></textarea>
           <span class="pan-hint">{{ nueva.contenido.length }} caracteres (mín. 50)</span>
         </div>
-
         <div class="pan-form-fila">
           <div class="pan-campo">
             <label for="categoria">Categoría (opcional)</label>
@@ -99,7 +94,6 @@
               }
             </select>
           </div>
-
           <div class="pan-campo pan-campo-ia">
             <label class="pan-label-toggle">
               <div class="pan-toggle-wrap">
@@ -107,25 +101,178 @@
                 <div class="pan-toggle-slider"></div>
               </div>
               <div>
-                <span class="pan-toggle-label">Mejorar con inteligencia artificial</span>
-                <span class="pan-toggle-desc">Claude (Anthropic) mejorará el título y redacción antes de enviar a revisión</span>
+                <span class="pan-toggle-label">Mejorar con IA</span>
+                <span class="pan-toggle-desc">Claude mejorará el título y redacción antes de enviar</span>
               </div>
             </label>
           </div>
         </div>
-
         <div class="pan-form-footer">
           <button type="submit" class="ITI-btn-primario"
                   [disabled]="guardando() || nueva.titulo.length < 5 || nueva.contenido.length < 50">
-            {{ guardando() ? 'Procesando...' : (nueva.usar_ia ? 'Mejorar con IA y enviar a revisión' : 'Enviar a revisión') }}
+            {{ guardando() ? 'Procesando...' : (nueva.usar_ia ? 'Mejorar con IA y enviar' : 'Enviar a revisión') }}
           </button>
-          <p class="pan-aviso-revision">La noticia no se publica directamente — queda pendiente de revisión por el administrador.</p>
+          <p class="pan-aviso-revision">La noticia queda pendiente de revisión por el administrador. Después podrás agregarle fotos.</p>
         </div>
       </form>
     </section>
   }
 
-  <!-- MIS NOTICIAS -->
+  <!-- ═══ PANEL DE SUBIDA DE FOTOS ═══ -->
+  @if (mostrarSubidaFotos) {
+    <section class="pan-subida-fotos" id="zona-fotos">
+      <div class="pan-subida-header">
+        <div class="pan-subida-titulo-wrap">
+          <span class="pan-subida-icono">📷</span>
+          <h2 class="pan-subida-titulo">Subir fotos</h2>
+        </div>
+        <button class="pan-subida-cerrar" (click)="cerrarSubidaFotos()" title="Cerrar">✕</button>
+      </div>
+
+      <!-- PASO 1: Elegir destino -->
+      @if (!destinoFoto) {
+        <div class="pan-destino-pregunta">
+          <p class="pan-destino-texto">¿Para dónde son estas fotos?</p>
+          <div class="pan-destino-opciones">
+            <button class="pan-destino-card" (click)="elegirDestino('noticia')">
+              <span class="pan-destino-emoji">📰</span>
+              <strong>Para una noticia</strong>
+              <span>Agrega fotos a una de tus noticias</span>
+            </button>
+            <button class="pan-destino-card" (click)="elegirDestino('galeria')">
+              <span class="pan-destino-emoji">🖼️</span>
+              <strong>Para la galería del colegio</strong>
+              <span>Fotos institucionales, eventos, actividades</span>
+            </button>
+          </div>
+        </div>
+      }
+
+      <!-- PASO 2A: Seleccionar noticia -->
+      @if (destinoFoto === 'noticia') {
+        <div class="pan-subida-paso">
+          <div class="pan-paso-header">
+            <button class="pan-volver" (click)="elegirDestino('')">← Volver</button>
+            <span class="pan-paso-label">Para una noticia</span>
+          </div>
+
+          <div class="pan-campo">
+            <label>¿A cuál noticia le agregas las fotos?</label>
+            <select class="input-ITI" [(ngModel)]="noticiaSeleccionadaId">
+              <option value="">— Selecciona una noticia —</option>
+              @for (n of noticias; track n.id) {
+                <option [value]="n.id" [disabled]="fotosPendientesEn(n) <= 0">
+                  {{ n.titulo | slice:0:60 }}{{ n.titulo.length > 60 ? '...' : '' }}
+                  @if (fotosDe(n).length > 0) { (ya tiene {{ fotosDe(n).length }} foto{{ fotosDe(n).length > 1 ? 's' : '' }}) }
+                  @if (fotosPendientesEn(n) <= 0) { — máx. alcanzado }
+                </option>
+              }
+            </select>
+          </div>
+
+          <!-- Fotos actuales de la noticia -->
+          @if (noticiaSeleccionadaId && fotosDe(noticiaSeleccionada).length) {
+            <div class="pan-fotos-actuales">
+              <span class="pan-fotos-actuales-label">Fotos actuales:</span>
+              @for (img of fotosDe(noticiaSeleccionada); track img.url) {
+                <img class="pan-foto-mini" [src]="img.url" [alt]="img.alt_text">
+              }
+            </div>
+          }
+
+          @if (noticiaSeleccionadaId) {
+            <ng-container *ngTemplateOutlet="zonaSubida"></ng-container>
+          }
+        </div>
+      }
+
+      <!-- PASO 2B: Galería -->
+      @if (destinoFoto === 'galeria') {
+        <div class="pan-subida-paso">
+          <div class="pan-paso-header">
+            <button class="pan-volver" (click)="elegirDestino('')">← Volver</button>
+            <span class="pan-paso-label">Para la galería del colegio</span>
+          </div>
+
+          <div class="pan-form-fila">
+            <div class="pan-campo">
+              <label>Sede <span class="pan-req">*</span></label>
+              <select class="input-ITI" [(ngModel)]="sedeSeleccionadaId">
+                <option value="">— Selecciona la sede —</option>
+                @for (s of sedes; track s.id) {
+                  <option [value]="s.id">{{ s.nombre }}</option>
+                }
+              </select>
+            </div>
+            <div class="pan-campo">
+              <label>¿Qué se ve en las fotos? (opcional)</label>
+              <input class="input-ITI" type="text" [(ngModel)]="contextoFoto"
+                     placeholder="Ej: Ceremonia de grado 2025, Feria de ciencias...">
+            </div>
+          </div>
+
+          @if (sedeSeleccionadaId) {
+            <ng-container *ngTemplateOutlet="zonaSubida"></ng-container>
+          }
+        </div>
+      }
+
+      <!-- Mensajes del uploader -->
+      @if (errorFotos()) { <div class="pan-alerta-error pan-mt">{{ errorFotos() }}</div> }
+      @if (exitoFotos()) { <div class="pan-alerta-exito pan-mt">✅ {{ exitoFotos() }}</div> }
+    </section>
+  }
+
+  <!-- ZONA DE SUBIDA (reutilizable) -->
+  <ng-template #zonaSubida>
+    <div class="pan-zona-wrap">
+      <label class="pan-zona"
+             (dragover)="onDragOver($event)"
+             (dragleave)="onDragLeave($event)"
+             (drop)="onDrop($event)">
+        <input type="file" accept="image/jpeg,image/png,image/webp"
+               [multiple]="maxFotos > 1"
+               (change)="onSeleccionarFotos($event)" hidden>
+        @if (!fotosSeleccionadas.length) {
+          <div class="pan-zona-inner">
+            <div class="pan-zona-icono">📁</div>
+            <div class="pan-zona-texto">Arrastra las fotos aquí o <span class="pan-zona-link">haz clic para seleccionar</span></div>
+            <div class="pan-zona-hint">JPG, PNG o WEBP · máx. {{ maxFotos }} foto{{ maxFotos > 1 ? 's' : '' }} · 5 MB cada una</div>
+          </div>
+        } @else {
+          <div class="pan-previews">
+            @for (f of fotosSeleccionadas; track f.preview; let i = $index) {
+              <div class="pan-preview-item" (click)="$event.preventDefault(); removerFoto(i)" title="Quitar esta foto">
+                <img [src]="f.preview" [alt]="'Foto ' + (i+1)">
+                <div class="pan-preview-overlay">✕</div>
+              </div>
+            }
+            @if (fotosSeleccionadas.length < fotosPorSubir) {
+              <div class="pan-preview-add">
+                <div class="pan-add-icono">+</div>
+                <div class="pan-add-texto">Agregar más</div>
+              </div>
+            }
+          </div>
+        }
+      </label>
+
+      @if (fotosSeleccionadas.length) {
+        <div class="pan-zona-acciones">
+          <button class="ITI-btn-primario" (click)="subirFotos()" [disabled]="subiendoFotos() || !puedeSubir">
+            @if (subiendoFotos()) {
+              <span class="pan-spinner"></span> Subiendo...
+            } @else {
+              Subir {{ fotosSeleccionadas.length }} foto{{ fotosSeleccionadas.length > 1 ? 's' : '' }}
+            }
+          </button>
+          <button class="pan-btn-limpiar" (click)="fotosSeleccionadas = []">Limpiar selección</button>
+        </div>
+      }
+    </div>
+  </ng-template>
+
+  <!-- ═══ MIS NOTICIAS ═══ -->
   <section class="pan-seccion">
     <div class="pan-seccion-header">
       <div class="linea-dorada"></div>
@@ -133,17 +280,13 @@
     </div>
 
     @if (cargando()) {
-      @for (sk of [1,2,3]; track sk) {
-        <div class="pan-sk-noticia"></div>
-      }
+      @for (sk of [1,2,3]; track sk) { <div class="pan-sk-noticia"></div> }
     }
 
     @if (!cargando() && noticias.length === 0) {
       <div class="pan-vacio">
         Aún no has escrito ninguna noticia.
-        <button class="pan-link-accion" (click)="mostrarFormNoticia = true">
-          Escribe tu primera noticia
-        </button>
+        <button class="pan-link-accion" (click)="mostrarFormNoticia = true">Escribe tu primera noticia</button>
       </div>
     }
 
@@ -151,20 +294,25 @@
       <div class="pan-lista-noticias">
         @for (n of noticias; track n.id) {
           <div class="pan-noticia" [class.pan-noticia-rechazada]="n.estado === 'rechazada'">
+
+            <!-- Imagen o placeholder -->
             @if (imagen(n)) {
               <img class="pan-noticia-img" [src]="imagen(n)" [alt]="n.titulo">
             } @else {
-              <div class="pan-noticia-img-placeholder"></div>
+              <div class="pan-noticia-img-placeholder">
+                <span class="pan-sin-foto">Sin foto</span>
+              </div>
             }
+
+            <!-- Cuerpo -->
             <div class="pan-noticia-cuerpo">
               <div class="pan-noticia-header">
-                <span [class]="estadoClass(n.estado)" class="pan-badge">
-                  {{ estadoLabel(n.estado) }}
-                </span>
+                <span [class]="estadoClass(n.estado)" class="pan-badge">{{ estadoLabel(n.estado) }}</span>
                 @if (n.categoria) {
-                  <span class="pan-badge-cat" [style.background]="categoriaColor(n)">
-                    {{ categoriaNombre(n) }}
-                  </span>
+                  <span class="pan-badge-cat" [style.background]="categoriaColor(n)">{{ categoriaNombre(n) }}</span>
+                }
+                @if (fotosDe(n).length > 0) {
+                  <span class="pan-badge-fotos">📷 {{ fotosDe(n).length }}/2</span>
                 }
               </div>
               <h3 class="pan-noticia-titulo">
@@ -175,16 +323,23 @@
                 }
               </h3>
               <p class="pan-noticia-resumen">{{ n.resumen || n.contenido | slice:0:150 }}...</p>
-              <div class="pan-noticia-meta">
-                {{ formatFecha(n.fechaPublicacion ?? n.createdAt) }}
-                @if (n.estado === 'publicada') {
-                  · <strong>{{ n.visitas }}</strong> visitas
-                }
-                @if (n.estado === 'rechazada' && motivoRechazoDe(n)) {
-                  · <span class="pan-motivo">Motivo: {{ motivoRechazoDe(n) }}</span>
+              <div class="pan-noticia-footer">
+                <span class="pan-noticia-meta">
+                  {{ formatFecha(n.fechaPublicacion ?? n.createdAt) }}
+                  @if (n.estado === 'publicada') { · <strong>{{ n.visitas }}</strong> visitas }
+                  @if (n.estado === 'rechazada' && motivoRechazoDe(n)) {
+                    · <span class="pan-motivo">Motivo: {{ motivoRechazoDe(n) }}</span>
+                  }
+                </span>
+                <!-- Botón fotos en la tarjeta -->
+                @if (fotosPendientesEn(n) > 0) {
+                  <button class="pan-btn-agregar-foto" (click)="abrirSubidaParaNoticia(n.id)">
+                    + Agregar foto
+                  </button>
                 }
               </div>
             </div>
+
           </div>
         }
       </div>
