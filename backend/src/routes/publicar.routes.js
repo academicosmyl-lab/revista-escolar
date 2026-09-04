@@ -143,7 +143,7 @@ router.post('/', autenticar, puedePublicar, uploadMem.array('imagenes', 5), asyn
         for (let i = 0; i < files.length; i++) {
           try {
             console.log(`publicar bg: subiendo imagen ${i + 1}/${files.length} (${files[i].size} bytes, ${files[i].mimetype})`);
-            const result = await cloudinary.subirImagen(files[i].buffer, 'noticias');
+            const result = await cloudinary.subirImagen(files[i].buffer, 'noticias', files[i].mimetype);
             await Imagen.create({
               noticia_id:   noticiaId,
               filename:     result.public_id,

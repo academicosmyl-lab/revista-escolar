@@ -41,25 +41,19 @@ const uploadPerfil    = multer({ storage: memStorage, fileFilter, limits: { file
 const uploadDocumento = multer({ storage: memStorage, fileFilter: fileFilterDocs, limits: { fileSize: 10 * 1024 * 1024, files: 1 } });
 
 /**
- * Sube un buffer a Cloudinary y devuelve el resultado
+ * Sube un buffer a Cloudinary usando base64 (más fiable que streaming en Render)
  */
 function subirBuffer(buffer, opciones = {}) {
-  return new Promise((resolve, reject) => {
-    const stream = cloudinary.uploader.upload_stream(opciones, (error, result) => {
-      if (error) reject(error);
-      else resolve(result);
-    });
-    stream.on('error', reject);
-    const readable = Readable.from(buffer);
-    readable.on('error', reject);
-    readable.pipe(stream);
-  });
+  const mime = opciones._mimetype || 'image/jpeg';
+  const dataUri = `data:${mime};base64,${buffer.toString('base64')}`;
+  const { _mimetype, ...opts } = opciones;
+  return cloudinary.uploader.upload(dataUri, opts);
 }
 
 /**
  * Sube imagen de noticia/seguimiento a Cloudinary
  */
-async function subirImagen(buffer, tipo = 'noticias') {
+async function subirImagen(buffer, tipo = 'noticias', mimetype = 'image/jpeg') {
   const folder = tipo === 'perfil'
     ? 'its-santander/perfiles'
     : tipo === 'inclusion'
@@ -73,6 +67,7 @@ async function subirImagen(buffer, tipo = 'noticias') {
     format: 'webp',
     transformation: [{ quality: 'auto', fetch_format: 'auto' }],
     public_id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+    _mimetype: mimetype,
   });
 }
 
