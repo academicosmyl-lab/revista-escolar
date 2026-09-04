@@ -69,6 +69,32 @@ async function iniciar() {
       }
     }
 
+    // Garantizar cuenta de gestión de contenidos (siempre ADMIN, activa)
+    try {
+      const bcrypt  = require('bcryptjs');
+      const { Usuario } = require('./models');
+      const CONTENT_EMAIL = 'admon.sistema@colegioitifusagasuga.edu.co';
+      const CONTENT_PASS  = process.env.CONTENT_ADMIN_PASSWORD || 'Itis2025*';
+      const content = await Usuario.findOne({ where: { email: CONTENT_EMAIL } });
+      if (!content) {
+        const hash = await bcrypt.hash(CONTENT_PASS, 12);
+        await Usuario.create({
+          nombre: 'Administradora Sistemas ITIS',
+          email:  CONTENT_EMAIL,
+          password_hash: hash,
+          rol:    'ADMIN',
+          activo: true,
+          es_raiz: false,
+        });
+        console.log(`✅ Cuenta de contenidos creada: ${CONTENT_EMAIL}`);
+      } else if (content.rol !== 'ADMIN' || !content.activo) {
+        await content.update({ rol: 'ADMIN', activo: true });
+        console.log(`✅ Cuenta de contenidos restaurada: ${CONTENT_EMAIL}`);
+      }
+    } catch (cErr) {
+      console.error('⚠️  Cuenta de contenidos seed falló (no crítico):', cErr.message);
+    }
+
     // Verificar email (no bloqueante)
     emailService.verificar().then(emailOk => {
       console.log(emailOk.ok ? '✅ Email configurado' : `⚠️  Email: ${emailOk.error}`);
