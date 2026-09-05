@@ -91,7 +91,7 @@ export class Panel implements OnInit {
 
   private cargarSedes() {
     this.api.get<any>('/sedes').subscribe({
-      next: r => { this.sedes = r.sedes ?? []; },
+      next: r => { this.sedes = r.data ?? r.sedes ?? []; },
       error: () => {},
     });
   }

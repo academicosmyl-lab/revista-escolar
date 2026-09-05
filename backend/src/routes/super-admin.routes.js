@@ -15,7 +15,7 @@ const {
   AccionAdmin, Sede, Noticia, Imagen,
 } = require('../models');
 const { emailService }      = require('../services/email.service');
-const { cloudinaryService } = require('../services/cloudinary.service');
+const { subirImagen } = require('../services/cloudinary.service');
 
 // Middleware: solo ADMIN puede acceder a todas estas rutas
 const soloAdmin = [autenticar, requiereRol('ADMIN')];
@@ -291,10 +291,7 @@ router.post('/docentes', soloAdmin, upload.single('foto'), async (req, res) => {
     let fotoUrl = null;
     if (req.file) {
       try {
-        const result = await cloudinaryService.uploadBuffer(
-          req.file.buffer, req.file.mimetype,
-          `docentes/${usuario.id}`
-        );
+        const result = await subirImagen(req.file.buffer, 'perfil', req.file.mimetype);
         fotoUrl = result.secure_url;
       } catch (uploadErr) {
         console.error('Error subiendo foto docente:', uploadErr.message);

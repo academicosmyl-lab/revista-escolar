@@ -9,7 +9,7 @@ const { upload } = require('../middlewares/upload.middleware');
 const { galleryAgent } = require('../agents/gallery.agent');
 const { crearError } = require('../middlewares/error.middleware');
 const { emailService }      = require('../services/email.service');
-const { cloudinaryService } = require('../services/cloudinary.service');
+const { subirImagen } = require('../services/cloudinary.service');
 
 const router = Router();
 const uploadMem = multer({ storage: multer.memoryStorage(), limits: { fileSize: 5 * 1024 * 1024 } });
@@ -34,11 +34,7 @@ router.post('/registro-publico', uploadMem.single('foto'), async (req, res) => {
     let fotoPublicId = null;
     if (req.file) {
       try {
-        const result = await cloudinaryService.uploadBuffer(
-          req.file.buffer,
-          req.file.mimetype,
-          `solicitudes-perfil/${Date.now()}`
-        );
+        const result = await subirImagen(req.file.buffer, 'perfil', req.file.mimetype);
         fotoUrl      = result.secure_url;
         fotoPublicId = result.public_id;
       } catch (uploadErr) {
@@ -140,11 +136,7 @@ router.put('/registro-publico/:id', uploadMem.single('foto'), async (req, res) =
     let fotoPublicId = solicitud.foto_public_id;
     if (req.file) {
       try {
-        const result = await cloudinaryService.uploadBuffer(
-          req.file.buffer,
-          req.file.mimetype,
-          `solicitudes-perfil/${Date.now()}`
-        );
+        const result = await subirImagen(req.file.buffer, 'perfil', req.file.mimetype);
         fotoUrl      = result.secure_url;
         fotoPublicId = result.public_id;
       } catch (uploadErr) {
@@ -340,11 +332,7 @@ router.post('/mio/foto', autenticar, uploadMem.single('foto'), async (req, res, 
     if (!perfil) perfil = await PerfilDocente.create({ usuario_id: req.usuario.id });
 
     // Subir a Cloudinary (nunca guardar en el servidor local)
-    const result = await cloudinaryService.uploadBuffer(
-      req.file.buffer,
-      req.file.mimetype,
-      `perfiles-docentes/${req.usuario.id}`
-    );
+    const result = await subirImagen(req.file.buffer, 'perfil', req.file.mimetype);
 
     const imagen = await Imagen.create({
       perfil_id:        perfil.id,
