@@ -50,6 +50,7 @@ export interface Noticia {
   contenido: string;
   resumen?: string;
   estado: EstadoNoticia;
+  destacada?: boolean;
   visitas: number;
   fechaPublicacion?: string;
   createdAt: string;

@@ -37,7 +37,7 @@ router.get('/', async (req, res, next) => {
         { model: Categoria, as: 'categoria', attributes: ['nombre', 'color'] },
         { model: Imagen, as: 'imagenes', attributes: ['url', 'alt_text', 'es_portada'] },
       ],
-      order: [['fecha_publicacion', 'DESC']],
+      order: [['destacada', 'DESC'], ['fecha_publicacion', 'DESC']],
       limit: limiteFinal,
       offset: (paginaFinal - 1) * limiteFinal,
     });

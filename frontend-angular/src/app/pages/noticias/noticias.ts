@@ -34,9 +34,17 @@ export class Noticias implements OnInit, OnDestroy {
   private sse: EventSource | null = null;
   private debounceTimer: ReturnType<typeof setTimeout> | null = null;
 
-  get destacado()   { return this.noticias[0] ?? null; }
-  get lateral()     { return this.noticias.slice(1, 3); }
-  get secundarias() { return this.noticias.slice(3); }
+  get destacado() {
+    return this.noticias.find(n => n.destacada) ?? this.noticias[0] ?? null;
+  }
+  get lateral() {
+    const d = this.destacado;
+    return this.noticias.filter(n => n.id !== d?.id).slice(0, 2);
+  }
+  get secundarias() {
+    const d = this.destacado;
+    return this.noticias.filter(n => n.id !== d?.id).slice(2);
+  }
   get paginas()     { return Array.from({ length: this.totalPaginas }, (_, i) => i + 1); }
 
   ngOnInit() {
