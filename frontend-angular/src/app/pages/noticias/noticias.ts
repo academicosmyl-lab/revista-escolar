@@ -24,7 +24,7 @@ export class Noticias implements OnInit, OnDestroy {
   skeletons = Array(3);
 
   busqueda        = '';
-  categoriaActiva: number | null = null;
+  categoriaActiva: string | null = null;
   sedeActiva:      string | null = null;
   paginaActual  = 1;
   totalPaginas  = 1;
@@ -99,7 +99,7 @@ export class Noticias implements OnInit, OnDestroy {
     });
   }
 
-  filtrarCategoria(id: number | null) {
+  filtrarCategoria(id: string | null) {
     this.categoriaActiva = id;
     this.cargarNoticias(1);
   }

@@ -34,11 +34,11 @@ export interface Sede {
 
 /* ── Categorías ─────────────────────────────────────────── */
 export interface Categoria {
-  id: number;
+  id: string;
   nombre: string;
-  slug: string;
+  slug?: string;
   color?: string;
-  sedeId?: number;
+  sedeId?: string;
 }
 
 /* ── Noticias ───────────────────────────────────────────── */

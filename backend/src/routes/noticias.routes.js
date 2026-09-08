@@ -2,7 +2,8 @@
  * routes/noticias.routes.js — CRUD de noticias
  */
 const { Router } = require('express');
-const { Noticia, Imagen, Categoria, Usuario } = require('../models');
+const { Op } = require('sequelize');
+const { Noticia, Imagen, Categoria, Usuario, Sede } = require('../models');
 const { autenticar, requiereRol } = require('../middlewares/auth.middleware');
 const { uploadNoticias, subirImagen } = require('../services/cloudinary.service');
 const { coordinador } = require('../agents/coordinator.agent');
@@ -22,20 +23,28 @@ const schemaNoticias = Joi.object({
 // GET /api/v1/noticias — lista pública
 router.get('/', async (req, res, next) => {
   try {
-    const { categoria, pagina = 1, limite = 10 } = req.query;
-    const where = { estado: 'publicada' };
-    if (categoria) where.categoria_id = categoria;
-
-    const { page, limit: limitQ } = req.query;
+    const { categoria, categoriaId, sedeId, busqueda, pagina = 1, limite = 10, page, limit: limitQ } = req.query;
     const paginaFinal = parseInt(pagina || page || 1);
     const limiteFinal = parseInt(limite || limitQ || 10);
+
+    const where = { estado: 'publicada' };
+    const catId = categoriaId || categoria;
+    if (catId)    where.categoria_id = catId;
+    if (sedeId)   where.sede_id      = sedeId;
+    if (busqueda) {
+      where[Op.or] = [
+        { titulo:  { [Op.iLike]: `%${busqueda}%` } },
+        { resumen: { [Op.iLike]: `%${busqueda}%` } },
+      ];
+    }
 
     const { count, rows } = await Noticia.findAndCountAll({
       where,
       include: [
-        { model: Usuario, as: 'autor', attributes: ['nombre'] },
+        { model: Usuario,   as: 'autor',     attributes: ['nombre'] },
         { model: Categoria, as: 'categoria', attributes: ['nombre', 'color'] },
-        { model: Imagen, as: 'imagenes', attributes: ['url', 'alt_text', 'es_portada'] },
+        { model: Sede,      as: 'sede',      attributes: ['id', 'nombre', 'slug'] },
+        { model: Imagen,    as: 'imagenes',  attributes: ['url', 'alt_text', 'es_portada'] },
       ],
       order: [['destacada', 'DESC'], ['fecha_publicacion', 'DESC']],
       limit: limiteFinal,
