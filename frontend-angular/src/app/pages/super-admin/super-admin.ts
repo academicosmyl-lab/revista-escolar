@@ -118,6 +118,7 @@ export class SuperAdmin implements OnInit {
   nuevoEmail       = signal('');
   nuevoArea        = signal('');
   nuevoRol         = signal('DOCENTE');
+  nuevoPassword    = signal('');
   nuevoCreandoErr  = signal('');
 
   /* Formulario "Editar docente" */
@@ -278,6 +279,7 @@ export class SuperAdmin implements OnInit {
   abrirCrear() {
     this.nuevoNombre.set(''); this.nuevoEmail.set('');
     this.nuevoArea.set('');   this.nuevoRol.set('DOCENTE');
+    this.nuevoPassword.set('');
     this.nuevoCreandoErr.set('');
     this.modal.set('crear');
   }
@@ -324,6 +326,7 @@ export class SuperAdmin implements OnInit {
     fd.append('email',  this.nuevoEmail());
     fd.append('rol',    this.nuevoRol());
     if (this.nuevoRol() === 'DOCENTE') fd.append('area', this.nuevoArea());
+    if (this.nuevoPassword().trim()) fd.append('password', this.nuevoPassword().trim());
 
     this.api.postFormData<any>('/super-admin/docentes', fd).subscribe({
       next:  r => {

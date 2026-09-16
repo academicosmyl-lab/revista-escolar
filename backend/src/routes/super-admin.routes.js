@@ -277,7 +277,7 @@ router.get('/docentes', soloAdmin, async (req, res) => {
 
 // Crear docente manualmente
 router.post('/docentes', soloAdmin, upload.single('foto'), async (req, res) => {
-  const { nombre, email, titulo, area, bio, sede, web, linkedin, orcid, rol: rolInput } = req.body;
+  const { nombre, email, titulo, area, bio, sede, web, linkedin, orcid, rol: rolInput, password: passInput } = req.body;
   const rolesPermitidos = ['DOCENTE', 'PERSONAL', 'RECTOR', 'COORDINADOR', 'ORIENTADORA'];
   const rolFinal = rolesPermitidos.includes(rolInput) ? rolInput : 'DOCENTE';
   if (!nombre?.trim() || !email?.trim()) {
@@ -288,9 +288,11 @@ router.post('/docentes', soloAdmin, upload.single('foto'), async (req, res) => {
     const existe = await Usuario.findOne({ where: { email } });
     if (existe) return res.status(409).json({ error: 'Ya existe un usuario con ese email' });
 
-    // Contraseña temporal
+    // Contraseña: usa la proporcionada o genera una aleatoria
     const chars    = 'ABCDEFGHJKMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789!@#$';
-    const passTemp = Array.from({ length: 12 }, () => chars[Math.floor(Math.random() * chars.length)]).join('');
+    const passTemp = passInput?.trim()
+      ? passInput.trim()
+      : Array.from({ length: 12 }, () => chars[Math.floor(Math.random() * chars.length)]).join('');
     const hash     = await bcrypt.hash(passTemp, 12);
 
     const usuario = await Usuario.create({ nombre, email, password_hash: hash, rol: rolFinal, activo: true });
