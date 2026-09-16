@@ -28,8 +28,8 @@ router.get('/stats', soloAdmin, async (req, res) => {
       SolicitudPerfil.count({ where: { estado: 'pendiente' } }),
       SolicitudPerfil.count({ where: { estado: 'aprobado'  } }),
       SolicitudPerfil.count({ where: { estado: 'rechazado' } }),
-      Usuario.count({ where: { rol: { [Op.in]: ['DOCENTE','PERSONAL'] } } }),
-      Usuario.count({ where: { rol: { [Op.in]: ['DOCENTE','PERSONAL'] }, activo: true } }),
+      Usuario.count({ where: { rol: { [Op.in]: ['DOCENTE','PERSONAL','RECTOR','COORDINADOR','ORIENTADORA'] } } }),
+      Usuario.count({ where: { rol: { [Op.in]: ['DOCENTE','PERSONAL','RECTOR','COORDINADOR','ORIENTADORA'] }, activo: true } }),
       Noticia.count({ where: { estado: 'pendiente' } }),
     ]);
 
@@ -254,7 +254,7 @@ router.put('/solicitudes/:id/rechazar', soloAdmin, async (req, res) => {
 // Listar todos los docentes (con perfil)
 router.get('/docentes', soloAdmin, async (req, res) => {
   const { q, activo, page = 1, limit = 20 } = req.query;
-  const where = { rol: { [Op.in]: ['DOCENTE', 'PERSONAL'] } };
+  const where = { rol: { [Op.in]: ['DOCENTE', 'PERSONAL', 'RECTOR', 'COORDINADOR', 'ORIENTADORA'] } };
   if (q)         where[Op.or] = [
     { nombre: { [Op.like]: `%${q}%` } },
     { email:  { [Op.like]: `%${q}%` } },
