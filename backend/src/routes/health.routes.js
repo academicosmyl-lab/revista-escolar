@@ -2,16 +2,20 @@
  * routes/health.routes.js — Estado del sistema
  */
 const { Router } = require('express');
-const { sequelize } = require('../config/database');
+const { sequelize, dialect } = require('../config/database');
 const { autenticar, requiereRol } = require('../middlewares/auth.middleware');
 const router = Router();
 
 router.get('/health', async (req, res) => {
   try {
     await sequelize.authenticate();
+    const dialectInfo = dialect === 'postgres'
+      ? 'postgres (Neon — persistente)'
+      : 'sqlite (EFÍMERO — datos se pierden en cada reinicio)';
     res.json({
       status:      'ok',
       database:    'connected',
+      dialect:     dialectInfo,
       anthropic:   process.env.ANTHROPIC_API_KEY ? 'configured' : 'missing',
       email:       process.env.EMAIL_USER && process.env.EMAIL_PASS ? 'configured' : 'missing',
       environment: process.env.NODE_ENV,
