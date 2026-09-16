@@ -151,20 +151,29 @@
   </div>
 
   <!-- Fila 1: avanza izquierda → derecha -->
+  @if (docentesFila1.length > 0) {
   <div class="docentes-fila">
     <div class="docentes-track docentes-track-fwd">
-      @for (d of docentesFila1; track d.slug) {
+      @for (d of docentesFila1; track d.nombre) {
         <div class="doc-card">
-          <img [src]="'/docentes/' + d.slug + '.jpg'" [alt]="d.nombre">
+          @if (d.fotoUrl) {
+            <img [src]="d.fotoUrl" [alt]="d.nombre">
+          } @else {
+            <div class="doc-card-inicial">{{ d.nombre.charAt(0) }}</div>
+          }
           <div class="doc-overlay" aria-hidden="true">
             <span class="doc-nombre">{{ d.nombre }}</span>
             <span class="doc-area">{{ d.area }}</span>
           </div>
         </div>
       }
-      @for (d of docentesFila1; track d.slug + 'b') {
+      @for (d of docentesFila1; track d.nombre + 'b') {
         <div class="doc-card">
-          <img [src]="'/docentes/' + d.slug + '.jpg'" [alt]="d.nombre">
+          @if (d.fotoUrl) {
+            <img [src]="d.fotoUrl" [alt]="d.nombre">
+          } @else {
+            <div class="doc-card-inicial">{{ d.nombre.charAt(0) }}</div>
+          }
           <div class="doc-overlay" aria-hidden="true">
             <span class="doc-nombre">{{ d.nombre }}</span>
             <span class="doc-area">{{ d.area }}</span>
@@ -173,22 +182,32 @@
       }
     </div>
   </div>
+  }
 
   <!-- Fila 2: retrocede derecha → izquierda (sentido contrario) -->
+  @if (docentesFila2.length > 0) {
   <div class="docentes-fila">
     <div class="docentes-track docentes-track-rev">
-      @for (d of docentesFila2; track d.slug) {
+      @for (d of docentesFila2; track d.nombre) {
         <div class="doc-card">
-          <img [src]="'/docentes/' + d.slug + '.jpg'" [alt]="d.nombre">
+          @if (d.fotoUrl) {
+            <img [src]="d.fotoUrl" [alt]="d.nombre">
+          } @else {
+            <div class="doc-card-inicial">{{ d.nombre.charAt(0) }}</div>
+          }
           <div class="doc-overlay" aria-hidden="true">
             <span class="doc-nombre">{{ d.nombre }}</span>
             <span class="doc-area">{{ d.area }}</span>
           </div>
         </div>
       }
-      @for (d of docentesFila2; track d.slug + 'b') {
+      @for (d of docentesFila2; track d.nombre + 'b') {
         <div class="doc-card">
-          <img [src]="'/docentes/' + d.slug + '.jpg'" [alt]="d.nombre">
+          @if (d.fotoUrl) {
+            <img [src]="d.fotoUrl" [alt]="d.nombre">
+          } @else {
+            <div class="doc-card-inicial">{{ d.nombre.charAt(0) }}</div>
+          }
           <div class="doc-overlay" aria-hidden="true">
             <span class="doc-nombre">{{ d.nombre }}</span>
             <span class="doc-area">{{ d.area }}</span>
@@ -197,6 +216,7 @@
       }
     </div>
   </div>
+  }
 
   <!-- CTA centrado abajo -->
   <div class="docentes-footer reveal">

@@ -49,26 +49,8 @@ export class Home implements OnInit, AfterViewInit {
   }));
 
   /* ── Sección equipo docente — dos filas marquee ────── */
-  docentesFila1 = [
-    { slug: 'luis-sanchez',      nombre: 'Luis Sánchez',       area: 'Electrónica'         },
-    { slug: 'patricia-diaz',     nombre: 'Patricia Díaz',      area: 'Español y Literatura' },
-    { slug: 'roberto-suarez',    nombre: 'Roberto Suárez',     area: 'Matemáticas'          },
-    { slug: 'elena-pacheco',     nombre: 'Elena Pacheco',      area: 'Diseño Digital'       },
-    { slug: 'diana-solano',      nombre: 'Diana Solano',       area: 'Inglés Comunicativo'  },
-    { slug: 'luz-rios',          nombre: 'Luz Ríos',           area: 'Ciencias Naturales'   },
-    { slug: 'maria-gomez',       nombre: 'María Gómez',        area: 'Corte y Confección'   },
-    { slug: 'carlos-rodriguez',  nombre: 'Carlos Rodríguez',   area: 'Educación Física'     },
-  ];
-
-  docentesFila2 = [
-    { slug: 'andres-torres',     nombre: 'Andrés Torres',      area: 'Medios Audiovisuales' },
-    { slug: 'liliana-mosquera',  nombre: 'Liliana Mosquera',   area: 'Matemáticas'          },
-    { slug: 'jorge-perez',       nombre: 'Jorge Pérez',        area: 'Tecnología e Inf.'    },
-    { slug: 'sandra-rivas',      nombre: 'Sandra Rivas',       area: 'Ciencias Sociales'    },
-    { slug: 'hernando-castillo', nombre: 'Hernando Castillo',  area: 'Electrónica'          },
-    { slug: 'rosa-vargas',       nombre: 'Rosa Vargas',        area: 'Inglés Comunicativo'  },
-    { slug: 'felipe-mantilla',   nombre: 'Felipe Mantilla',    area: 'Diseño Digital'       },
-  ];
+  docentesFila1: { nombre: string; area: string; fotoUrl: string | null }[] = [];
+  docentesFila2: { nombre: string; area: string; fotoUrl: string | null }[] = [];
 
   /* ── Sedes institucionales ───────────────────────────── */
   sedes = [
@@ -100,10 +82,29 @@ export class Home implements OnInit, AfterViewInit {
   /* ── Ciclo de vida ──────────────────────────────────── */
   ngOnInit() {
     this.cargarNoticiasHome();
+    this.cargarDocentesHome();
   }
 
   // CAMBIO ARCH-UI: carga las últimas 5 noticias publicadas del backend real
   // SOLO modifica home.ts — NO toca noticias.ts ni la ruta /noticias
+  private cargarDocentesHome() {
+    this.api.get<any>('/perfil/docentes').subscribe({
+      next: r => {
+        const lista = (r.docentes ?? []) as any[];
+        const items = lista.map(d => ({
+          nombre:  d.usuario?.nombre ?? '',
+          area:    d.cargo ?? d.titulo ?? '',
+          fotoUrl: d.fotoUrl ?? null,
+        }));
+        const mid = Math.ceil(items.length / 2);
+        this.docentesFila1 = items.slice(0, mid);
+        this.docentesFila2 = items.slice(mid);
+        this.cdr.markForCheck();
+      },
+      error: () => {},
+    });
+  }
+
   private cargarNoticiasHome() {
     this.cargandoNoticias.set(true);
     this.servidorLento.set(false);
