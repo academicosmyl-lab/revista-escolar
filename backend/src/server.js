@@ -97,6 +97,35 @@ async function iniciar() {
       console.error('⚠️  Cuenta de contenidos seed falló (no crítico):', cErr.message);
     }
 
+    // Seed datos base: sedes, áreas, categorías (findOrCreate — nunca borra datos existentes)
+    try {
+      const { Sede, Area, Categoria } = require('./models');
+      const sedesBase = [
+        { nombre: 'Técnico Industrial Bachillerato',     slug: 'tecnico-industrial-bachillerato',     tipo: 'bachillerato',    activa: true, color_institucional: '#A94455' },
+        { nombre: 'Técnico Industrial Básica Primaria',  slug: 'tecnico-industrial-basica-primaria',  tipo: 'basica_primaria', activa: true, color_institucional: '#3A7D5C' },
+        { nombre: 'Técnico Industrial Rural Los Sauces', slug: 'tecnico-industrial-rural-los-sauces', tipo: 'rural',           activa: true, color_institucional: '#A05C2E' },
+      ];
+      for (const s of sedesBase) await Sede.findOrCreate({ where: { slug: s.slug }, defaults: s });
+
+      const areasBase = [
+        'Matemáticas', 'Ciencias Naturales', 'Lenguaje', 'Ciencias Sociales',
+        'Tecnología e Informática', 'Inglés', 'Educación Física', 'Artes',
+        'Ética y Valores', 'Técnica Industrial',
+      ];
+      for (const nombre of areasBase) await Area.findOrCreate({ where: { nombre }, defaults: { nombre, activa: true } });
+
+      const catsBase = [
+        { nombre: 'Académico',  color: '#A94455' }, { nombre: 'Deportivo',  color: '#3A7D5C' },
+        { nombre: 'Cultural',   color: '#D4A853' }, { nombre: 'Tecnología', color: '#4A7FB5' },
+        { nombre: 'Comunidad',  color: '#5BA08A' }, { nombre: 'Logros',     color: '#7C6D9F' },
+        { nombre: 'Anuncios',   color: '#6B7280' },
+      ];
+      for (const c of catsBase) await Categoria.findOrCreate({ where: { nombre: c.nombre }, defaults: c });
+      console.log('✅ Datos base listos (sedes, áreas, categorías)');
+    } catch (baseErr) {
+      console.error('⚠️  Seed datos base falló (no crítico):', baseErr.message);
+    }
+
     // Verificar email (no bloqueante)
     emailService.verificar().then(emailOk => {
       console.log(emailOk.ok ? '✅ Email configurado' : `⚠️  Email: ${emailOk.error}`);
