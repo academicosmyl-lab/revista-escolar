@@ -5,6 +5,8 @@
  */
 const nodemailer = require('nodemailer');
 
+const EMAIL_CONFIGURADO = !!(process.env.EMAIL_USER && process.env.EMAIL_PASS);
+
 // Crear transportador Gmail — puerto 587 STARTTLS (compatible con Render free tier)
 const transporter = nodemailer.createTransport({
   host:   'smtp.gmail.com',
@@ -15,9 +17,9 @@ const transporter = nodemailer.createTransport({
     pass: process.env.EMAIL_PASS,
   },
   tls:               { rejectUnauthorized: false },
-  connectionTimeout: 10000,
-  greetingTimeout:   10000,
-  socketTimeout:     15000,
+  connectionTimeout: 5000,
+  greetingTimeout:   5000,
+  socketTimeout:     8000,
 });
 
 const FROM = process.env.EMAIL_FROM || 'Instituto Técnico Industrial Santander <noreply@itssantander.edu.co>';
@@ -145,6 +147,7 @@ const emailService = {
    * Email de bienvenida para nuevo usuario
    */
   async bienvenida({ email, nombre, password, rol }) {
+    if (!EMAIL_CONFIGURADO) return;
     try {
       await transporter.sendMail({
         from: FROM,
@@ -171,6 +174,7 @@ const emailService = {
    * Notificar al super-admin que llegó una solicitud de perfil
    */
   async solicitudPerfilPendiente({ adminEmail, docenteNombre, docenteArea, solicitudId }) {
+    if (!EMAIL_CONFIGURADO) return;
     try {
       await transporter.sendMail({
         from: FROM,
@@ -199,6 +203,7 @@ const emailService = {
    * Notificar al docente que su perfil fue aprobado
    */
   async perfilAprobado({ docenteEmail, docenteNombre, motivo, passwordTemp }) {
+    if (!EMAIL_CONFIGURADO) return;
     try {
       await transporter.sendMail({
         from: FROM,
@@ -233,6 +238,7 @@ const emailService = {
    * Notificar al docente que su perfil fue rechazado con motivo
    */
   async perfilRechazado({ docenteEmail, docenteNombre, motivo }) {
+    if (!EMAIL_CONFIGURADO) return;
     try {
       await transporter.sendMail({
         from: FROM,
