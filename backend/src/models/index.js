@@ -303,7 +303,8 @@ const AccionAdmin = sequelize.define('AccionAdmin', {
     type: DataTypes.ENUM(
       'aprobar_perfil','rechazar_perfil',
       'crear_docente','editar_docente','desactivar_docente','reactivar_docente',
-      'eliminar_docente','login_admin','crear_usuario'
+      'eliminar_docente','login_admin','crear_usuario',
+      'aprobar_publicacion','rechazar_publicacion','eliminar_publicacion'
     ),
     allowNull: false,
   },

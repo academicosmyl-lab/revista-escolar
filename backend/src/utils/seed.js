@@ -8,7 +8,7 @@ const { sequelize, Usuario, Sede, Area, Categoria } = require('../models');
 
 async function seed() {
   try {
-    await sequelize.sync({ alter: true });
+    await sequelize.sync();
     console.log('✅ Base de datos sincronizada\n');
 
     const sedes = [];

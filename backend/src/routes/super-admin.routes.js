@@ -568,6 +568,53 @@ router.delete('/publicaciones/:id', soloAdmin, async (req, res) => {
   }
 });
 
+// GET /api/v1/super-admin/usuarios/buscar?email=xxx — diagnóstico: estado de cualquier usuario
+router.get('/usuarios/buscar', soloAdmin, async (req, res) => {
+  try {
+    const { email } = req.query;
+    if (!email?.trim()) return res.status(400).json({ error: 'email es requerido' });
+    const usuario = await Usuario.findOne({
+      where: { email: email.trim().toLowerCase() },
+      include: [{ model: PerfilDocente, as: 'perfil', required: false }],
+    });
+    if (!usuario) return res.json({ encontrado: false, mensaje: 'No existe ningún usuario con ese email' });
+    res.json({
+      encontrado:    true,
+      id:            usuario.id,
+      nombre:        usuario.nombre,
+      email:         usuario.email,
+      rol:           usuario.rol,
+      activo:        usuario.activo,
+      es_raiz:       usuario.es_raiz,
+      tiene_perfil:  !!usuario.perfil,
+      perfil_publico: usuario.perfil?.perfil_publico ?? null,
+      foto_url:      usuario.perfil?.foto_url ?? null,
+      bio:           usuario.perfil?.bio ? usuario.perfil.bio.slice(0, 80) + '…' : null,
+    });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+// PATCH /api/v1/super-admin/usuarios/:id/reactivar — reactivar usuario desactivado
+router.patch('/usuarios/:id/reactivar', soloAdmin, async (req, res) => {
+  try {
+    const usuario = await Usuario.findByPk(req.params.id);
+    if (!usuario) return res.status(404).json({ error: 'Usuario no encontrado' });
+    await usuario.update({ activo: true });
+    await AccionAdmin.create({
+      admin_id:     req.usuario.id,
+      tipo:         'reactivar_docente',
+      descripcion:  `Usuario "${usuario.nombre}" reactivado desde diagnóstico`,
+      entidad_tipo: 'Usuario',
+      entidad_id:   usuario.id,
+    });
+    res.json({ ok: true, mensaje: `"${usuario.nombre}" reactivado correctamente` });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
 // PUT /api/v1/super-admin/usuarios/reset-password — resetear contraseña de cualquier usuario
 router.put('/usuarios/reset-password', soloAdmin, async (req, res) => {
   try {
