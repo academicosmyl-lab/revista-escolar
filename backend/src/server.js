@@ -23,8 +23,8 @@ process.on('unhandledRejection', (reason) => {
 
 async function iniciar() {
   try {
-    // Sincronizar base de datos
-    await sequelize.sync({ alter: true });
+    // Sincronizar base de datos — solo crea tablas que no existen, nunca borra datos
+    await sequelize.sync();
     console.log('✅ Base de datos sincronizada');
 
     // Auto-seed demo si la BD está vacía
