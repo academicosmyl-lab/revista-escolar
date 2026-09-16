@@ -18,6 +18,15 @@ export class Panel implements OnInit {
   auth = inject(AuthService);
   private api = inject(ApiService);
 
+  readonly etiquetaRol: Record<string, string> = {
+    RECTOR:      'Rector/a',
+    COORDINADOR: 'Coordinador/a',
+    ORIENTADORA: 'Orientador/a',
+    DOCENTE:     'Docente',
+    PERSONAL:    'Equipo de apoyo',
+    ADMIN:       'Administrador/a',
+  };
+
   cargando      = signal(true);
   guardando     = signal(false);
   subiendoFotos = signal(false);

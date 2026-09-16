@@ -14,7 +14,7 @@
         }
         <div>
           <div class="pan-user-nombre">{{ auth.usuario()?.nombre }}</div>
-          <div class="pan-user-rol">{{ auth.usuario()?.rol }}</div>
+          <div class="pan-user-rol">{{ etiquetaRol[auth.usuario()?.rol ?? ''] || auth.usuario()?.rol }}</div>
         </div>
       </div>
       <a routerLink="/" class="pan-btn-revista">Ver Revista</a>
@@ -380,7 +380,7 @@
               <div class="ep-foto-preview-tag">Así se verá tu tarjeta</div>
               <div class="ep-foto-overlay-demo" aria-hidden="true">
                 <span class="ep-overlay-nombre">{{ auth.usuario()?.nombre }}</span>
-                <span class="ep-overlay-area">{{ epValues.cargo || epValues.titulo_profesional || auth.usuario()?.rol }}</span>
+                <span class="ep-overlay-area">{{ epValues.cargo || epValues.titulo_profesional || etiquetaRol[auth.usuario()?.rol ?? ''] || auth.usuario()?.rol }}</span>
               </div>
             </div>
           } @else {

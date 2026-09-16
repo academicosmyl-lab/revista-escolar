@@ -330,7 +330,7 @@
                       <span class="sa-doc-nombre">{{ doc.nombre }}</span>
                     </td>
                     <td class="sa-td-email">{{ doc.email }}</td>
-                    <td><span class="sa-rol-chip">{{ doc.rol }}</span></td>
+                    <td><span class="sa-rol-chip sa-rol-{{ doc.rol.toLowerCase() }}">{{ etiquetaRol[doc.rol] || doc.rol }}</span></td>
                     <td class="sa-td-titulo">{{ doc.perfil?.tituloProfesional ?? '—' }}</td>
                     <td>
                       <span class="sa-status-chip" [class.activo]="doc.activo" [class.inactivo]="!doc.activo">
