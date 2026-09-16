@@ -562,7 +562,7 @@ router.delete('/publicaciones/:id', soloAdmin, async (req, res) => {
 });
 
 // PUT /api/v1/super-admin/usuarios/reset-password — resetear contraseña de cualquier usuario
-router.put('/usuarios/reset-password', async (req, res) => {
+router.put('/usuarios/reset-password', soloAdmin, async (req, res) => {
   try {
     const { email, nueva_password } = req.body;
     if (!email || !nueva_password) {
