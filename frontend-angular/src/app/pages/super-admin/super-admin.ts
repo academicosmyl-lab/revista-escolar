@@ -120,6 +120,13 @@ export class SuperAdmin implements OnInit {
   nuevoRol         = signal('DOCENTE');
   nuevoCreandoErr  = signal('');
 
+  /* Formulario "Editar docente" */
+  editNombre  = signal('');
+  editTitulo  = signal('');
+  editArea    = signal('');
+  editBio     = signal('');
+  editErr     = signal('');
+
   /* ── Publicaciones ──────────────────────────────────────── */
   publicaciones: Publicacion[] = [];
   totalPublicaciones = 0;
@@ -273,6 +280,37 @@ export class SuperAdmin implements OnInit {
     this.nuevoArea.set('');   this.nuevoRol.set('DOCENTE');
     this.nuevoCreandoErr.set('');
     this.modal.set('crear');
+  }
+
+  abrirEditar(doc: Docente) {
+    this.modalItem.set(doc);
+    this.editNombre.set(doc.nombre);
+    this.editTitulo.set(doc.perfil?.tituloProfesional ?? '');
+    this.editArea.set(doc.perfil?.cargo ?? '');
+    this.editBio.set(doc.perfil?.bio ?? '');
+    this.editErr.set('');
+    this.modal.set('editar');
+  }
+
+  guardarEdicion() {
+    const doc = this.asDocente(this.modalItem());
+    if (!doc) return;
+    if (!this.editNombre().trim()) { this.editErr.set('El nombre es obligatorio'); return; }
+    this.cargando.set(true);
+    this.api.put<any>(`/super-admin/docentes/${doc.id}`, {
+      nombre: this.editNombre(),
+      titulo: this.editTitulo(),
+      area:   this.editArea(),
+      bio:    this.editBio(),
+    }).subscribe({
+      next: r => {
+        this.exito.set(r.mensaje || 'Docente actualizado');
+        this.cerrarModal();
+        this.cargarDocentes();
+        this.cdr.markForCheck();
+      },
+      error: e => { this.editErr.set(e.mensaje ?? 'Error al guardar'); this.cargando.set(false); this.cdr.markForCheck(); },
+    });
   }
 
   crearDocente() {

@@ -60,8 +60,70 @@
     <button class="pan-btn-fotos" (click)="abrirSubidaFotos(); mostrarFormNoticia = false">
       📷 Subir fotos
     </button>
+    <button class="pan-link-perfil" style="cursor:pointer;background:none;border:1px solid currentColor;border-radius:6px;padding:8px 14px"
+      (click)="abrirEditPerfil()">✏️ Editar mi perfil</button>
     <a routerLink="/docentes" class="pan-link-perfil">Ver mi perfil público</a>
   </div>
+
+  <!-- EDITAR PERFIL -->
+  @if (mostrarEditPerfil) {
+    <section class="pan-form-seccion">
+      <div class="pan-form-header">
+        <div class="linea-vinotinto"></div>
+        <h2 class="pan-form-titulo">Editar mi perfil</h2>
+      </div>
+
+      <!-- Foto de perfil -->
+      <div style="display:flex;align-items:center;gap:16px;margin-bottom:20px">
+        @if (fotoPerfilPreview || perfilFotoUrl) {
+          <img [src]="fotoPerfilPreview || perfilFotoUrl" alt="foto"
+            style="width:72px;height:72px;border-radius:50%;object-fit:cover;border:2px solid #A94455">
+        } @else {
+          <div style="width:72px;height:72px;border-radius:50%;background:#A94455;display:flex;align-items:center;justify-content:center;color:#fff;font-size:1.8rem">
+            {{ (auth.usuario()?.nombre || '?').charAt(0) }}
+          </div>
+        }
+        <div>
+          <label class="pan-label" style="display:block;margin-bottom:6px">Foto de perfil</label>
+          <label style="cursor:pointer;background:#f3f4f6;border:1px solid #d1d5db;border-radius:6px;padding:7px 14px;font-size:0.85rem">
+            📷 Cambiar foto
+            <input type="file" accept="image/*" style="display:none" (change)="onFotoPerfilChange($event)">
+          </label>
+          @if (fotoPerfilPreview) { <span style="font-size:0.8rem;color:#059669;margin-left:8px">Nueva foto seleccionada</span> }
+        </div>
+      </div>
+
+      <div class="pan-form-grid">
+        <div class="pan-form-campo">
+          <label class="pan-label">Título profesional</label>
+          <input class="input-ITI" type="text" [(ngModel)]="perfilEdit.titulo_profesional"
+            placeholder="Ej: Licenciada en Ciencias Naturales">
+        </div>
+        <div class="pan-form-campo pan-form-campo--full">
+          <label class="pan-label">Biografía / Presentación</label>
+          <textarea class="input-ITI" rows="4" [(ngModel)]="perfilEdit.bio"
+            placeholder="Cuéntale a la comunidad quién eres, tu experiencia y tu pasión por la docencia..."></textarea>
+        </div>
+        <div class="pan-form-campo">
+          <label class="pan-label">LinkedIn</label>
+          <input class="input-ITI" type="url" [(ngModel)]="perfilEdit.url_linkedin"
+            placeholder="https://linkedin.com/in/tu-perfil">
+        </div>
+        <div class="pan-form-campo">
+          <label class="pan-label">Blog o sitio web</label>
+          <input class="input-ITI" type="url" [(ngModel)]="perfilEdit.url_blog"
+            placeholder="https://tu-sitio.com">
+        </div>
+      </div>
+
+      <div style="display:flex;gap:12px;margin-top:16px">
+        <button class="ITI-btn-primario" (click)="guardarPerfil()" [disabled]="guardandoPerfil()">
+          @if (guardandoPerfil()) { Guardando… } @else { Guardar cambios }
+        </button>
+        <button class="pan-btn-fotos" (click)="mostrarEditPerfil = false">Cancelar</button>
+      </div>
+    </section>
+  }
 
   <!-- FORMULARIO NUEVA NOTICIA -->
   @if (mostrarFormNoticia) {

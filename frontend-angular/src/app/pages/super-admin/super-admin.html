@@ -354,6 +354,9 @@
                       </button>
                     </td>
                     <td class="sa-td-actions">
+                      <button class="sa-icon-btn" title="Editar perfil" (click)="abrirEditar(doc)" style="color:#1E40AF">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                      </button>
                       <button class="sa-icon-btn" [class.deactivate]="doc.activo" [class.activate]="!doc.activo"
                         (click)="toggleActivo(doc)"
                         [title]="doc.activo ? 'Desactivar cuenta' : 'Reactivar cuenta'">
@@ -734,6 +737,49 @@
       </div>
       <div class="sa-modal-footer">
         <button class="sa-btn sa-btn-ok" (click)="credenciales.set(null)">Entendido, ya copié las credenciales</button>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- Modal: Editar docente -->
+@if (modal() === 'editar') {
+  <div class="sa-modal-backdrop" (click)="cerrarModal()">
+    <div class="sa-modal sa-modal-wide" (click)="$event.stopPropagation()">
+      <div class="sa-modal-header sa-modal-header-neutral">
+        <h2>✏️ Editar perfil</h2>
+        <button class="sa-modal-close" (click)="cerrarModal()">✕</button>
+      </div>
+      <div class="sa-modal-body">
+        <div class="sa-form-grid">
+          <div class="sa-field sa-field-full">
+            <label class="sa-label">Nombre completo <span class="sa-required">*</span></label>
+            <input class="sa-input" type="text" [value]="editNombre()"
+              (input)="editNombre.set($any($event.target).value)">
+          </div>
+          <div class="sa-field">
+            <label class="sa-label">Título profesional</label>
+            <input class="sa-input" type="text" placeholder="Ej: Lic. en Matemáticas"
+              [value]="editTitulo()" (input)="editTitulo.set($any($event.target).value)">
+          </div>
+          <div class="sa-field">
+            <label class="sa-label">Área / Materia</label>
+            <input class="sa-input" type="text" placeholder="Ej: Matemáticas"
+              [value]="editArea()" (input)="editArea.set($any($event.target).value)">
+          </div>
+          <div class="sa-field sa-field-full">
+            <label class="sa-label">Biografía</label>
+            <textarea class="sa-textarea" rows="3" placeholder="Presentación del docente..."
+              [value]="editBio()" (input)="editBio.set($any($event.target).value)"></textarea>
+          </div>
+        </div>
+        @if (editErr()) { <p class="sa-field-err">{{ editErr() }}</p> }
+      </div>
+      <div class="sa-modal-footer">
+        <button class="sa-btn sa-btn-ghost" (click)="cerrarModal()" [disabled]="cargando()">Cancelar</button>
+        <button class="sa-btn sa-btn-primary" (click)="guardarEdicion()" [disabled]="cargando()">
+          @if (cargando()) { <span class="sa-btn-spinner"></span> } Guardar
+        </button>
       </div>
     </div>
   </div>

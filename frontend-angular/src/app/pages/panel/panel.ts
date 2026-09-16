@@ -32,6 +32,11 @@ export class Panel implements OnInit {
   perfil:     Partial<PerfilDocente> = {};
 
   mostrarFormNoticia = false;
+  mostrarEditPerfil  = false;
+  guardandoPerfil    = signal(false);
+  perfilEdit = { titulo_profesional: '', bio: '', url_linkedin: '', url_blog: '', url_orcid: '' };
+  fotoPerfilFile:    File | null = null;
+  fotoPerfilPreview: string | null = null;
 
   // Flujo de subida de fotos
   mostrarSubidaFotos  = false;
@@ -84,8 +89,70 @@ export class Panel implements OnInit {
 
   private cargarPerfil() {
     this.api.get<any>('/perfil/mio/datos').subscribe({
-      next: r => { this.perfil = r.perfil ?? {}; },
+      next: r => {
+        this.perfil = r.perfil ?? {};
+        this.perfilEdit.titulo_profesional = (r.perfil?.titulo_profesional ?? '');
+        this.perfilEdit.bio                = (r.perfil?.bio ?? '');
+        this.perfilEdit.url_linkedin       = (r.perfil?.url_linkedin ?? '');
+        this.perfilEdit.url_blog           = (r.perfil?.url_blog ?? '');
+        this.perfilEdit.url_orcid          = (r.perfil?.url_orcid ?? '');
+      },
       error: () => {},
+    });
+  }
+
+  abrirEditPerfil() {
+    this.mostrarEditPerfil = true;
+    this.mostrarFormNoticia = false;
+    this.mostrarSubidaFotos = false;
+    this.fotoPerfilFile = null;
+    this.fotoPerfilPreview = null;
+  }
+
+  onFotoPerfilChange(event: Event) {
+    const file = (event.target as HTMLInputElement).files?.[0];
+    if (!file || !file.type.startsWith('image/')) return;
+    this.fotoPerfilFile = file;
+    const reader = new FileReader();
+    reader.onload = e => { this.fotoPerfilPreview = e.target?.result as string; };
+    reader.readAsDataURL(file);
+  }
+
+  guardarPerfil() {
+    this.guardandoPerfil.set(true);
+    this.error.set('');
+
+    this.api.put<any>('/perfil/mio/datos', this.perfilEdit).subscribe({
+      next: () => {
+        if (this.fotoPerfilFile) {
+          const fd = new FormData();
+          fd.append('foto', this.fotoPerfilFile);
+          this.api.postFormData<any>('/perfil/mio/foto', fd).subscribe({
+            next: r => {
+              (this.perfil as any).foto_url = r.foto_url;
+              this.fotoPerfilFile = null;
+              this.fotoPerfilPreview = null;
+              this.guardandoPerfil.set(false);
+              this.mostrarEditPerfil = false;
+              this.exito.set('Perfil actualizado correctamente.');
+              setTimeout(() => this.exito.set(''), 4000);
+            },
+            error: () => {
+              this.guardandoPerfil.set(false);
+              this.mostrarEditPerfil = false;
+              this.exito.set('Datos guardados. La foto no se pudo subir.');
+              setTimeout(() => this.exito.set(''), 4000);
+            },
+          });
+        } else {
+          this.cargarPerfil();
+          this.guardandoPerfil.set(false);
+          this.mostrarEditPerfil = false;
+          this.exito.set('Perfil actualizado correctamente.');
+          setTimeout(() => this.exito.set(''), 4000);
+        }
+      },
+      error: e => { this.error.set(e.mensaje || 'No se pudo guardar el perfil.'); this.guardandoPerfil.set(false); },
     });
   }
 
