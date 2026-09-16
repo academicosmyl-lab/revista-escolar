@@ -110,6 +110,9 @@ export class SuperAdmin implements OnInit {
   motivo    = signal('');
   motivoErr = signal('');
 
+  /* ── Credenciales tras aprobación ───────────────────────── */
+  credenciales = signal<{ nombre: string; email: string; pass: string; emailEnviado: boolean } | null>(null);
+
   /* Formulario "Crear usuario" */
   nuevoNombre      = signal('');
   nuevoEmail       = signal('');
@@ -207,10 +210,19 @@ export class SuperAdmin implements OnInit {
     this.cargando.set(true);
     this.api.put<any>(url, { motivo: this.motivo() }).subscribe({
       next:  r => {
-        this.exito.set(r.mensaje || 'Acción realizada');
         this.cerrarModal();
         this.cargarCola();
-        this.stats = null; // fuerza refresco del dashboard
+        this.stats = null;
+        if (tipo === 'aprobar' && r.passTemp) {
+          this.credenciales.set({
+            nombre:       (this.modalItem() as Solicitud)?.nombre ?? '',
+            email:        r.emailDocente ?? '',
+            pass:         r.passTemp,
+            emailEnviado: !!r.emailEnviado,
+          });
+        } else {
+          this.exito.set(r.mensaje || 'Acción realizada');
+        }
         this.cdr.markForCheck();
       },
       error: e => {

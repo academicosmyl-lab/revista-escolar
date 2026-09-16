@@ -190,7 +190,14 @@ router.put('/solicitudes/:id/aprobar', soloAdmin, async (req, res) => {
       }).catch(e => console.error('Email perfilAprobado error:', e.message));
     }
 
-    res.json({ ok: true, mensaje: `Perfil de "${sol.nombre}" aprobado y publicado.`, usuarioId: usuario.id });
+    res.json({
+      ok: true,
+      mensaje:      `Perfil de "${sol.nombre}" aprobado y publicado.`,
+      usuarioId:    usuario.id,
+      passTemp,
+      emailDocente,
+      emailEnviado: !!sol.email,
+    });
   } catch (e) {
     console.error('Error aprobar solicitud:', e.message);
     res.status(500).json({ error: e.message });

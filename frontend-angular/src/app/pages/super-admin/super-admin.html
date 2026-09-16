@@ -698,6 +698,47 @@
   </div>
 }
 
+<!-- Modal: Credenciales tras aprobación -->
+@if (credenciales()) {
+  <div class="sa-modal-backdrop">
+    <div class="sa-modal" (click)="$event.stopPropagation()">
+      <div class="sa-modal-header aprobar">
+        <h2>✅ Perfil aprobado — Credenciales de acceso</h2>
+      </div>
+      <div class="sa-modal-body">
+        <p style="margin-bottom:16px">La cuenta de <strong>{{ credenciales()!.nombre }}</strong> fue creada exitosamente.</p>
+
+        <div style="background:#F0FDF4;border:1px solid #86EFAC;border-radius:8px;padding:16px;margin-bottom:16px">
+          <p style="margin:0 0 8px;font-size:0.85rem;color:#166534;font-weight:600">DATOS DE ACCESO</p>
+          <p style="margin:4px 0;font-size:0.95rem"><strong>Email:</strong> {{ credenciales()!.email }}</p>
+          <p style="margin:4px 0;font-size:0.95rem"><strong>Contraseña temporal:</strong>
+            <code style="background:#DCFCE7;padding:3px 10px;border-radius:4px;font-size:1rem;letter-spacing:1px">{{ credenciales()!.pass }}</code>
+          </p>
+        </div>
+
+        @if (credenciales()!.emailEnviado) {
+          <div class="sa-modal-notice sa-modal-notice-ok">
+            Se envió un correo a {{ credenciales()!.email }} con estas credenciales.
+            Si no llega, entrégalas manualmente.
+          </div>
+        } @else {
+          <div class="sa-modal-notice sa-modal-notice-err">
+            <strong>El correo NO fue enviado</strong> (la solicitud no tenía email registrado o el servicio de correo falló).
+            Copia estas credenciales y entrégalas manualmente a la persona.
+          </div>
+        }
+
+        <p style="font-size:0.82rem;color:#6B7280;margin-top:12px">
+          La persona debe cambiar su contraseña al ingresar por primera vez.
+        </p>
+      </div>
+      <div class="sa-modal-footer">
+        <button class="sa-btn sa-btn-ok" (click)="credenciales.set(null)">Entendido, ya copié las credenciales</button>
+      </div>
+    </div>
+  </div>
+}
+
 <!-- Modal: Crear usuario -->
 @if (modal() === 'crear') {
   <div class="sa-modal-backdrop" (click)="cerrarModal()">

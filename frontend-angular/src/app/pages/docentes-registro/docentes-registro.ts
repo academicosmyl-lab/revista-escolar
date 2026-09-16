@@ -1,6 +1,6 @@
 import {
   Component, OnInit, OnDestroy, AfterViewInit,
-  signal, computed, inject,
+  signal, computed, inject, effect,
   ChangeDetectionStrategy, ChangeDetectorRef,
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
@@ -24,6 +24,25 @@ export class DocentesRegistro implements OnInit, AfterViewInit, OnDestroy {
 
   private api = inject(ApiService);
   private cdr = inject(ChangeDetectorRef);
+
+  private readonly DRAFT_KEY = 'itis-docente-registro-draft';
+  private boundBeforeUnload = (e: BeforeUnloadEvent) => { e.preventDefault(); };
+
+  constructor() {
+    effect(() => {
+      if (this.modoInicio() !== 'nuevo' && this.modoInicio() !== 'editando') return;
+      try {
+        localStorage.setItem(this.DRAFT_KEY, JSON.stringify({
+          rol: this.rol(), nombre: this.nombre(), titulo: this.titulo(),
+          email: this.email(), area: this.area(), otraArea: this.otraArea(),
+          sede: this.sede(), experiencia: this.experiencia(),
+          bioCorta: this.bioCorta(), bioCompleta: this.bioCompleta(),
+          web: this.web(), linkedin: this.linkedin(), orcid: this.orcid(),
+          especialidades: this.especialidades(), publicaciones: this.publicaciones(),
+        }));
+      } catch { /* localStorage lleno o deshabilitado */ }
+    });
+  }
 
   // ── Opciones ────────────────────────────────────────────
   // Cada cargo tiene su propio value único.
@@ -149,8 +168,6 @@ export class DocentesRegistro implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnInit() {
     // ── Back navigation ──────────────────────────────────────
-    // Cada transición de paso hace pushState — el botón Atrás del browser
-    // desanda esos pasos antes de salir de la página.
     this.backNav = new BackNavigationUtil<ModoInicio>(
       '',
       (modo) => {
@@ -159,6 +176,12 @@ export class DocentesRegistro implements OnInit, AfterViewInit, OnDestroy {
         this.cdr.markForCheck();
       },
     );
+
+    // ── Recuperar borrador guardado ───────────────────────────
+    this.loadDraft();
+
+    // ── Aviso al salir si hay datos sin enviar ────────────────
+    window.addEventListener('beforeunload', this.boundBeforeUnload);
 
     // ── Cargar áreas ─────────────────────────────────────────
     this.api.get<string[]>('/areas').subscribe({
@@ -175,6 +198,38 @@ export class DocentesRegistro implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnDestroy() {
     this.backNav.destroy();
+    window.removeEventListener('beforeunload', this.boundBeforeUnload);
+  }
+
+  private loadDraft() {
+    try {
+      const raw = localStorage.getItem(this.DRAFT_KEY);
+      if (!raw) return;
+      const d = JSON.parse(raw);
+      if (!d.rol && !d.nombre) return;
+      if (d.rol)            this.rol.set(d.rol);
+      if (d.nombre)         this.nombre.set(d.nombre);
+      if (d.titulo)         this.titulo.set(d.titulo);
+      if (d.email)          this.email.set(d.email);
+      if (d.area)           this.area.set(d.area);
+      if (d.otraArea)       this.otraArea.set(d.otraArea);
+      if (d.sede)           this.sede.set(d.sede);
+      if (d.experiencia != null) this.experiencia.set(d.experiencia);
+      if (d.bioCorta)       this.bioCorta.set(d.bioCorta);
+      if (d.bioCompleta)    this.bioCompleta.set(d.bioCompleta);
+      if (d.web)            this.web.set(d.web);
+      if (d.linkedin)       this.linkedin.set(d.linkedin);
+      if (d.orcid)          this.orcid.set(d.orcid);
+      if (Array.isArray(d.especialidades)) this.especialidades.set(d.especialidades);
+      if (Array.isArray(d.publicaciones))  this.publicaciones.set(d.publicaciones);
+      this.modoInicio.set('nuevo');
+      this.backNav.push('nuevo');
+      this.cdr.markForCheck();
+    } catch { /* borrador corrupto — ignorar */ }
+  }
+
+  clearDraft() {
+    try { localStorage.removeItem(this.DRAFT_KEY); } catch { /* nada */ }
   }
 
   ngAfterViewInit() {
@@ -429,7 +484,7 @@ export class DocentesRegistro implements OnInit, AfterViewInit, OnDestroy {
       : this.api.postFormData<any>('/perfil/registro-publico', fd);
 
     obs.subscribe({
-      next:  () => { this.enviado.set(true);  this.enviando.set(false); this.cdr.markForCheck(); },
+      next:  () => { this.clearDraft(); this.enviado.set(true);  this.enviando.set(false); this.cdr.markForCheck(); },
       error: e  => { this.errorEnvio.set(e.mensaje ?? 'Error al enviar. Intenta de nuevo.'); this.enviando.set(false); this.cdr.markForCheck(); },
     });
   }
