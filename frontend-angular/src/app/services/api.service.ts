@@ -39,8 +39,12 @@ export class ApiService {
     );
   }
 
-  delete<T>(path: string): Observable<T> {
-    return this.http.delete<T>(`${this.base}${path}`).pipe(
+  delete<T>(path: string, params?: Record<string, string | number>): Observable<T> {
+    let httpParams = new HttpParams();
+    if (params) {
+      Object.entries(params).forEach(([k, v]) => httpParams = httpParams.set(k, String(v)));
+    }
+    return this.http.delete<T>(`${this.base}${path}`, { params: httpParams }).pipe(
       timeout(TIMEOUT_MS), catchError(this.manejarError)
     );
   }

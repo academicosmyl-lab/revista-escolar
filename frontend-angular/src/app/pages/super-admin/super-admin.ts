@@ -404,6 +404,14 @@ export class SuperAdmin implements OnInit {
     });
   }
 
+  eliminarDefinitivo(doc: Docente) {
+    if (!confirm(`¿ELIMINAR DEFINITIVAMENTE a "${doc.nombre}" (${doc.email})?\n\nEsto borra la cuenta y el perfil por completo. El email quedará libre para crear una cuenta nueva.\n\nEsta acción NO se puede deshacer.`)) return;
+    this.api.delete<any>('/super-admin/usuarios/eliminar-definitivo', { email: doc.email }).subscribe({
+      next:  r => { this.exito.set(r.mensaje || 'Eliminado'); this.cargarDocentes(); this.cdr.markForCheck(); },
+      error: e => { this.error.set(e.mensaje ?? 'Error al eliminar'); this.cdr.markForCheck(); },
+    });
+  }
+
   get totalPagesPublicaciones() { return Math.ceil(this.totalPublicaciones / this.LIMIT); }
   prevPublicaciones() { if (this.pagPublicaciones() > 1) { this.pagPublicaciones.update(p => p - 1); this.cargarPublicaciones(); } }
   nextPublicaciones() { if (this.pagPublicaciones() < this.totalPagesPublicaciones) { this.pagPublicaciones.update(p => p + 1); this.cargarPublicaciones(); } }
