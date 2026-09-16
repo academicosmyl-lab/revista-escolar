@@ -97,8 +97,11 @@ export class Home implements OnInit, AfterViewInit {
           fotoUrl: d.fotoUrl ?? null,
         }));
         const mid = Math.ceil(items.length / 2);
-        this.docentesFila1 = items.slice(0, mid);
-        this.docentesFila2 = items.slice(mid);
+        const f1 = items.slice(0, mid);
+        const f2 = items.slice(mid);
+        // Repetir hasta tener al menos 8 tarjetas por fila para que el marquee no muestre duplicados visibles
+        this.docentesFila1 = f1.length ? Array.from({ length: Math.ceil(8 / f1.length) }, () => f1).flat() : [];
+        this.docentesFila2 = f2.length ? Array.from({ length: Math.ceil(8 / f2.length) }, () => f2).flat() : [];
         this.cdr.markForCheck();
       },
       error: () => {},
