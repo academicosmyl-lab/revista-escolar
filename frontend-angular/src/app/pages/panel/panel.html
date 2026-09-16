@@ -60,70 +60,9 @@
     <button class="pan-btn-fotos" (click)="abrirSubidaFotos(); mostrarFormNoticia = false">
       📷 Subir fotos
     </button>
-    <button class="pan-link-perfil" style="cursor:pointer;background:none;border:1px solid currentColor;border-radius:6px;padding:8px 14px"
-      (click)="abrirEditPerfil()">✏️ Editar mi perfil</button>
+    <button class="pan-btn-editar-perfil" (click)="abrirEditPerfil()">✏ Editar mi perfil</button>
     <a routerLink="/docentes" class="pan-link-perfil">Ver mi perfil público</a>
   </div>
-
-  <!-- EDITAR PERFIL -->
-  @if (mostrarEditPerfil) {
-    <section class="pan-form-seccion">
-      <div class="pan-form-header">
-        <div class="linea-vinotinto"></div>
-        <h2 class="pan-form-titulo">Editar mi perfil</h2>
-      </div>
-
-      <!-- Foto de perfil -->
-      <div style="display:flex;align-items:center;gap:16px;margin-bottom:20px">
-        @if (fotoPerfilPreview || perfilFotoUrl) {
-          <img [src]="fotoPerfilPreview || perfilFotoUrl" alt="foto"
-            style="width:72px;height:72px;border-radius:50%;object-fit:cover;border:2px solid #A94455">
-        } @else {
-          <div style="width:72px;height:72px;border-radius:50%;background:#A94455;display:flex;align-items:center;justify-content:center;color:#fff;font-size:1.8rem">
-            {{ (auth.usuario()?.nombre || '?').charAt(0) }}
-          </div>
-        }
-        <div>
-          <label class="pan-label" style="display:block;margin-bottom:6px">Foto de perfil</label>
-          <label style="cursor:pointer;background:#f3f4f6;border:1px solid #d1d5db;border-radius:6px;padding:7px 14px;font-size:0.85rem">
-            📷 Cambiar foto
-            <input type="file" accept="image/*" style="display:none" (change)="onFotoPerfilChange($event)">
-          </label>
-          @if (fotoPerfilPreview) { <span style="font-size:0.8rem;color:#059669;margin-left:8px">Nueva foto seleccionada</span> }
-        </div>
-      </div>
-
-      <div class="pan-form-grid">
-        <div class="pan-form-campo">
-          <label class="pan-label">Título profesional</label>
-          <input class="input-ITI" type="text" [(ngModel)]="perfilEdit.titulo_profesional"
-            placeholder="Ej: Licenciada en Ciencias Naturales">
-        </div>
-        <div class="pan-form-campo pan-form-campo--full">
-          <label class="pan-label">Biografía / Presentación</label>
-          <textarea class="input-ITI" rows="4" [(ngModel)]="perfilEdit.bio"
-            placeholder="Cuéntale a la comunidad quién eres, tu experiencia y tu pasión por la docencia..."></textarea>
-        </div>
-        <div class="pan-form-campo">
-          <label class="pan-label">LinkedIn</label>
-          <input class="input-ITI" type="url" [(ngModel)]="perfilEdit.url_linkedin"
-            placeholder="https://linkedin.com/in/tu-perfil">
-        </div>
-        <div class="pan-form-campo">
-          <label class="pan-label">Blog o sitio web</label>
-          <input class="input-ITI" type="url" [(ngModel)]="perfilEdit.url_blog"
-            placeholder="https://tu-sitio.com">
-        </div>
-      </div>
-
-      <div style="display:flex;gap:12px;margin-top:16px">
-        <button class="ITI-btn-primario" (click)="guardarPerfil()" [disabled]="guardandoPerfil()">
-          @if (guardandoPerfil()) { Guardando… } @else { Guardar cambios }
-        </button>
-        <button class="pan-btn-fotos" (click)="mostrarEditPerfil = false">Cancelar</button>
-      </div>
-    </section>
-  }
 
   <!-- FORMULARIO NUEVA NOTICIA -->
   @if (mostrarFormNoticia) {
@@ -232,7 +171,6 @@
             </select>
           </div>
 
-          <!-- Fotos actuales de la noticia -->
           @if (noticiaSeleccionadaId && fotosDe(noticiaSeleccionada).length) {
             <div class="pan-fotos-actuales">
               <span class="pan-fotos-actuales-label">Fotos actuales:</span>
@@ -279,7 +217,6 @@
         </div>
       }
 
-      <!-- Mensajes del uploader -->
       @if (errorFotos()) { <div class="pan-alerta-error pan-mt">{{ errorFotos() }}</div> }
       @if (exitoFotos()) { <div class="pan-alerta-exito pan-mt">✅ {{ exitoFotos() }}</div> }
     </section>
@@ -357,7 +294,6 @@
         @for (n of noticias; track n.id) {
           <div class="pan-noticia" [class.pan-noticia-rechazada]="n.estado === 'rechazada'">
 
-            <!-- Imagen o placeholder -->
             @if (imagen(n)) {
               <img class="pan-noticia-img" [src]="imagen(n)" [alt]="n.titulo">
             } @else {
@@ -366,7 +302,6 @@
               </div>
             }
 
-            <!-- Cuerpo -->
             <div class="pan-noticia-cuerpo">
               <div class="pan-noticia-header">
                 <span [class]="estadoClass(n.estado)" class="pan-badge">{{ estadoLabel(n.estado) }}</span>
@@ -393,7 +328,6 @@
                     · <span class="pan-motivo">Motivo: {{ motivoRechazoDe(n) }}</span>
                   }
                 </span>
-                <!-- Botón fotos en la tarjeta -->
                 @if (fotosPendientesEn(n) > 0) {
                   <button class="pan-btn-agregar-foto" (click)="abrirSubidaParaNoticia(n.id)">
                     + Agregar foto
@@ -409,3 +343,288 @@
   </section>
 
 </main>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- MODAL GLASSMORPHISM — EDITAR PERFIL                     -->
+<!-- ═══════════════════════════════════════════════════════ -->
+@if (epModal) {
+  <div class="ep-overlay" (click)="cerrarEditPerfil()">
+    <div class="ep-modal" (click)="$event.stopPropagation()">
+
+      <!-- Header del modal -->
+      <div class="ep-modal-header">
+        <div>
+          <div class="ep-modal-eyebrow">Mi perfil</div>
+          <h2 class="ep-modal-titulo">Editar información</h2>
+        </div>
+        <button class="ep-cerrar" (click)="cerrarEditPerfil()" title="Cerrar">✕</button>
+      </div>
+
+      <!-- ── Foto de perfil (misma lógica que formulario de registro) ── -->
+      <div class="ep-foto-seccion">
+        <div class="ep-seccion-label">
+          <span class="ep-seccion-num">01</span>
+          <span class="ep-seccion-txt">Foto de perfil</span>
+        </div>
+
+        <label class="ep-drop-zona" for="epInputFoto"
+               [class.ep-drop-zona--drag]="epDragging"
+               (dragover)="epOnDragOver($event)"
+               (dragleave)="epOnDragLeave()"
+               (drop)="epOnDrop($event)">
+
+          @if (epFotoPreview || perfilFotoUrl) {
+            <!-- Preview con overlay — igual que formulario de registro -->
+            <div class="ep-foto-preview-wrap">
+              <img [src]="epFotoPreview || perfilFotoUrl" alt="Vista previa" class="ep-foto-preview">
+              <div class="ep-foto-preview-tag">Así se verá tu tarjeta</div>
+              <div class="ep-foto-overlay-demo" aria-hidden="true">
+                <span class="ep-overlay-nombre">{{ auth.usuario()?.nombre }}</span>
+                <span class="ep-overlay-area">{{ epValues.cargo || epValues.titulo_profesional || auth.usuario()?.rol }}</span>
+              </div>
+            </div>
+          } @else {
+            <!-- Zona de arrastre vacía -->
+            <div class="ep-drop-placeholder">
+              <div class="ep-drop-icono">
+                <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5" width="48">
+                  <circle cx="24" cy="20" r="8"/>
+                  <path d="M8 40c0-8.837 7.163-16 16-16s16 7.163 16 16"/>
+                  <path d="M32 10l4 4-4 4M36 14H28" stroke-linecap="round"/>
+                </svg>
+              </div>
+              <span class="ep-drop-texto">Arrastra tu foto aquí</span>
+              <span class="ep-drop-sub">o haz clic para seleccionarla · JPG/PNG · máx 5 MB</span>
+            </div>
+          }
+
+          <input id="epInputFoto" type="file" accept="image/*" hidden (change)="epFotoChange($event)">
+        </label>
+
+        @if (epFotoPreview || perfilFotoUrl) {
+          <button type="button" class="ep-foto-cambiar"
+                  onclick="document.getElementById('epInputFoto').click()">
+            Cambiar foto
+          </button>
+        }
+
+        <div class="ep-foto-tips">
+          <strong>Consejos:</strong> Fondo neutro · Buena iluminación · Rostro al 60% · Ropa formal · Sin filtros
+        </div>
+      </div>
+
+      <!-- ── Campos de información ── -->
+      <div class="ep-campos-seccion">
+        <div class="ep-seccion-label">
+          <span class="ep-seccion-num">02</span>
+          <span class="ep-seccion-txt">Información profesional</span>
+        </div>
+
+        <!-- Título profesional -->
+        <div class="ep-campo">
+          <div class="ep-campo-info">
+            <div class="ep-campo-label">Título profesional</div>
+            @if (!epEnEditando('titulo_profesional')) {
+              <div class="ep-campo-valor" [class.ep-campo-vacio]="!epValues.titulo_profesional">
+                {{ epValues.titulo_profesional || 'Sin información — haz clic en Editar' }}
+              </div>
+            } @else {
+              <input class="ep-input" type="text" [(ngModel)]="epValues.titulo_profesional"
+                     placeholder="Ej: Licenciada en Ciencias Naturales" maxlength="80" autofocus>
+            }
+          </div>
+          <div class="ep-campo-acciones">
+            @if (!epEnEditando('titulo_profesional')) {
+              <button class="ep-btn-editar" (click)="epEditar('titulo_profesional')">✏ Editar</button>
+            } @else {
+              <button class="ep-btn-listo" (click)="epEditando.delete('titulo_profesional')">✓ Listo</button>
+              <button class="ep-btn-cancelar" (click)="epCancelar('titulo_profesional')">✕</button>
+            }
+          </div>
+        </div>
+
+        <!-- Área / Cargo -->
+        <div class="ep-campo">
+          <div class="ep-campo-info">
+            <div class="ep-campo-label">Área / Materia</div>
+            @if (!epEnEditando('cargo')) {
+              <div class="ep-campo-valor" [class.ep-campo-vacio]="!epValues.cargo">
+                {{ epValues.cargo || 'Sin información — haz clic en Editar' }}
+              </div>
+            } @else {
+              <input class="ep-input" type="text" [(ngModel)]="epValues.cargo"
+                     placeholder="Ej: Matemáticas, Electrónica, Orientación..." maxlength="80">
+            }
+          </div>
+          <div class="ep-campo-acciones">
+            @if (!epEnEditando('cargo')) {
+              <button class="ep-btn-editar" (click)="epEditar('cargo')">✏ Editar</button>
+            } @else {
+              <button class="ep-btn-listo" (click)="epEditando.delete('cargo')">✓ Listo</button>
+              <button class="ep-btn-cancelar" (click)="epCancelar('cargo')">✕</button>
+            }
+          </div>
+        </div>
+
+        <!-- Presentación -->
+        <div class="ep-campo ep-campo--bloque">
+          <div class="ep-campo-info">
+            <div class="ep-campo-label">Presentación profesional</div>
+            @if (!epEnEditando('bio')) {
+              <div class="ep-campo-valor ep-campo-valor--multi" [class.ep-campo-vacio]="!epValues.bio">
+                {{ epValues.bio || 'Sin información — haz clic en Editar' }}
+              </div>
+            } @else {
+              <textarea class="ep-textarea" rows="4" [(ngModel)]="epValues.bio"
+                        placeholder="Cuéntale a la comunidad quién eres, tu experiencia y tu pasión por la docencia..."
+                        maxlength="500"></textarea>
+              <div class="ep-contador">{{ 500 - epValues.bio.length }} caracteres restantes</div>
+            }
+          </div>
+          <div class="ep-campo-acciones ep-campo-acciones--top">
+            @if (!epEnEditando('bio')) {
+              <button class="ep-btn-editar" (click)="epEditar('bio')">✏ Editar</button>
+            } @else {
+              <button class="ep-btn-listo" (click)="epEditando.delete('bio')">✓ Listo</button>
+              <button class="ep-btn-cancelar" (click)="epCancelar('bio')">✕</button>
+            }
+          </div>
+        </div>
+
+        <!-- Especialidades (tags) -->
+        <div class="ep-campo ep-campo--bloque">
+          <div class="ep-campo-info">
+            <div class="ep-campo-label">Especialidades</div>
+            @if (!epEnEditando('especialidades')) {
+              @if (epValues.especialidades.length > 0) {
+                <div class="ep-tags">
+                  @for (tag of epValues.especialidades; track tag) {
+                    <span class="ep-tag">{{ tag }}</span>
+                  }
+                </div>
+              } @else {
+                <div class="ep-campo-valor ep-campo-vacio">Sin especialidades — haz clic en Editar</div>
+              }
+            } @else {
+              @if (epValues.especialidades.length > 0) {
+                <div class="ep-tags ep-tags--edit">
+                  @for (tag of epValues.especialidades; track tag) {
+                    <span class="ep-tag ep-tag--edit">
+                      {{ tag }}
+                      <button type="button" class="ep-tag-x" (click)="epQuitarTag(tag)">✕</button>
+                    </span>
+                  }
+                </div>
+              }
+              <div class="ep-tag-input-wrap">
+                <input class="ep-input ep-tag-input" type="text" [(ngModel)]="epTagNueva"
+                       placeholder="Ej: Robótica, Álgebra, Arduino..."
+                       (keydown)="epTagKey($event)" maxlength="40">
+                <button type="button" class="ep-btn-agregar-tag"
+                        (click)="epAgregarTag()" [disabled]="!epTagNueva.trim()">+ Agregar</button>
+              </div>
+            }
+          </div>
+          <div class="ep-campo-acciones ep-campo-acciones--top">
+            @if (!epEnEditando('especialidades')) {
+              <button class="ep-btn-editar" (click)="epEditar('especialidades')">✏ Editar</button>
+            } @else {
+              <button class="ep-btn-listo" (click)="epEditando.delete('especialidades')">✓ Listo</button>
+              <button class="ep-btn-cancelar" (click)="epCancelar('especialidades')">✕</button>
+            }
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Presencia digital ── -->
+      <div class="ep-campos-seccion">
+        <div class="ep-seccion-label">
+          <span class="ep-seccion-num">03</span>
+          <span class="ep-seccion-txt">Presencia digital <span class="ep-opcional">(opcional)</span></span>
+        </div>
+
+        <!-- LinkedIn -->
+        <div class="ep-campo">
+          <div class="ep-campo-info">
+            <div class="ep-campo-label">LinkedIn</div>
+            @if (!epEnEditando('url_linkedin')) {
+              <div class="ep-campo-valor" [class.ep-campo-vacio]="!epValues.url_linkedin">
+                {{ epValues.url_linkedin || 'Sin información' }}
+              </div>
+            } @else {
+              <input class="ep-input" type="url" [(ngModel)]="epValues.url_linkedin"
+                     placeholder="https://linkedin.com/in/tu-perfil" maxlength="200">
+            }
+          </div>
+          <div class="ep-campo-acciones">
+            @if (!epEnEditando('url_linkedin')) {
+              <button class="ep-btn-editar" (click)="epEditar('url_linkedin')">✏ Editar</button>
+            } @else {
+              <button class="ep-btn-listo" (click)="epEditando.delete('url_linkedin')">✓ Listo</button>
+              <button class="ep-btn-cancelar" (click)="epCancelar('url_linkedin')">✕</button>
+            }
+          </div>
+        </div>
+
+        <!-- Blog / Sitio web -->
+        <div class="ep-campo">
+          <div class="ep-campo-info">
+            <div class="ep-campo-label">Blog / Sitio web</div>
+            @if (!epEnEditando('url_blog')) {
+              <div class="ep-campo-valor" [class.ep-campo-vacio]="!epValues.url_blog">
+                {{ epValues.url_blog || 'Sin información' }}
+              </div>
+            } @else {
+              <input class="ep-input" type="url" [(ngModel)]="epValues.url_blog"
+                     placeholder="https://tu-sitio.com" maxlength="200">
+            }
+          </div>
+          <div class="ep-campo-acciones">
+            @if (!epEnEditando('url_blog')) {
+              <button class="ep-btn-editar" (click)="epEditar('url_blog')">✏ Editar</button>
+            } @else {
+              <button class="ep-btn-listo" (click)="epEditando.delete('url_blog')">✓ Listo</button>
+              <button class="ep-btn-cancelar" (click)="epCancelar('url_blog')">✕</button>
+            }
+          </div>
+        </div>
+
+        <!-- ORCID -->
+        <div class="ep-campo">
+          <div class="ep-campo-info">
+            <div class="ep-campo-label">ORCID</div>
+            @if (!epEnEditando('url_orcid')) {
+              <div class="ep-campo-valor" [class.ep-campo-vacio]="!epValues.url_orcid">
+                {{ epValues.url_orcid || 'Sin información' }}
+              </div>
+            } @else {
+              <input class="ep-input" type="text" [(ngModel)]="epValues.url_orcid"
+                     placeholder="0000-0000-0000-0000" maxlength="20">
+            }
+          </div>
+          <div class="ep-campo-acciones">
+            @if (!epEnEditando('url_orcid')) {
+              <button class="ep-btn-editar" (click)="epEditar('url_orcid')">✏ Editar</button>
+            } @else {
+              <button class="ep-btn-listo" (click)="epEditando.delete('url_orcid')">✓ Listo</button>
+              <button class="ep-btn-cancelar" (click)="epCancelar('url_orcid')">✕</button>
+            }
+          </div>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div class="ep-modal-footer">
+        <button class="ep-btn-guardar" (click)="guardarPerfil()" [disabled]="epGuardando">
+          @if (epGuardando) {
+            <span class="pan-spinner"></span> Guardando...
+          } @else {
+            Guardar cambios
+          }
+        </button>
+        <button class="ep-btn-modal-cerrar" (click)="cerrarEditPerfil()">Cancelar</button>
+      </div>
+
+    </div>
+  </div>
+}

@@ -32,11 +32,25 @@ export class Panel implements OnInit {
   perfil:     Partial<PerfilDocente> = {};
 
   mostrarFormNoticia = false;
-  mostrarEditPerfil  = false;
-  guardandoPerfil    = signal(false);
-  perfilEdit = { titulo_profesional: '', bio: '', url_linkedin: '', url_blog: '', url_orcid: '' };
-  fotoPerfilFile:    File | null = null;
-  fotoPerfilPreview: string | null = null;
+
+  // ── Modal Editar Perfil ─────────────────────────────────
+  epModal      = false;
+  epGuardando  = false;
+  epEditando   = new Set<string>();
+  epDragging   = false;
+  epFotoFile:    File | null = null;
+  epFotoPreview: string | null = null;
+  epTagNueva   = '';
+  epValues = {
+    titulo_profesional: '',
+    cargo:              '',
+    bio:                '',
+    especialidades:     [] as string[],
+    url_linkedin:       '',
+    url_blog:           '',
+    url_orcid:          '',
+  };
+  private epOriginal: any = null;
 
   // Flujo de subida de fotos
   mostrarSubidaFotos  = false;
@@ -45,8 +59,6 @@ export class Panel implements OnInit {
   sedeSeleccionadaId      = '';
   contextoFoto            = '';
   fotosSeleccionadas: { file: File; preview: string }[] = [];
-
-  // Para agregar fotos rápido desde la tarjeta de una noticia
   noticiaConFotos: string | null = null;
 
   nueva = { titulo: '', contenido: '', categoria_id: '', usar_ia: true };
@@ -89,71 +101,130 @@ export class Panel implements OnInit {
 
   private cargarPerfil() {
     this.api.get<any>('/perfil/mio/datos').subscribe({
-      next: r => {
-        this.perfil = r.perfil ?? {};
-        this.perfilEdit.titulo_profesional = (r.perfil?.titulo_profesional ?? '');
-        this.perfilEdit.bio                = (r.perfil?.bio ?? '');
-        this.perfilEdit.url_linkedin       = (r.perfil?.url_linkedin ?? '');
-        this.perfilEdit.url_blog           = (r.perfil?.url_blog ?? '');
-        this.perfilEdit.url_orcid          = (r.perfil?.url_orcid ?? '');
-      },
+      next: r => { this.perfil = r.perfil ?? {}; },
       error: () => {},
     });
   }
 
+  // ── Modal editar perfil ────────────────────────────────
+
   abrirEditPerfil() {
-    this.mostrarEditPerfil = true;
+    const p = this.perfil as any;
+    this.epValues = {
+      titulo_profesional: p.titulo_profesional ?? '',
+      cargo:              p.cargo              ?? '',
+      bio:                p.bio                ?? '',
+      especialidades:     [...(p.cualidades_intelectuales ?? [])],
+      url_linkedin:       p.url_linkedin       ?? '',
+      url_blog:           p.url_blog           ?? '',
+      url_orcid:          p.url_orcid          ?? '',
+    };
+    this.epOriginal = { ...this.epValues, especialidades: [...this.epValues.especialidades] };
+    this.epEditando.clear();
+    this.epFotoFile    = null;
+    this.epFotoPreview = null;
+    this.epTagNueva    = '';
+    this.epDragging    = false;
+    this.epModal       = true;
     this.mostrarFormNoticia = false;
     this.mostrarSubidaFotos = false;
-    this.fotoPerfilFile = null;
-    this.fotoPerfilPreview = null;
   }
 
-  onFotoPerfilChange(event: Event) {
+  cerrarEditPerfil() { this.epModal = false; }
+
+  epEditar(campo: string)  { this.epEditando.add(campo); }
+
+  epCancelar(campo: string) {
+    this.epEditando.delete(campo);
+    if (campo === 'especialidades') {
+      this.epValues.especialidades = [...(this.epOriginal?.especialidades ?? [])];
+      this.epTagNueva = '';
+    } else {
+      (this.epValues as any)[campo] = this.epOriginal?.[campo] ?? '';
+    }
+  }
+
+  epEnEditando(campo: string): boolean { return this.epEditando.has(campo); }
+
+  // Foto: misma lógica que formulario de registro (drag & drop + preview con overlay)
+  epFotoChange(event: Event) {
     const file = (event.target as HTMLInputElement).files?.[0];
     if (!file || !file.type.startsWith('image/')) return;
-    this.fotoPerfilFile = file;
+    this.epFotoFile = file;
     const reader = new FileReader();
-    reader.onload = e => { this.fotoPerfilPreview = e.target?.result as string; };
+    reader.onload = e => { this.epFotoPreview = e.target?.result as string; };
     reader.readAsDataURL(file);
   }
 
-  guardarPerfil() {
-    this.guardandoPerfil.set(true);
-    this.error.set('');
+  epOnDragOver(e: DragEvent) { e.preventDefault(); this.epDragging = true; }
+  epOnDragLeave()            { this.epDragging = false; }
+  epOnDrop(e: DragEvent) {
+    e.preventDefault();
+    this.epDragging = false;
+    const file = e.dataTransfer?.files?.[0];
+    if (!file || !file.type.startsWith('image/')) return;
+    this.epFotoFile = file;
+    const reader = new FileReader();
+    reader.onload = ev => { this.epFotoPreview = ev.target?.result as string; };
+    reader.readAsDataURL(file);
+  }
 
-    this.api.put<any>('/perfil/mio/datos', this.perfilEdit).subscribe({
+  // Tags / especialidades
+  epAgregarTag() {
+    const t = this.epTagNueva.trim();
+    if (!t || this.epValues.especialidades.includes(t)) return;
+    this.epValues.especialidades = [...this.epValues.especialidades, t];
+    this.epTagNueva = '';
+  }
+
+  epQuitarTag(tag: string) {
+    this.epValues.especialidades = this.epValues.especialidades.filter(t => t !== tag);
+  }
+
+  epTagKey(e: KeyboardEvent) {
+    if (e.key === 'Enter' || e.key === ',') { e.preventDefault(); this.epAgregarTag(); }
+  }
+
+  guardarPerfil() {
+    this.epGuardando = true;
+    this.error.set('');
+    const payload = {
+      titulo_profesional:       this.epValues.titulo_profesional,
+      cargo:                    this.epValues.cargo,
+      bio:                      this.epValues.bio,
+      cualidades_intelectuales: this.epValues.especialidades,
+      url_linkedin:             this.epValues.url_linkedin,
+      url_blog:                 this.epValues.url_blog,
+      url_orcid:                this.epValues.url_orcid,
+    };
+    this.api.put<any>('/perfil/mio/datos', payload).subscribe({
       next: () => {
-        if (this.fotoPerfilFile) {
+        if (this.epFotoFile) {
           const fd = new FormData();
-          fd.append('foto', this.fotoPerfilFile);
+          fd.append('foto', this.epFotoFile);
           this.api.postFormData<any>('/perfil/mio/foto', fd).subscribe({
             next: r => {
               (this.perfil as any).foto_url = r.foto_url;
-              this.fotoPerfilFile = null;
-              this.fotoPerfilPreview = null;
-              this.guardandoPerfil.set(false);
-              this.mostrarEditPerfil = false;
-              this.exito.set('Perfil actualizado correctamente.');
-              setTimeout(() => this.exito.set(''), 4000);
+              this.epFotoFile    = null;
+              this.epFotoPreview = null;
+              this._finGuardar('Perfil actualizado correctamente.');
             },
-            error: () => {
-              this.guardandoPerfil.set(false);
-              this.mostrarEditPerfil = false;
-              this.exito.set('Datos guardados. La foto no se pudo subir.');
-              setTimeout(() => this.exito.set(''), 4000);
-            },
+            error: () => this._finGuardar('Datos guardados. La foto no se pudo subir.'),
           });
         } else {
           this.cargarPerfil();
-          this.guardandoPerfil.set(false);
-          this.mostrarEditPerfil = false;
-          this.exito.set('Perfil actualizado correctamente.');
-          setTimeout(() => this.exito.set(''), 4000);
+          this._finGuardar('Perfil actualizado correctamente.');
         }
       },
-      error: e => { this.error.set(e.mensaje || 'No se pudo guardar el perfil.'); this.guardandoPerfil.set(false); },
+      error: e => { this.error.set(e.mensaje || 'No se pudo guardar el perfil.'); this.epGuardando = false; },
     });
+  }
+
+  private _finGuardar(msg: string) {
+    this.epGuardando = false;
+    this.epModal     = false;
+    this.exito.set(msg);
+    setTimeout(() => this.exito.set(''), 4000);
   }
 
   private cargarSedes() {

@@ -295,7 +295,7 @@ router.get('/mio/datos', autenticar, async (req, res, next) => {
 router.put('/mio/datos', autenticar, async (req, res, next) => {
   try {
     const {
-      titulo_profesional, bio,
+      titulo_profesional, bio, cargo,
       estudios, cualidades_intelectuales, cualidades_fisicas,
       logros, proyectos,
       url_blog, url_linkedin, url_researchgate, url_orcid,
@@ -307,17 +307,29 @@ router.put('/mio/datos', autenticar, async (req, res, next) => {
       perfil = await PerfilDocente.create({ usuario_id: req.usuario.id });
     }
 
-    await perfil.update({
-      titulo_profesional, bio,
-      estudios:               typeof estudios === 'string' ? JSON.parse(estudios) : estudios,
-      cualidades_intelectuales: typeof cualidades_intelectuales === 'string' ? JSON.parse(cualidades_intelectuales) : cualidades_intelectuales,
-      cualidades_fisicas:     typeof cualidades_fisicas === 'string' ? JSON.parse(cualidades_fisicas) : cualidades_fisicas,
-      logros:     typeof logros === 'string' ? JSON.parse(logros) : logros,
-      proyectos:  typeof proyectos === 'string' ? JSON.parse(proyectos) : proyectos,
-      url_blog, url_linkedin, url_researchgate, url_orcid,
-      perfil_publico,
+    const upd = {
       ultima_actualizacion: new Date(),
-    });
+    };
+    if (titulo_profesional !== undefined) upd.titulo_profesional = titulo_profesional;
+    if (bio               !== undefined) upd.bio               = bio;
+    if (cargo             !== undefined) upd.cargo             = cargo;
+    if (url_blog          !== undefined) upd.url_blog          = url_blog;
+    if (url_linkedin      !== undefined) upd.url_linkedin      = url_linkedin;
+    if (url_researchgate  !== undefined) upd.url_researchgate  = url_researchgate;
+    if (url_orcid         !== undefined) upd.url_orcid         = url_orcid;
+    if (perfil_publico    !== undefined) upd.perfil_publico    = perfil_publico;
+    if (estudios !== undefined)
+      upd.estudios = typeof estudios === 'string' ? JSON.parse(estudios) : estudios;
+    if (cualidades_intelectuales !== undefined)
+      upd.cualidades_intelectuales = typeof cualidades_intelectuales === 'string' ? JSON.parse(cualidades_intelectuales) : cualidades_intelectuales;
+    if (cualidades_fisicas !== undefined)
+      upd.cualidades_fisicas = typeof cualidades_fisicas === 'string' ? JSON.parse(cualidades_fisicas) : cualidades_fisicas;
+    if (logros !== undefined)
+      upd.logros = typeof logros === 'string' ? JSON.parse(logros) : logros;
+    if (proyectos !== undefined)
+      upd.proyectos = typeof proyectos === 'string' ? JSON.parse(proyectos) : proyectos;
+
+    await perfil.update(upd);
 
     res.json({ perfil, mensaje: 'Perfil actualizado exitosamente' });
   } catch (err) { next(err); }
