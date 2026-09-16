@@ -41,13 +41,14 @@ router.get('/stats', soloAdmin, async (req, res) => {
     });
 
     // Distribución por área (cargo en perfil)
+    const { fn, col } = require('sequelize');
     const porArea = await PerfilDocente.findAll({
       attributes: [
         'cargo',
-        [require('sequelize').fn('COUNT', require('sequelize').col('cargo')), 'total'],
+        [fn('COUNT', col('cargo')), 'total'],
       ],
       group:   ['cargo'],
-      order:   [[require('sequelize').literal('total'), 'DESC']],
+      order:   [[fn('COUNT', col('cargo')), 'DESC']],
       limit:   8,
       raw:     true,
     });
@@ -564,6 +565,40 @@ router.delete('/publicaciones/:id', soloAdmin, async (req, res) => {
     res.json({ ok: true, mensaje: `"${titulo}" eliminada permanentemente.` });
   } catch (e) {
     console.error('publicaciones eliminar error:', e.message);
+    res.status(500).json({ error: e.message });
+  }
+});
+
+// DELETE /api/v1/super-admin/usuarios/eliminar-definitivo?email=xxx
+// Borra permanentemente un usuario y su perfil (para poder recrearlo con el mismo email)
+router.delete('/usuarios/eliminar-definitivo', soloAdmin, async (req, res) => {
+  try {
+    const { email } = req.query;
+    if (!email?.trim()) return res.status(400).json({ error: 'email es requerido' });
+
+    const usuario = await Usuario.findOne({
+      where: { email: email.trim().toLowerCase() },
+      include: [{ model: PerfilDocente, as: 'perfil', required: false }],
+    });
+    if (!usuario) return res.status(404).json({ error: 'No existe ningún usuario con ese email' });
+    if (usuario.es_raiz) return res.status(403).json({ error: 'No se puede eliminar el usuario raíz' });
+
+    const nombre = usuario.nombre;
+
+    if (usuario.perfil) await usuario.perfil.destroy();
+    await usuario.destroy();
+
+    await AccionAdmin.create({
+      admin_id:     req.usuario.id,
+      tipo:         'eliminar_docente',
+      descripcion:  `Usuario "${nombre}" (${email}) eliminado permanentemente para recreación`,
+      entidad_tipo: 'Usuario',
+      entidad_id:   usuario.id,
+    });
+
+    res.json({ ok: true, mensaje: `"${nombre}" eliminado. Ya puedes crear la cuenta nueva con ese email.` });
+  } catch (e) {
+    console.error('eliminar-definitivo error:', e.message);
     res.status(500).json({ error: e.message });
   }
 });

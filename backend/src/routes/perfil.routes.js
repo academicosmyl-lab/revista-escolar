@@ -61,7 +61,7 @@ router.post('/registro-publico', uploadMem.single('foto'), async (req, res) => {
       foto_url:     fotoUrl,
       foto_public_id: fotoPublicId,
       estado:       'pendiente',
-      ip_origen:    req.ip,
+      ip_origen:    (req.ip || '').slice(0, 45),
     });
 
     // Auto-registrar área personalizada en la tabla de áreas
@@ -90,8 +90,11 @@ router.post('/registro-publico', uploadMem.single('foto'), async (req, res) => {
       id:      solicitud.id,
     });
   } catch (e) {
-    console.error('Error registro-publico:', e.message);
-    res.status(500).json({ error: 'Error al guardar la solicitud. Intenta de nuevo.' });
+    console.error('Error registro-publico DETALLE:', e.message, e.original?.message, e.errors?.map(x => x.message));
+    res.status(500).json({
+      error: 'Error al guardar la solicitud. Intenta de nuevo.',
+      detalle: process.env.NODE_ENV !== 'production' ? e.message : undefined,
+    });
   }
 });
 
