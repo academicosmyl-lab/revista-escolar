@@ -273,8 +273,8 @@ const SolicitudPerfil = sequelize.define('SolicitudPerfil', {
   area:           { type: DataTypes.STRING(100) },
   sede:           { type: DataTypes.STRING(100) },
   experiencia:    { type: DataTypes.INTEGER },
-  email:          { type: DataTypes.STRING(150) },
-  bio_corta:      { type: DataTypes.STRING(150) },
+  email:          { type: DataTypes.STRING(200) },
+  bio_corta:      { type: DataTypes.TEXT },
   bio_completa:   { type: DataTypes.TEXT },
   especialidades: { type: DataTypes.TEXT },   // JSON stringified
   publicaciones:  { type: DataTypes.TEXT },   // JSON stringified
