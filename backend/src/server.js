@@ -27,18 +27,20 @@ async function iniciar() {
     await sequelize.sync();
     console.log('✅ Base de datos sincronizada');
 
-    // Auto-seed demo si la BD está vacía
-    try {
-      const { Usuario } = require('./models');
-      const total = await Usuario.count();
-      if (total === 0) {
-        console.log('⚡ BD vacía — ejecutando seed demo automático...');
-        const { seedDemo } = require('./utils/seed-demo');
-        await seedDemo();
-        console.log('✅ Seed demo completado automáticamente');
+    // Auto-seed demo solo en desarrollo (nunca en producción — protege datos reales)
+    if (process.env.NODE_ENV !== 'production') {
+      try {
+        const { Usuario } = require('./models');
+        const total = await Usuario.count();
+        if (total === 0) {
+          console.log('⚡ BD vacía — ejecutando seed demo automático...');
+          const { seedDemo } = require('./utils/seed-demo');
+          await seedDemo();
+          console.log('✅ Seed demo completado automáticamente');
+        }
+      } catch (seedErr) {
+        console.error('⚠️  Auto-seed falló (no crítico):', seedErr.message);
       }
-    } catch (seedErr) {
-      console.error('⚠️  Auto-seed falló (no crítico):', seedErr.message);
     }
 
     // Auto-seed Super Admin si las variables de entorno están definidas
