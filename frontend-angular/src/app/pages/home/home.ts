@@ -174,6 +174,14 @@ export class Home implements OnInit, AfterViewInit {
     });
   }
 
+  onFotoLoad(event: Event) {
+    (event.target as HTMLImageElement).classList.add('visible');
+  }
+
+  onFotoError(event: Event) {
+    (event.target as HTMLImageElement).style.display = 'none';
+  }
+
   cargarMasFeed() {
     this.cargarFeed(this.feedPagina() + 1);
   }
