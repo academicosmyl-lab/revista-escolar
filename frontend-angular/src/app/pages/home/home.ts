@@ -34,6 +34,14 @@ export class Home implements OnInit, AfterViewInit {
   // Skeletons: array de 4 elementos para mostrar mientras carga
   skeletons = Array(4);
 
+  /* ── Feed nativo de noticias (reemplaza iframe Facebook) ── */
+  noticiasFeed    = signal<Noticia[]>([]);
+  feedPagina      = signal(1);
+  feedTotal       = signal(0);
+  cargandoFeed    = signal(false);
+  feedHayMas      = computed(() => this.noticiasFeed().length < this.feedTotal());
+  skeletonsFeed   = Array(3);
+
   /* ── Video institucional YouTube ────────────────────── */
   readonly videoYTId = 'Yz4sq_s8-wA';
   readonly videoYTLink = 'https://youtu.be/Yz4sq_s8-wA';
@@ -83,6 +91,7 @@ export class Home implements OnInit, AfterViewInit {
   ngOnInit() {
     this.cargarNoticiasHome();
     this.cargarDocentesHome();
+    this.cargarFeed();
   }
 
   // CAMBIO ARCH-UI: carga las últimas 5 noticias publicadas del backend real
@@ -139,6 +148,34 @@ export class Home implements OnInit, AfterViewInit {
         this.cdr.markForCheck();
       },
     });
+  }
+
+  private cargarFeed(pagina = 1) {
+    this.cargandoFeed.set(true);
+    this.api.get<any>('/noticias', { estado: 'publicada', limit: 4, pagina }).subscribe({
+      next: r => {
+        const raw = r.data ?? r;
+        const lista: Noticia[] = Array.isArray(raw) ? raw : (raw.rows ?? raw.noticias ?? []);
+        const total = r.total ?? r.count ?? lista.length;
+        if (pagina === 1) {
+          this.noticiasFeed.set(lista);
+        } else {
+          this.noticiasFeed.update(prev => [...prev, ...lista]);
+        }
+        this.feedTotal.set(total);
+        this.feedPagina.set(pagina);
+        this.cargandoFeed.set(false);
+        this.cdr.markForCheck();
+      },
+      error: () => {
+        this.cargandoFeed.set(false);
+        this.cdr.markForCheck();
+      },
+    });
+  }
+
+  cargarMasFeed() {
+    this.cargarFeed(this.feedPagina() + 1);
   }
 
   abrirCertificado() {
