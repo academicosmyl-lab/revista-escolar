@@ -1,11 +1,8 @@
 /* ── Barra superior ─────────────────────────────────── */
 .its-topbar {
-  background: rgba(169,68,85,0.22);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border-bottom: 1px solid rgba(169,68,85,0.3);
-  color: rgba(255,255,255,0.9);
-  font-family: 'Inter', sans-serif;
+  background: #A94455;
+  color: white;
+  font-family: 'Source Sans 3', sans-serif;
   font-size: 0.7rem;
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -22,12 +19,10 @@
   }
 }
 
-/* ── Navbar glass ────────────────────────────────────── */
+/* ── Navbar ─────────────────────────────────────────── */
 .its-nav {
-  background: rgba(26,26,46,0.62);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  border-bottom: 1px solid rgba(212,168,83,0.18);
+  background: white;
+  border-bottom: 3px solid #D4A853;
   padding: 0.75rem 2rem;
   display: flex;
   align-items: center;
@@ -35,7 +30,8 @@
   position: sticky;
   top: 0;
   z-index: 1000;
-  box-shadow: 0 4px 24px rgba(0,0,0,0.25);
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+  /* Transición suave entre estado normal y glass */
   transition:
     background 0.35s ease,
     backdrop-filter 0.35s ease,
@@ -43,14 +39,16 @@
     border-color 0.35s ease,
     padding 0.35s ease;
 
+  /* ── Glass morphism al hacer scroll ──────────────── */
+  /* Activa cuando el usuario bajó más de 60px */
   &.scrolled {
-    background: rgba(13,10,16,0.82);
-    backdrop-filter: blur(28px) saturate(1.4);
-    -webkit-backdrop-filter: blur(28px) saturate(1.4);
-    border-bottom-color: rgba(212,168,83,0.28);
+    background: rgba(255, 255, 255, 0.82);
+    backdrop-filter: blur(18px) saturate(1.6);
+    -webkit-backdrop-filter: blur(18px) saturate(1.6);
+    border-bottom-color: rgba(212, 168, 83, 0.6);
     box-shadow:
-      0 1px 0 rgba(212,168,83,0.12) inset,
-      0 4px 32px rgba(0,0,0,0.35);
+      0 1px 0 rgba(212, 168, 83, 0.15) inset,
+      0 4px 24px rgba(0, 0, 0, 0.1);
     padding: 0.5rem 2rem;
   }
 
@@ -83,9 +81,9 @@
 }
 
 .its-nav-nombre {
-  font-family: 'DM Serif Display', Georgia, serif;
+  font-family: 'Playfair Display', serif;
   font-size: 1rem;
-  color: #fff;
+  color: #A94455;
   font-weight: 700;
   line-height: 1.2;
 
@@ -93,9 +91,9 @@
 }
 
 .its-nav-sede {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Source Sans 3', sans-serif;
   font-size: 0.68rem;
-  color: rgba(212,168,83,0.8);
+  color: #3A7D5C;
   font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -115,7 +113,7 @@
     display: block;
     width: 24px;
     height: 2px;
-    background: rgba(212,168,83,0.8);
+    background: #A94455;
     transition: all 0.2s;
   }
 
@@ -135,7 +133,7 @@
     align-items: flex-start;
     padding: 1rem 0;
     gap: 0.25rem;
-    border-top: 1px solid rgba(255,255,255,0.08);
+    border-top: 1px solid #eee;
     margin-top: 0.75rem;
 
     &.abierto { display: flex; }
@@ -143,10 +141,10 @@
 }
 
 .nav-link {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Source Sans 3', sans-serif;
   font-size: 0.82rem;
   font-weight: 600;
-  color: rgba(255,255,255,0.8);
+  color: #2C3E50;
   text-decoration: none;
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -156,45 +154,36 @@
   white-space: nowrap;
 
   &:hover, &.nav-activo {
-    color: #fff;
-    border-bottom-color: rgba(212,168,83,0.7);
+    color: #A94455;
+    border-bottom-color: #D4A853;
   }
 
   @media (max-width: 768px) {
     padding: 0.6rem 0;
     width: 100%;
-    border-bottom: 1px solid rgba(255,255,255,0.08);
+    border-bottom: 1px solid #f0f0f0;
     font-size: 0.9rem;
   }
 }
 
 .nav-link-indicadores {
-  color: rgba(212,168,83,0.9) !important;
+  color: #4A7FB5 !important;
   font-weight: 700 !important;
   &:hover, &.nav-activo {
-    color: #D4A853 !important;
-    border-bottom-color: rgba(212,168,83,0.7) !important;
+    color: #4A7FB5 !important;
+    border-bottom-color: #4A7FB5 !important;
   }
 }
 
 .nav-link-publicar {
-  background: rgba(30,64,175,0.35);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  background: #1E40AF;
   color: #fff !important;
-  border: 1px solid rgba(59,130,246,0.4);
   border-radius: 6px;
   padding: 6px 14px !important;
   font-weight: 700 !important;
   border-bottom: none !important;
-  &:hover {
-    background: rgba(59,130,246,0.4);
-    border-color: rgba(59,130,246,0.6);
-  }
-  &.nav-activo {
-    background: rgba(59,130,246,0.4);
-    border-bottom: none !important;
-  }
+  &:hover { background: #3B82F6; }
+  &.nav-activo { background: #3B82F6; border-bottom: none !important; }
 
   @media (max-width: 768px) {
     width: auto;
