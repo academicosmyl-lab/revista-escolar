@@ -347,11 +347,13 @@ router.put('/docentes/:id', soloAdmin, async (req, res) => {
     });
     if (!usuario) return res.status(404).json({ error: 'Docente no encontrado' });
 
-    const { nombre, activo, titulo, area, bio, perfil_publico, web, linkedin, orcid } = req.body;
+    const { nombre, activo, rol, titulo, area, bio, perfil_publico, web, linkedin, orcid } = req.body;
 
+    const ROLES_VALIDOS = ['ADMIN', 'RECTOR', 'COORDINADOR', 'ORIENTADORA', 'DOCENTE', 'PERSONAL'];
     const userUpd = {};
     if (nombre  !== undefined) userUpd.nombre = nombre;
     if (activo  !== undefined) userUpd.activo  = activo;
+    if (rol !== undefined && ROLES_VALIDOS.includes(rol)) userUpd.rol = rol;
     if (Object.keys(userUpd).length) await usuario.update(userUpd);
 
     if (usuario.perfil) {
