@@ -1,13 +1,12 @@
 # .github/workflows/keep-alive.yml
 # Ping al backend de Render cada 10 minutos para evitar el cold start
-# Render free tier duerme después de 15 min sin actividad
 
 name: Keep Render Alive
 
 on:
   schedule:
-    - cron: '*/10 * * * *'   # cada 10 minutos
-  workflow_dispatch:           # permite correrlo manualmente
+    - cron: "*/10 * * * *"
+  workflow_dispatch:
 
 jobs:
   ping:
@@ -16,12 +15,12 @@ jobs:
     steps:
       - name: Ping health endpoint
         run: |
-          STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
-            --max-time 60 \
-            https://revista-escolar.onrender.com/api/v1/health)
+          echo "Enviando ping a Render..."
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}"             --max-time 90             https://revista-escolar.onrender.com/api/v1/health || echo "timeout")
           echo "Render health status: $STATUS"
-          if [ "$STATUS" != "200" ]; then
-            echo "⚠️  Backend respondió $STATUS — puede estar despertando."
+          if [ "$STATUS" = "200" ]; then
+            echo "Backend despierto y saludable."
           else
-            echo "✅ Backend despierto y saludable."
+            echo "Backend respondio $STATUS (puede estar despertando)."
           fi
+          exit 0
