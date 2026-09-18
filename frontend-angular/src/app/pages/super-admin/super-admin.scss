@@ -1,47 +1,42 @@
 // ╔══════════════════════════════════════════════════════╗
-// ║  SUPER ADMIN — Glassmorphism edition                 ║
+// ║  SUPER ADMIN — Estilos editoriales institucionales   ║
 // ╚══════════════════════════════════════════════════════╝
 
-// ── Tokens — TEMA OSCURO GLASS ─────────────────────────
-$bg:         #0d0a10;
-$sidebar-bg: rgba(26,10,14,0.7);
-$surface:    rgba(255,255,255,0.06);
-$surface2:   rgba(255,255,255,0.04);
-$border:     rgba(212,168,83,0.18);
-$border2:    rgba(255,255,255,0.08);
-$gold:       #D4A853;
-$gold-dim:   rgba(212,168,83,0.15);
-$text:       rgba(255,255,255,0.92);
-$text-dim:   rgba(255,255,255,0.5);
-$ok:         #34d399;
-$err:        #f87171;
-$warn:       #fbbf24;
-$blue:       #60a5fa;
+// ── Tokens — TEMA CLARO INSTITUCIONAL ──────────────────
+$bg:         #f0f2f7;
+$sidebar-bg: #7B2D3F;   // vinotinto ITS
+$surface:    #ffffff;
+$surface2:   #f8f9fc;
+$border:     rgba(0,0,0,0.09);
+$gold:       #A94455;   // vinotinto como acento principal
+$gold-dim:   rgba(169,68,85,0.1);
+$text:       #1a1f2e;
+$text-dim:   #6b7280;
+$ok:         #16a34a;
+$err:        #dc2626;
+$warn:       #d97706;
+$blue:       #2563eb;
 $radius:     10px;
 $radius-lg:  16px;
-$blur-md:    blur(16px);
-$blur-lg:    blur(24px);
-$blur-xl:    blur(28px);
 
 // ── Shell: layout sidebar + main ───────────────────────
 .sa-shell {
   display: flex;
   min-height: 100vh;
-  background: transparent;
+  background: $bg;
   color: $text;
   font-family: 'Inter', system-ui, sans-serif;
+  // Cursor nativo visible sobre el fondo claro
   cursor: auto !important;
   * { cursor: auto !important; }
   button, a, [role="button"] { cursor: pointer !important; }
 }
 
-// ── Sidebar glass ───────────────────────────────────────
+// ── Sidebar ────────────────────────────────────────────
 .sa-sidebar {
   width: 240px;
   flex-shrink: 0;
   background: $sidebar-bg;
-  backdrop-filter: $blur-xl;
-  -webkit-backdrop-filter: $blur-xl;
   border-right: 1px solid $border;
   display: flex;
   flex-direction: column;
@@ -69,7 +64,7 @@ $blur-xl:    blur(28px);
   align-items: center;
   gap: 0.75rem;
   padding: 0 0.5rem 1.75rem;
-  border-bottom: 1px solid rgba(212,168,83,0.15);
+  border-bottom: 1px solid rgba(255,255,255,0.15);
   margin-bottom: 1.25rem;
 
   @media (max-width: 768px) {
@@ -97,7 +92,7 @@ $blur-xl:    blur(28px);
 .sa-brand-sub {
   display: block;
   font-size: 0.7rem;
-  color: rgba(212,168,83,0.65);
+  color: rgba(255,255,255,0.65);
 }
 
 .sa-nav {
@@ -121,7 +116,7 @@ $blur-xl:    blur(28px);
   border-radius: $radius;
   border: none;
   background: transparent;
-  color: rgba(255,255,255,0.6);
+  color: rgba(255,255,255,0.7);
   font-size: 0.83rem;
   font-weight: 500;
   cursor: pointer;
@@ -131,21 +126,20 @@ $blur-xl:    blur(28px);
 
   svg { width: 17px; height: 17px; flex-shrink: 0; }
 
-  &:hover { background: rgba(255,255,255,0.08); color: #fff; }
+  &:hover { background: rgba(255,255,255,0.12); color: #fff; }
 
   &.active {
-    background: rgba(212,168,83,0.15);
-    border: 1px solid rgba(212,168,83,0.25);
+    background: rgba(255,255,255,0.2);
     color: #fff;
     font-weight: 700;
 
-    svg { stroke: $gold; }
+    svg { stroke: #fff; }
   }
 
   @media (max-width: 768px) {
     padding: 0.5rem 0.75rem;
     font-size: 0.78rem;
-    color: rgba(255,255,255,0.75);
+    color: rgba(255,255,255,0.8);
 
     svg { display: none; }
   }
@@ -165,7 +159,7 @@ $blur-xl:    blur(28px);
 
 .sa-sidebar-footer {
   padding-top: 1.5rem;
-  border-top: 1px solid rgba(212,168,83,0.12);
+  border-top: 1px solid rgba(255,255,255,0.15);
   margin-top: auto;
 
   @media (max-width: 768px) {
@@ -180,7 +174,7 @@ $blur-xl:    blur(28px);
   align-items: center;
   gap: 0.5rem;
   font-size: 0.78rem;
-  color: rgba(255,255,255,0.45);
+  color: rgba(255,255,255,0.6);
   text-decoration: none;
   padding: 0.5rem;
   border-radius: $radius;
@@ -188,7 +182,7 @@ $blur-xl:    blur(28px);
 
   svg { width: 15px; height: 15px; }
 
-  &:hover { color: rgba(255,255,255,0.85); }
+  &:hover { color: #fff; }
 }
 
 // ── Main ────────────────────────────────────────────────
@@ -203,7 +197,7 @@ $blur-xl:    blur(28px);
 
 .sa-page { max-width: 1100px; margin: 0 auto; }
 
-// ── Encabezado de pagina ────────────────────────────────
+// ── Encabezado de página ────────────────────────────────
 .sa-page-header {
   margin-bottom: 2rem;
 
@@ -218,9 +212,8 @@ $blur-xl:    blur(28px);
 
 .sa-page-title {
   font-size: 1.6rem;
-  font-family: 'DM Serif Display', serif;
-  font-weight: 700;
-  color: #fff;
+  font-weight: 800;
+  color: $text;
   margin: 0 0 0.2rem;
   letter-spacing: -0.02em;
 }
@@ -231,7 +224,7 @@ $blur-xl:    blur(28px);
   margin: 0;
 }
 
-// ── Alertas glass ───────────────────────────────────────
+// ── Alertas ─────────────────────────────────────────────
 .sa-alert {
   display: flex;
   align-items: center;
@@ -240,8 +233,6 @@ $blur-xl:    blur(28px);
   border-radius: $radius;
   font-size: 0.875rem;
   margin-bottom: 1.5rem;
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
 
   svg { width: 18px; height: 18px; flex-shrink: 0; }
 
@@ -291,7 +282,7 @@ $blur-xl:    blur(28px);
 
 @keyframes spin { to { transform: rotate(360deg); } }
 
-// ── Widgets dashboard glass ──────────────────────────────
+// ── Widgets dashboard ────────────────────────────────────
 .sa-widgets {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -301,8 +292,6 @@ $blur-xl:    blur(28px);
 
 .sa-widget {
   background: $surface;
-  backdrop-filter: $blur-md;
-  -webkit-backdrop-filter: $blur-md;
   border: 1px solid $border;
   border-radius: $radius-lg;
   padding: 1.4rem 1.5rem;
@@ -311,9 +300,6 @@ $blur-xl:    blur(28px);
   gap: 0.3rem;
   position: relative;
   overflow: hidden;
-  transition: background 0.2s;
-
-  &:hover { background: rgba(255,255,255,0.09); }
 
   &::before {
     content: '';
@@ -333,7 +319,7 @@ $blur-xl:    blur(28px);
   font-weight: 800;
   letter-spacing: -0.04em;
   line-height: 1;
-  color: #fff;
+  color: $text;
 }
 
 .sa-widget-label {
@@ -352,8 +338,8 @@ $blur-xl:    blur(28px);
 
 .sa-widget-cta {
   margin-top: 0.6rem;
-  background: rgba(251,191,36,0.1);
-  border: 1px solid rgba(251,191,36,0.25);
+  background: none;
+  border: 1px solid rgba(245,158,11,0.35);
   color: $warn;
   font-size: 0.75rem;
   font-weight: 600;
@@ -363,7 +349,7 @@ $blur-xl:    blur(28px);
   align-self: flex-start;
   transition: background 0.15s;
 
-  &:hover { background: rgba(251,191,36,0.18); }
+  &:hover { background: rgba(245,158,11,0.1); }
 }
 
 // ── Dashboard row ────────────────────────────────────────
@@ -375,11 +361,9 @@ $blur-xl:    blur(28px);
   @media (max-width: 900px) { grid-template-columns: 1fr; }
 }
 
-// ── Cards genericas glass ───────────────────────────────
+// ── Cards genéricas ─────────────────────────────────────
 .sa-card {
   background: $surface;
-  backdrop-filter: $blur-md;
-  -webkit-backdrop-filter: $blur-md;
   border: 1px solid $border;
   border-radius: $radius-lg;
   padding: 1.4rem 1.5rem;
@@ -421,7 +405,7 @@ $blur-xl:    blur(28px);
 .sa-bar-track {
   flex: 1;
   height: 6px;
-  background: rgba(255,255,255,0.08);
+  background: $surface2;
   border-radius: 3px;
   overflow: hidden;
 }
@@ -441,13 +425,13 @@ $blur-xl:    blur(28px);
   text-align: right;
 }
 
-// ── Acciones historial ───────────────────────────────────
+// ── Acciones historial (dashboard) ──────────────────────
 .sa-accion-row {
   display: flex;
   gap: 0.75rem;
   align-items: flex-start;
   padding: 0.6rem 0;
-  border-bottom: 1px solid $border2;
+  border-bottom: 1px solid $border;
 
   &:last-of-type { border-bottom: none; }
 }
@@ -478,7 +462,7 @@ $blur-xl:    blur(28px);
 .sa-link-btn {
   background: none;
   border: none;
-  color: rgba(212,168,83,0.8);
+  color: $gold;
   font-size: 0.78rem;
   font-weight: 600;
   cursor: pointer;
@@ -486,7 +470,7 @@ $blur-xl:    blur(28px);
   &:hover { text-decoration: underline; }
 }
 
-// ── Toolbar ─────────────────────────────────────────────
+// ── Toolbar (filtros + búsqueda) ────────────────────────
 .sa-toolbar {
   display: flex;
   align-items: center;
@@ -498,12 +482,10 @@ $blur-xl:    blur(28px);
 .sa-filter-tabs {
   display: flex;
   gap: 0.3rem;
-  background: rgba(255,255,255,0.04);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  background: $surface;
   padding: 4px;
   border-radius: $radius;
-  border: 1px solid $border2;
+  border: 1px solid $border;
 }
 
 .sa-filter-tab {
@@ -518,23 +500,20 @@ $blur-xl:    blur(28px);
   transition: background 0.15s, color 0.15s;
 
   &.active {
-    background: rgba(212,168,83,0.2);
-    color: #fff;
+    background: $gold;
+    color: #000;
     font-weight: 700;
-    border: 1px solid rgba(212,168,83,0.3);
   }
 
-  &:not(.active):hover { background: rgba(255,255,255,0.06); color: $text; }
+  &:not(.active):hover { background: $surface2; color: $text; }
 }
 
 .sa-search {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  background: rgba(255,255,255,0.06);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  border: 1px solid $border2;
+  background: $surface;
+  border: 1px solid $border;
   border-radius: $radius;
   padding: 0 0.85rem;
   flex: 1;
@@ -557,7 +536,7 @@ $blur-xl:    blur(28px);
   }
 }
 
-// ── Grid solicitudes glass ──────────────────────────────
+// ── Grid solicitudes ────────────────────────────────────
 .sa-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -566,20 +545,14 @@ $blur-xl:    blur(28px);
 
 .sa-sol-card {
   background: $surface;
-  backdrop-filter: $blur-md;
-  -webkit-backdrop-filter: $blur-md;
   border: 1px solid $border;
   border-radius: $radius-lg;
   display: flex;
   gap: 1rem;
   padding: 1.1rem 1.2rem;
-  transition: border-color 0.2s, transform 0.2s, background 0.2s;
+  transition: border-color 0.2s, transform 0.2s;
 
-  &:hover {
-    border-color: rgba(212,168,83,0.35);
-    background: rgba(255,255,255,0.09);
-    transform: translateY(-2px);
-  }
+  &:hover { border-color: rgba(212,168,83,0.25); transform: translateY(-2px); }
 
   &.pendiente { border-left: 3px solid $warn; }
   &.aprobado  { border-left: 3px solid $ok; }
@@ -605,14 +578,14 @@ $blur-xl:    blur(28px);
   width: 100%;
   height: 100%;
   border-radius: 50%;
-  background: rgba(212,168,83,0.1);
+  background: $surface2;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 1.5rem;
   font-weight: 700;
   color: $gold;
-  border: 2px solid rgba(212,168,83,0.25);
+  border: 2px solid $border;
 }
 
 .sa-sol-badge {
@@ -625,9 +598,9 @@ $blur-xl:    blur(28px);
   letter-spacing: 0.04em;
   padding: 2px 6px;
   border-radius: 6px;
-  background: rgba(255,255,255,0.08);
+  background: $surface2;
   color: $text-dim;
-  border: 1px solid $border2;
+  border: 1px solid $border;
 
   .pendiente & { background: rgba(245,158,11,0.15); color: $warn; border-color: rgba(245,158,11,0.3); }
   .aprobado  & { background: rgba(34,197,94,0.12); color: $ok; border-color: rgba(34,197,94,0.3); }
@@ -648,7 +621,7 @@ $blur-xl:    blur(28px);
 
 .sa-sol-titulo {
   font-size: 0.78rem;
-  color: rgba(212,168,83,0.8);
+  color: $gold;
   margin: 0 0 0.4rem;
 }
 
@@ -675,7 +648,7 @@ $blur-xl:    blur(28px);
 .sa-sol-motivo {
   font-size: 0.75rem;
   color: #fca5a5;
-  background: rgba(239,68,68,0.1);
+  background: rgba(239,68,68,0.08);
   border: 1px solid rgba(239,68,68,0.2);
   border-radius: 6px;
   padding: 0.4rem 0.6rem;
@@ -694,7 +667,7 @@ $blur-xl:    blur(28px);
   margin-top: 0.5rem;
 }
 
-// ── Botones glass ────────────────────────────────────────
+// ── Botones ──────────────────────────────────────────────
 .sa-btn {
   display: inline-flex;
   align-items: center;
@@ -706,8 +679,6 @@ $blur-xl:    blur(28px);
   font-weight: 600;
   cursor: pointer;
   transition: opacity 0.15s, transform 0.12s;
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
 
   &:active { transform: scale(0.97); }
   &:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
@@ -727,18 +698,17 @@ $blur-xl:    blur(28px);
   }
 
   &-primary {
-    background: rgba(212,168,83,0.2);
-    color: #fff;
-    border: 1px solid rgba(212,168,83,0.4);
+    background: $gold;
+    color: #000;
     font-weight: 700;
-    &:hover:not(:disabled) { background: rgba(212,168,83,0.3); }
+    &:hover:not(:disabled) { background: #e8b95c; }
   }
 
   &-ghost {
-    background: rgba(255,255,255,0.06);
+    background: $surface2;
     color: $text-dim;
-    border: 1px solid $border2;
-    &:hover:not(:disabled) { color: $text; background: rgba(255,255,255,0.1); }
+    border: 1px solid $border;
+    &:hover:not(:disabled) { color: $text; background: $surface; }
   }
 
   &-lg { padding: 0.65rem 1.35rem; font-size: 0.875rem; }
@@ -754,13 +724,11 @@ $blur-xl:    blur(28px);
   animation: spin 0.7s linear infinite;
 }
 
-// ── Tabla docentes glass ─────────────────────────────────
+// ── Tabla docentes ───────────────────────────────────────
 .sa-table-wrap {
   overflow-x: auto;
   border-radius: $radius-lg;
   border: 1px solid $border;
-  backdrop-filter: $blur-md;
-  -webkit-backdrop-filter: $blur-md;
 }
 
 .sa-table {
@@ -769,7 +737,7 @@ $blur-xl:    blur(28px);
   font-size: 0.83rem;
 
   thead tr {
-    background: rgba(255,255,255,0.04);
+    background: $surface;
     border-bottom: 1px solid $border;
   }
 
@@ -785,12 +753,12 @@ $blur-xl:    blur(28px);
   }
 
   tbody tr {
-    border-bottom: 1px solid $border2;
+    border-bottom: 1px solid $border;
     background: $surface;
     transition: background 0.12s;
 
     &:last-child { border-bottom: none; }
-    &:hover { background: rgba(255,255,255,0.09); }
+    &:hover { background: $surface2; }
     &.inactivo { opacity: 0.55; }
   }
 
@@ -819,7 +787,7 @@ $blur-xl:    blur(28px);
   width: 34px;
   height: 34px;
   border-radius: 50%;
-  background: rgba(212,168,83,0.1);
+  background: $surface2;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -827,7 +795,7 @@ $blur-xl:    blur(28px);
   font-weight: 700;
   color: $gold;
   flex-shrink: 0;
-  border: 1px solid rgba(212,168,83,0.25);
+  border: 1px solid $border;
 }
 
 .sa-doc-nombre { font-weight: 600; white-space: nowrap; }
@@ -860,7 +828,7 @@ $blur-xl:    blur(28px);
 
 .sa-icon-btn {
   background: none;
-  border: 1px solid $border2;
+  border: 1px solid $border;
   border-radius: 7px;
   padding: 5px 7px;
   cursor: pointer;
@@ -884,7 +852,7 @@ $blur-xl:    blur(28px);
   }
 }
 
-// ── Toggle visible ───────────────────────────────────────
+// ── Toggle visible /docentes ─────────────────────────────
 .sa-td-visible { white-space: nowrap; }
 
 .sa-visible-toggle {
@@ -911,18 +879,16 @@ $blur-xl:    blur(28px);
   }
 
   &.oculto {
-    background: rgba(255,255,255,0.05);
-    border-color: rgba(255,255,255,0.12);
+    background: rgba(122,130,153,0.1);
+    border-color: rgba(122,130,153,0.25);
     color: $text-dim;
-    &:hover { background: rgba(255,255,255,0.1); color: $text; }
+    &:hover { background: rgba(122,130,153,0.18); color: $text; }
   }
 }
 
 // ── Historial ────────────────────────────────────────────
 .sa-historial-list {
   background: $surface;
-  backdrop-filter: $blur-md;
-  -webkit-backdrop-filter: $blur-md;
   border: 1px solid $border;
   border-radius: $radius-lg;
   overflow: hidden;
@@ -933,11 +899,11 @@ $blur-xl:    blur(28px);
   align-items: center;
   gap: 1rem;
   padding: 0.9rem 1.25rem;
-  border-bottom: 1px solid $border2;
+  border-bottom: 1px solid $border;
   transition: background 0.12s;
 
   &:last-child { border-bottom: none; }
-  &:hover { background: rgba(255,255,255,0.04); }
+  &:hover { background: $surface2; }
 }
 
 .sa-hist-icon { font-size: 1.2rem; flex-shrink: 0; }
@@ -969,14 +935,14 @@ $blur-xl:    blur(28px);
   letter-spacing: 0.04em;
   text-transform: uppercase;
   color: $text-dim;
-  background: rgba(255,255,255,0.06);
+  background: $surface2;
   padding: 3px 8px;
   border-radius: 6px;
   white-space: nowrap;
   flex-shrink: 0;
 }
 
-// ── Paginacion ────────────────────────────────────────────
+// ── Paginación ────────────────────────────────────────────
 .sa-pag {
   display: flex;
   align-items: center;
@@ -987,9 +953,7 @@ $blur-xl:    blur(28px);
 
 .sa-pag-btn {
   background: $surface;
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  border: 1px solid $border2;
+  border: 1px solid $border;
   color: $text;
   font-size: 0.8rem;
   font-weight: 600;
@@ -998,11 +962,7 @@ $blur-xl:    blur(28px);
   cursor: pointer;
   transition: background 0.15s;
 
-  &:hover:not(:disabled) {
-    background: rgba(255,255,255,0.1);
-    border-color: rgba(212,168,83,0.35);
-    color: $gold;
-  }
+  &:hover:not(:disabled) { background: $surface2; border-color: rgba(212,168,83,0.3); color: $gold; }
   &:disabled { opacity: 0.35; cursor: not-allowed; }
 }
 
@@ -1011,7 +971,7 @@ $blur-xl:    blur(28px);
   color: $text-dim;
 }
 
-// ── Estado vacio ──────────────────────────────────────────
+// ── Estado vacío ──────────────────────────────────────────
 .sa-empty-state {
   text-align: center;
   padding: 4rem 2rem;
@@ -1022,13 +982,12 @@ $blur-xl:    blur(28px);
   p { font-size: 0.9rem; }
 }
 
-// ── Modal glass ───────────────────────────────────────────
+// ── Modal ─────────────────────────────────────────────────
 .sa-modal-backdrop {
   position: fixed;
   inset: 0;
   background: rgba(0,0,0,0.72);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(4px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1037,16 +996,14 @@ $blur-xl:    blur(28px);
 }
 
 .sa-modal {
-  background: rgba(26,10,14,0.82);
-  backdrop-filter: $blur-xl;
-  -webkit-backdrop-filter: $blur-xl;
-  border: 1px solid rgba(169,68,85,0.3);
+  background: $surface;
+  border: 1px solid $border;
   border-radius: $radius-lg;
   width: 100%;
   max-width: 520px;
   max-height: 90vh;
   overflow-y: auto;
-  box-shadow: 0 24px 80px rgba(0,0,0,0.6);
+  box-shadow: 0 24px 80px rgba(0,0,0,0.5);
 
   &.sa-modal-wide { max-width: 680px; }
 }
@@ -1056,7 +1013,7 @@ $blur-xl:    blur(28px);
   align-items: center;
   justify-content: space-between;
   padding: 1.2rem 1.5rem;
-  border-bottom: 1px solid $border2;
+  border-bottom: 1px solid $border;
 
   h2 { font-size: 1rem; font-weight: 700; margin: 0; color: $text; }
 
@@ -1133,13 +1090,13 @@ $blur-xl:    blur(28px);
 
 .sa-modal-footer {
   padding: 1rem 1.5rem;
-  border-top: 1px solid $border2;
+  border-top: 1px solid $border;
   display: flex;
   justify-content: flex-end;
   gap: 0.75rem;
 }
 
-// ── Formulario crear docente glass ──────────────────────
+// ── Formulario crear docente ─────────────────────────────
 .sa-form-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -1165,10 +1122,8 @@ $blur-xl:    blur(28px);
 .sa-required { color: $err; }
 
 .sa-input, .sa-textarea, .sa-select {
-  background: rgba(255,255,255,0.06);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  border: 1px solid rgba(212,168,83,0.2);
+  background: $bg;
+  border: 1px solid $border;
   border-radius: 8px;
   color: $text;
   font-size: 0.85rem;
@@ -1184,7 +1139,7 @@ $blur-xl:    blur(28px);
 
 .sa-select {
   appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23D4A853' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%237a8299' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 0.85rem center;
   padding-right: 2.2rem;
@@ -1286,7 +1241,7 @@ $blur-xl:    blur(28px);
   color: $text-dim;
   margin: 0 0 0.6rem;
   padding-bottom: 0.4rem;
-  border-bottom: 1px solid $border2;
+  border-bottom: 1px solid $border;
 }
 
 .sa-modal-bio-corta {
@@ -1314,7 +1269,7 @@ $blur-xl:    blur(28px);
   align-items: center;
   gap: 0.3rem;
   font-size: 0.78rem;
-  color: rgba(212,168,83,0.8);
+  color: $gold;
   text-decoration: none;
   padding: 4px 10px;
   border-radius: 6px;
