@@ -328,13 +328,43 @@
           Ver página completa en Facebook
         </a>
       </div>
-      <div class="fb-embed-wrap">
-        <iframe class="fb-embed"
-          [src]="fbSrc"
-          scrolling="no"
-          frameborder="0"
-          allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share">
-        </iframe>
+      <div class="fb-feed-wrap">
+        @for (n of noticiasFeed(); track n.id) {
+          <a class="feed-card" [routerLink]="['/noticias', n.id]">
+            @if (imagenNoticia(n)) {
+              <img class="feed-card-img" [src]="imagenNoticia(n)!" [alt]="altNoticia(n)" loading="lazy" (load)="onFotoLoad($event)" (error)="onFotoError($event)">
+            } @else {
+              <div class="feed-card-img feed-card-img--placeholder">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+              </div>
+            }
+            <div class="feed-card-body">
+              @if (n.categoria) {
+                <span class="feed-card-cat" [style.background]="colorCategoria(n)">{{ n.categoria.nombre }}</span>
+              }
+              <p class="feed-card-titulo">{{ n.titulo }}</p>
+              <span class="feed-card-fecha">{{ formatFecha(n.fecha_publicacion) }}</span>
+            </div>
+          </a>
+        }
+        @if (cargandoFeed()) {
+          @for (s of skeletonsFeed; track $index) {
+            <div class="feed-card feed-skeleton">
+              <div class="feed-card-img feed-skel-img"></div>
+              <div class="feed-card-body">
+                <div class="feed-skel-line feed-skel-line--short"></div>
+                <div class="feed-skel-line"></div>
+                <div class="feed-skel-line feed-skel-line--xs"></div>
+              </div>
+            </div>
+          }
+        }
+        @if (!cargandoFeed() && feedHayMas()) {
+          <button class="feed-mas-btn" (click)="cargarMasFeed()">Ver más noticias</button>
+        }
+        @if (!cargandoFeed() && noticiasFeed().length === 0) {
+          <p class="feed-vacio">No hay noticias publicadas aún.</p>
+        }
       </div>
     </div>
   </section>
