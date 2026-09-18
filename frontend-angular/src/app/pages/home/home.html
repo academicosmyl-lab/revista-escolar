@@ -343,7 +343,7 @@
                 <span class="feed-card-cat" [style.background]="colorCategoria(n)">{{ n.categoria.nombre }}</span>
               }
               <p class="feed-card-titulo">{{ n.titulo }}</p>
-              <span class="feed-card-fecha">{{ formatFecha(n.fecha_publicacion) }}</span>
+              <span class="feed-card-fecha">{{ formatFecha(n.fechaPublicacion ?? n.createdAt) }}</span>
             </div>
           </a>
         }
