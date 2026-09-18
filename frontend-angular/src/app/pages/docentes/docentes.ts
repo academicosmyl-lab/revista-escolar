@@ -4,6 +4,15 @@ import { RouterLink } from '@angular/router';
 import { ApiService } from '../../services/api.service';
 import { PerfilDocente, Sede } from '../../models';
 
+const ORDEN_ROL: Record<string, number> = {
+  RECTOR:       1,
+  COORDINADOR:  2,
+  ORIENTADORA:  3,
+  DOCENTE:      4,
+  PERSONAL:     5,
+  ADMIN:        6,
+};
+
 @Component({
   selector: 'app-docentes',
   imports: [FormsModule, RouterLink],
@@ -85,12 +94,20 @@ export class Docentes implements OnInit, OnDestroy {
 
   get docentesFiltrados(): PerfilDocente[] {
     const q = this.busqueda.trim().toLowerCase();
-    if (!q) return this.docentes;
-    return this.docentes.filter(d =>
-      d.usuario.nombre.toLowerCase().includes(q) ||
-      d.cargo?.toLowerCase().includes(q) ||
-      d.areas?.some(a => a.toLowerCase().includes(q))
-    );
+    const lista = q
+      ? this.docentes.filter(d =>
+          d.usuario.nombre.toLowerCase().includes(q) ||
+          d.cargo?.toLowerCase().includes(q) ||
+          d.areas?.some(a => a.toLowerCase().includes(q))
+        )
+      : [...this.docentes];
+
+    return lista.sort((a, b) => {
+      const oa = ORDEN_ROL[a.usuario.rol] ?? 99;
+      const ob = ORDEN_ROL[b.usuario.rol] ?? 99;
+      if (oa !== ob) return oa - ob;
+      return a.usuario.nombre.localeCompare(b.usuario.nombre, 'es');
+    });
   }
 
   // ── Acciones del panel ────────────────────────────────────
@@ -138,7 +155,7 @@ export class Docentes implements OnInit, OnDestroy {
 
   irAFormulario(tipo: string) {
     const url = this.FORM_URLS[tipo];
-    if (url && url !== '#') { window.open(url, '_blank', 'noopener,noreferrer'); }
+    if (url && url !== '#') { window.open(url, 'blank', 'noopener,noreferrer'); }
     this.cerrarModal();
   }
 
