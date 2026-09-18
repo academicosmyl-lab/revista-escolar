@@ -1,33 +1,35 @@
 // ══════════════════════════════════════════════════════════
-//  FOOTER — Diseño claro institucional ITI
+//  FOOTER — Glassmorphism Edition
 // ══════════════════════════════════════════════════════════
 
-$vino:    #7B2D3F;
-$vino2:   #A94455;
+$vino:    #A94455;
+$vino2:   #c4566a;
 $gold:    #D4A853;
-$text:    #1a1f2e;
-$dim:     #5a6478;
-$border:  #e2e6ef;
-$bg:      #f4f5f9;
+$text:    rgba(255,255,255,0.85);
+$dim:     rgba(255,255,255,0.5);
+$border:  rgba(212,168,83,0.15);
+$bg:      rgba(13,10,16,0.82);
 
 .footer {
   background: $bg;
-  border-top: 3px solid $vino;
+  backdrop-filter: blur(28px);
+  -webkit-backdrop-filter: blur(28px);
+  border-top: 1px solid $border;
   padding: 3.5rem 2rem 0;
   position: relative;
   color: $text;
 
-  // línea dorada decorativa bajo el borde vinotinto
+  // linea dorada decorativa bajo el borde
   &::before {
     content: '';
     position: absolute;
-    top: 3px; left: 0; right: 0;
+    top: 1px; left: 0; right: 0;
     height: 1px;
     background: linear-gradient(
       90deg,
       transparent,
-      rgba(212,168,83,0.45) 30%,
-      rgba(212,168,83,0.45) 70%,
+      rgba(212,168,83,0.4) 30%,
+      rgba(212,168,83,0.4) 70%,
       transparent
     );
     pointer-events: none;
@@ -56,13 +58,14 @@ $bg:      #f4f5f9;
   width: auto;
   margin-bottom: 0.85rem;
   display: block;
+  filter: drop-shadow(0 2px 8px rgba(212,168,83,0.2));
 }
 
 .footer-nombre {
-  font-family: 'Playfair Display', serif;
+  font-family: 'DM Serif Display', serif;
   font-size: 1.05rem;
-  font-weight: 800;
-  color: $text;
+  font-weight: 700;
+  color: rgba(255,255,255,0.92);
   margin: 0 0 0.2rem;
 }
 
@@ -71,7 +74,7 @@ $bg:      #f4f5f9;
   font-weight: 700;
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: $vino;
+  color: rgba(212,168,83,0.8);
   margin: 0 0 0.9rem;
 }
 
@@ -89,13 +92,13 @@ $bg:      #f4f5f9;
   font-weight: 800;
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: $vino;
+  color: rgba(212,168,83,0.8);
   margin: 0 0 1rem;
   padding-bottom: 0.5rem;
-  border-bottom: 1.5px solid rgba(123,45,63,0.18);
+  border-bottom: 1px solid rgba(212,168,83,0.18);
 }
 
-// ── Links de navegación ──────────────────────────────────
+// ── Links de navegacion ──────────────────────────────────
 .footer-links {
   display: flex;
   flex-direction: column;
@@ -110,7 +113,7 @@ $bg:      #f4f5f9;
   transition: color 0.18s, padding-left 0.18s;
 
   &:hover {
-    color: $vino;
+    color: rgba(255,255,255,0.9);
     padding-left: 4px;
   }
 }
@@ -136,18 +139,18 @@ $bg:      #f4f5f9;
   font-weight: 800;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: $text;
+  color: rgba(255,255,255,0.7);
 }
 
 .footer-email {
-  color: $vino;
+  color: rgba(212,168,83,0.8);
   font-weight: 600;
   text-decoration: none;
   font-size: 0.85rem;
   word-break: break-all;
   transition: color 0.18s;
 
-  &:hover { color: $vino2; text-decoration: underline; }
+  &:hover { color: #D4A853; text-decoration: underline; }
 }
 
 // ── Mapa ─────────────────────────────────────────────────
@@ -156,7 +159,7 @@ $bg:      #f4f5f9;
   height: 155px;
   overflow: hidden;
   border-radius: 8px;
-  border: 1.5px solid $border;
+  border: 1px solid $border;
   margin-bottom: 0.55rem;
 }
 
@@ -165,13 +168,13 @@ $bg:      #f4f5f9;
   height: 100%;
   border: none;
   display: block;
-  filter: grayscale(0.25) contrast(1.05);
+  filter: grayscale(0.6) contrast(1.1) brightness(0.7);
 }
 
 .footer-mapa-link {
   font-size: 0.8rem;
   font-weight: 600;
-  color: $vino;
+  color: rgba(212,168,83,0.8);
   text-decoration: none;
   letter-spacing: 0.03em;
   transition: color 0.18s;
@@ -180,25 +183,25 @@ $bg:      #f4f5f9;
   gap: 0.3rem;
 
   &::after { content: ' ↗'; font-size: 0.75rem; }
-  &:hover { color: $vino2; text-decoration: underline; }
+  &:hover { color: #D4A853; text-decoration: underline; }
 }
 
-// ── Pie de página ─────────────────────────────────────────
+// ── Pie de pagina ─────────────────────────────────────────
 .footer-copy {
   max-width: 1280px;
   margin: 0 auto;
-  border-top: 1px solid $border;
+  border-top: 1px solid rgba(255,255,255,0.06);
   padding: 1.1rem 0 1.4rem;
   display: flex;
   justify-content: space-between;
   flex-wrap: wrap;
   gap: 0.35rem;
   font-size: 0.7rem;
-  color: #9ca3af;
+  color: rgba(255,255,255,0.35);
 }
 
 .footer-web {
-  color: $vino;
+  color: rgba(212,168,83,0.7);
   font-weight: 600;
   font-size: 0.7rem;
 }
