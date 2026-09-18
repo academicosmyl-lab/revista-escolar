@@ -1,11 +1,12 @@
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400;1,600&family=Source+Sans+3:wght@300;400;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Colores del escudo oficial ITS Santander Fusagasugá */
+/* ── Variables institucionales ITS Santander ─────────────── */
 :root {
+  /* Paleta base */
   --vinotinto: #A94455;
   --verde:     #3A7D5C;
   --azul:      #4A7FB5;
@@ -14,6 +15,28 @@
   --gris:      #2C3E50;
   --claro:     #EEF2F7;
   --blanco:    #FFFFFF;
+
+  /* Glassmorphism tokens */
+  --glass-card:        rgba(255,255,255,0.06);
+  --glass-navbar:      rgba(26,26,46,0.62);
+  --glass-modal:       rgba(26,10,14,0.72);
+  --glass-btn-primary: rgba(169,68,85,0.28);
+  --glass-input:       rgba(255,255,255,0.06);
+  --glass-sidebar:     rgba(26,26,46,0.5);
+
+  --glass-blur-sm:  blur(8px);
+  --glass-blur-md:  blur(16px);
+  --glass-blur-lg:  blur(24px);
+  --glass-blur-xl:  blur(28px);
+
+  --glass-border-gold:   rgba(212,168,83,0.18);
+  --glass-border-gold-2: rgba(212,168,83,0.3);
+  --glass-border-vino:   rgba(169,68,85,0.3);
+  --glass-border-white:  rgba(255,255,255,0.08);
+
+  --text-primary:   rgba(255,255,255,0.92);
+  --text-secondary: rgba(212,168,83,0.8);
+  --text-dim:       rgba(255,255,255,0.55);
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -53,109 +76,161 @@
   }
 }
 
+/* ── Body: fondo glassmorphism base ─────────────────────── */
 body {
-  font-family: 'Source Sans 3', sans-serif;
-  background: var(--crema);
-  color: var(--gris);
+  font-family: 'Inter', system-ui, sans-serif;
+  background:
+    radial-gradient(ellipse at 12% 18%, rgba(169, 68, 85, 0.22) 0%, transparent 48%),
+    radial-gradient(ellipse at 88% 72%, rgba(212, 168, 83, 0.15) 0%, transparent 48%),
+    radial-gradient(ellipse at 55% 90%, rgba(58, 125, 92, 0.1) 0%, transparent 45%),
+    radial-gradient(ellipse at 70% 10%, rgba(169, 68, 85, 0.12) 0%, transparent 42%),
+    linear-gradient(160deg, #0d0a10 0%, #1a0a0e 35%, #1a1a2e 70%, #0d0d1a 100%);
+  min-height: 100vh;
+  color: rgba(255,255,255,0.92);
   font-size: 16px;
   line-height: 1.65;
 }
 
 h1, h2, h3, h4, h5 {
-  font-family: 'Playfair Display', Georgia, serif;
-  color: var(--vinotinto);
+  font-family: 'DM Serif Display', Georgia, serif;
+  color: #fff;
   line-height: 1.2;
 }
 
-/* Botones */
+/* ── Botones glass ───────────────────────────────────────── */
 .its-btn-primario {
-  background: var(--vinotinto);
-  color: white;
+  background: rgba(169,68,85,0.28);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: #fff;
   padding: 0.65rem 1.75rem;
-  font-family: 'Source Sans 3', sans-serif;
+  font-family: 'Inter', sans-serif;
   font-weight: 600;
   letter-spacing: 0.06em;
   text-transform: uppercase;
   font-size: 0.78rem;
-  border: none;
+  border: 1px solid rgba(169,68,85,0.5);
+  cursor: pointer;
+  transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+  display: inline-block;
+  text-decoration: none;
+  border-radius: 4px;
+}
+.its-btn-primario:hover {
+  background: rgba(169,68,85,0.36);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(169,68,85,0.3);
+}
+
+.its-btn-verde {
+  background: rgba(58,125,92,0.28);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: #fff;
+  padding: 0.65rem 1.75rem;
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-size: 0.78rem;
+  border: 1px solid rgba(58,125,92,0.5);
   cursor: pointer;
   transition: background 0.2s, transform 0.15s;
   display: inline-block;
   text-decoration: none;
+  border-radius: 4px;
 }
-.its-btn-primario:hover { background: var(--dorado); transform: translateY(-1px); }
-
-.its-btn-verde {
-  background: var(--verde);
-  color: white;
-  padding: 0.65rem 1.75rem;
-  font-family: 'Source Sans 3', sans-serif;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  font-size: 0.78rem;
-  border: none;
-  cursor: pointer;
-  transition: background 0.2s;
-  display: inline-block;
-  text-decoration: none;
+.its-btn-verde:hover {
+  background: rgba(58,125,92,0.36);
+  transform: translateY(-2px);
 }
-.its-btn-verde:hover { background: #2E6B4F; }
 
-/* Líneas decorativas */
+/* ── Lineas decorativas ─────────────────────────────────── */
 .linea-dorada { width: 48px; height: 3px; background: var(--dorado); margin-bottom: 1rem; }
 .linea-vinotinto { width: 48px; height: 3px; background: var(--vinotinto); margin-bottom: 1rem; }
 
-/* Cards */
+/* ── Card glass ─────────────────────────────────────────── */
 .card-noticia {
-  background: white;
-  transition: transform 0.2s, box-shadow 0.2s;
+  background: rgba(255,255,255,0.06);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(212,168,83,0.18);
+  border-radius: 12px;
+  transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
 }
 .card-noticia:hover {
   transform: translateY(-3px);
-  box-shadow: 0 8px 32px rgba(169,68,85,0.12);
+  background: rgba(255,255,255,0.1);
+  box-shadow: 0 8px 32px rgba(169,68,85,0.2);
 }
 
-/* Placeholder de imagen */
+/* ── Placeholder de imagen ──────────────────────────────── */
 .img-placeholder {
-  background: linear-gradient(135deg, var(--claro) 0%, #dde5dd 100%);
+  background: rgba(255,255,255,0.04);
+  border: 2px dashed rgba(212,168,83,0.25);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  color: var(--verde);
-  font-family: 'Source Sans 3', sans-serif;
+  color: rgba(212,168,83,0.7);
+  font-family: 'Inter', sans-serif;
   font-size: 0.72rem;
   font-weight: 700;
   text-align: center;
   padding: 1.5rem;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  border: 2px dashed #a0b8a0;
   gap: 0.5rem;
 }
-.img-placeholder span { font-size: 0.65rem; font-weight: 400; color: var(--gris); letter-spacing: 0.03em; text-transform: none; }
+.img-placeholder span {
+  font-size: 0.65rem;
+  font-weight: 400;
+  color: rgba(255,255,255,0.5);
+  letter-spacing: 0.03em;
+  text-transform: none;
+}
 
-/* Scrollbar */
+/* ── Scrollbar glass ────────────────────────────────────── */
 ::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: var(--crema); }
+::-webkit-scrollbar-track { background: #0d0a10; }
 ::-webkit-scrollbar-thumb { background: var(--vinotinto); border-radius: 3px; }
 
-/* Animaciones */
+/* ── Animaciones ────────────────────────────────────────── */
 @keyframes fadeInUp {
   from { opacity: 0; transform: translateY(24px); }
   to   { opacity: 1; transform: translateY(0); }
 }
 .fade-in-up { animation: fadeInUp 0.5s ease forwards; }
 
-/* Borde dorado decorativo */
+/* ── Borde dorado decorativo ────────────────────────────── */
 .borde-dorado-izq { border-left: 4px solid var(--dorado); padding-left: 1rem; }
 
-/* Footer — colores gestionados en footer.scss (fondo claro, texto oscuro) */
+/* ── Clases utilitarias glass ───────────────────────────── */
+.glass-panel {
+  background: rgba(255,255,255,0.06);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(212,168,83,0.18);
+  border-radius: 12px;
+}
 
-/* ── MOTION ANIMATIONS ────────────────────────────────── */
+.glass-panel--borgona {
+  background: rgba(169,68,85,0.12);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(169,68,85,0.3);
+  border-radius: 12px;
+}
 
-/* Barra de progreso de scroll — gradiente institucional fijo en el tope */
+.glass-panel--dorado {
+  background: rgba(212,168,83,0.1);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(212,168,83,0.3);
+  border-radius: 12px;
+}
+
+/* ── Scroll progress ────────────────────────────────────── */
 .scroll-progress {
   position: fixed;
   top: 0; left: 0;
@@ -172,7 +247,7 @@ h1, h2, h3, h4, h5 {
   will-change: transform;
 }
 
-/* Clase base para scroll-reveal — usada en toda la app */
+/* ── Scroll reveal ──────────────────────────────────────── */
 .reveal {
   opacity: 0;
   transform: translateY(32px);
@@ -186,21 +261,18 @@ h1, h2, h3, h4, h5 {
   }
 }
 
-/* Líneas de título — cada span es una "rendija" que oculta el inner */
 .ht-line {
   display: block;
   overflow: hidden;
   line-height: 1.02;
 }
 
-/* Línea de título — motion.js anima la entrada cuando carga */
-/* Sin opacity:0 aquí — si motion falla el texto sigue visible */
 .ht-inner {
   display: block;
   will-change: transform, opacity;
 }
 
-/* Cards news: aparecen con delay escalonado al ser renderizadas por Angular */
+/* ── Cards motion ───────────────────────────────────────── */
 @keyframes cardFadeUp {
   from { opacity: 0; transform: translateY(36px) scale(0.97); }
   to   { opacity: 1; transform: translateY(0)   scale(1);    }
@@ -211,13 +283,11 @@ h1, h2, h3, h4, h5 {
   animation-delay: calc(var(--card-i, 0) * 110ms + 200ms);
 }
 
-/* Sedes — igual pero escala desde abajo */
 .motion-sede {
   animation: cardFadeUp 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
   animation-delay: calc(var(--sede-i, 0) * 150ms + 100ms);
 }
 
-/* Efecto magnético en botones (motion.js gestiona transform) */
 .btn-magnetic {
   will-change: transform;
   transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
