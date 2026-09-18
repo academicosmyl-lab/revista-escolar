@@ -143,6 +143,16 @@ async function iniciar() {
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`);
     });
 
+    // Self-ping cada 4 minutos — previene cold start de Render free tier
+    // (backup del cron de GitHub Actions que puede llegar tarde)
+    if (process.env.NODE_ENV === 'production') {
+      const https = require('https');
+      const SELF = 'https://revista-escolar.onrender.com/api/v1/health';
+      setInterval(() => {
+        https.get(SELF, () => {}).on('error', () => {});
+      }, 4 * 60 * 1000);
+    }
+
     // Cron en producción: noticias externas cada hora
     if (process.env.NODE_ENV === 'production') {
       console.log('⏰ Iniciando cron de noticias externas...');
