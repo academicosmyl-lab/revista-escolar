@@ -85,7 +85,7 @@ export class WelcomeIntro implements AfterViewInit, OnDestroy {
     this.sched(6100,  () => this.showDivider.set(true));
     this.sched(6600,  () => this.showTitle.set(true));
     this.sched(7500,  () => this.showSub.set(true));
-    this.sched(12000, () => this.dismiss());
+    this.sched(17000, () => this.dismiss());
   }
 
   skip(): void { this.dismiss(); }
