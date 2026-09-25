@@ -124,8 +124,22 @@
   display: block;
   position: relative;
   z-index: 1;
-  filter: drop-shadow(0 0 28px rgba(212, 168, 83, 0.55))
-          drop-shadow(0 0 60px rgba(212, 168, 83, 0.22));
+  animation: wi-edge-glow 2.6s ease-in-out infinite;
+}
+
+@keyframes wi-edge-glow {
+  0%, 100% {
+    filter:
+      drop-shadow(0 0  8px rgba(255, 230, 120, 0.70))
+      drop-shadow(0 0 22px rgba(212, 168,  83, 0.50))
+      drop-shadow(0 0 50px rgba(212, 168,  83, 0.18));
+  }
+  50% {
+    filter:
+      drop-shadow(0 0 16px rgba(255, 245, 160, 1.00))
+      drop-shadow(0 0 40px rgba(212, 168,  83, 0.80))
+      drop-shadow(0 0 80px rgba(180, 120,  20, 0.40));
+  }
 }
 
 .wi-block--name { transition-delay: 0.1s; }
