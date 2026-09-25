@@ -130,75 +130,36 @@ export class WelcomeIntro implements AfterViewInit, OnDestroy {
     this.buildOutlinePoints(cx, cy, sw, sh);
   }
 
-  private buildFillPoints(cx: number, cy: number, sw: number, sh: number): void {
-    // Móvil: paso grande → menos partículas → mejor rendimiento
+  private buildFillPoints(cx: number, cy: number, sw: number, _sh: number): void {
+    const r    = sw / 2;
     const step = this.mobile ? 22 : 10;
-    const pad  = 4;
     const pts: { x: number; y: number }[] = [];
     const j = (v: number) => v + (Math.random() - 0.5) * step * 0.4;
 
-    const makePath = (): Path2D => {
-      const p = new Path2D();
-      p.moveTo(pad + sw * 0.08, pad);
-      p.lineTo(pad + sw * 0.92, pad);
-      p.lineTo(pad + sw * 0.92, pad + sh * 0.48);
-      p.bezierCurveTo(pad + sw * 0.92, pad + sh * 0.76, pad + sw * 0.63, pad + sh * 0.93, pad + sw * 0.50, pad + sh);
-      p.bezierCurveTo(pad + sw * 0.37, pad + sh * 0.93, pad + sw * 0.08, pad + sh * 0.76, pad + sw * 0.08, pad + sh * 0.48);
-      p.closePath();
-      return p;
-    };
-
-    try {
-      const off  = new OffscreenCanvas(Math.ceil(sw) + pad * 2, Math.ceil(sh) + pad * 2);
-      const octx = off.getContext('2d')!;
-      const path = makePath();
-      for (let ly = 0; ly <= sh; ly += step) {
-        for (let lx = 0; lx <= sw; lx += step) {
-          if (octx.isPointInPath(path, pad + lx, pad + ly)) {
-            pts.push({ x: j(cx - sw / 2 + lx), y: j(cy - sh / 2 + ly) });
-          }
-        }
-      }
-    } catch {
-      for (let ly = 0; ly <= sh; ly += step) {
-        for (let lx = 0; lx <= sw; lx += step) {
-          const nx = lx / sw, ny = ly / sh;
-          const inside = ny <= 0.48
-            ? nx >= 0.08 && nx <= 0.92
-            : Math.abs(nx - 0.5) <= 0.42 * (1 - Math.pow((ny - 0.48) / 0.52, 2));
-          if (inside) pts.push({ x: j(cx - sw / 2 + lx), y: j(cy - sh / 2 + ly) });
+    for (let dy = -r; dy <= r; dy += step) {
+      for (let dx = -r; dx <= r; dx += step) {
+        if (dx * dx + dy * dy <= r * r) {
+          pts.push({ x: j(cx + dx), y: j(cy + dy) });
         }
       }
     }
     this.fillPts = pts;
   }
 
-  private buildOutlinePoints(cx: number, cy: number, sw: number, sh: number): void {
+  private buildOutlinePoints(cx: number, cy: number, sw: number, _sh: number): void {
+    const r      = sw / 2;
+    const numPts = this.mobile ? 120 : 220;
+    const J      = 1.5;
+    const j      = () => (Math.random() - 0.5) * J;
     const pts: { x: number; y: number }[] = [];
-    const J = 1.5;
-    const j = () => (Math.random() - 0.5) * J;
-    const toC = (lx: number, ly: number) => ({ x: cx - sw / 2 + lx + j(), y: cy - sh / 2 + ly + j() });
 
-    const line = (x0: number, y0: number, x1: number, y1: number, n: number) => {
-      for (let i = 0; i <= n; i++) {
-        const t = i / n;
-        pts.push(toC(x0 + (x1 - x0) * t, y0 + (y1 - y0) * t));
-      }
-    };
-    const bezier = (x0: number, y0: number, cx1: number, cy1: number, cx2: number, cy2: number, x1: number, y1: number, n: number) => {
-      for (let i = 0; i <= n; i++) {
-        const t = i / n, u = 1 - t;
-        pts.push(toC(u*u*u*x0+3*u*u*t*cx1+3*u*t*t*cx2+t*t*t*x1, u*u*u*y0+3*u*u*t*cy1+3*u*t*t*cy2+t*t*t*y1));
-      }
-    };
-
-    const sp = this.mobile ? 7 : 4;
-    line(sw*0.08, 0,       sw*0.92, 0,       Math.ceil(sw*0.84/sp));
-    line(sw*0.92, 0,       sw*0.92, sh*0.48, Math.ceil(sh*0.48/sp));
-    bezier(sw*0.92, sh*0.48, sw*0.92, sh*0.76, sw*0.63, sh*0.93, sw*0.50, sh, this.mobile ? 40 : 64);
-    bezier(sw*0.50, sh,     sw*0.37, sh*0.93, sw*0.08, sh*0.76, sw*0.08, sh*0.48, this.mobile ? 40 : 64);
-    line(sw*0.08, sh*0.48, sw*0.08, 0,       Math.ceil(sh*0.48/sp));
-
+    for (let i = 0; i <= numPts; i++) {
+      const angle = (i / numPts) * Math.PI * 2;
+      pts.push({
+        x: cx + Math.cos(angle) * r + j(),
+        y: cy + Math.sin(angle) * r + j()
+      });
+    }
     this.outlinePts = pts;
   }
 
@@ -276,36 +237,31 @@ export class WelcomeIntro implements AfterViewInit, OnDestroy {
 
   // Trazo real del escudo — siempre visible, independiente del rendimiento
   private drawShieldStroke(ctx: CanvasRenderingContext2D, alpha: number): void {
-    const { cx, cy, sw, sh } = this;
+    const { cx, cy, sw } = this;
+    const r     = sw / 2;
     const pulse = Math.sin(performance.now() * 0.003) * 0.12 + 0.88;
-    const a = alpha * pulse;
+    const a     = alpha * pulse;
 
     ctx.save();
-    ctx.translate(cx - sw / 2, cy - sh / 2);
+    ctx.lineJoin = 'round';
 
-    const path = new Path2D();
-    path.moveTo(sw * 0.08, 0);
-    path.lineTo(sw * 0.92, 0);
-    path.lineTo(sw * 0.92, sh * 0.48);
-    path.bezierCurveTo(sw*0.92, sh*0.76, sw*0.63, sh*0.93, sw*0.50, sh);
-    path.bezierCurveTo(sw*0.37, sh*0.93, sw*0.08, sh*0.76, sw*0.08, sh*0.48);
-    path.closePath();
-
-    // Halo exterior grueso
+    ctx.beginPath();
+    ctx.arc(cx, cy, r, 0, Math.PI * 2);
     ctx.strokeStyle = `rgba(212, 148, 20, ${a * 0.35})`;
     ctx.lineWidth   = 18;
-    ctx.lineJoin    = 'round';
-    ctx.stroke(path);
+    ctx.stroke();
 
-    // Línea media dorada
+    ctx.beginPath();
+    ctx.arc(cx, cy, r, 0, Math.PI * 2);
     ctx.strokeStyle = `rgba(230, 175, 50, ${a * 0.75})`;
     ctx.lineWidth   = 6;
-    ctx.stroke(path);
+    ctx.stroke();
 
-    // Línea interior brillante
+    ctx.beginPath();
+    ctx.arc(cx, cy, r, 0, Math.PI * 2);
     ctx.strokeStyle = `rgba(255, 235, 140, ${a})`;
     ctx.lineWidth   = 2;
-    ctx.stroke(path);
+    ctx.stroke();
 
     ctx.restore();
   }
