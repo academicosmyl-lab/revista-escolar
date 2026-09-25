@@ -9,28 +9,24 @@
   <div class="wi-vignette" aria-hidden="true"></div>
   <canvas #particleCanvas class="wi-canvas" aria-hidden="true"></canvas>
 
-  <!-- Destello sólido dorado al aparecer el escudo -->
   @if (showText90()) {
   <div class="wi-flash" aria-hidden="true"></div>
   }
 
   <div class="wi-stage">
 
-    <!-- Escudo 90 años -->
     <div class="wi-block wi-block--shield" [class.wi--show]="showText90()">
       <div class="wi-shield-glow" aria-hidden="true"></div>
       <img
         class="wi-shield-img"
-        src="/assets/images/escudo-90-anios.jpg"
+        src="/assets/images/escudo-90-circular.png"
         alt="Escudo 90 aniversario Instituto Técnico Industrial Fusagasugá"
         loading="eager"
       />
     </div>
 
-    <!-- Divisor dorado -->
     <div class="wi-divider" [class.wi--show]="showDivider()" aria-hidden="true"></div>
 
-    <!-- Nombre institución -->
     <div class="wi-block wi-block--name" [class.wi--show]="showTitle()">
       <h1 class="wi-name">Instituto Técnico Industrial</h1>
       <p class="wi-sub" [class.wi--show]="showSub()">
