@@ -32,6 +32,7 @@ export class WelcomeIntro implements AfterViewInit, OnDestroy {
   readonly showSub     = signal(false);
   readonly showSkip    = signal(false);
   readonly fadingOut   = signal(false);
+  readonly soundOn     = signal(false);
 
   private zone       = inject(NgZone);
   private platformId = inject(PLATFORM_ID);
@@ -43,6 +44,7 @@ export class WelcomeIntro implements AfterViewInit, OnDestroy {
   private fillPts:    { x: number; y: number }[] = [];
   private outlinePts: { x: number; y: number }[] = [];
   private W = 0; private H = 0; private dpr = 1;
+  private audioCtx?: AudioContext;
   private rafId = 0;
   private startTime = 0;
   private timers: number[] = [];
@@ -81,7 +83,7 @@ export class WelcomeIntro implements AfterViewInit, OnDestroy {
     });
 
     this.sched(1000,  () => this.showSkip.set(true));
-    this.sched(5200,  () => this.showText90.set(true));
+    this.sched(5200,  () => { this.showText90.set(true); this.zone.run(() => this.tryAutoplay()); });
     this.sched(6100,  () => this.showDivider.set(true));
     this.sched(6600,  () => this.showTitle.set(true));
     this.sched(7500,  () => this.showSub.set(true));
@@ -95,6 +97,7 @@ export class WelcomeIntro implements AfterViewInit, OnDestroy {
     this.fadingOut.set(true);
     cancelAnimationFrame(this.rafId);
     this.timers.forEach(clearTimeout);
+    this.audioCtx?.close().catch(() => {});
     this.timers.push(window.setTimeout(() => this.visible.set(false), 900));
   }
 
@@ -349,8 +352,138 @@ export class WelcomeIntro implements AfterViewInit, OnDestroy {
   private easeInOut(t: number): number { return t < 0.5 ? 2*t*t : -1+(4-2*t)*t; }
   private easeOut(t: number):   number { return 1 - Math.pow(1 - Math.min(t, 1), 3); }
 
+  // ── Sonido ───────────────────────────────────────────────────────────────────
+
+  async toggleSound(): Promise<void> {
+    if (this.soundOn()) {
+      await this.audioCtx?.close().catch(() => {});
+      this.audioCtx = undefined;
+      this.soundOn.set(false);
+      return;
+    }
+    await this.startSound();
+  }
+
+  private async tryAutoplay(): Promise<void> {
+    try {
+      const ctx = new AudioContext();
+      if (ctx.state === 'suspended') await ctx.resume();
+      if (ctx.state === 'running') {
+        this.audioCtx = ctx;
+        this.soundOn.set(true);
+        this.buildSound(ctx);
+      } else {
+        ctx.close();
+      }
+    } catch { /* autoplay bloqueado — el usuario usa el botón */ }
+  }
+
+  private async startSound(): Promise<void> {
+    try {
+      const ctx = new AudioContext();
+      await ctx.resume();
+      this.audioCtx = ctx;
+      this.soundOn.set(true);
+      this.buildSound(ctx);
+    } catch { /* sin soporte de Web Audio */ }
+  }
+
+  private buildSound(ctx: AudioContext): void {
+    const master = ctx.createGain();
+    master.gain.value = 0;
+    master.connect(ctx.destination);
+    // Fade-in muy suave del master
+    master.gain.linearRampToValueAtTime(0.18, ctx.currentTime + 1.8);
+
+    // Reverb simple con dos delays
+    this.addDelay(ctx, master, 0.30, 0.20);
+    this.addDelay(ctx, master, 0.55, 0.10);
+
+    // Pad suave: acorde Cmaj7 con sines levemente desafinados (efecto coro)
+    const pad: [number, number][] = [
+      [130.81, 0.22], // C3 base
+      [196.00, 0.16], // G3
+      [261.63, 0.18], // C4
+      [329.63, 0.14], // E4
+      [392.00, 0.12], // G4
+      [493.88, 0.10], // B4
+    ];
+    pad.forEach(([freq, vol]) => {
+      [-6, -2, 0, 2, 6].forEach(detune => {
+        this.sine(ctx, master, freq, detune, 0, vol / 5, 1.2, 14);
+      });
+    });
+
+    // Melodía de cristal: notas de campana que suben con delicadeza
+    const bells: [number, number][] = [
+      [523.25, 1.6 ],  // C5
+      [659.25, 2.8 ],  // E5
+      [783.99, 4.0 ],  // G5
+      [1046.5, 5.2 ],  // C6
+      [1318.5, 6.6 ],  // E6  — nota más alta, suave
+    ];
+    bells.forEach(([freq, start]) => {
+      this.bell(ctx, master, freq, start, 0.13);
+    });
+
+    // Fade-out suave antes del dismiss (17s total, fade desde 14s)
+    master.gain.setValueAtTime(0.18, ctx.currentTime + 14);
+    master.gain.linearRampToValueAtTime(0, ctx.currentTime + 17);
+  }
+
+  private sine(
+    ctx: AudioContext, dest: AudioNode,
+    freq: number, detune: number,
+    start: number, vol: number, attack: number, dur: number
+  ): void {
+    const osc  = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = 'sine';
+    osc.frequency.value = freq;
+    osc.detune.value    = detune;
+    osc.connect(gain);
+    gain.connect(dest);
+    const t = ctx.currentTime + start;
+    gain.gain.setValueAtTime(0, t);
+    gain.gain.linearRampToValueAtTime(vol, t + attack);
+    gain.gain.setValueAtTime(vol, t + dur - 0.8);
+    gain.gain.linearRampToValueAtTime(0, t + dur);
+    osc.start(t);
+    osc.stop(t + dur + 0.1);
+  }
+
+  private bell(ctx: AudioContext, dest: AudioNode, freq: number, start: number, vol: number): void {
+    // Campana = sine fundamental + 2do armónico suave, decay exponencial
+    [1, 2.756].forEach((ratio, i) => {
+      const osc  = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.value = freq * ratio;
+      osc.connect(gain);
+      gain.connect(dest);
+      const t  = ctx.currentTime + start;
+      const v  = i === 0 ? vol : vol * 0.25;
+      gain.gain.setValueAtTime(0, t);
+      gain.gain.linearRampToValueAtTime(v, t + 0.015);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + 3.5);
+      osc.start(t);
+      osc.stop(t + 4);
+    });
+  }
+
+  private addDelay(ctx: AudioContext, src: AudioNode, time: number, vol: number): void {
+    const d = ctx.createDelay(1);
+    const g = ctx.createGain();
+    d.delayTime.value = time;
+    g.gain.value      = vol;
+    src.connect(d);
+    d.connect(g);
+    g.connect(ctx.destination);
+  }
+
   ngOnDestroy(): void {
     cancelAnimationFrame(this.rafId);
     this.timers.forEach(clearTimeout);
+    this.audioCtx?.close().catch(() => {});
   }
 }
