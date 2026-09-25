@@ -183,50 +183,67 @@
   &.wi--show { opacity: 1; }
 }
 
-// ── Skip button ───────────────────────────────────────────────────────────────
-.wi-skip {
+// ── Controles (sound + skip) ──────────────────────────────────────────────────
+.wi-controls {
   position: absolute;
   bottom: clamp(20px, 3.5vh, 44px);
   right: clamp(18px, 3.5vw, 44px);
   z-index: 5;
-  display: inline-flex;
+  display: flex;
   align-items: center;
-  gap: 7px;
-  padding: 7px 18px 7px 16px;
-  background: transparent;
-  border: 1px solid rgba(212, 168, 83, 0.30);
-  border-radius: 2px;
-  color: rgba(212, 168, 83, 0.55);
-  font-family: "Source Sans 3", sans-serif;
-  font-size: 0.75rem;
-  font-weight: 400;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  cursor: pointer;
-  pointer-events: all;
+  gap: 10px;
   animation: wi-skip-in 0.5s ease forwards;
-  transition:
-    background  0.25s ease,
-    border-color 0.25s ease,
-    color        0.25s ease;
-
-  &:hover {
-    background:    rgba(212, 168, 83, 0.08);
-    border-color:  rgba(212, 168, 83, 0.6);
-    color:         #D4A853;
-  }
-
-  &:focus-visible {
-    outline: 2px solid #D4A853;
-    outline-offset: 3px;
-  }
-
-  svg { flex-shrink: 0; }
+  pointer-events: all;
 }
 
 @keyframes wi-skip-in {
   from { opacity: 0; transform: translateY(8px); }
   to   { opacity: 1; transform: translateY(0); }
+}
+
+// Estilos compartidos de botones
+%wi-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: 1px solid rgba(212, 168, 83, 0.30);
+  border-radius: 2px;
+  color: rgba(212, 168, 83, 0.55);
+  cursor: pointer;
+  transition:
+    background   0.25s ease,
+    border-color 0.25s ease,
+    color        0.25s ease;
+
+  &:hover {
+    background:   rgba(212, 168, 83, 0.08);
+    border-color: rgba(212, 168, 83, 0.6);
+    color:        #D4A853;
+  }
+  &:focus-visible {
+    outline: 2px solid #D4A853;
+    outline-offset: 3px;
+  }
+}
+
+.wi-sound {
+  @extend %wi-btn;
+  width: 32px;
+  height: 32px;
+  svg { flex-shrink: 0; }
+}
+
+.wi-skip {
+  @extend %wi-btn;
+  gap: 7px;
+  padding: 7px 18px 7px 16px;
+  font-family: "Source Sans 3", sans-serif;
+  font-size: 0.75rem;
+  font-weight: 400;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  svg { flex-shrink: 0; }
 }
 
 // ── Responsive ────────────────────────────────────────────────────────────────
