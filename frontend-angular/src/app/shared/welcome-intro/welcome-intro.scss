@@ -38,10 +38,33 @@
   z-index: 0;
 }
 
+// ── Destello solido dorado ────────────────────────────────────────────────────
+.wi-flash {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse 70% 70% at 50% 50%,
+    rgba(255, 240, 160, 0.92) 0%,
+    rgba(212, 168, 83, 0.72)  25%,
+    rgba(180, 120, 20, 0.40)  55%,
+    transparent                80%
+  );
+  animation: wi-flash-burst 1.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes wi-flash-burst {
+  0%   { opacity: 0;    transform: scale(0.3);  }
+  12%  { opacity: 1;    transform: scale(1.05); }
+  35%  { opacity: 0.85; transform: scale(1.0);  }
+  100% { opacity: 0;    transform: scale(1.15); }
+}
+
 // ── Stage ─────────────────────────────────────────────────────────────────────
 .wi-stage {
   position: relative;
-  z-index: 2;
+  z-index: 4;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -72,10 +95,9 @@
   justify-content: center;
 }
 
-// ── Glow dorado — mismo radio que el escudo de partículas (sw = min(62vw, 380px)) × 1.3
+// ── Glow dorado ───────────────────────────────────────────────────────────────
 .wi-shield-glow {
   position: absolute;
-  // El escudo de partículas mide ~380px desktop y ~88vw móvil; escalado 1.3 = ~494px / ~114vw
   width: clamp(220px, 81vw, 494px);
   height: clamp(220px, 81vw, 494px);
   border-radius: 50%;
@@ -94,9 +116,8 @@
   50%       { opacity: 1;    transform: scale(1.10); }
 }
 
-// ── Imagen del escudo — 30% más grande, sin recorte circular
+// ── Imagen del escudo ─────────────────────────────────────────────────────────
 .wi-shield-img {
-  // Base anterior: clamp(200px, 36vw, 320px) × 1.3
   width: clamp(260px, 47vw, 416px);
   height: clamp(260px, 47vw, 416px);
   object-fit: contain;
@@ -134,7 +155,7 @@
     0 2px 6px rgba(0, 0, 0, 0.7);
 }
 
-// ── Subtitle / city + year ────────────────────────────────────────────────────
+// ── Subtitle ──────────────────────────────────────────────────────────────────
 .wi-sub {
   font-family: "Source Sans 3", sans-serif;
   font-size: clamp(0.78rem, 1.8vw, 0.95rem);
@@ -153,7 +174,7 @@
   position: absolute;
   bottom: clamp(20px, 3.5vh, 44px);
   right: clamp(18px, 3.5vw, 44px);
-  z-index: 3;
+  z-index: 5;
   display: inline-flex;
   align-items: center;
   gap: 7px;
@@ -168,6 +189,7 @@
   letter-spacing: 0.14em;
   text-transform: uppercase;
   cursor: pointer;
+  pointer-events: all;
   animation: wi-skip-in 0.5s ease forwards;
   transition:
     background  0.25s ease,
