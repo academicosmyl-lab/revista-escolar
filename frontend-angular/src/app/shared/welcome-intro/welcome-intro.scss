@@ -72,15 +72,17 @@
   justify-content: center;
 }
 
-// ── Glow detrás del escudo ────────────────────────────────────────────────────
+// ── Glow dorado — mismo radio que el escudo de partículas (sw = min(62vw, 380px)) × 1.3
 .wi-shield-glow {
   position: absolute;
-  inset: -28px;
+  // El escudo de partículas mide ~380px desktop y ~88vw móvil; escalado 1.3 = ~494px / ~114vw
+  width: clamp(220px, 81vw, 494px);
+  height: clamp(220px, 81vw, 494px);
   border-radius: 50%;
   background: radial-gradient(
     circle,
-    rgba(212, 168, 83, 0.40) 0%,
-    rgba(212, 168, 83, 0.15) 50%,
+    rgba(212, 168, 83, 0.38) 0%,
+    rgba(212, 168, 83, 0.14) 50%,
     transparent 72%
   );
   animation: wi-shield-pulse 3.2s ease-in-out infinite;
@@ -92,20 +94,17 @@
   50%       { opacity: 1;    transform: scale(1.10); }
 }
 
-// ── Imagen circular del escudo ────────────────────────────────────────────────
+// ── Imagen del escudo — 30% más grande, sin recorte circular
 .wi-shield-img {
-  width: clamp(200px, 36vw, 320px);
-  height: clamp(200px, 36vw, 320px);
-  border-radius: 50%;
-  object-fit: cover;
-  border: 2px solid rgba(212, 168, 83, 0.60);
-  box-shadow:
-    0 0 0 5px rgba(212, 168, 83, 0.12),
-    0 0 40px rgba(212, 168, 83, 0.50),
-    0 0 80px rgba(212, 168, 83, 0.20);
+  // Base anterior: clamp(200px, 36vw, 320px) × 1.3
+  width: clamp(260px, 47vw, 416px);
+  height: clamp(260px, 47vw, 416px);
+  object-fit: contain;
   display: block;
   position: relative;
   z-index: 1;
+  filter: drop-shadow(0 0 28px rgba(212, 168, 83, 0.55))
+          drop-shadow(0 0 60px rgba(212, 168, 83, 0.22));
 }
 
 .wi-block--name { transition-delay: 0.1s; }
@@ -114,7 +113,7 @@
 .wi-divider {
   width: 0;
   height: 1px;
-  margin: 1.6rem auto;
+  margin: 1.4rem auto;
   background: linear-gradient(90deg, transparent, #D4A853, transparent);
   box-shadow: 0 0 8px rgba(212, 168, 83, 0.5);
   transition: width 1.5s cubic-bezier(0.16, 1, 0.3, 1);
@@ -197,18 +196,21 @@
 // ── Responsive ────────────────────────────────────────────────────────────────
 @media (max-width: 480px) {
   .wi-shield-img {
-    width: clamp(160px, 60vw, 240px);
-    height: clamp(160px, 60vw, 240px);
+    width: clamp(200px, 72vw, 300px);
+    height: clamp(200px, 72vw, 300px);
   }
-
+  .wi-shield-glow {
+    width: clamp(200px, 100vw, 360px);
+    height: clamp(200px, 100vw, 360px);
+  }
   .wi-divider.wi--show { width: clamp(140px, 60vw, 260px); }
 }
 
 @media (max-height: 500px) {
   .wi-shield-img {
-    width: clamp(120px, 24vw, 180px);
-    height: clamp(120px, 24vw, 180px);
+    width: clamp(110px, 22vw, 170px);
+    height: clamp(110px, 22vw, 170px);
   }
   .wi-name { font-size: clamp(1rem, 3.2vw, 1.5rem); }
-  .wi-divider { margin: 0.8rem auto; }
+  .wi-divider { margin: 0.6rem auto; }
 }
