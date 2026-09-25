@@ -6,20 +6,20 @@
   aria-modal="true"
   aria-label="Celebración 90 años Instituto Técnico Industrial Fusagasugá"
 >
-  <!-- Vignette -->
   <div class="wi-vignette" aria-hidden="true"></div>
-
-  <!-- Canvas de partículas -->
   <canvas #particleCanvas class="wi-canvas" aria-hidden="true"></canvas>
 
-  <!-- Contenido central -->
   <div class="wi-stage">
 
-    <!-- 90 AÑOS -->
-    <div class="wi-block wi-block--anni" [class.wi--show]="showText90()">
-      <div class="wi-burst" aria-hidden="true"></div>
-      <p class="wi-num">90</p>
-      <p class="wi-years">AÑOS</p>
+    <!-- Escudo 90 años -->
+    <div class="wi-block wi-block--shield" [class.wi--show]="showText90()">
+      <div class="wi-shield-glow" aria-hidden="true"></div>
+      <img
+        class="wi-shield-img"
+        src="/assets/images/escudo-90-anios.jpg"
+        alt="Escudo 90 aniversario Instituto Técnico Industrial Fusagasugá"
+        loading="eager"
+      />
     </div>
 
     <!-- Divisor dorado -->
@@ -35,7 +35,6 @@
 
   </div>
 
-  <!-- Botón omitir -->
   @if (showSkip()) {
   <button class="wi-skip" (click)="skip()" aria-label="Omitir introducción">
     Omitir
