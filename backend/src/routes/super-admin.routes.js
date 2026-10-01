@@ -13,6 +13,7 @@ const { autenticar, requiereRol } = require('../middlewares/auth.middleware');
 const {
   Usuario, PerfilDocente, SolicitudPerfil,
   AccionAdmin, Sede, Noticia, Imagen,
+  DocenteSede, CursoDocente,
 } = require('../models');
 const { emailService }      = require('../services/email.service');
 const { subirImagen } = require('../services/cloudinary.service');
@@ -269,7 +270,24 @@ router.get('/docentes', soloAdmin, async (req, res) => {
       limit:   parseInt(limit),
       offset:  (parseInt(page) - 1) * parseInt(limit),
     });
-    res.json({ total: count, data: rows, page: parseInt(page), totalPages: Math.ceil(count / parseInt(limit)) });
+
+    const data = rows.map(doc => ({
+      id:     doc.id,
+      nombre: doc.nombre,
+      email:  doc.email,
+      activo: doc.activo,
+      rol:    doc.rol,
+      perfil: doc.perfil ? {
+        id:                doc.perfil.id,
+        fotoUrl:           doc.perfil.foto_url,
+        tituloProfesional: doc.perfil.titulo_profesional,
+        cargo:             doc.perfil.cargo,
+        bio:               doc.perfil.bio,
+        perfil_publico:    doc.perfil.perfil_publico,
+      } : null,
+    }));
+
+    res.json({ total: count, data, page: parseInt(page), totalPages: Math.ceil(count / parseInt(limit)) });
   } catch (e) {
     res.status(500).json({ error: e.message });
   }
@@ -588,6 +606,12 @@ router.delete('/usuarios/eliminar-definitivo', soloAdmin, async (req, res) => {
     if (usuario.es_raiz) return res.status(403).json({ error: 'No se puede eliminar el usuario raíz' });
 
     const nombre = usuario.nombre;
+
+    // Limpiar todas las referencias FK para que PostgreSQL permita el DELETE
+    await Noticia.update({ autor_id: null }, { where: { autor_id: usuario.id } });
+    await DocenteSede.destroy({ where: { usuario_id: usuario.id } });
+    await CursoDocente.destroy({ where: { usuario_id: usuario.id } });
+    await AccionAdmin.update({ admin_id: null }, { where: { admin_id: usuario.id } });
 
     if (usuario.perfil) await usuario.perfil.destroy();
     await usuario.destroy();
