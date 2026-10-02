@@ -1,5 +1,5 @@
 // CAMBIO ARCH-UI: motion.js — animaciones revolucionarias con scroll/inView/stagger
-import { Component, OnInit, AfterViewInit, signal, computed, inject, ChangeDetectionStrategy, ChangeDetectorRef, NgZone } from '@angular/core';
+import { Component, OnInit, OnDestroy, AfterViewInit, signal, computed, inject, ChangeDetectionStrategy, ChangeDetectorRef, NgZone } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
@@ -14,7 +14,7 @@ import { HorizonteSection } from './sections/horizonte-section'; // CAMBIO ARCH-
   styleUrl: './home.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class Home implements OnInit, AfterViewInit {
+export class Home implements OnInit, OnDestroy, AfterViewInit {
 
   // CAMBIO ARCH-UI: ApiService inyectado para cargar noticias reales del backend
   private api       = inject(ApiService);
@@ -33,6 +33,14 @@ export class Home implements OnInit, AfterViewInit {
 
   // Skeletons: array de 4 elementos para mostrar mientras carga
   skeletons = Array(4);
+
+  /* ── Carrusel auto-rotante ──────────────────────────── */
+  carruselActual  = signal(0);
+  carruselPausado = signal(false);
+  private carruselTimer: any = null;
+
+  /* ── Blogs de docentes ──────────────────────────────── */
+  docentesConBlog = signal<{ nombre: string; area: string; fotoUrl: string | null; urlBlog: string }[]>([]);
 
   /* ── Feed nativo de noticias (reemplaza iframe Facebook) ── */
   noticiasFeed    = signal<Noticia[]>([]);
@@ -111,6 +119,17 @@ export class Home implements OnInit, AfterViewInit {
         // Repetir hasta tener al menos 8 tarjetas por fila para que el marquee no muestre duplicados visibles
         this.docentesFila1 = f1.length ? Array.from({ length: Math.ceil(8 / f1.length) }, () => f1).flat() : [];
         this.docentesFila2 = f2.length ? Array.from({ length: Math.ceil(8 / f2.length) }, () => f2).flat() : [];
+
+        // Docentes con blog configurado
+        const conBlog = (lista as any[])
+          .filter(d => d.urlBlog)
+          .map(d => ({
+            nombre:  d.usuario?.nombre ?? '',
+            area:    d.cargo ?? d.titulo ?? '',
+            fotoUrl: d.fotoUrl ?? null,
+            urlBlog: d.urlBlog as string,
+          }));
+        this.docentesConBlog.set(conBlog);
         this.cdr.markForCheck();
       },
       error: () => {},
@@ -139,6 +158,7 @@ export class Home implements OnInit, AfterViewInit {
         this.noticiasHome.set(lista);
         this.cargandoNoticias.set(false);
         this.servidorLento.set(false);
+        this.iniciarCarrusel();
         this.cdr.markForCheck();
       },
       error: () => {
@@ -172,6 +192,35 @@ export class Home implements OnInit, AfterViewInit {
         this.cdr.markForCheck();
       },
     });
+  }
+
+  /* ── Carrusel ───────────────────────────────────────── */
+  private iniciarCarrusel() {
+    if (this.carruselTimer) clearInterval(this.carruselTimer);
+    this.zone.runOutsideAngular(() => {
+      this.carruselTimer = setInterval(() => {
+        if (!this.carruselPausado()) {
+          this.zone.run(() => {
+            const total = this.noticiasHome().length;
+            if (total > 1) this.carruselActual.update(i => (i + 1) % total);
+          });
+        }
+      }, 5000);
+    });
+  }
+
+  carruselSiguiente() {
+    const total = this.noticiasHome().length;
+    this.carruselActual.update(i => (i + 1) % total);
+  }
+
+  carruselAnterior() {
+    const total = this.noticiasHome().length;
+    this.carruselActual.update(i => (i - 1 + total) % total);
+  }
+
+  ngOnDestroy() {
+    if (this.carruselTimer) clearInterval(this.carruselTimer);
   }
 
   onFotoLoad(event: Event) {

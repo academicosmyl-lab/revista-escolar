@@ -1350,5 +1350,286 @@
 .skeleton-desc   { height: 14px; width: 70%; }
 .skeleton-fecha  { height: 12px; width: 45%; }
 
+/* ── CARRUSEL NOTICIAS ──────────────────────────────── */
+.noticias-carousel {
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 28px rgba(0,0,0,0.08);
+  background: white;
+}
+
+.carousel-slide {
+  display: flex;
+  align-items: stretch;
+  text-decoration: none;
+  color: inherit;
+  // No activa: oculta encima del slide activo
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.55s ease;
+
+  &.carousel-slide--active {
+    // Activa: posición relativa para dar altura al contenedor
+    position: relative;
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  @media (max-width: 700px) { flex-direction: column; }
+}
+
+.carousel-img-wrap {
+  width: 55%;
+  flex-shrink: 0;
+  overflow: hidden;
+  background: #e8eaed;
+  min-height: 320px;
+
+  @media (max-width: 700px) { width: 100%; min-height: 200px; height: 200px; }
+}
+
+.carousel-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.6s ease;
+
+  .carousel-slide--active:hover & { transform: scale(1.03); }
+}
+
+.carousel-img-placeholder {
+  width: 100%;
+  height: 100%;
+  min-height: 320px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f0f2f5;
+  color: #aaa;
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.85rem;
+}
+
+.carousel-content {
+  flex: 1;
+  padding: 2.5rem 2.5rem 2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.5rem;
+
+  @media (max-width: 900px) { padding: 2rem 1.75rem; }
+  @media (max-width: 700px) { padding: 1.5rem; }
+}
+
+.carousel-titulo {
+  font-size: clamp(1.1rem, 2.8vw, 1.65rem);
+  line-height: 1.3;
+  color: #1a1a2e;
+  margin: 0;
+}
+
+.carousel-desc {
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.9rem;
+  color: #5a5a5a;
+  line-height: 1.65;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  margin: 0;
+}
+
+.carousel-fecha {
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.72rem;
+  color: #999;
+  margin-top: auto;
+  padding-top: 0.75rem;
+}
+
+.carousel-leer {
+  display: inline-block;
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: #A94455;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  transition: letter-spacing 0.2s;
+
+  .carousel-slide--active:hover & { letter-spacing: 0.1em; }
+}
+
+// Flechas prev / next
+.carousel-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
+  background: white;
+  border: none;
+  cursor: pointer;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  font-size: 1.6rem;
+  line-height: 1;
+  color: #A94455;
+  box-shadow: 0 2px 14px rgba(0,0,0,0.13);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+
+  &:hover { background: #A94455; color: white; box-shadow: 0 4px 20px rgba(169,68,85,0.3); }
+  &--prev { left: 1rem; }
+  &--next { right: 1rem; }
+
+  @media (max-width: 580px) {
+    width: 36px; height: 36px; font-size: 1.2rem;
+    &--prev { left: 0.4rem; }
+    &--next { right: 0.4rem; }
+  }
+}
+
+// Puntos indicadores
+.carousel-dots {
+  position: absolute;
+  bottom: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 0.5rem;
+  z-index: 10;
+}
+
+.carousel-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  background: rgba(169,68,85,0.25);
+  transition: background 0.25s, transform 0.25s;
+
+  &--active { background: #A94455; transform: scale(1.35); }
+  &:hover:not(.carousel-dot--active) { background: rgba(169,68,85,0.5); }
+}
+
+/* ── BLOGS DOCENTES ─────────────────────────────────── */
+.blogs-seccion {
+  padding: 2.5rem 0 1.5rem;
+  background: #fafafa;
+  border-top: 1px solid #f0f0f0;
+  overflow: hidden;
+}
+
+.blogs-header {
+  max-width: 1200px;
+  margin: 0 auto 1.5rem;
+  padding: 0 2rem;
+  @media (max-width: 640px) { padding: 0 1rem; }
+}
+
+.blogs-titulo {
+  font-size: clamp(1rem, 2.5vw, 1.3rem);
+  color: #2C3E50;
+  margin: 0.5rem 0 0;
+}
+
+.blogs-marquee-wrap {
+  overflow: hidden;
+  mask-image: linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%);
+}
+
+.blogs-marquee-track {
+  display: flex;
+  gap: 1rem;
+  width: max-content;
+  animation: blogsMarquee 30s linear infinite;
+  padding: 0.5rem 0 1rem;
+
+  &:hover { animation-play-state: paused; }
+}
+
+@keyframes blogsMarquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+.blog-chip {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.65rem 1.1rem 0.65rem 0.75rem;
+  background: white;
+  border: 1px solid #e8e8e8;
+  text-decoration: none;
+  color: inherit;
+  white-space: nowrap;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  flex-shrink: 0;
+
+  &:hover {
+    border-color: #D4A853;
+    box-shadow: 0 2px 12px rgba(212,168,83,0.15);
+  }
+}
+
+.blog-chip-foto {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.blog-chip-inicial {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #A94455;
+  color: white;
+  font-weight: 700;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.blog-chip-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+
+.blog-chip-nombre {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #2C3E50;
+}
+
+.blog-chip-area {
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.7rem;
+  color: #888;
+}
+
+.blog-chip-icono {
+  width: 14px;
+  height: 14px;
+  color: #D4A853;
+  flex-shrink: 0;
+  margin-left: 0.25rem;
+}
+
 /* CAMBIO ARCH-UI: estilos del footer movidos a src/app/shared/footer/footer.scss */
 

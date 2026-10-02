@@ -248,55 +248,49 @@
     </div>
   }
 
-  <!-- Noticias reales del API -->
+  <!-- Carrusel auto-rotante de noticias -->
   @if (!cargandoNoticias() && noticiasHome().length > 0) {
-    <div class="noticias-grid reveal">
+    <div class="noticias-carousel"
+         (mouseenter)="carruselPausado.set(true)"
+         (mouseleave)="carruselPausado.set(false)">
 
-      <!-- Noticia destacada — overlay magazine: gradiente vinotinto sube en hover -->
-      @if (noticiaDestacada(); as nd) {
-        <a [routerLink]="['/noticias', nd.id]" class="card-noticia noticia-principal card-link motion-card" style="--card-i:0">
-          <div class="card-img-wrap">
-            @if (imagenNoticia(nd)) {
-              <img class="card-img" [src]="imagenNoticia(nd)!" [alt]="altNoticia(nd)" style="height:260px;width:100%;object-fit:cover;">
+      @for (n of noticiasHome(); track n.id; let i = $index) {
+        <a class="carousel-slide card-link"
+           [class.carousel-slide--active]="carruselActual() === i"
+           [routerLink]="['/noticias', n.id]">
+          <div class="carousel-img-wrap">
+            @if (imagenNoticia(n)) {
+              <img class="carousel-img" [src]="imagenNoticia(n)!" [alt]="altNoticia(n)">
             } @else {
-              <div class="img-placeholder" style="height:260px;"><span>Sin imagen</span></div>
+              <div class="carousel-img-placeholder"><span>Sin imagen</span></div>
             }
-            <!-- Overlay que sube en hover mostrando cat + título -->
-            <div class="card-overlay" aria-hidden="true">
-              <span class="co-cat">{{ nd.categoria?.nombre ?? 'Destacada' }}</span>
-              <span class="co-titulo">{{ nd.titulo }}</span>
-              <span class="co-flecha">→</span>
-            </div>
           </div>
-          <div class="card-body">
-            <span class="badge badge-vinotinto">{{ nd.categoria?.nombre ?? 'Destacada' }}</span>
-            <h3 class="card-titulo-grande">{{ nd.titulo }}</h3>
-            @if (nd.resumen) { <p class="card-desc">{{ nd.resumen }}</p> }
-            <div class="card-fecha">{{ formatFecha(nd.fechaPublicacion ?? nd.createdAt) }}</div>
+          <div class="carousel-content">
+            <span class="badge badge-vinotinto">{{ n.categoria?.nombre ?? 'Destacada' }}</span>
+            <h3 class="carousel-titulo">{{ n.titulo }}</h3>
+            @if (n.resumen) { <p class="carousel-desc">{{ n.resumen }}</p> }
+            <div class="carousel-fecha">{{ formatFecha(n.fechaPublicacion ?? n.createdAt) }}</div>
+            <span class="carousel-leer">Leer nota →</span>
           </div>
         </a>
       }
 
-      <!-- Noticias secundarias — mismo overlay magazine -->
-      @for (n of noticiasSecundarias(); track n.id; let i = $index) {
-        <a [routerLink]="['/noticias', n.id]" class="card-noticia card-link motion-card" [style]="'--card-i:' + (i + 1)">
-          <div class="card-img-wrap">
-            @if (imagenNoticia(n)) {
-              <img class="card-img" [src]="imagenNoticia(n)!" [alt]="altNoticia(n)" style="height:130px;width:100%;object-fit:cover;">
-            } @else {
-              <div class="img-placeholder" style="height:130px;"><span>Sin imagen</span></div>
-            }
-            <div class="card-overlay" aria-hidden="true">
-              <span class="co-cat">{{ n.categoria?.nombre ?? 'General' }}</span>
-              <span class="co-titulo">{{ n.titulo }}</span>
-            </div>
-          </div>
-          <div class="card-body card-body-sm">
-            <span class="badge badge-verde" [style.color]="colorCategoria(n)">{{ n.categoria?.nombre ?? 'General' }}</span>
-            <h4 class="card-titulo-sm">{{ n.titulo }}</h4>
-            <div class="card-fecha">{{ formatFecha(n.fechaPublicacion ?? n.createdAt) }}</div>
-          </div>
-        </a>
+      @if (noticiasHome().length > 1) {
+        <button class="carousel-btn carousel-btn--prev"
+                (click)="$event.preventDefault(); $event.stopPropagation(); carruselAnterior()"
+                aria-label="Anterior">&#8249;</button>
+        <button class="carousel-btn carousel-btn--next"
+                (click)="$event.preventDefault(); $event.stopPropagation(); carruselSiguiente()"
+                aria-label="Siguiente">&#8250;</button>
+        <div class="carousel-dots">
+          @for (n of noticiasHome(); track n.id; let i = $index) {
+            <button class="carousel-dot"
+                    [class.carousel-dot--active]="carruselActual() === i"
+                    (click)="$event.stopPropagation(); carruselActual.set(i)"
+                    [attr.aria-label]="'Ir a noticia ' + (i + 1)">
+            </button>
+          }
+        </div>
       }
     </div>
   }
@@ -309,6 +303,57 @@
     </div>
   }
 </section>
+
+<!-- BLOGS DOCENTES — solo aparece si hay docentes con blog configurado -->
+@if (docentesConBlog().length > 0) {
+  <section class="blogs-seccion">
+    <div class="blogs-header">
+      <div class="linea-dorada"></div>
+      <h3 class="blogs-titulo">Espacios digitales de nuestros docentes</h3>
+    </div>
+    <div class="blogs-marquee-wrap">
+      <div class="blogs-marquee-track">
+        @for (d of docentesConBlog(); track $index) {
+          <a class="blog-chip" [href]="d.urlBlog" target="_blank" rel="noopener noreferrer">
+            @if (d.fotoUrl) {
+              <img class="blog-chip-foto" [src]="d.fotoUrl" [alt]="d.nombre">
+            } @else {
+              <span class="blog-chip-inicial">{{ d.nombre.charAt(0) }}</span>
+            }
+            <span class="blog-chip-info">
+              <span class="blog-chip-nombre">{{ d.nombre }}</span>
+              <span class="blog-chip-area">{{ d.area }}</span>
+            </span>
+            <svg class="blog-chip-icono" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+              <polyline points="15 3 21 3 21 9"/>
+              <line x1="10" y1="14" x2="21" y2="3"/>
+            </svg>
+          </a>
+        }
+        <!-- duplicado para loop infinito del marquee -->
+        @for (d of docentesConBlog(); track 100 + $index) {
+          <a class="blog-chip" [href]="d.urlBlog" target="_blank" rel="noopener noreferrer" aria-hidden="true" tabindex="-1">
+            @if (d.fotoUrl) {
+              <img class="blog-chip-foto" [src]="d.fotoUrl" [alt]="d.nombre">
+            } @else {
+              <span class="blog-chip-inicial">{{ d.nombre.charAt(0) }}</span>
+            }
+            <span class="blog-chip-info">
+              <span class="blog-chip-nombre">{{ d.nombre }}</span>
+              <span class="blog-chip-area">{{ d.area }}</span>
+            </span>
+            <svg class="blog-chip-icono" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+              <polyline points="15 3 21 3 21 9"/>
+              <line x1="10" y1="14" x2="21" y2="3"/>
+            </svg>
+          </a>
+        }
+      </div>
+    </div>
+  </section>
+}
 
 <!-- SECCIÓN FACEBOOK — @defer: el iframe solo carga cuando el usuario llega aquí (CAMBIO ARCH-UI) -->
 @defer (on viewport) {
