@@ -35,10 +35,10 @@
 
 | Servicio | URL |
 |---|---|
-| Frontend (Vercel) | https://revista-escolar-zeta.vercel.app |
+| Frontend (Vercel) | https://www.institutotecnicoindustrial.com.co |
 | Backend (Render) | https://revista-escolar.onrender.com |
 | Health check | https://revista-escolar.onrender.com/api/v1/health |
-| Super Admin | https://revista-escolar-zeta.vercel.app/super-admin |
+| Super Admin | https://www.institutotecnicoindustrial.com.co/super-admin |
 
 **Login Super Admin:** academicosmyl@gmail.com
 
