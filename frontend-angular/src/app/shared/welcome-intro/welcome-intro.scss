@@ -171,7 +171,7 @@
 
 // ── Subtitle ──────────────────────────────────────────────────────────────────
 .wi-sub {
-  font-family: "DM Sans", sans-serif;
+  font-family: "Source Sans 3", sans-serif;
   font-size: clamp(0.78rem, 1.8vw, 0.95rem);
   font-weight: 300;
   letter-spacing: 0.22em;
@@ -238,7 +238,7 @@
   @extend %wi-btn;
   gap: 7px;
   padding: 7px 18px 7px 16px;
-  font-family: "DM Sans", sans-serif;
+  font-family: "Source Sans 3", sans-serif;
   font-size: 0.75rem;
   font-weight: 400;
   letter-spacing: 0.14em;
