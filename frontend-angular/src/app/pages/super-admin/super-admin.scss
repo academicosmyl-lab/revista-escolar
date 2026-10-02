@@ -1282,3 +1282,59 @@ $radius-lg:  16px;
     border-color: rgba(212,168,83,0.45);
   }
 }
+
+/* ── Grid gestión imágenes publicación ─────────────── */
+.sa-img-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-top: 0.5rem;
+}
+
+.sa-img-item {
+  border: 1px solid #e8e8e8;
+  background: #fafafa;
+  overflow: hidden;
+}
+
+.sa-img-preview-wrap {
+  position: relative;
+  background: #f0f2f5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 160px;
+}
+
+.sa-img-preview {
+  max-width: 100%;
+  max-height: 160px;
+  object-fit: contain;
+  display: block;
+}
+
+.sa-img-badge {
+  position: absolute;
+  top: 6px; left: 6px;
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.6rem; font-weight: 700;
+  letter-spacing: 0.06em; text-transform: uppercase;
+  padding: 2px 7px;
+  background: #A94455; color: white;
+
+  &.sa-img-badge-gal { background: #3A7D5C; }
+}
+
+.sa-img-actions {
+  padding: 0.6rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  border-top: 1px solid #e8e8e8;
+}
+
+.sa-btn-disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}

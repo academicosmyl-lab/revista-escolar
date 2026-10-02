@@ -51,7 +51,7 @@ interface Publicacion {
   destacada: boolean;
   createdAt: string;
   autor?: { nombre: string; rol: string; };
-  imagenes?: { url: string; es_portada: boolean; }[];
+  imagenes?: { id: string; url: string; es_portada: boolean; }[];
 }
 
 interface Stats {
@@ -136,6 +136,11 @@ export class SuperAdmin implements OnInit {
   modalPublicacion = signal<Publicacion | null>(null);
   motivoPub        = signal('');
   motivoPubErr     = signal('');
+
+  /* ── Gestión de imágenes de una publicación ─────────── */
+  modalImagenes    = signal<Publicacion | null>(null);
+  cargandoImg      = signal(false);
+  errorImg         = signal('');
 
   readonly LIMIT = 12;
 
@@ -455,4 +460,48 @@ export class SuperAdmin implements OnInit {
 
   asSolicitud(item: Solicitud | Docente | null): Solicitud | null { return item as Solicitud; }
   asDocente(item: Solicitud | Docente | null): Docente   | null   { return item as Docente;   }
+
+  /* ── Gestión imágenes publicación ───────────────────── */
+  abrirGestionImagenes(pub: Publicacion) {
+    this.errorImg.set('');
+    this.modalImagenes.set(pub);
+  }
+
+  cerrarImagenes() { this.modalImagenes.set(null); }
+
+  eliminarImagenPub(pub: Publicacion, imagenId: string) {
+    if (!confirm('¿Eliminar esta imagen? La acción no se puede deshacer.')) return;
+    this.cargandoImg.set(true);
+    this.errorImg.set('');
+    this.api.delete<any>(`/noticias/${pub.id}/fotos/${imagenId}`).subscribe({
+      next: () => {
+        if (pub.imagenes) pub.imagenes = pub.imagenes.filter(i => i.id !== imagenId);
+        this.modalImagenes.set({ ...pub });
+        this.cargandoImg.set(false);
+        this.cdr.markForCheck();
+      },
+      error: e => { this.errorImg.set(e.mensaje ?? 'Error al eliminar'); this.cargandoImg.set(false); this.cdr.markForCheck(); },
+    });
+  }
+
+  reemplazarImagenPub(pub: Publicacion, imagenId: string, event: Event) {
+    const file = (event.target as HTMLInputElement).files?.[0];
+    if (!file) return;
+    this.cargandoImg.set(true);
+    this.errorImg.set('');
+    const fd = new FormData();
+    fd.append('foto', file);
+    this.api.putFormData<any>(`/noticias/${pub.id}/fotos/${imagenId}`, fd).subscribe({
+      next: r => {
+        if (pub.imagenes) {
+          const idx = pub.imagenes.findIndex(i => i.id === imagenId);
+          if (idx !== -1) pub.imagenes[idx] = { ...pub.imagenes[idx], url: r.imagen.url };
+        }
+        this.modalImagenes.set({ ...pub });
+        this.cargandoImg.set(false);
+        this.cdr.markForCheck();
+      },
+      error: e => { this.errorImg.set(e.mensaje ?? 'Error al reemplazar'); this.cargandoImg.set(false); this.cdr.markForCheck(); },
+    });
+  }
 }

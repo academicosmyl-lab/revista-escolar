@@ -467,6 +467,7 @@
                         <button class="sa-btn sa-btn-ok" style="margin-right:6px;font-size:0.78rem;padding:5px 10px" (click)="abrirRevisionPub(pub, 'aprobar-pub')">Aprobar</button>
                         <button class="sa-btn sa-btn-err" style="margin-right:6px;font-size:0.78rem;padding:5px 10px" (click)="abrirRevisionPub(pub, 'rechazar-pub')">Rechazar</button>
                       }
+                      <button class="sa-btn" style="font-size:0.78rem;padding:5px 10px;background:#f0f4ff;color:#3B5BDB;border:1px solid #c5d0ff;margin-right:6px" title="Gestionar imágenes" (click)="abrirGestionImagenes(pub)">🖼️ Imágenes</button>
                       <button class="sa-btn sa-btn-err" style="font-size:0.78rem;padding:5px 10px;opacity:0.75" title="Eliminar permanentemente" (click)="eliminarPublicacion(pub)">🗑️ Eliminar</button>
                     </td>
                   </tr>
@@ -850,6 +851,72 @@
           @if (cargando()) { <span class="sa-btn-spinner"></span> }
           Crear usuario
         </button>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- Modal: Gestionar imágenes de publicación -->
+@if (modalImagenes(); as pub) {
+  <div class="sa-modal-backdrop" (click)="cerrarImagenes()">
+    <div class="sa-modal sa-modal-wide" (click)="$event.stopPropagation()">
+      <div class="sa-modal-header sa-modal-header-neutral">
+        <h2>🖼️ Imágenes — {{ pub.titulo }}</h2>
+        <button class="sa-modal-close" (click)="cerrarImagenes()">✕</button>
+      </div>
+      <div class="sa-modal-body">
+
+        @if (errorImg()) {
+          <div class="sa-field-err" style="margin-bottom:1rem;padding:0.75rem 1rem;background:#fff0f0;border:1px solid #f5c0c0">
+            {{ errorImg() }}
+          </div>
+        }
+
+        @if (!pub.imagenes || pub.imagenes.length === 0) {
+          <p style="color:#888;font-family:'Source Sans 3',sans-serif;font-size:0.9rem;text-align:center;padding:2rem 0">
+            Esta publicación no tiene imágenes.
+          </p>
+        }
+
+        <div class="sa-img-grid">
+          @for (img of pub.imagenes; track img.id) {
+            <div class="sa-img-item">
+              <div class="sa-img-preview-wrap">
+                <img class="sa-img-preview" [src]="img.url" [alt]="pub.titulo">
+                @if (img.es_portada) {
+                  <span class="sa-img-badge">Portada</span>
+                } @else {
+                  <span class="sa-img-badge sa-img-badge-gal">Galería</span>
+                }
+              </div>
+              <div class="sa-img-actions">
+                <label class="sa-btn sa-btn-primary" style="font-size:0.75rem;padding:5px 10px;cursor:pointer;margin-right:6px"
+                       [class.sa-btn-disabled]="cargandoImg()"
+                       title="Reemplazar con otra imagen">
+                  📷 Reemplazar
+                  <input type="file" accept="image/*" style="display:none"
+                         [disabled]="cargandoImg()"
+                         (change)="reemplazarImagenPub(pub, img.id, $event)">
+                </label>
+                <button class="sa-btn sa-btn-err" style="font-size:0.75rem;padding:5px 10px"
+                        [disabled]="cargandoImg()"
+                        (click)="eliminarImagenPub(pub, img.id)">
+                  🗑️ Eliminar
+                </button>
+              </div>
+            </div>
+          }
+        </div>
+
+        @if (cargandoImg()) {
+          <p style="text-align:center;font-family:'Source Sans 3',sans-serif;font-size:0.85rem;color:#888;margin-top:1rem">
+            Procesando imagen…
+          </p>
+        }
+
+      </div>
+      <div class="sa-modal-footer">
+        <button class="sa-btn sa-btn-ghost" (click)="cerrarImagenes()">Cerrar</button>
       </div>
     </div>
   </div>

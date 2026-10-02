@@ -494,7 +494,7 @@ router.get('/publicaciones', soloAdmin, async (req, res) => {
       where: { estado },
       include: [
         { model: Usuario, as: 'autor', attributes: ['nombre', 'rol'] },
-        { model: Imagen,  as: 'imagenes', attributes: ['url', 'es_portada'] },
+        { model: Imagen,  as: 'imagenes', attributes: ['id', 'url', 'es_portada'] },
       ],
       order: [['createdAt', 'DESC']],
       limit:  parseInt(limit),

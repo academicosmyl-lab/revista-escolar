@@ -5,7 +5,7 @@ const { Router } = require('express');
 const { Op } = require('sequelize');
 const { Noticia, Imagen, Categoria, Usuario, Sede } = require('../models');
 const { autenticar, requiereRol } = require('../middlewares/auth.middleware');
-const { uploadNoticias, subirImagen } = require('../services/cloudinary.service');
+const { uploadNoticias, subirImagen, eliminarImagen } = require('../services/cloudinary.service');
 const { coordinador } = require('../agents/coordinator.agent');
 const { crearError } = require('../middlewares/error.middleware');
 const Joi = require('joi');
@@ -164,6 +164,54 @@ router.post('/:id/fotos', autenticar, uploadNoticias.array('fotos', 2), async (r
     }
 
     res.json({ imagenes: imagenesCreadas });
+  } catch (err) { next(err); }
+});
+
+// DELETE /api/v1/noticias/:id/fotos/:imagenId — eliminar una imagen específica
+router.delete('/:id/fotos/:imagenId', autenticar, async (req, res, next) => {
+  try {
+    const noticia = await Noticia.findByPk(req.params.id);
+    if (!noticia) return res.status(404).json({ error: 'Noticia no encontrada' });
+
+    const esAdmin = ['ADMIN', 'RECTOR'].includes(req.usuario.rol);
+    if (!esAdmin && noticia.autor_id !== req.usuario.id)
+      return res.status(403).json({ error: 'Sin permiso para modificar esta noticia' });
+
+    const imagen = await Imagen.findOne({
+      where: { id: req.params.imagenId, noticia_id: req.params.id },
+    });
+    if (!imagen) return res.status(404).json({ error: 'Imagen no encontrada' });
+
+    await eliminarImagen(imagen.filename).catch(() => {});
+    await imagen.destroy();
+
+    res.json({ ok: true });
+  } catch (err) { next(err); }
+});
+
+// PUT /api/v1/noticias/:id/fotos/:imagenId — reemplazar una imagen
+router.put('/:id/fotos/:imagenId', autenticar, uploadNoticias.single('foto'), async (req, res, next) => {
+  try {
+    const noticia = await Noticia.findByPk(req.params.id);
+    if (!noticia) return res.status(404).json({ error: 'Noticia no encontrada' });
+
+    const esAdmin = ['ADMIN', 'RECTOR'].includes(req.usuario.rol);
+    if (!esAdmin && noticia.autor_id !== req.usuario.id)
+      return res.status(403).json({ error: 'Sin permiso para modificar esta noticia' });
+
+    const imagen = await Imagen.findOne({
+      where: { id: req.params.imagenId, noticia_id: req.params.id },
+    });
+    if (!imagen) return res.status(404).json({ error: 'Imagen no encontrada' });
+    if (!req.file)  return res.status(400).json({ error: 'Debes subir una imagen' });
+
+    const tipoImg = imagen.es_portada ? 'noticias' : 'noticias-galeria';
+    const result  = await subirImagen(req.file.buffer, tipoImg, req.file.mimetype);
+
+    await eliminarImagen(imagen.filename).catch(() => {});
+    await imagen.update({ url: result.secure_url, filename: result.public_id, tamaño_bytes: req.file.size });
+
+    res.json({ ok: true, imagen: { id: imagen.id, url: result.secure_url, es_portada: imagen.es_portada } });
   } catch (err) { next(err); }
 });
 
