@@ -2,6 +2,7 @@
 import { Component, OnInit, OnDestroy, AfterViewInit, signal, computed, inject, ChangeDetectionStrategy, ChangeDetectorRef, NgZone } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { SlicePipe } from '@angular/common';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { ApiService } from '../../services/api.service';
 import { Noticia } from '../../models';
@@ -9,7 +10,7 @@ import { HorizonteSection } from './sections/horizonte-section'; // CAMBIO ARCH-
 
 @Component({
   selector: 'app-home',
-  imports: [RouterLink, FormsModule, HorizonteSection],
+  imports: [RouterLink, FormsModule, SlicePipe, HorizonteSection],
   templateUrl: './home.html',
   styleUrl: './home.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
