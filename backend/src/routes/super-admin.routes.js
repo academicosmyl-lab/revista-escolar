@@ -13,7 +13,7 @@ const { autenticar, requiereRol } = require('../middlewares/auth.middleware');
 const {
   Usuario, PerfilDocente, SolicitudPerfil,
   AccionAdmin, Sede, Noticia, Imagen,
-  DocenteSede, CursoDocente,
+  DocenteSede, CursoDocente, VideoYoutube,
 } = require('../models');
 const { emailService }      = require('../services/email.service');
 const { subirImagen } = require('../services/cloudinary.service');
@@ -607,8 +607,9 @@ router.delete('/usuarios/eliminar-definitivo', soloAdmin, async (req, res) => {
 
     const nombre = usuario.nombre;
 
-    // Limpiar todas las referencias FK para que PostgreSQL permita el DELETE
-    await Noticia.update({ autor_id: null }, { where: { autor_id: usuario.id } });
+    // Reasignar contenido al admin que ejecuta la acción (autor_id es NOT NULL)
+    await Noticia.update({ autor_id: req.usuario.id }, { where: { autor_id: usuario.id } });
+    await VideoYoutube.update({ autor_id: req.usuario.id }, { where: { autor_id: usuario.id } });
     await DocenteSede.destroy({ where: { usuario_id: usuario.id } });
     await CursoDocente.destroy({ where: { usuario_id: usuario.id } });
     await AccionAdmin.update({ admin_id: null }, { where: { admin_id: usuario.id } });
