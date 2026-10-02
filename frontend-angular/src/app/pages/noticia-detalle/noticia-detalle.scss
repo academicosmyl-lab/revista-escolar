@@ -67,12 +67,20 @@
   @media (max-width: 580px) { display: none; } }
 
 /* ── IMAGEN HERO ───────────────────────────────────────── */
-.det-imagen-hero-wrap { background: #111; max-height: 560px; overflow: hidden;
-  @media (max-width: 900px) { max-height: 400px; } @media (max-width: 580px) { max-height: 260px; } }
+.det-imagen-hero-wrap {
+  background: #111;
+  display: flex; align-items: center; justify-content: center;
+  max-height: 600px; overflow: hidden;
+  @media (max-width: 900px) { max-height: 480px; }
+  @media (max-width: 580px) { max-height: 320px; }
+}
 .det-imagen-hero {
-  width: 100%; height: 560px; object-fit: cover; display: block;
-  mask-image: linear-gradient(to bottom, rgba(0,0,0,0.9) 80%, rgba(0,0,0,0.4) 100%);
-  @media (max-width: 900px) { height: 400px; } @media (max-width: 580px) { height: 260px; }
+  /* contain: muestra la imagen completa sin recortar (QR, vertical, panorámica) */
+  max-width: 100%; max-height: 600px;
+  width: auto; height: auto; display: block;
+  object-fit: contain;
+  @media (max-width: 900px) { max-height: 480px; }
+  @media (max-width: 580px) { max-height: 320px; }
 }
 .det-imagen-hero-placeholder {
   width: 100%; height: 560px;
@@ -143,13 +151,16 @@
   @media (max-width: 480px) { grid-template-columns: 1fr; }
 }
 .det-galeria-item {
-  position: relative; overflow: hidden; background: #ddd; cursor: pointer;
+  position: relative; background: #f0f2f5; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  min-height: 180px;
   &:first-child { grid-column: span 2; @media (max-width: 480px) { grid-column: span 1; } }
 }
 .det-galeria-img {
-  width: 100%; height: 220px; object-fit: cover; display: block; transition: transform 0.4s ease;
-  .det-galeria-item:first-child & { height: 280px; @media (max-width: 768px) { height: 220px; } }
-  &:hover { transform: scale(1.03); }
+  /* contain: muestra el contenido completo (QR, infografías, imágenes verticales) */
+  max-width: 100%; height: auto; max-height: 300px;
+  display: block; object-fit: contain;
+  .det-galeria-item:first-child & { max-height: 400px; }
 }
 .det-galeria-alt {
   position: absolute; bottom: 0; left: 0; right: 0;
