@@ -1,4 +1,4 @@
-import { Component, OnInit, HostListener, inject, signal } from '@angular/core';
+import { Component, OnInit, OnDestroy, HostListener, inject, signal, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
 import { RouterLink, ActivatedRoute } from '@angular/router';
 import { ApiService } from '../../services/api.service';
 import { Noticia } from '../../models';
@@ -8,22 +8,27 @@ import { Noticia } from '../../models';
   imports: [RouterLink],
   templateUrl: './noticia-detalle.html',
   styleUrl: './noticia-detalle.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class NoticiaDetalle implements OnInit {
+export class NoticiaDetalle implements OnInit, OnDestroy {
   private api   = inject(ApiService);
   private route = inject(ActivatedRoute);
+  private cdr   = inject(ChangeDetectorRef);
 
-  cargando   = true;
-  error      = '';
-  noticia:   Noticia | null = null;
-  relacionadas: Noticia[]   = [];
+  cargando      = signal(true);
+  error         = signal('');
+  noticia       = signal<Noticia | null>(null);
+  relacionadas  = signal<Noticia[]>([]);
+  servidorLento = signal(false);
   skeletons = Array(5);
+
+  private lentoBanner: any = null;
 
   /* ── Lightbox ───────────────────────────────────────── */
   lbAbierto = signal(false);
   lbIndice  = signal(0);
 
-  get lbImagenes() { return this.noticia?.imagenes?.slice(1) ?? []; }
+  get lbImagenes() { return this.noticia()?.imagenes?.slice(1) ?? []; }
   get lbActual()   { return this.lbImagenes[this.lbIndice()] ?? null; }
 
   abrirLb(idx: number) { this.lbIndice.set(idx); this.lbAbierto.set(true); document.body.style.overflow = 'hidden'; }
@@ -46,52 +51,68 @@ export class NoticiaDetalle implements OnInit {
     });
   }
 
+  ngOnDestroy() {
+    if (this.lentoBanner) clearTimeout(this.lentoBanner);
+    document.body.style.overflow = '';
+  }
+
   private cargar(id: string) {
-    this.cargando = true;
-    this.error    = '';
-    this.noticia  = null;
+    this.cargando.set(true);
+    this.error.set('');
+    this.noticia.set(null);
+    this.servidorLento.set(false);
+
+    this.lentoBanner = setTimeout(() => this.servidorLento.set(true), 4000);
 
     this.api.get<any>(`/noticias/${id}`).subscribe({
       next: r => {
-        this.noticia  = r.noticia ?? r.data ?? r;
-        this.cargando = false;
+        clearTimeout(this.lentoBanner);
+        this.servidorLento.set(false);
+        this.noticia.set(r.noticia ?? r.data ?? r);
+        this.cargando.set(false);
+        this.cdr.markForCheck();
         this.cargarRelacionadas();
       },
       error: e => {
-        this.error    = e.mensaje || 'No se pudo cargar el artículo.';
-        this.cargando = false;
+        clearTimeout(this.lentoBanner);
+        this.servidorLento.set(false);
+        this.error.set(e.mensaje || 'No se pudo cargar el artículo.');
+        this.cargando.set(false);
+        this.cdr.markForCheck();
       },
     });
   }
 
   private cargarRelacionadas() {
-    if (!this.noticia) return;
-    const params: Record<string, string | number> = { limit: 3, estado: 'publicada' };
-    if ((this.noticia.categoria as any)?.id) params['categoriaId'] = (this.noticia.categoria as any).id;
+    const n = this.noticia();
+    if (!n) return;
+    const params: Record<string, string | number> = { limit: 4, estado: 'publicada' };
+    if ((n.categoria as any)?.id) params['categoriaId'] = (n.categoria as any).id;
 
     this.api.get<any>('/noticias', params).subscribe({
       next: r => {
         const data = r.data ?? r;
         const lista: Noticia[] = Array.isArray(data) ? data : (data.rows ?? data.noticias ?? []);
-        this.relacionadas = lista.filter(n => n.id !== this.noticia!.id).slice(0, 3);
+        this.relacionadas.set(lista.filter(x => x.id !== n.id).slice(0, 3));
+        this.cdr.markForCheck();
       },
       error: () => {},
     });
   }
 
   get autorFotoUrl(): string | null {
-    return (this.noticia?.autor as any)?.perfil?.foto_url ?? null;
+    return (this.noticia()?.autor as any)?.perfil?.foto_url ?? null;
   }
   get autorCargo(): string | null {
-    const p = (this.noticia?.autor as any)?.perfil;
+    const p = (this.noticia()?.autor as any)?.perfil;
     return p?.cargo ?? p?.titulo_profesional ?? null;
   }
 
   get imagenPrincipal(): string | null {
-    return this.noticia?.imagenes?.[0]?.url ?? null;
+    return this.noticia()?.imagenes?.[0]?.url ?? null;
   }
   get imagenesExtra() {
-    return this.noticia?.imagenes?.slice(1) ?? [];
+    return this.noticia()?.imagenes?.slice(1) ?? [];
   }
 
   formatFecha(fecha: string | undefined): string {
@@ -105,7 +126,7 @@ export class NoticiaDetalle implements OnInit {
 
   compartir(via: 'copiar' | 'whatsapp') {
     const url   = window.location.href;
-    const texto = this.noticia?.titulo ?? '';
+    const texto = this.noticia()?.titulo ?? '';
     if (via === 'copiar') {
       navigator.clipboard.writeText(url).catch(() => {});
     } else {

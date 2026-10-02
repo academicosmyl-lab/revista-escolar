@@ -66,6 +66,44 @@
 .det-meta-dot { width: 3px; height: 3px; border-radius: 50%; background: rgba(255,255,255,0.3); align-self: center; flex-shrink: 0;
   @media (max-width: 580px) { display: none; } }
 
+/* Autor inline en metadata del header */
+.det-meta-autor {
+  display: flex; align-items: center; gap: 10px;
+}
+.det-meta-autor-foto {
+  width: 38px; height: 38px; border-radius: 50%;
+  border: 2px solid #D4A853; object-fit: cover; flex-shrink: 0;
+  &.det-meta-autor-foto--inicial {
+    background: #D4A853; color: #7B1D2C;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Playfair Display', serif; font-size: 1rem; font-weight: 700;
+  }
+}
+.det-meta-autor-info { display: flex; flex-direction: column; gap: 1px; }
+.det-meta-autor-nombre { font-family: 'Source Sans 3', sans-serif; font-size: 0.83rem; font-weight: 700; color: white; }
+.det-meta-autor-cargo { font-family: 'Source Sans 3', sans-serif; font-size: 0.65rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: #D4A853; }
+
+/* Banner servidor despertando */
+.det-banner-lento {
+  background: linear-gradient(90deg, #1a0a10 0%, #2d1520 50%, #1a0a10 100%);
+  border-bottom: 1px solid rgba(212,168,83,0.3);
+  padding: 12px 32px;
+  @media (max-width: 580px) { padding: 10px 16px; }
+}
+.det-banner-lento-inner {
+  max-width: 1200px; margin: 0 auto;
+  display: flex; align-items: center; gap: 12px;
+  font-family: 'Source Sans 3', sans-serif; font-size: 0.78rem;
+  color: rgba(255,255,255,0.7);
+}
+.det-banner-spinner {
+  width: 14px; height: 14px; border-radius: 50%; flex-shrink: 0;
+  border: 2px solid rgba(212,168,83,0.3);
+  border-top-color: #D4A853;
+  animation: det-spin 0.8s linear infinite;
+}
+@keyframes det-spin { to { transform: rotate(360deg); } }
+
 /* ── IMAGEN HERO ───────────────────────────────────────── */
 .det-imagen-hero-wrap {
   background: #111;

@@ -5,17 +5,27 @@
       <a routerLink="/">Inicio</a>
       <span class="det-sep">/</span>
       <a routerLink="/noticias">Revista</a>
-      @if (noticia) {
+      @if (noticia()) {
         <span class="det-sep">/</span>
-        <span class="det-bc-titulo">{{ noticia.titulo }}</span>
+        <span class="det-bc-titulo">{{ noticia()!.titulo }}</span>
       }
     </div>
     <a routerLink="/noticias" class="det-btn-volver">← Volver</a>
   </div>
 </div>
 
+<!-- BANNER SERVIDOR LENTO -->
+@if (cargando() && servidorLento()) {
+  <div class="det-banner-lento">
+    <div class="det-banner-lento-inner">
+      <span class="det-banner-spinner"></span>
+      <span>El servidor está despertando, ya casi...</span>
+    </div>
+  </div>
+}
+
 <!-- ── ESTADO CARGANDO ───────────────────────────────────── -->
-@if (cargando) {
+@if (cargando()) {
   <div class="det-header">
     <div class="det-header-inner">
       <div class="det-sk-eyebrow"></div>
@@ -39,48 +49,57 @@
 }
 
 <!-- ── ESTADO ERROR ─────────────────────────────────────── -->
-@if (!cargando && error) {
+@if (!cargando() && error()) {
   <div class="det-error">
     <div class="det-error-linea"></div>
     <h1 class="det-error-titulo">Artículo no encontrado</h1>
-    <p class="det-error-texto">{{ error }}</p>
+    <p class="det-error-texto">{{ error() }}</p>
     <a routerLink="/noticias" class="its-btn-primario">Ver todas las noticias</a>
   </div>
 }
 
 <!-- ── CONTENIDO REAL ─────────────────────────────────────── -->
-@if (!cargando && !error && noticia) {
+@if (!cargando() && !error() && noticia(); as n) {
 
   <!-- HEADER EDITORIAL -->
   <section class="det-header">
     <div class="det-header-inner">
       <div class="det-eyebrow">
-        @if (noticia.categoria) {
-          <span class="det-badge-categoria" [style.background]="colorCategoria(noticia)">
-            {{ noticia.categoria.nombre }}
+        @if (n.categoria) {
+          <span class="det-badge-categoria" [style.background]="colorCategoria(n)">
+            {{ n.categoria.nombre }}
           </span>
         }
-        @if (noticia.sede) {
-          <span class="det-sede-eyebrow">{{ noticia.sede.nombre }}</span>
+        @if (n.sede) {
+          <span class="det-sede-eyebrow">{{ n.sede.nombre }}</span>
         }
       </div>
-      <h1 class="det-titulo">{{ noticia.titulo }}</h1>
+      <h1 class="det-titulo">{{ n.titulo }}</h1>
       <div class="det-metadata">
-        @if (noticia.autor) {
-          <div class="det-meta-item">
-            <span class="det-meta-label">Autor</span>
-            <span class="det-meta-valor">{{ noticia.autor.nombre }}</span>
+        @if (n.autor) {
+          <div class="det-meta-autor">
+            @if (autorFotoUrl) {
+              <img class="det-meta-autor-foto" [src]="autorFotoUrl" [alt]="n.autor.nombre">
+            } @else {
+              <div class="det-meta-autor-foto det-meta-autor-foto--inicial">{{ n.autor.nombre.charAt(0) }}</div>
+            }
+            <div class="det-meta-autor-info">
+              <span class="det-meta-autor-nombre">{{ n.autor.nombre }}</span>
+              @if (autorCargo) {
+                <span class="det-meta-autor-cargo">{{ autorCargo }}</span>
+              }
+            </div>
           </div>
           <div class="det-meta-dot"></div>
         }
         <div class="det-meta-item">
           <span class="det-meta-label">Publicado</span>
-          <span class="det-meta-valor">{{ formatFecha(noticia.fechaPublicacion ?? noticia.createdAt) }}</span>
+          <span class="det-meta-valor">{{ formatFecha(n.fechaPublicacion ?? n.createdAt) }}</span>
         </div>
         <div class="det-meta-dot"></div>
         <div class="det-meta-item">
           <span class="det-meta-label">Visitas</span>
-          <span class="det-meta-valor">{{ noticia.visitas }}</span>
+          <span class="det-meta-valor">{{ n.visitas }}</span>
         </div>
       </div>
     </div>
@@ -90,14 +109,14 @@
   @if (imagenPrincipal) {
     <div class="det-imagen-hero-wrap">
       <img class="det-imagen-hero" [src]="imagenPrincipal"
-           [alt]="noticia.imagenes![0].altText ?? noticia.titulo">
+           [alt]="n.imagenes![0].altText ?? n.titulo">
     </div>
-    @if (noticia.imagenes![0].altText) {
-      <p class="det-imagen-alt">{{ noticia.imagenes![0].altText }}</p>
+    @if (n.imagenes![0].altText) {
+      <p class="det-imagen-alt">{{ n.imagenes![0].altText }}</p>
     }
   } @else {
     <div class="det-imagen-hero-wrap">
-      <div class="det-imagen-hero-placeholder"><span>{{ noticia.titulo }}</span></div>
+      <div class="det-imagen-hero-placeholder"><span>{{ n.titulo }}</span></div>
     </div>
   }
 
@@ -106,7 +125,7 @@
 
     <!-- Contenido editorial (HTML del backend) -->
     <div class="det-contenido-wrap">
-      <div class="det-contenido-editorial" [innerHTML]="noticia.contenido"></div>
+      <div class="det-contenido-editorial" [innerHTML]="n.contenido"></div>
     </div>
 
     <!-- Aside sticky -->
@@ -124,39 +143,39 @@
       <!-- Ficha del artículo -->
       <div class="det-aside-bloque">
         <div class="det-aside-titulo">Ficha</div>
-        @if (noticia.autor) {
+        @if (n.autor) {
           <div class="det-ficha-autor">
             @if (autorFotoUrl) {
-              <img class="det-autor-foto" [src]="autorFotoUrl" [alt]="noticia.autor.nombre">
+              <img class="det-autor-foto" [src]="autorFotoUrl" [alt]="n.autor.nombre">
             } @else {
               <div class="det-autor-foto det-autor-foto--inicial">
-                {{ noticia.autor.nombre.charAt(0) }}
+                {{ n.autor.nombre.charAt(0) }}
               </div>
             }
             <div class="det-autor-info">
               <span class="det-ficha-label">Autor</span>
-              <span class="det-autor-nombre">{{ noticia.autor.nombre }}</span>
+              <span class="det-autor-nombre">{{ n.autor.nombre }}</span>
               @if (autorCargo) {
                 <span class="det-autor-cargo">{{ autorCargo }}</span>
               }
             </div>
           </div>
         }
-        @if (noticia.categoria) {
+        @if (n.categoria) {
           <div class="det-ficha-item">
             <span class="det-ficha-label">Categoría</span>
-            <span class="det-ficha-valor">{{ noticia.categoria.nombre }}</span>
+            <span class="det-ficha-valor">{{ n.categoria.nombre }}</span>
           </div>
         }
-        @if (noticia.sede) {
+        @if (n.sede) {
           <div class="det-ficha-item">
             <span class="det-ficha-label">Sede</span>
-            <span class="det-ficha-valor">{{ noticia.sede.nombre }}</span>
+            <span class="det-ficha-valor">{{ n.sede.nombre }}</span>
           </div>
         }
         <div class="det-ficha-item">
           <span class="det-ficha-label">Visitas</span>
-          <span class="det-ficha-valor">{{ noticia.visitas }}</span>
+          <span class="det-ficha-valor">{{ n.visitas }}</span>
         </div>
       </div>
 
@@ -173,7 +192,7 @@
           @for (img of imagenesExtra; track img.id; let i = $index) {
             <div class="det-galeria-item" (click)="abrirLb(i)" role="button" tabindex="0"
                  (keydown.enter)="abrirLb(i)" aria-label="Ver imagen ampliada">
-              <img class="det-galeria-img" [src]="img.url" [alt]="img.altText ?? noticia.titulo">
+              <img class="det-galeria-img" [src]="img.url" [alt]="img.altText ?? n.titulo">
               <div class="det-galeria-zoom-hint" aria-hidden="true">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
                   <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
@@ -191,7 +210,7 @@
   }
 
   <!-- ARTÍCULOS RELACIONADOS -->
-  @if (relacionadas.length > 0) {
+  @if (relacionadas().length > 0) {
     <section class="det-relacionadas">
       <div class="det-rel-header">
         <div class="linea-dorada"></div>
@@ -199,21 +218,21 @@
         <a routerLink="/noticias" class="det-rel-ver-todas">Ver todas</a>
       </div>
       <div class="det-rel-grid">
-        @for (n of relacionadas; track n.id; let i = $index) {
-          <a class="det-rel-card" [routerLink]="['/noticias', n.id]" [style.--i]="i">
-            @if (n.imagenes?.[0]?.url) {
-              <img class="det-rel-img" [src]="n.imagenes![0].url" [alt]="n.titulo">
+        @for (rel of relacionadas(); track rel.id; let i = $index) {
+          <a class="det-rel-card" [routerLink]="['/noticias', rel.id]" [style.--i]="i">
+            @if (rel.imagenes?.[0]?.url) {
+              <img class="det-rel-img" [src]="rel.imagenes![0].url" [alt]="rel.titulo">
             } @else {
               <div class="det-rel-img-placeholder"></div>
             }
             <div class="det-rel-cuerpo">
-              @if (n.categoria) {
-                <span class="det-rel-badge" [style.background]="colorCategoria(n)">
-                  {{ n.categoria.nombre }}
+              @if (rel.categoria) {
+                <span class="det-rel-badge" [style.background]="colorCategoria(rel)">
+                  {{ rel.categoria.nombre }}
                 </span>
               }
-              <h3 class="det-rel-card-titulo">{{ n.titulo }}</h3>
-              <div class="det-rel-fecha">{{ formatFecha(n.fechaPublicacion ?? n.createdAt) }}</div>
+              <h3 class="det-rel-card-titulo">{{ rel.titulo }}</h3>
+              <div class="det-rel-fecha">{{ formatFecha(rel.fechaPublicacion ?? rel.createdAt) }}</div>
             </div>
           </a>
         }

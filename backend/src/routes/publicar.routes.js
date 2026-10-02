@@ -171,7 +171,7 @@ router.post('/', autenticar, puedePublicar, uploadMem.array('imagenes', 5), asyn
             docenteNombre: req.usuario.nombre,
             noticiaId:     noticia.id,
             noticiaTitulo: titulo,
-            sedeName:      sede_nombre || 'Sin especificar',
+            sedeName:      sede_nombre || 'Todas las sedes',
           });
         }
       } catch (emailErr) {

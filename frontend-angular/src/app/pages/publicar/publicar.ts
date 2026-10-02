@@ -142,7 +142,9 @@ export class Publicar implements OnInit {
     fd.append('descripcion',    this.descripcion().trim());
     fd.append('tipo_contenido', this.tipo());
     if (this.tipo() === 'video')     fd.append('url_youtube',  this.urlYoutube().trim());
-    if (this.sedeSeleccionada())     fd.append('sede_nombre',  this.sedeSeleccionada());
+    if (this.sedeSeleccionada() && this.sedeSeleccionada() !== 'TODAS') {
+      fd.append('sede_nombre', this.sedeSeleccionada());
+    }
     fd.append('para_portada',        String(this.paraPortada()));
     if (this.tipo() === 'imagenes') {
       this.imagenes.forEach(f => fd.append('imagenes', f));

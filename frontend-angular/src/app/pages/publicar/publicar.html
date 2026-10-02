@@ -100,6 +100,7 @@
                 (ngModelChange)="sedeSeleccionada.set($event)"
               >
                 <option value="" disabled selected>Selecciona la sede...</option>
+                <option value="TODAS">🏫 Todas las sedes</option>
                 @for (s of sedes(); track s.id) {
                   <option [value]="s.nombre">{{ s.nombre }}</option>
                 }
@@ -257,7 +258,9 @@
                 {{ tipo() === 'imagenes' ? '📸 ' + imagenes.length + ' imagen(es)' :
                    tipo() === 'video'    ? '▶️ Video de YouTube' : '📝 Solo texto' }}
               </li>
-              @if (sedeSeleccionada()) { <li><strong>Sede:</strong> {{ sedeSeleccionada() }}</li> }
+              @if (sedeSeleccionada()) {
+                <li><strong>Sede:</strong> {{ sedeSeleccionada() === 'TODAS' ? '🏫 Todas las sedes' : sedeSeleccionada() }}</li>
+              }
             </ul>
           </div>
 
