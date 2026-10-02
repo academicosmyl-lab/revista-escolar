@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, HostListener, inject, signal } from '@angular/core';
 import { RouterLink, ActivatedRoute } from '@angular/router';
 import { ApiService } from '../../services/api.service';
 import { Noticia } from '../../models';
@@ -18,6 +18,26 @@ export class NoticiaDetalle implements OnInit {
   noticia:   Noticia | null = null;
   relacionadas: Noticia[]   = [];
   skeletons = Array(5);
+
+  /* ── Lightbox ───────────────────────────────────────── */
+  lbAbierto = signal(false);
+  lbIndice  = signal(0);
+
+  get lbImagenes() { return this.noticia?.imagenes?.slice(1) ?? []; }
+  get lbActual()   { return this.lbImagenes[this.lbIndice()] ?? null; }
+
+  abrirLb(idx: number) { this.lbIndice.set(idx); this.lbAbierto.set(true); document.body.style.overflow = 'hidden'; }
+  cerrarLb()           { this.lbAbierto.set(false); document.body.style.overflow = ''; }
+  lbAnterior()         { this.lbIndice.update(i => (i - 1 + this.lbImagenes.length) % this.lbImagenes.length); }
+  lbSiguiente()        { this.lbIndice.update(i => (i + 1) % this.lbImagenes.length); }
+
+  @HostListener('document:keydown', ['$event'])
+  onKey(e: KeyboardEvent) {
+    if (!this.lbAbierto()) return;
+    if (e.key === 'Escape')    this.cerrarLb();
+    if (e.key === 'ArrowLeft') this.lbAnterior();
+    if (e.key === 'ArrowRight') this.lbSiguiente();
+  }
 
   ngOnInit() {
     this.route.paramMap.subscribe(params => {
