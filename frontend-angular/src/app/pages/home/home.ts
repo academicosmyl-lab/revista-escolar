@@ -66,6 +66,7 @@ export class Home implements OnInit, OnDestroy, AfterViewInit {
 
   /* ── Sección equipo docente — dos filas marquee ────── */
   totalDocentes = signal(0);
+  equipoPorRol  = signal<{ label: string; count: number }[]>([]);
   docentesFila1: { nombre: string; area: string; fotoUrl: string | null }[] = [];
   docentesFila2: { nombre: string; area: string; fotoUrl: string | null }[] = [];
 
@@ -110,6 +111,29 @@ export class Home implements OnInit, OnDestroy, AfterViewInit {
       next: r => {
         const lista = (r.docentes ?? []) as any[];
         this.totalDocentes.set(lista.length);
+
+        // Conteo real por cargo
+        const rolesLabel: Record<string, [string, string]> = {
+          RECTOR:      ['Rector',       'Rectores'],
+          COORDINADOR: ['Coordinador/a','Coordinadores'],
+          ORIENTADORA: ['Orientadora',  'Orientadoras'],
+          DOCENTE:     ['Docente',      'Docentes'],
+          PERSONAL:    ['Personal',     'Personal'],
+        };
+        const orden = ['RECTOR','COORDINADOR','ORIENTADORA','DOCENTE','PERSONAL'];
+        const conteo = new Map<string, number>();
+        for (const d of lista) {
+          const rol: string = d.usuario?.rol ?? 'DOCENTE';
+          conteo.set(rol, (conteo.get(rol) ?? 0) + 1);
+        }
+        this.equipoPorRol.set(
+          orden
+            .filter(r => conteo.has(r))
+            .map(r => ({
+              label: conteo.get(r)! === 1 ? rolesLabel[r][0] : rolesLabel[r][1],
+              count: conteo.get(r)!,
+            }))
+        );
         const items = lista.map(d => ({
           nombre:  d.usuario?.nombre ?? '',
           area:    d.cargo ?? d.titulo ?? '',

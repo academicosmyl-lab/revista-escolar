@@ -133,10 +133,13 @@
       <p class="docentes-subtitulo">Profesionales comprometidos con la formación técnica integral</p>
     </div>
     <div class="docentes-stats-mini">
-      <span class="doc-stat"><strong>{{ totalDocentes() > 0 ? totalDocentes() : '...' }}</strong> Profesionales</span>
-      <span class="doc-stat-sep">·</span>
-      <span class="doc-stat"><strong>5</strong> Áreas Técnicas</span>
-      <span class="doc-stat-sep">·</span>
+      @if (equipoPorRol().length > 0) {
+        @for (stat of equipoPorRol(); track stat.label; let last = $last) {
+          <span class="doc-stat"><strong>{{ stat.count }}</strong> {{ stat.label }}</span>
+          @if (!last) { <span class="doc-stat-sep">·</span> }
+        }
+        <span class="doc-stat-sep">·</span>
+      }
       <span class="doc-stat"><strong>3</strong> Sedes</span>
     </div>
   </div>
