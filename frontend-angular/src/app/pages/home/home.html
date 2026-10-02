@@ -119,15 +119,6 @@
 
 </section>
 
-<!-- CAMBIO ARCH-UI (Lote C 3.1): sección extraída a HorizonteSectionComponent -->
-<!-- @defer: Angular carga este componente solo cuando el usuario llega a él (viewport) -->
-@defer (on viewport) {
-  <app-horizonte-section></app-horizonte-section>
-} @placeholder {
-  <!-- Espacio reservado — evita el salto de layout mientras carga -->
-  <div style="min-height:600px;background:linear-gradient(175deg,rgba(6,14,8,0.82),rgba(10,3,6,0.78))"></div>
-}
-
 <!-- SECCIÓN EQUIPO DOCENTE — editorial dark con dos filas marquee -->
 <section class="docentes-seccion">
 
@@ -142,7 +133,7 @@
       <p class="docentes-subtitulo">Profesionales comprometidos con la formación técnica integral</p>
     </div>
     <div class="docentes-stats-mini">
-      <span class="doc-stat"><strong>50+</strong> Docentes</span>
+      <span class="doc-stat"><strong>{{ totalDocentes() > 0 ? totalDocentes() : '...' }}</strong> Docentes</span>
       <span class="doc-stat-sep">·</span>
       <span class="doc-stat"><strong>5</strong> Áreas Técnicas</span>
       <span class="doc-stat-sep">·</span>
@@ -355,14 +346,14 @@
   </section>
 }
 
-<!-- SECCIÓN FACEBOOK — @defer: el iframe solo carga cuando el usuario llega aquí (CAMBIO ARCH-UI) -->
+<!-- REDES + HORIZONTE — bloque unificado para evitar espacio vacío entre secciones -->
 @defer (on viewport) {
   <section class="fb-seccion reveal">
     <div class="fb-inner">
       <div class="fb-texto">
         <div class="linea-dorada"></div>
-        <p class="fb-eyebrow">Síguenos en Facebook</p>
-        <h2 class="fb-titulo">Noticias y vida<br><em>institucional</em></h2>
+        <p class="fb-eyebrow">Redes Sociales</p>
+        <h2 class="fb-titulo">¿Qué está pasando<br><em>en las redes?</em></h2>
         <p class="fb-desc">
           Publicamos eventos, logros, actividades y noticias en tiempo real.
           Cada publicación aparece aquí automáticamente.
@@ -413,8 +404,9 @@
       </div>
     </div>
   </section>
+  <app-horizonte-section></app-horizonte-section>
 } @placeholder {
-  <div style="min-height:200px;background:#f0f4fa"></div>
+  <div style="min-height:800px;background:#f0f4fa"></div>
 }
 
 <!-- SECCIÓN SEDES con scroll reveal -->

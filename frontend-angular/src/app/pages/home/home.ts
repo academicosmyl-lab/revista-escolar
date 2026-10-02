@@ -65,6 +65,7 @@ export class Home implements OnInit, OnDestroy, AfterViewInit {
   }));
 
   /* ── Sección equipo docente — dos filas marquee ────── */
+  totalDocentes = signal(0);
   docentesFila1: { nombre: string; area: string; fotoUrl: string | null }[] = [];
   docentesFila2: { nombre: string; area: string; fotoUrl: string | null }[] = [];
 
@@ -108,6 +109,7 @@ export class Home implements OnInit, OnDestroy, AfterViewInit {
     this.api.get<any>('/perfil/docentes').subscribe({
       next: r => {
         const lista = (r.docentes ?? []) as any[];
+        this.totalDocentes.set(lista.length);
         const items = lista.map(d => ({
           nombre:  d.usuario?.nombre ?? '',
           area:    d.cargo ?? d.titulo ?? '',
