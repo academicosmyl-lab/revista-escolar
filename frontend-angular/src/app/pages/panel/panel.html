@@ -175,9 +175,23 @@
             <div class="pan-fotos-actuales">
               <span class="pan-fotos-actuales-label">Fotos actuales:</span>
               @for (img of fotosDe(noticiaSeleccionada); track img.url) {
-                <img class="pan-foto-mini" [src]="img.url" [alt]="img.alt_text">
+                <div class="pan-foto-mini-wrap">
+                  <img class="pan-foto-mini" [src]="img.url" [alt]="img.alt_text">
+                  <div class="pan-foto-mini-actions">
+                    <label class="pan-img-btn pan-img-btn--replace" title="Reemplazar">
+                      ↺
+                      <input type="file" accept="image/*" style="display:none"
+                             (change)="reemplazarFoto(noticiaSeleccionada!, img.id!, $event)">
+                    </label>
+                    <button class="pan-img-btn pan-img-btn--delete" title="Eliminar"
+                            (click)="eliminarFoto(noticiaSeleccionada!, img.id!)">✕</button>
+                  </div>
+                </div>
               }
             </div>
+            @if (errorImg()) {
+              <p class="pan-error-img">{{ errorImg() }}</p>
+            }
           }
 
           @if (noticiaSeleccionadaId) {

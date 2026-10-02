@@ -21,7 +21,7 @@ router.get('/noticias', async (req, res, next) => {
       where: { autor_id: req.usuario.id },
       include: [
         { model: Categoria, as: 'categoria', attributes: ['nombre', 'color'] },
-        { model: Imagen, as: 'imagenes', attributes: ['url', 'alt_text', 'es_portada'] },
+        { model: Imagen, as: 'imagenes', attributes: ['id', 'url', 'alt_text', 'es_portada'] },
       ],
       order: [['created_at', 'DESC']],
     });

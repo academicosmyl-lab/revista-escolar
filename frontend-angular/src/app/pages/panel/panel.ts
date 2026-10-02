@@ -61,6 +61,10 @@ export class Panel implements OnInit {
   };
   private epOriginal: any = null;
 
+  // Gestión de imágenes existentes
+  cargandoImg = signal(false);
+  errorImg    = signal('');
+
   // Flujo de subida de fotos
   mostrarSubidaFotos  = false;
   destinoFoto: DestinoFoto = '';
@@ -415,4 +419,35 @@ export class Panel implements OnInit {
   categoriaColor(n: Noticia): string { return (n.categoria as any)?.color ?? '#7B1D2C'; }
   categoriaNombre(n: Noticia): string { return (n.categoria as any)?.nombre ?? ''; }
   tituloNoticia(id: string): string { return this.noticias.find(n => n.id === id)?.titulo ?? ''; }
+
+  eliminarFoto(n: Noticia, imgId: string) {
+    if (!confirm('¿Eliminar esta foto de la noticia?')) return;
+    this.cargandoImg.set(true);
+    this.errorImg.set('');
+    this.api.delete<any>(`/noticias/${n.id}/fotos/${imgId}`).subscribe({
+      next: () => {
+        (n as any).imagenes = (n as any).imagenes?.filter((i: any) => i.id !== imgId);
+        this.cargandoImg.set(false);
+      },
+      error: e => { this.errorImg.set(e.mensaje ?? 'Error al eliminar la foto'); this.cargandoImg.set(false); },
+    });
+  }
+
+  reemplazarFoto(n: Noticia, imgId: string, event: Event) {
+    const file = (event.target as HTMLInputElement).files?.[0];
+    if (!file) return;
+    this.cargandoImg.set(true);
+    this.errorImg.set('');
+    const fd = new FormData();
+    fd.append('foto', file);
+    this.api.putFormData<any>(`/noticias/${n.id}/fotos/${imgId}`, fd).subscribe({
+      next: r => {
+        const imgs = (n as any).imagenes as any[];
+        const idx = imgs.findIndex((i: any) => i.id === imgId);
+        if (idx !== -1) imgs[idx] = { ...imgs[idx], url: r.imagen.url };
+        this.cargandoImg.set(false);
+      },
+      error: e => { this.errorImg.set(e.mensaje ?? 'Error al reemplazar la foto'); this.cargandoImg.set(false); },
+    });
+  }
 }

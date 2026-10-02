@@ -388,10 +388,48 @@
   font-weight: 600;
   text-transform: uppercase;
 }
+.pan-foto-mini-wrap {
+  position: relative;
+  display: inline-flex;
+
+  &:hover .pan-foto-mini-actions { opacity: 1; }
+}
 .pan-foto-mini {
   width: 64px; height: 48px;
   object-fit: cover;
   border: 2px solid var(--verde);
+  border-radius: 4px;
+  display: block;
+}
+.pan-foto-mini-actions {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  opacity: 0;
+  transition: opacity .2s;
+  border-radius: 4px;
+}
+.pan-img-btn {
+  cursor: pointer;
+  border: none;
+  border-radius: 3px;
+  width: 24px; height: 24px;
+  font-size: 13px;
+  font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  padding: 0;
+
+  &--replace { background: #3b82f6; color: #fff; }
+  &--delete  { background: #ef4444; color: #fff; }
+}
+.pan-error-img {
+  font-size: 0.8rem;
+  color: #ef4444;
+  margin: 0.25rem 0 0;
 }
 
 /* Zona drag & drop */
