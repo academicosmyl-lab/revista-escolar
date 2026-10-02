@@ -34,14 +34,40 @@
       }
     </div>
 
-    <!-- Pills de categoría -->
-    <div class="not-categorias-scroll">
-      <button class="not-pill pill-todos" [class.activo]="categoriaActiva === null"
-              (click)="filtrarCategoria(null)">Todas</button>
-      @for (c of categorias; track c.id) {
-        <button class="not-pill" [class.activo]="categoriaActiva === c.id"
-                [style.background]="categoriaActiva === c.id ? (c.color || '#7B1D2C') : ''"
-                (click)="filtrarCategoria(c.id)">{{ c.nombre }}</button>
+    <!-- Dropdown de categoría -->
+    @if (dropdownAbierto()) {
+      <div class="not-cat-backdrop" (click)="dropdownAbierto.set(false)"></div>
+    }
+    <div class="not-cat-dropdown-wrap">
+      <button class="not-cat-btn" (click)="toggleDropdown()"
+              [class.not-cat-btn--activo]="categoriaActiva !== null">
+        <span class="not-cat-btn-dot"
+              [style.background]="categoriaActivaColor || '#D4A853'"
+              [style.opacity]="categoriaActiva ? '1' : '0.4'">
+        </span>
+        <span class="not-cat-btn-label">{{ categoriaActivaNombre }}</span>
+        <svg class="not-cat-chevron" [class.not-cat-chevron--open]="dropdownAbierto()"
+             viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+             width="14" height="14" aria-hidden="true">
+          <polyline points="6 9 12 15 18 9"/>
+        </svg>
+      </button>
+
+      @if (dropdownAbierto()) {
+        <div class="not-cat-menu">
+          <button class="not-cat-opcion" [class.not-cat-opcion--activa]="categoriaActiva === null"
+                  (click)="seleccionarCategoria(null)">
+            <span class="not-cat-opcion-dot" style="background:#9ca3af"></span>
+            Todas las categorías
+          </button>
+          @for (c of categorias; track c.id) {
+            <button class="not-cat-opcion" [class.not-cat-opcion--activa]="categoriaActiva === c.id"
+                    (click)="seleccionarCategoria(c.id)">
+              <span class="not-cat-opcion-dot" [style.background]="c.color || '#7B1D2C'"></span>
+              {{ c.nombre }}
+            </button>
+          }
+        </div>
       }
     </div>
 

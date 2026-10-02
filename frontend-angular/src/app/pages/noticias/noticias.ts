@@ -25,7 +25,19 @@ export class Noticias implements OnInit, OnDestroy {
 
   busqueda        = '';
   categoriaActiva: string | null = null;
+  dropdownAbierto = signal(false);
   sedeActiva:      string | null = null;
+
+  get categoriaActivaNombre(): string {
+    if (!this.categoriaActiva) return 'Todas las categorías';
+    return this.categorias.find(c => c.id === this.categoriaActiva)?.nombre ?? 'Categoría';
+  }
+  get categoriaActivaColor(): string {
+    if (!this.categoriaActiva) return '';
+    return (this.categorias.find(c => c.id === this.categoriaActiva) as any)?.color ?? '#7B1D2C';
+  }
+  toggleDropdown() { this.dropdownAbierto.update(v => !v); }
+  seleccionarCategoria(id: string | null) { this.filtrarCategoria(id); this.dropdownAbierto.set(false); }
   paginaActual  = 1;
   totalPaginas  = 1;
   total         = 0;
