@@ -299,8 +299,11 @@
 @if (docentesConBlog().length > 0) {
   <section class="blogs-seccion">
     <div class="blogs-header">
-      <div class="linea-dorada"></div>
-      <h3 class="blogs-titulo">Espacios digitales de nuestros docentes</h3>
+      <div>
+        <div class="linea-dorada"></div>
+        <p class="blogs-eyebrow">Comunidad docente</p>
+        <h3 class="blogs-titulo">Espacios digitales de <em>nuestros docentes</em></h3>
+      </div>
     </div>
     <div class="blogs-marquee-wrap">
       <div class="blogs-marquee-track">
@@ -346,8 +349,8 @@
   </section>
 }
 
-<!-- REDES + HORIZONTE — bloque unificado para evitar espacio vacío entre secciones -->
-@defer (on viewport) {
+<!-- SECCIÓN REDES SOCIALES -->
+@defer (on idle) {
   <section class="fb-seccion reveal">
     <div class="fb-inner">
       <div class="fb-texto">
@@ -404,9 +407,15 @@
       </div>
     </div>
   </section>
+} @placeholder {
+  <div style="min-height:200px;background:#f0f4fa"></div>
+}
+
+<!-- HORIZONTE INSTITUCIONAL (misión · visión · colibrí) -->
+@defer (on idle) {
   <app-horizonte-section></app-horizonte-section>
 } @placeholder {
-  <div style="min-height:800px;background:#f0f4fa"></div>
+  <div style="min-height:600px;background:linear-gradient(175deg,rgba(6,14,8,0.82),rgba(10,3,6,0.78))"></div>
 }
 
 <!-- SECCIÓN SEDES con scroll reveal -->
