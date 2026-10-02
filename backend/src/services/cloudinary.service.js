@@ -77,14 +77,15 @@ async function subirImagen(buffer, tipo = 'noticias', mimetype = 'image/jpeg') {
     ? 'its-santander/inclusion'
     : tipo === 'seguimiento'
     ? 'its-santander/seguimiento'
-    : 'its-santander/noticias';
+    : 'its-santander/noticias'; // noticias + noticias-galeria van a la misma carpeta
 
   const bufferNorm = await normalizarImagen(buffer, tipo);
-  const esNoticia = tipo === 'noticias';
+  // Solo la portada de la noticia recibe el recorte 16:9
+  const esPortada = tipo === 'noticias';
   return subirBuffer(bufferNorm, {
     folder,
     format: 'webp',
-    transformation: esNoticia
+    transformation: esPortada
       ? [
           { width: 1200, aspect_ratio: '16:9', crop: 'fill', gravity: 'auto' },
           { quality: 'auto', fetch_format: 'auto' },

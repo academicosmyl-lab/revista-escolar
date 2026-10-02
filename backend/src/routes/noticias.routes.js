@@ -140,8 +140,9 @@ router.post('/:id/fotos', autenticar, uploadNoticias.array('fotos', 2), async (r
 
     const imagenesCreadas = [];
     for (const file of req.files) {
-      // Subir a Cloudinary (buffer en memoria → nunca toca disco)
-      const result = await subirImagen(file.buffer, 'noticias');
+      // Portada → 16:9; galería → sin recorte (para preservar QR, infografías, etc.)
+      const tipoImg = imagenesCreadas.length === 0 ? 'noticias' : 'noticias-galeria';
+      const result = await subirImagen(file.buffer, tipoImg);
 
       // Generar ALT con IA usando el buffer
       const { altText } = await coordinador({
