@@ -295,8 +295,8 @@
   }
 </section>
 
-<!-- BLOGS DOCENTES — solo aparece si hay docentes con blog configurado -->
-@if (docentesConBlog().length > 0) {
+<!-- COMUNIDAD DOCENTE — blogs + publicaciones recientes -->
+@if (docentesConBlog().length > 0 || noticiasFeed().length > 0) {
   <section class="blogs-seccion">
     <div class="blogs-header">
       <div>
@@ -305,47 +305,99 @@
         <h3 class="blogs-titulo">Espacios digitales de <em>nuestros docentes</em></h3>
       </div>
     </div>
-    <div class="blogs-marquee-wrap">
-      <div class="blogs-marquee-track">
-        @for (d of docentesConBlog(); track $index) {
-          <a class="blog-chip" [href]="d.urlBlog" target="_blank" rel="noopener noreferrer">
-            @if (d.fotoUrl) {
-              <img class="blog-chip-foto" [src]="d.fotoUrl" [alt]="d.nombre">
-            } @else {
-              <span class="blog-chip-inicial">{{ d.nombre.charAt(0) }}</span>
-            }
-            <span class="blog-chip-info">
-              <span class="blog-chip-nombre">{{ d.nombre }}</span>
-              <span class="blog-chip-area">{{ d.area }}</span>
-            </span>
-            <svg class="blog-chip-icono" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
-              <polyline points="15 3 21 3 21 9"/>
-              <line x1="10" y1="14" x2="21" y2="3"/>
-            </svg>
-          </a>
-        }
-        <!-- duplicado para loop infinito del marquee -->
-        @for (d of docentesConBlog(); track 100 + $index) {
-          <a class="blog-chip" [href]="d.urlBlog" target="_blank" rel="noopener noreferrer" aria-hidden="true" tabindex="-1">
-            @if (d.fotoUrl) {
-              <img class="blog-chip-foto" [src]="d.fotoUrl" [alt]="d.nombre">
-            } @else {
-              <span class="blog-chip-inicial">{{ d.nombre.charAt(0) }}</span>
-            }
-            <span class="blog-chip-info">
-              <span class="blog-chip-nombre">{{ d.nombre }}</span>
-              <span class="blog-chip-area">{{ d.area }}</span>
-            </span>
-            <svg class="blog-chip-icono" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
-              <polyline points="15 3 21 3 21 9"/>
-              <line x1="10" y1="14" x2="21" y2="3"/>
-            </svg>
-          </a>
-        }
+
+    <!-- Franja 1: blogs personales -->
+    @if (docentesConBlog().length > 0) {
+      <div class="blogs-marquee-wrap">
+        <div class="blogs-marquee-track">
+          @for (d of docentesConBlog(); track $index) {
+            <a class="blog-chip" [href]="d.urlBlog" target="_blank" rel="noopener noreferrer">
+              @if (d.fotoUrl) {
+                <img class="blog-chip-foto" [src]="d.fotoUrl" [alt]="d.nombre">
+              } @else {
+                <span class="blog-chip-inicial">{{ d.nombre.charAt(0) }}</span>
+              }
+              <span class="blog-chip-info">
+                <span class="blog-chip-nombre">{{ d.nombre }}</span>
+                <span class="blog-chip-area">{{ d.area }}</span>
+              </span>
+              <svg class="blog-chip-icono" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+                <polyline points="15 3 21 3 21 9"/>
+                <line x1="10" y1="14" x2="21" y2="3"/>
+              </svg>
+            </a>
+          }
+          @for (d of docentesConBlog(); track 100 + $index) {
+            <a class="blog-chip" [href]="d.urlBlog" target="_blank" rel="noopener noreferrer" aria-hidden="true" tabindex="-1">
+              @if (d.fotoUrl) {
+                <img class="blog-chip-foto" [src]="d.fotoUrl" [alt]="d.nombre">
+              } @else {
+                <span class="blog-chip-inicial">{{ d.nombre.charAt(0) }}</span>
+              }
+              <span class="blog-chip-info">
+                <span class="blog-chip-nombre">{{ d.nombre }}</span>
+                <span class="blog-chip-area">{{ d.area }}</span>
+              </span>
+              <svg class="blog-chip-icono" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+                <polyline points="15 3 21 3 21 9"/>
+                <line x1="10" y1="14" x2="21" y2="3"/>
+              </svg>
+            </a>
+          }
+        </div>
       </div>
-    </div>
+    }
+
+    <!-- Franja 2: publicaciones recientes de docentes -->
+    @if (noticiasFeed().length > 0) {
+      <div class="pub-franja-label">
+        <span class="pub-franja-eyebrow">Últimas publicaciones</span>
+      </div>
+      <div class="blogs-marquee-wrap pub-marquee-wrap">
+        <div class="blogs-marquee-track pub-marquee-track">
+          @for (n of noticiasFeed(); track n.id) {
+            <a class="pub-card" [routerLink]="['/noticias', n.id]">
+              @if (imagenNoticia(n)) {
+                <img class="pub-card-img" [src]="imagenNoticia(n)!" [alt]="altNoticia(n)" loading="lazy">
+              } @else {
+                <div class="pub-card-img pub-card-img--vacia">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="22" height="22"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+                </div>
+              }
+              <div class="pub-card-body">
+                @if (n.categoria) {
+                  <span class="pub-card-cat" [style.background]="colorCategoria(n)">{{ n.categoria.nombre }}</span>
+                }
+                <p class="pub-card-titulo">{{ n.titulo | slice:0:55 }}{{ n.titulo.length > 55 ? '…' : '' }}</p>
+                <span class="pub-card-autor">{{ n.autor?.nombre ?? 'Docente' }}</span>
+              </div>
+            </a>
+          }
+          <!-- duplicado para loop infinito -->
+          @for (n of noticiasFeed(); track 200 + n.id) {
+            <a class="pub-card" [routerLink]="['/noticias', n.id]" aria-hidden="true" tabindex="-1">
+              @if (imagenNoticia(n)) {
+                <img class="pub-card-img" [src]="imagenNoticia(n)!" [alt]="altNoticia(n)" loading="lazy">
+              } @else {
+                <div class="pub-card-img pub-card-img--vacia">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="22" height="22"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+                </div>
+              }
+              <div class="pub-card-body">
+                @if (n.categoria) {
+                  <span class="pub-card-cat" [style.background]="colorCategoria(n)">{{ n.categoria.nombre }}</span>
+                }
+                <p class="pub-card-titulo">{{ n.titulo | slice:0:55 }}{{ n.titulo.length > 55 ? '…' : '' }}</p>
+                <span class="pub-card-autor">{{ n.autor?.nombre ?? 'Docente' }}</span>
+              </div>
+            </a>
+          }
+        </div>
+      </div>
+    }
+
   </section>
 }
 
