@@ -8,8 +8,6 @@ import { ApiService } from '../../services/api.service';
 import { Noticia } from '../../models';
 import { HorizonteSection } from './sections/horizonte-section'; // CAMBIO ARCH-UI (Lote C)
 
-type BlogDocente = { nombre: string; area: string; fotoUrl: string | null; urlBlog: string };
-type FeedItem = { tipo: 'noticia'; data: Noticia } | { tipo: 'blog'; data: BlogDocente };
 
 @Component({
   selector: 'app-home',
@@ -54,20 +52,6 @@ export class Home implements OnInit, OnDestroy, AfterViewInit {
   cargandoFeed    = signal(false);
   feedHayMas      = computed(() => this.noticiasFeed().length < this.feedTotal());
   skeletonsFeed   = Array(3);
-
-  feedMezclado = computed<FeedItem[]>(() => {
-    const noticias: FeedItem[] = this.noticiasFeed().map(n => ({ tipo: 'noticia' as const, data: n }));
-    const blogs: FeedItem[]    = this.docentesConBlog().map(d => ({ tipo: 'blog' as const, data: d }));
-    if (!blogs.length) return noticias;
-    const result: FeedItem[] = [];
-    let bi = 0;
-    noticias.forEach((n, i) => {
-      result.push(n);
-      if (bi < blogs.length && (i + 1) % 2 === 0) result.push(blogs[bi++]);
-    });
-    while (bi < blogs.length) result.push(blogs[bi++]);
-    return result;
-  });
 
   /* ── Video institucional YouTube ────────────────────── */
   readonly videoYTId = 'Yz4sq_s8-wA';
