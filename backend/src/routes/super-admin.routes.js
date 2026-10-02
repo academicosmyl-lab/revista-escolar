@@ -14,6 +14,7 @@ const {
   Usuario, PerfilDocente, SolicitudPerfil,
   AccionAdmin, Sede, Noticia, Imagen,
   DocenteSede, CursoDocente, VideoYoutube,
+  SeguimientoMateria, DocumentoDocente, SeguimientoInclusion,
 } = require('../models');
 const { emailService }      = require('../services/email.service');
 const { subirImagen } = require('../services/cloudinary.service');
@@ -607,12 +608,15 @@ router.delete('/usuarios/eliminar-definitivo', soloAdmin, async (req, res) => {
 
     const nombre = usuario.nombre;
 
-    // Reasignar contenido al admin que ejecuta la acción (autor_id es NOT NULL)
+    // Limpiar/reasignar todas las FKs NOT NULL antes de borrar el usuario
     await Noticia.update({ autor_id: req.usuario.id }, { where: { autor_id: usuario.id } });
     await VideoYoutube.update({ autor_id: req.usuario.id }, { where: { autor_id: usuario.id } });
+    await AccionAdmin.update({ admin_id: req.usuario.id }, { where: { admin_id: usuario.id } });
+    await SeguimientoInclusion.update({ registrado_por: req.usuario.id }, { where: { registrado_por: usuario.id } });
+    await DocumentoDocente.destroy({ where: { docente_id: usuario.id } });
+    await SeguimientoMateria.destroy({ where: { docente_id: usuario.id } });
     await DocenteSede.destroy({ where: { usuario_id: usuario.id } });
     await CursoDocente.destroy({ where: { usuario_id: usuario.id } });
-    await AccionAdmin.update({ admin_id: null }, { where: { admin_id: usuario.id } });
 
     if (usuario.perfil) await usuario.perfil.destroy();
     await usuario.destroy();
