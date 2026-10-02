@@ -38,6 +38,7 @@ export class Home implements OnInit, OnDestroy, AfterViewInit {
   carruselActual  = signal(0);
   carruselPausado = signal(false);
   private carruselTimer: any = null;
+  private feedTimer: any = null;
 
   /* ── Blogs de docentes ──────────────────────────────── */
   docentesConBlog = signal<{ nombre: string; area: string; fotoUrl: string | null; urlBlog: string }[]>([]);
@@ -212,6 +213,14 @@ export class Home implements OnInit, OnDestroy, AfterViewInit {
         this.feedPagina.set(pagina);
         this.cargandoFeed.set(false);
         this.cdr.markForCheck();
+        // Inicia refresco automático solo la primera vez
+        if (pagina === 1 && !this.feedTimer) {
+          this.zone.runOutsideAngular(() => {
+            this.feedTimer = setInterval(() => {
+              this.zone.run(() => this.cargarFeed(1));
+            }, 2 * 60 * 1000); // cada 2 minutos
+          });
+        }
       },
       error: () => {
         this.cargandoFeed.set(false);
@@ -247,6 +256,7 @@ export class Home implements OnInit, OnDestroy, AfterViewInit {
 
   ngOnDestroy() {
     if (this.carruselTimer) clearInterval(this.carruselTimer);
+    if (this.feedTimer) clearInterval(this.feedTimer);
   }
 
   onFotoLoad(event: Event) {
