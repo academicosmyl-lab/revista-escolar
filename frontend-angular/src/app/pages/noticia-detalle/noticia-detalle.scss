@@ -140,6 +140,35 @@
 .det-ficha-label { font-family: 'Source Sans 3', sans-serif; font-size: 0.62rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #D4A853; }
 .det-ficha-valor { font-family: 'Source Sans 3', sans-serif; font-size: 0.88rem; color: #2C3E50; font-weight: 600; }
 
+.det-ficha-autor {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 0; border-bottom: 1px solid #f0f0f0;
+}
+.det-autor-foto {
+  width: 48px; height: 48px; border-radius: 50%;
+  object-fit: cover; flex-shrink: 0;
+  border: 2px solid #D4A853;
+
+  &--inicial {
+    background: #A94455; color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 1.1rem;
+  }
+}
+.det-autor-info {
+  display: flex; flex-direction: column; gap: 2px; min-width: 0;
+}
+.det-autor-nombre {
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.88rem; font-weight: 700; color: #2C3E50;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.det-autor-cargo {
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.72rem; color: #888; font-style: italic;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+
 /* ── GALERÍA ───────────────────────────────────────────── */
 .det-galeria-seccion { background: #F5F7FA; padding: 48px 32px; border-top: 1px solid #e8e8e8; @media (max-width: 580px) { padding: 32px 16px; } }
 .det-galeria-inner { max-width: 1200px; margin: 0 auto; }

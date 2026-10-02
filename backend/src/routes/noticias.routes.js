@@ -3,7 +3,7 @@
  */
 const { Router } = require('express');
 const { Op } = require('sequelize');
-const { Noticia, Imagen, Categoria, Usuario, Sede } = require('../models');
+const { Noticia, Imagen, Categoria, Usuario, Sede, PerfilDocente } = require('../models');
 const { autenticar, requiereRol } = require('../middlewares/auth.middleware');
 const { uploadNoticias, subirImagen, eliminarImagen } = require('../services/cloudinary.service');
 const { coordinador } = require('../agents/coordinator.agent');
@@ -72,7 +72,8 @@ router.get('/:id', async (req, res, next) => {
     const noticia = await Noticia.findOne({
       where: { id: req.params.id, estado: 'publicada' },
       include: [
-        { model: Usuario, as: 'autor', attributes: ['nombre'] },
+        { model: Usuario, as: 'autor', attributes: ['nombre'],
+          include: [{ model: PerfilDocente, as: 'perfil', attributes: ['foto_url', 'cargo', 'titulo_profesional'], required: false }] },
         { model: Categoria, as: 'categoria', attributes: ['nombre', 'color'] },
         { model: Imagen, as: 'imagenes' },
       ],

@@ -125,9 +125,21 @@
       <div class="det-aside-bloque">
         <div class="det-aside-titulo">Ficha</div>
         @if (noticia.autor) {
-          <div class="det-ficha-item">
-            <span class="det-ficha-label">Autor</span>
-            <span class="det-ficha-valor">{{ noticia.autor.nombre }}</span>
+          <div class="det-ficha-autor">
+            @if (autorFotoUrl) {
+              <img class="det-autor-foto" [src]="autorFotoUrl" [alt]="noticia.autor.nombre">
+            } @else {
+              <div class="det-autor-foto det-autor-foto--inicial">
+                {{ noticia.autor.nombre.charAt(0) }}
+              </div>
+            }
+            <div class="det-autor-info">
+              <span class="det-ficha-label">Autor</span>
+              <span class="det-autor-nombre">{{ noticia.autor.nombre }}</span>
+              @if (autorCargo) {
+                <span class="det-autor-cargo">{{ autorCargo }}</span>
+              }
+            </div>
           </div>
         }
         @if (noticia.categoria) {

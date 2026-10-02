@@ -79,6 +79,14 @@ export class NoticiaDetalle implements OnInit {
     });
   }
 
+  get autorFotoUrl(): string | null {
+    return (this.noticia?.autor as any)?.perfil?.foto_url ?? null;
+  }
+  get autorCargo(): string | null {
+    const p = (this.noticia?.autor as any)?.perfil;
+    return p?.cargo ?? p?.titulo_profesional ?? null;
+  }
+
   get imagenPrincipal(): string | null {
     return this.noticia?.imagenes?.[0]?.url ?? null;
   }
