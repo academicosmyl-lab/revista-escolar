@@ -46,6 +46,8 @@ app.use(helmet({
 const CORS_ALLOWED = [
   'https://revista-escolar-zeta.vercel.app',
   'https://academicosmyl-lab.github.io',
+  'https://institutotecnicoindustrial.com.co',
+  'https://www.institutotecnicoindustrial.com.co',
   process.env.FRONTEND_URL,
   process.env.FRONTEND_URL_ALT,
   'http://localhost:4200',
