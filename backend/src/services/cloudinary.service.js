@@ -7,6 +7,7 @@ const cloudinary = require('cloudinary').v2;
 const multer = require('multer');
 const path = require('path');
 const { Readable } = require('stream');
+const sharp = require('sharp');
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -36,8 +37,9 @@ const fileFilterDocs = (req, file, cb) => {
   else cb(new Error('Tipo de archivo no permitido'), false);
 };
 
-const uploadNoticias  = multer({ storage: memStorage, fileFilter, limits: { fileSize: 5 * 1024 * 1024, files: 2 } });
-const uploadPerfil    = multer({ storage: memStorage, fileFilter, limits: { fileSize: 3 * 1024 * 1024, files: 1 } });
+// Límite generoso — sharp normaliza antes de subir a Cloudinary
+const uploadNoticias  = multer({ storage: memStorage, fileFilter, limits: { fileSize: 20 * 1024 * 1024, files: 2 } });
+const uploadPerfil    = multer({ storage: memStorage, fileFilter, limits: { fileSize: 20 * 1024 * 1024, files: 1 } });
 const uploadDocumento = multer({ storage: memStorage, fileFilter: fileFilterDocs, limits: { fileSize: 10 * 1024 * 1024, files: 1 } });
 
 /**
@@ -48,6 +50,21 @@ function subirBuffer(buffer, opciones = {}) {
   const dataUri = `data:${mime};base64,${buffer.toString('base64')}`;
   const { _mimetype, ...opts } = opciones;
   return cloudinary.uploader.upload(dataUri, opts);
+}
+
+/**
+ * Normaliza cualquier imagen antes de subir a Cloudinary:
+ * - Corrige orientación EXIF (fotos de celular llegan rotadas)
+ * - Redimensiona al máximo útil (1920px noticias / 800px perfil)
+ * - Mantiene proporción original
+ */
+async function normalizarImagen(buffer, tipo = 'noticias') {
+  const maxPx = (tipo === 'perfil') ? 800 : 1920;
+  return sharp(buffer)
+    .rotate()                    // corrige orientación EXIF automáticamente
+    .resize(maxPx, maxPx, { fit: 'inside', withoutEnlargement: true })
+    .jpeg({ quality: 88 })       // compresión ligera antes de que Cloudinary haga el webp
+    .toBuffer();
 }
 
 /**
@@ -62,8 +79,9 @@ async function subirImagen(buffer, tipo = 'noticias', mimetype = 'image/jpeg') {
     ? 'its-santander/seguimiento'
     : 'its-santander/noticias';
 
+  const bufferNorm = await normalizarImagen(buffer, tipo);
   const esNoticia = tipo === 'noticias';
-  return subirBuffer(buffer, {
+  return subirBuffer(bufferNorm, {
     folder,
     format: 'webp',
     transformation: esNoticia
@@ -73,7 +91,7 @@ async function subirImagen(buffer, tipo = 'noticias', mimetype = 'image/jpeg') {
         ]
       : [{ quality: 'auto', fetch_format: 'auto' }],
     public_id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
-    _mimetype: mimetype,
+    _mimetype: 'image/jpeg',
   });
 }
 
