@@ -22,7 +22,7 @@
   margin-bottom: 0.2rem;
 }
 .pan-titulo {
-  font-family: 'Playfair Display', Georgia, serif;
+  font-family: 'Cormorant Garamond', Georgia, serif;
   font-size: 1.6rem;
   color: white;
   margin: 0;
@@ -112,7 +112,7 @@
 .pan-stat-rojo   { border-top-color: var(--vinotinto); }
 .pan-stat-vino   { border-top-color: #9333ea; }
 .pan-stat-num {
-  font-family: 'Playfair Display', Georgia, serif;
+  font-family: 'Cormorant Garamond', Georgia, serif;
   font-size: 2.2rem; font-weight: 700;
   color: var(--gris); line-height: 1;
 }
@@ -146,7 +146,7 @@
   display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem;
 }
 .pan-form-titulo {
-  font-family: 'Playfair Display', Georgia, serif;
+  font-family: 'Cormorant Garamond', Georgia, serif;
   font-size: 1.2rem; color: var(--vinotinto); margin: 0;
 }
 .pan-form { display: flex; flex-direction: column; gap: 1.25rem; }
@@ -160,7 +160,7 @@
 .input-its {
   border: 1.5px solid #d1d5db;
   padding: 0.6rem 0.85rem;
-  font-family: 'Source Sans 3', sans-serif;
+  font-family: 'DM Sans', sans-serif;
   font-size: 0.95rem;
   background: #fafafa;
   width: 100%;
@@ -208,7 +208,7 @@
 .pan-seccion { margin-bottom: 2rem; }
 .pan-seccion-header { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.25rem; }
 .pan-seccion-titulo {
-  font-family: 'Playfair Display', Georgia, serif;
+  font-family: 'Cormorant Garamond', Georgia, serif;
   font-size: 1.25rem; color: var(--vinotinto); margin: 0;
 }
 
@@ -294,7 +294,7 @@
 }
 .pan-subida-icono { font-size: 1.4rem; }
 .pan-subida-titulo {
-  font-family: 'Playfair Display', Georgia, serif;
+  font-family: 'Cormorant Garamond', Georgia, serif;
   font-size: 1.2rem;
   color: var(--vinotinto);
   margin: 0;
@@ -660,7 +660,7 @@
   margin-bottom: 0.2rem;
 }
 .ep-modal-titulo {
-  font-family: 'Playfair Display', Georgia, serif;
+  font-family: 'Cormorant Garamond', Georgia, serif;
   font-size: 1.5rem;
   color: var(--gris);
   margin: 0;
@@ -803,7 +803,7 @@
   gap: 0.15rem;
 }
 .ep-overlay-nombre {
-  font-family: 'Playfair Display', Georgia, serif;
+  font-family: 'Cormorant Garamond', Georgia, serif;
   font-size: 1.05rem;
   font-weight: 700;
   color: white;
@@ -892,7 +892,7 @@
   width: 100%;
   border: 1.5px solid #d1d5db;
   padding: 0.5rem 0.75rem;
-  font-family: 'Source Sans 3', sans-serif;
+  font-family: 'DM Sans', sans-serif;
   font-size: 0.92rem;
   background: #fff;
   transition: border-color 0.2s;
@@ -902,7 +902,7 @@
   width: 100%;
   border: 1.5px solid #d1d5db;
   padding: 0.5rem 0.75rem;
-  font-family: 'Source Sans 3', sans-serif;
+  font-family: 'DM Sans', sans-serif;
   font-size: 0.92rem;
   background: #fff;
   resize: vertical;

@@ -30,7 +30,7 @@ $sombra-h:  0 8px 28px rgba(44, 62, 80, 0.14);
   background: $bg;
   min-height: 100vh;
   color: $texto;
-  font-family: 'Source Sans 3', system-ui, sans-serif;
+  font-family: 'DM Sans', system-ui, sans-serif;
 }
 
 // ── HERO ───────────────────────────────────────────────────────────────────────
@@ -81,7 +81,7 @@ $sombra-h:  0 8px 28px rgba(44, 62, 80, 0.14);
   line-height: 1.15;
   color: #fff;
   margin-bottom: 0.6rem;
-  font-family: 'Playfair Display', Georgia, serif;
+  font-family: 'Cormorant Garamond', Georgia, serif;
   text-shadow: 0 2px 8px rgba(0,0,0,0.2);
 }
 
@@ -109,7 +109,7 @@ $sombra-h:  0 8px 28px rgba(44, 62, 80, 0.14);
   font-weight: 900;
   color: $dorado-l;
   line-height: 1;
-  font-family: 'Playfair Display', serif;
+  font-family: 'Cormorant Garamond', serif;
 }
 
 .ind-badge-label {
@@ -437,7 +437,7 @@ $sombra-h:  0 8px 28px rgba(44, 62, 80, 0.14);
   line-height: 1;
   margin-bottom: 0.4rem;
   transition: color $trans;
-  font-family: 'Playfair Display', serif;
+  font-family: 'Cormorant Garamond', serif;
 
   &.azul  { color: $azul; }
   &.ambar { color: $dorado; }
@@ -689,7 +689,7 @@ $sombra-h:  0 8px 28px rgba(44, 62, 80, 0.14);
   font-size: 1.8rem;
   font-weight: 900;
   line-height: 1;
-  font-family: 'Playfair Display', serif;
+  font-family: 'Cormorant Garamond', serif;
 
   &.azul { color: $vinotinto; }
 }

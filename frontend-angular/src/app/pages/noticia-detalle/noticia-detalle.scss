@@ -12,13 +12,13 @@
 }
 .det-breadcrumb {
   display: flex; align-items: center; gap: 8px;
-  font-family: 'Source Sans 3', sans-serif; font-size: 0.72rem; color: #999; overflow: hidden;
+  font-family: 'DM Sans', sans-serif; font-size: 0.72rem; color: #999; overflow: hidden;
   a { color: #A94455; text-decoration: none; font-weight: 600; white-space: nowrap; transition: color 0.2s; &:hover { color: #D4A853; } }
   .det-sep { color: #ccc; }
   .det-bc-titulo { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 280px; @media (max-width: 580px) { display: none; } }
 }
 .det-btn-volver {
-  font-family: 'Source Sans 3', sans-serif; font-size: 0.72rem; font-weight: 700;
+  font-family: 'DM Sans', sans-serif; font-size: 0.72rem; font-weight: 700;
   letter-spacing: 0.06em; text-transform: uppercase; color: #A94455; text-decoration: none;
   border-bottom: 1px solid #D4A853; padding-bottom: 2px; white-space: nowrap; transition: color 0.2s; flex-shrink: 0;
   &:hover { color: #D4A853; }
@@ -39,16 +39,16 @@
 .det-header-inner { max-width: 860px; margin: 0 auto; position: relative; z-index: 2; }
 .det-eyebrow { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
 .det-badge-categoria {
-  font-family: 'Source Sans 3', sans-serif; font-size: 0.62rem; font-weight: 700;
+  font-family: 'DM Sans', sans-serif; font-size: 0.62rem; font-weight: 700;
   letter-spacing: 0.1em; text-transform: uppercase; padding: 5px 12px;
   color: #A94455; background: #D4A853;
 }
 .det-sede-eyebrow {
-  font-family: 'Source Sans 3', sans-serif; font-size: 0.7rem; font-weight: 600;
+  font-family: 'DM Sans', sans-serif; font-size: 0.7rem; font-weight: 600;
   letter-spacing: 0.08em; text-transform: uppercase; color: rgba(255,255,255,0.6);
 }
 .det-titulo {
-  font-family: 'Playfair Display', serif;
+  font-family: 'Cormorant Garamond', serif;
   font-size: clamp(1.9rem, 5vw, 3.2rem); font-weight: 900; color: white; line-height: 1.1;
   margin-bottom: 24px; max-width: 800px;
   animation: det-fade-up 400ms ease forwards;
@@ -58,7 +58,7 @@
   padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.15);
 }
 .det-meta-item {
-  font-family: 'Source Sans 3', sans-serif; font-size: 0.8rem;
+  font-family: 'DM Sans', sans-serif; font-size: 0.8rem;
   color: rgba(255,255,255,0.72); display: flex; flex-direction: column; gap: 2px;
 }
 .det-meta-label { font-size: 0.62rem; letter-spacing: 0.1em; text-transform: uppercase; color: #D4A853; font-weight: 700; }
@@ -76,12 +76,12 @@
   &.det-meta-autor-foto--inicial {
     background: #D4A853; color: #7B1D2C;
     display: flex; align-items: center; justify-content: center;
-    font-family: 'Playfair Display', serif; font-size: 1rem; font-weight: 700;
+    font-family: 'Cormorant Garamond', serif; font-size: 1rem; font-weight: 700;
   }
 }
 .det-meta-autor-info { display: flex; flex-direction: column; gap: 1px; }
-.det-meta-autor-nombre { font-family: 'Source Sans 3', sans-serif; font-size: 0.83rem; font-weight: 700; color: white; }
-.det-meta-autor-cargo { font-family: 'Source Sans 3', sans-serif; font-size: 0.65rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: #D4A853; }
+.det-meta-autor-nombre { font-family: 'DM Sans', sans-serif; font-size: 0.83rem; font-weight: 700; color: white; }
+.det-meta-autor-cargo { font-family: 'DM Sans', sans-serif; font-size: 0.65rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: #D4A853; }
 
 /* Banner servidor despertando */
 .det-banner-lento {
@@ -93,7 +93,7 @@
 .det-banner-lento-inner {
   max-width: 1200px; margin: 0 auto;
   display: flex; align-items: center; gap: 12px;
-  font-family: 'Source Sans 3', sans-serif; font-size: 0.78rem;
+  font-family: 'DM Sans', sans-serif; font-size: 0.78rem;
   color: rgba(255,255,255,0.7);
 }
 .det-banner-spinner {
@@ -124,12 +124,12 @@
   width: 100%; height: 560px;
   background: linear-gradient(135deg, #1f0b10 0%, #0f3d25 100%);
   display: flex; align-items: center; justify-content: center;
-  span { font-family: 'Playfair Display', serif; font-size: 1.2rem; color: rgba(255,255,255,0.2); letter-spacing: 0.1em; text-transform: uppercase; }
+  span { font-family: 'Cormorant Garamond', serif; font-size: 1.2rem; color: rgba(255,255,255,0.2); letter-spacing: 0.1em; text-transform: uppercase; }
   @media (max-width: 900px) { height: 400px; } @media (max-width: 580px) { height: 260px; }
 }
 .det-imagen-alt {
   max-width: 1200px; margin: 0 auto; padding: 8px 32px 0;
-  font-family: 'Source Sans 3', sans-serif; font-size: 0.75rem; color: #aaa; font-style: italic;
+  font-family: 'DM Sans', sans-serif; font-size: 0.75rem; color: #aaa; font-style: italic;
   @media (max-width: 580px) { padding: 8px 16px 0; }
 }
 
@@ -145,10 +145,10 @@
 
 /* Estilos del HTML del artículo (viene del backend) */
 .det-contenido-editorial {
-  font-family: 'Source Sans 3', sans-serif; font-size: 1.05rem; line-height: 1.8; color: #2C3E50;
+  font-family: 'DM Sans', sans-serif; font-size: 1.05rem; line-height: 1.8; color: #2C3E50;
   p  { margin-bottom: 24px; max-width: 72ch; }
-  h2 { font-family: 'Playfair Display', serif; font-size: 1.6rem; font-weight: 700; color: #A94455; margin: 40px 0 16px; line-height: 1.25; }
-  h3 { font-family: 'Playfair Display', serif; font-size: 1.25rem; font-weight: 700; color: #3A7D5C; margin: 32px 0 12px; }
+  h2 { font-family: 'Cormorant Garamond', serif; font-size: 1.6rem; font-weight: 700; color: #A94455; margin: 40px 0 16px; line-height: 1.25; }
+  h3 { font-family: 'Cormorant Garamond', serif; font-size: 1.25rem; font-weight: 700; color: #3A7D5C; margin: 32px 0 12px; }
   blockquote { margin: 32px 0; padding: 20px 24px; border-left: 4px solid #D4A853; background: #F5F7FA; font-style: italic; font-size: 1.1rem; color: #A94455; line-height: 1.7; }
   ul, ol { padding-left: 24px; margin-bottom: 24px; li { margin-bottom: 8px; line-height: 1.7; } }
   a { color: #A94455; text-decoration: underline; text-decoration-color: #D4A853; text-underline-offset: 3px; transition: color 0.2s; &:hover { color: #D4A853; } }
@@ -166,17 +166,17 @@
   background: white; padding: 20px 24px; margin-bottom: 20px; border-top: 3px solid #D4A853; box-shadow: 0 2px 12px rgba(0,0,0,0.05);
   @media (max-width: 768px) { margin-bottom: 0; }
 }
-.det-aside-titulo { font-family: 'Source Sans 3', sans-serif; font-size: 0.65rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #D4A853; margin-bottom: 16px; }
+.det-aside-titulo { font-family: 'DM Sans', sans-serif; font-size: 0.65rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #D4A853; margin-bottom: 16px; }
 .det-compartir-opciones { display: flex; flex-direction: column; gap: 8px; }
 .det-compartir-btn {
-  font-family: 'Source Sans 3', sans-serif; font-size: 0.82rem; font-weight: 600; color: #2C3E50;
+  font-family: 'DM Sans', sans-serif; font-size: 0.82rem; font-weight: 600; color: #2C3E50;
   background: #F5F7FA; border: 1px solid #e0e0e0; padding: 10px 16px; cursor: pointer; text-align: left;
   transition: background 0.18s, color 0.18s, border-color 0.18s;
   &:hover { background: #A94455; color: white; border-color: #A94455; }
 }
 .det-ficha-item { display: flex; flex-direction: column; gap: 2px; padding: 10px 0; border-bottom: 1px solid #f0f0f0; &:last-child { border-bottom: none; } }
-.det-ficha-label { font-family: 'Source Sans 3', sans-serif; font-size: 0.62rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #D4A853; }
-.det-ficha-valor { font-family: 'Source Sans 3', sans-serif; font-size: 0.88rem; color: #2C3E50; font-weight: 600; }
+.det-ficha-label { font-family: 'DM Sans', sans-serif; font-size: 0.62rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #D4A853; }
+.det-ficha-valor { font-family: 'DM Sans', sans-serif; font-size: 0.88rem; color: #2C3E50; font-weight: 600; }
 
 .det-ficha-autor {
   display: flex; align-items: center; gap: 12px;
@@ -197,12 +197,12 @@
   display: flex; flex-direction: column; gap: 2px; min-width: 0;
 }
 .det-autor-nombre {
-  font-family: 'Source Sans 3', sans-serif;
+  font-family: 'DM Sans', sans-serif;
   font-size: 0.88rem; font-weight: 700; color: #2C3E50;
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 .det-autor-cargo {
-  font-family: 'Source Sans 3', sans-serif;
+  font-family: 'DM Sans', sans-serif;
   font-size: 0.72rem; color: #888; font-style: italic;
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
@@ -210,8 +210,8 @@
 /* ── GALERÍA ───────────────────────────────────────────── */
 .det-galeria-seccion { background: #F5F7FA; padding: 48px 32px; border-top: 1px solid #e8e8e8; @media (max-width: 580px) { padding: 32px 16px; } }
 .det-galeria-inner { max-width: 1200px; margin: 0 auto; }
-.det-galeria-eyebrow { font-family: 'Source Sans 3', sans-serif; font-size: 0.68rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #D4A853; margin-bottom: 8px; }
-.det-galeria-titulo { font-family: 'Playfair Display', serif; font-size: 1.4rem; color: #A94455; margin-bottom: 24px; }
+.det-galeria-eyebrow { font-family: 'DM Sans', sans-serif; font-size: 0.68rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #D4A853; margin-bottom: 8px; }
+.det-galeria-titulo { font-family: 'Cormorant Garamond', serif; font-size: 1.4rem; color: #A94455; margin-bottom: 24px; }
 .det-galeria-grid {
   display: grid; grid-template-columns: repeat(3,1fr); gap: 10px;
   @media (max-width: 768px) { grid-template-columns: repeat(2,1fr); }
@@ -240,7 +240,7 @@
 .det-galeria-alt {
   position: absolute; bottom: 0; left: 0; right: 0;
   background: linear-gradient(to top, rgba(0,0,0,0.65) 0%, transparent 100%);
-  padding: 16px 12px 10px; font-family: 'Source Sans 3', sans-serif;
+  padding: 16px 12px 10px; font-family: 'DM Sans', sans-serif;
   font-size: 0.72rem; color: rgba(255,255,255,0.9); font-style: italic;
   opacity: 0; transition: opacity 0.25s;
   .det-galeria-item:hover & { opacity: 1; }
@@ -290,7 +290,7 @@
 @keyframes lbImgIn { from { transform: scale(0.94); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 
 .lb-caption {
-  font-family: 'Source Sans 3', sans-serif; font-size: 0.82rem;
+  font-family: 'DM Sans', sans-serif; font-size: 0.82rem;
   color: rgba(255,255,255,0.7); text-align: center; font-style: italic;
   max-width: 600px;
 }
@@ -308,9 +308,9 @@
 /* ── RELACIONADAS ──────────────────────────────────────── */
 .det-relacionadas { max-width: 1200px; margin: 0 auto; padding: 48px 32px 80px; @media (max-width: 580px) { padding: 32px 16px 64px; } }
 .det-rel-header { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 24px; gap: 16px; }
-.det-rel-titulo { font-family: 'Playfair Display', serif; font-size: clamp(1.2rem,3vw,1.6rem); color: #A94455; }
+.det-rel-titulo { font-family: 'Cormorant Garamond', serif; font-size: clamp(1.2rem,3vw,1.6rem); color: #A94455; }
 .det-rel-ver-todas {
-  font-family: 'Source Sans 3', sans-serif; font-size: 0.72rem; font-weight: 600; letter-spacing: 0.06em;
+  font-family: 'DM Sans', sans-serif; font-size: 0.72rem; font-weight: 600; letter-spacing: 0.06em;
   text-transform: uppercase; color: #A94455; text-decoration: none; border-bottom: 1px solid #D4A853;
   padding-bottom: 2px; white-space: nowrap; transition: color 0.2s; &:hover { color: #D4A853; }
 }
@@ -329,16 +329,16 @@
 .det-rel-img-placeholder { width: 100%; height: 160px; background: linear-gradient(135deg, #EEF2F7 0%, #dde5dd 100%); }
 .det-rel-cuerpo { padding: 16px 20px 20px; flex: 1; display: flex; flex-direction: column; }
 .det-rel-badge {
-  font-family: 'Source Sans 3', sans-serif; font-size: 0.58rem; font-weight: 700;
+  font-family: 'DM Sans', sans-serif; font-size: 0.58rem; font-weight: 700;
   letter-spacing: 0.1em; text-transform: uppercase; padding: 3px 8px; color: white;
   background: #A94455; margin-bottom: 10px; align-self: flex-start;
 }
 .det-rel-card-titulo {
-  font-family: 'Playfair Display', serif; font-size: 0.95rem; font-weight: 700; color: #A94455;
+  font-family: 'Cormorant Garamond', serif; font-size: 0.95rem; font-weight: 700; color: #A94455;
   line-height: 1.3; margin-bottom: auto;
   display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
 }
-.det-rel-fecha { font-family: 'Source Sans 3', sans-serif; font-size: 0.68rem; color: #bbb; margin-top: 12px; }
+.det-rel-fecha { font-family: 'DM Sans', sans-serif; font-size: 0.68rem; color: #bbb; margin-top: 12px; }
 
 /* ── SKELETON DETALLE ──────────────────────────────────── */
 @keyframes det-shimmer {
@@ -364,8 +364,8 @@
 /* ── ERROR DETALLE ─────────────────────────────────────── */
 .det-error { max-width: 600px; margin: 80px auto; padding: 0 32px; text-align: center; @media (max-width: 580px) { padding: 0 16px; margin: 48px auto; } }
 .det-error-linea { width: 48px; height: 3px; background: #D4A853; margin: 0 auto 24px; }
-.det-error-titulo { font-family: 'Playfair Display', serif; font-size: 1.5rem; color: #A94455; margin-bottom: 12px; }
-.det-error-texto { font-family: 'Source Sans 3', sans-serif; font-size: 0.9rem; color: #888; margin-bottom: 28px; line-height: 1.7; }
+.det-error-titulo { font-family: 'Cormorant Garamond', serif; font-size: 1.5rem; color: #A94455; margin-bottom: 12px; }
+.det-error-texto { font-family: 'DM Sans', sans-serif; font-size: 0.9rem; color: #888; margin-bottom: 28px; line-height: 1.7; }
 
 /* ── ANIMACIÓN ─────────────────────────────────────────── */
 @keyframes det-fade-up {
