@@ -282,13 +282,13 @@
 
       <!-- Stage — el álbum -->
       <div class="gal-libro-stage">
-        <div [class]="'gal-libro-book ' + bookFlipClass">
+        <div class="gal-libro-book">
 
           <!-- Brillo dorado sobre el libro -->
           <div class="gal-libro-shimmer" aria-hidden="true"></div>
 
           <!-- PÁGINA IZQUIERDA -->
-          <div class="gal-libro-pag pag-izq">
+          <div [class]="'gal-libro-pag pag-izq ' + pagIzqClass">
             @if (fotoIzq(); as foto) {
               <div class="gal-foto-mount"
                    [style.--rot]="fotoRot(paginaLibro() * 2) + 'deg'"
@@ -311,7 +311,7 @@
           </div>
 
           <!-- PÁGINA DERECHA -->
-          <div class="gal-libro-pag pag-der">
+          <div [class]="'gal-libro-pag pag-der ' + pagDerClass">
             @if (fotoDer(); as foto) {
               <div class="gal-foto-mount"
                    [style.--rot]="fotoRot(paginaLibro() * 2 + 1) + 'deg'"
@@ -335,7 +335,7 @@
       <div class="gal-libro-controles">
         <button class="gal-libro-btn-pag"
                 (click)="paginaAnterior()"
-                [disabled]="paginaLibro() === 0 || !!bookFlipClass">
+                [disabled]="paginaLibro() === 0 || pagFlipping">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="16"><polyline points="15 18 9 12 15 6"/></svg>
           Anterior
         </button>
@@ -348,7 +348,7 @@
 
         <button class="gal-libro-btn-pag"
                 (click)="paginaSiguiente()"
-                [disabled]="paginaLibro() >= spreadsTotal() - 1 || !!bookFlipClass">
+                [disabled]="paginaLibro() >= spreadsTotal() - 1 || pagFlipping">
           Siguiente
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="16"><polyline points="9 18 15 12 9 6"/></svg>
         </button>

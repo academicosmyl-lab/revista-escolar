@@ -48,8 +48,10 @@ export class Galeria implements OnInit {
   flipClass        = '';
 
   paginaLibro   = signal(0);
-  bookFlipClass  = '';
   bookEntrando   = false;
+  pagFlipping    = false;
+  pagDerClass    = '';
+  pagIzqClass    = '';
 
   categorias: string[] = [];
 
@@ -112,8 +114,10 @@ export class Galeria implements OnInit {
   abrirCapitulo(cap: Capitulo) {
     this.capituloActivo.set(cap);
     this.paginaLibro.set(0);
-    this.bookFlipClass = '';
-    this.bookEntrando  = true;
+    this.pagFlipping  = false;
+    this.pagDerClass  = '';
+    this.pagIzqClass  = '';
+    this.bookEntrando = true;
     this.vista.set('libro');
     document.body.style.overflow = 'hidden';
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -159,28 +163,46 @@ export class Galeria implements OnInit {
 
   paginaAnterior() {
     const p = this.paginaLibro();
-    if (p <= 0 || this.bookFlipClass) return;
-    this.bookFlipClass = 'libro-fp-prev';
+    if (p <= 0 || this.pagFlipping) return;
+    this.pagFlipping = true;
+    // Página izquierda gira desde su bisagra derecha (lomo)
+    this.pagIzqClass = 'pag-out-prev';
+    this.pagDerClass = 'pag-xfade-out';
     this.cdr.markForCheck();
     setTimeout(() => {
       this.paginaLibro.set(p - 1);
-      this.bookFlipClass = 'libro-fi-prev';
+      this.pagIzqClass = 'pag-in-prev';
+      this.pagDerClass = 'pag-xfade-in';
       this.cdr.markForCheck();
-      setTimeout(() => { this.bookFlipClass = ''; this.cdr.markForCheck(); }, 400);
-    }, 400);
+      setTimeout(() => {
+        this.pagIzqClass = '';
+        this.pagDerClass = '';
+        this.pagFlipping = false;
+        this.cdr.markForCheck();
+      }, 360);
+    }, 360);
   }
 
   paginaSiguiente() {
     const p = this.paginaLibro();
-    if (p >= this.spreadsTotal() - 1 || this.bookFlipClass) return;
-    this.bookFlipClass = 'libro-fp-next';
+    if (p >= this.spreadsTotal() - 1 || this.pagFlipping) return;
+    this.pagFlipping = true;
+    // Página derecha gira desde su bisagra izquierda (lomo)
+    this.pagDerClass = 'pag-out-next';
+    this.pagIzqClass = 'pag-xfade-out';
     this.cdr.markForCheck();
     setTimeout(() => {
       this.paginaLibro.set(p + 1);
-      this.bookFlipClass = 'libro-fi-next';
+      this.pagDerClass = 'pag-in-next';
+      this.pagIzqClass = 'pag-xfade-in';
       this.cdr.markForCheck();
-      setTimeout(() => { this.bookFlipClass = ''; this.cdr.markForCheck(); }, 400);
-    }, 400);
+      setTimeout(() => {
+        this.pagDerClass = '';
+        this.pagIzqClass = '';
+        this.pagFlipping = false;
+        this.cdr.markForCheck();
+      }, 360);
+    }, 360);
   }
 
   fotosVisibles(): Foto[] {
