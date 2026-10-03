@@ -21,47 +21,53 @@
     </div>
   </section>
 
-  <!-- Álbum destacado — 90 años -->
+  <!-- Álbum destacado — hero libro flotante -->
   @if (albumDestacado) {
-    <div class="gal-dest-wrap">
-      <div class="gal-dest-card" (click)="abrirAlbum(albumDestacado)">
-          <div class="gal-dest-overlay"></div>
+    <section class="gal-hero-album" [class.abriendo]="heroAbriendo">
 
-        <!-- Destellos dorados -->
-        <span class="gal-dest-shimmer" aria-hidden="true"></span>
-
-        <!-- Contenido -->
-        <div class="gal-dest-content">
-          <span class="gal-dest-badge">✦ Edición Especial</span>
-          <h2 class="gal-dest-nombre">{{ albumDestacado.nombre }}</h2>
-          @if (albumDestacado.subtitulo) {
-            <p class="gal-dest-sub">{{ albumDestacado.subtitulo }}</p>
-          }
-          <div class="gal-dest-meta">
-            <span>{{ albumDestacado.total_fotos ?? 0 }} fotografías</span>
-            <span>·</span>
-            <span>{{ albumAnio(albumDestacado) }}</span>
-          </div>
-          <button class="gal-dest-cta">
-            Abrir álbum
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="15"><polyline points="9 18 15 12 9 6"/></svg>
-          </button>
-        </div>
-
-        <!-- Portada como "libro" con escudo encima -->
-        @if (albumDestacado.portada_url) {
-          <div class="gal-dest-libro">
-            <div class="gal-dest-lomo"></div>
-            <img [src]="albumDestacado.portada_url" [alt]="albumDestacado.nombre">
-            <div class="gal-dest-escudo-wrap">
-              <img class="gal-dest-escudo"
-                src="https://res.cloudinary.com/div57iwsy/image/upload/v1790993416/its-santander/galeria/gal-1790993414928-j0f2uz.webp"
-                alt="Escudo 90 años ITI">
-            </div>
-          </div>
-        }
+      <!-- Ambiente oscuro con orbs dorados -->
+      <div class="gal-ha-bg" aria-hidden="true">
+        <span class="gal-ha-orb o1"></span>
+        <span class="gal-ha-orb o2"></span>
+        <span class="gal-ha-orb o3"></span>
+        <span class="gal-ha-p p1"></span>
+        <span class="gal-ha-p p2"></span>
+        <span class="gal-ha-p p3"></span>
+        <span class="gal-ha-p p4"></span>
+        <span class="gal-ha-p p5"></span>
       </div>
-    </div>
+
+      <!-- Texto izquierda -->
+      <div class="gal-ha-info">
+        <span class="gal-ha-eyebrow">✦ Edición Especial · Aniversario</span>
+        <h2 class="gal-ha-nombre">{{ albumDestacado.nombre }}</h2>
+        @if (albumDestacado.subtitulo) {
+          <p class="gal-ha-sub">{{ albumDestacado.subtitulo }}</p>
+        }
+        <div class="gal-ha-meta">
+          <span>{{ albumDestacado.total_fotos ?? 0 }} fotografías</span>
+          <span class="gal-ha-sep">·</span>
+          <span>{{ albumAnio(albumDestacado) }}</span>
+        </div>
+        <button class="gal-ha-cta" (click)="abrirAlbumHero()">
+          <span>Abrir álbum</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="15"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>
+      </div>
+
+      <!-- Libro flotante — clic lo abre -->
+      <div class="gal-ha-libro" [class.abriendo]="heroAbriendo" (click)="abrirAlbumHero()">
+        <div class="gal-ha-lomo"></div>
+        @if (albumDestacado.portada_url) {
+          <img class="gal-ha-portada" [src]="albumDestacado.portada_url" [alt]="albumDestacado.nombre">
+        }
+        <img class="gal-ha-escudo"
+          src="https://res.cloudinary.com/div57iwsy/image/upload/v1790993416/its-santander/galeria/gal-1790993414928-j0f2uz.webp"
+          alt="" aria-hidden="true">
+        <span class="gal-ha-shimmer" aria-hidden="true"></span>
+      </div>
+
+    </section>
   }
 
   <!-- Tabs de categoría -->

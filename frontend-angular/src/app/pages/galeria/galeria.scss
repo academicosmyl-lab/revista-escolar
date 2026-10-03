@@ -122,24 +122,278 @@
 
 /* ── ÁLBUM DESTACADO (90 AÑOS) ─────────────────────────── */
 
-.gal-dest-wrap {
-  background: #F8F7F5;
-  padding: 2rem 1.5rem 0;
-  max-width: 1280px;
-  margin: 0 auto;
-}
+/* ── HERO ÁLBUM DESTACADO ──────────────────────────────── */
 
-@keyframes dest-shimmer {
-  0%   { transform: translateX(-110%) skewX(-20deg); opacity:0; }
+@keyframes ha-float {
+  0%,100% { transform: translateY(0) rotate(-2deg); }
+  50%     { transform: translateY(-12px) rotate(-2deg); }
+}
+@keyframes ha-shimmer {
+  0%   { transform: translateX(-130%) skewX(-18deg); opacity: 0; }
   15%  { opacity: 1; }
-  85%  { opacity: .85; }
-  100% { transform: translateX(210%)  skewX(-20deg); opacity:0; }
+  85%  { opacity: .9; }
+  100% { transform: translateX(230%)  skewX(-18deg); opacity: 0; }
 }
-@keyframes dest-float {
-  0%,100% { transform: translateY(0)   rotate(-1.5deg); }
-  50%     { transform: translateY(-8px) rotate(-1.5deg); }
+@keyframes ha-libro-abrir {
+  0%   { transform: scale(1) rotate(-2deg); opacity: 1; }
+  60%  { transform: scale(3.5) rotate(0deg); opacity: 1; }
+  100% { transform: scale(9) rotate(0deg); opacity: 0; }
+}
+@keyframes ha-flash {
+  0%,100% { opacity: 0; }
+  45%     { opacity: 1; }
+}
+@keyframes ha-orb {
+  0%,100% { transform: scale(1) translate(0,0); }
+  50%     { transform: scale(1.15) translate(15px,-10px); }
+}
+@keyframes ha-particula {
+  0%   { transform: translateY(0) scale(1); opacity: .8; }
+  100% { transform: translateY(-120px) scale(.3); opacity: 0; }
+}
+@keyframes ha-entrada-libro {
+  from { opacity: 0; transform: translateY(40px) rotate(-2deg) scale(.9); }
+  to   { opacity: 1; transform: translateY(0)    rotate(-2deg) scale(1); }
+}
+@keyframes ha-entrada-info {
+  from { opacity: 0; transform: translateX(-30px); }
+  to   { opacity: 1; transform: translateX(0); }
 }
 
+.gal-hero-album {
+  position: relative;
+  width: 100%;
+  background: linear-gradient(160deg, #0A0800 0%, #1A1000 45%, #0D0A00 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4rem;
+  padding: 4rem 3rem 5rem;
+  overflow: hidden;
+
+  // Flash dorado al abrir
+  &.abriendo::after {
+    content: '';
+    position: fixed; inset: 0; z-index: 9999;
+    background: rgba(212,175,55,.35);
+    animation: ha-flash .65s ease forwards;
+    pointer-events: none;
+  }
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: 2.5rem;
+    padding: 3rem 1.5rem 4rem;
+  }
+}
+
+// Fondo con orbs y partículas
+.gal-ha-bg { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+
+.gal-ha-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(70px);
+  animation: ha-orb 8s ease-in-out infinite;
+
+  &.o1 {
+    width: 420px; height: 420px;
+    background: radial-gradient(circle, rgba(180,130,10,.35), transparent 70%);
+    top: -100px; left: -80px;
+    animation-delay: 0s;
+  }
+  &.o2 {
+    width: 300px; height: 300px;
+    background: radial-gradient(circle, rgba(120,80,5,.3), transparent 70%);
+    bottom: -60px; right: 10%;
+    animation-delay: 3s;
+  }
+  &.o3 {
+    width: 200px; height: 200px;
+    background: radial-gradient(circle, rgba(212,175,55,.2), transparent 70%);
+    top: 40%; left: 50%;
+    animation-delay: 5s;
+  }
+}
+
+.gal-ha-p {
+  position: absolute;
+  width: 4px; height: 4px;
+  border-radius: 50%;
+  background: #D4AF37;
+  animation: ha-particula linear infinite;
+
+  &.p1 { left: 15%; bottom: 20%; animation-duration: 4s;  opacity: .6; animation-delay: 0s; }
+  &.p2 { left: 35%; bottom: 10%; animation-duration: 5.5s; opacity: .5; animation-delay: 1s; }
+  &.p3 { left: 60%; bottom: 30%; animation-duration: 3.5s; opacity: .7; animation-delay: 2s; }
+  &.p4 { left: 80%; bottom: 15%; animation-duration: 6s;   opacity: .4; animation-delay: .5s; }
+  &.p5 { left: 50%; bottom: 5%;  animation-duration: 4.5s; opacity: .6; animation-delay: 1.5s; }
+}
+
+// Bloque de texto izquierda
+.gal-ha-info {
+  position: relative; z-index: 2;
+  flex: 1;
+  max-width: 480px;
+  animation: ha-entrada-info .8s cubic-bezier(.2,.8,.4,1) both .1s;
+
+  @media (max-width: 768px) { text-align: center; order: 2; }
+}
+
+.gal-ha-eyebrow {
+  display: block;
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: .7rem;
+  font-weight: 700;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: #D4AF37;
+  margin-bottom: .9rem;
+}
+
+.gal-ha-nombre {
+  font-family: 'Dancing Script', cursive;
+  font-size: clamp(2.2rem, 5vw, 3.8rem);
+  font-weight: 700;
+  color: #fff;
+  margin: 0 0 .5rem;
+  line-height: 1.1;
+  text-shadow: 0 0 50px rgba(212,175,55,.5), 0 2px 12px rgba(0,0,0,.6);
+}
+
+.gal-ha-sub {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-style: italic;
+  font-size: 1rem;
+  color: rgba(255,255,255,.55);
+  margin: 0 0 1rem;
+}
+
+.gal-ha-meta {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: .78rem;
+  color: rgba(255,255,255,.35);
+  margin-bottom: 1.8rem;
+
+  @media (max-width: 768px) { justify-content: center; }
+}
+.gal-ha-sep { color: rgba(212,175,55,.5); }
+
+.gal-ha-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: .45rem;
+  background: linear-gradient(135deg, #D4AF37 0%, #B8942A 100%);
+  border: none;
+  border-radius: 28px;
+  padding: 12px 26px;
+  color: #0D0800;
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: .85rem;
+  font-weight: 700;
+  letter-spacing: .04em;
+  cursor: pointer;
+  box-shadow: 0 6px 24px rgba(212,175,55,.4);
+  transition: all .2s;
+
+  &:hover {
+    background: linear-gradient(135deg, #F0C840 0%, #CCA030 100%);
+    box-shadow: 0 8px 32px rgba(212,175,55,.55);
+    transform: translateY(-2px);
+  }
+}
+
+// Libro flotante derecha
+.gal-ha-libro {
+  position: relative; z-index: 2;
+  flex-shrink: 0;
+  cursor: pointer;
+  animation: ha-float 5s ease-in-out infinite, ha-entrada-libro .9s cubic-bezier(.2,.8,.4,1) both;
+  transition: filter .3s;
+
+  &:hover { filter: brightness(1.08); }
+
+  // Animación de apertura al clic
+  &.abriendo {
+    animation: ha-libro-abrir .65s cubic-bezier(.4,0,1,1) forwards !important;
+    pointer-events: none;
+  }
+
+  @media (max-width: 768px) { order: 1; }
+}
+
+.gal-ha-portada {
+  display: block;
+  width: 260px;
+  height: 360px;
+  object-fit: cover;
+  border-radius: 4px 14px 14px 4px;
+  box-shadow:
+    0 30px 80px rgba(0,0,0,.8),
+    0 8px 20px rgba(0,0,0,.5),
+    6px 0 0 rgba(212,175,55,.35),
+    inset -2px 0 6px rgba(0,0,0,.3);
+
+  @media (max-width: 768px) { width: 180px; height: 250px; }
+}
+
+.gal-ha-lomo {
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 14px;
+  background: linear-gradient(180deg,
+    #E8C84A 0%, #A07820 25%,
+    #D4AF37 50%, #7A5C10 75%, #D4AF37 100%);
+  border-radius: 4px 0 0 4px;
+  box-shadow: 3px 0 12px rgba(0,0,0,.5), inset -2px 0 4px rgba(255,255,255,.1);
+}
+
+// Escudo sutil centrado sobre el libro
+.gal-ha-escudo {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 80px; height: 80px;
+  object-fit: contain;
+  opacity: .55;
+  border-radius: 50%;
+  filter: drop-shadow(0 0 12px rgba(212,175,55,.5));
+  pointer-events: none;
+  transition: opacity .3s;
+
+  @media (max-width: 768px) { width: 54px; height: 54px; }
+}
+
+.gal-ha-libro:hover .gal-ha-escudo { opacity: .75; }
+
+// Brillo que barre el libro
+.gal-ha-shimmer {
+  position: absolute; inset: 0;
+  border-radius: inherit;
+  overflow: hidden;
+  pointer-events: none;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0; bottom: 0; left: 0;
+    width: 35%;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255,215,0,.18) 40%,
+      rgba(255,255,255,.12) 55%,
+      rgba(255,215,0,.18) 70%,
+      transparent
+    );
+    animation: ha-shimmer 4.5s cubic-bezier(.4,0,.6,1) infinite 1s;
+  }
+}
+
+// ── Separador entre hero-album y el grid ─────────────────
 .gal-dest-card {
   position: relative;
   border-radius: 18px;

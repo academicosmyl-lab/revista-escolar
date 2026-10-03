@@ -54,6 +54,8 @@ export class Galeria implements OnInit {
   pagDerClass    = '';
   pagIzqClass    = '';
 
+  heroAbriendo  = false;
+
   categorias: string[] = [];
 
   ngOnInit() { this.cargarTodo(); }
@@ -94,6 +96,16 @@ export class Galeria implements OnInit {
   seleccionarCategoria(cat: string) {
     this.categoriaActiva.set(cat);
     this.cdr.markForCheck();
+  }
+
+  abrirAlbumHero() {
+    if (this.heroAbriendo || !this.albumDestacado) return;
+    this.heroAbriendo = true;
+    this.cdr.markForCheck();
+    setTimeout(() => {
+      this.heroAbriendo = false;
+      this.abrirAlbum(this.albumDestacado!);
+    }, 650);
   }
 
   abrirAlbum(album: Album) {
