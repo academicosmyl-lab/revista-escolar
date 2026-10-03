@@ -176,9 +176,33 @@ export class Galeria implements OnInit {
     return (((idx * 13 + 5) % 11) - 5) * 0.55;
   }
 
+  private playFlipSound(): void {
+    try {
+      const Ctx = (window as any).AudioContext || (window as any).webkitAudioContext;
+      if (!Ctx) return;
+      const ctx = new Ctx();
+      const sr = ctx.sampleRate;
+      const buf = ctx.createBuffer(1, Math.floor(sr * 0.13), sr);
+      const d = buf.getChannelData(0);
+      for (let i = 0; i < d.length; i++) {
+        const t = i / d.length;
+        d[i] = (Math.random() * 2 - 1) * Math.pow(Math.sin(t * Math.PI), 0.5) * (1 - t * 0.4);
+      }
+      const src = ctx.createBufferSource();
+      src.buffer = buf;
+      const filt = ctx.createBiquadFilter();
+      filt.type = 'bandpass'; filt.frequency.value = 3800; filt.Q.value = 0.7;
+      const gain = ctx.createGain(); gain.gain.value = 0.22;
+      src.connect(filt); filt.connect(gain); gain.connect(ctx.destination);
+      src.start();
+      setTimeout(() => { try { ctx.close(); } catch (_) {} }, 600);
+    } catch (_) {}
+  }
+
   paginaAnterior() {
     const p = this.paginaLibro();
     if (p <= 0 || this.pagFlipping) return;
+    this.playFlipSound();
     this.pagFlipping = true;
     // Página izquierda gira desde su bisagra derecha (lomo)
     this.pagIzqClass = 'pag-out-prev';
@@ -201,6 +225,7 @@ export class Galeria implements OnInit {
   paginaSiguiente() {
     const p = this.paginaLibro();
     if (p >= this.spreadsTotal() - 1 || this.pagFlipping) return;
+    this.playFlipSound();
     this.pagFlipping = true;
     // Página derecha gira desde su bisagra izquierda (lomo)
     this.pagDerClass = 'pag-out-next';

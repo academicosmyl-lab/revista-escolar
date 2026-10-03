@@ -336,6 +336,12 @@
           <!-- Brillo dorado sobre el libro -->
           <div class="gal-libro-shimmer" aria-hidden="true"></div>
 
+          <!-- Sombras dinámicas al pasar página -->
+          <div class="gal-flip-sombra izq" aria-hidden="true"
+               [class.activa]="pagDerClass === 'pag-out-next' || pagDerClass === 'pag-in-next'"></div>
+          <div class="gal-flip-sombra der" aria-hidden="true"
+               [class.activa]="pagIzqClass === 'pag-out-prev' || pagIzqClass === 'pag-in-prev'"></div>
+
           <!-- PÁGINA IZQUIERDA -->
           <div [class]="'gal-libro-pag pag-izq ' + pagIzqClass">
             @if (fotoIzq(); as foto) {
