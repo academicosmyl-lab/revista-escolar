@@ -1,150 +1,273 @@
-<!-- HERO -->
-<div class="gal-hero">
-  @if (!cargando && imagenHero) {
-    <img class="gal-hero-img" [src]="imagenHero.url" [alt]="imagenHero.altText ?? 'Galería ITI'">
-  } @else {
-    <div class="gal-hero-img-placeholder"></div>
-  }
-  <div class="gal-hero-overlay"></div>
-  <div class="gal-hero-content">
-    <div class="gal-hero-eyebrow">Instituto Técnico Industrial</div>
-    <h1 class="gal-hero-titulo">Galería Institucional</h1>
-    <p class="gal-hero-subtitulo">Fotos y videos de nuestra comunidad educativa</p>
-  </div>
-</div>
+<!-- ══════════════════════════════════════════════════════════
+     GALERÍA INSTITUCIONAL — 3 vistas: álbumes → TOC → fotos
+     ══════════════════════════════════════════════════════════ -->
 
-<!-- TABS DE FILTRO -->
-<div class="gal-tabs-wrap">
-  <div class="gal-tabs-inner">
-    <button class="gal-tab" [class.activo]="tabActiva === 'todas'"  (click)="cambiarTab('todas')">Todas</button>
-    <button class="gal-tab" [class.activo]="tabActiva === 'fotos'"  (click)="cambiarTab('fotos')">Fotos</button>
-    <button class="gal-tab" [class.activo]="tabActiva === 'videos'" (click)="cambiarTab('videos')">Videos</button>
-  </div>
-</div>
+<!-- ═══════════════════════════ VISTA 1: ÁLBUMES ════════════ -->
+@if (vista() === 'albums') {
 
-<!-- CUERPO PRINCIPAL -->
-<div class="gal-cuerpo">
+  <!-- Hero decorativo -->
+  <section class="gal-hero">
+    <div class="gal-hero-aurora"></div>
+    <div class="gal-hero-content">
+      <span class="gal-hero-eyebrow">Instituto Técnico Industrial Santander</span>
+      <h1 class="gal-hero-titulo">Galería</h1>
+      <p class="gal-hero-sub">Momentos que construyen nuestra historia</p>
+    </div>
+    <div class="gal-hero-wave">
+      <svg viewBox="0 0 1440 60" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M0,30 C360,60 1080,0 1440,30 L1440,60 L0,60 Z" fill="#F8F7F5"/>
+      </svg>
+    </div>
+  </section>
 
-  <!-- CARGANDO -->
-  @if (cargando) {
-    <div class="gal-skeleton-grid">
-      @for (sk of skeletons; track $index) {
-        <div class="gal-sk-item"></div>
+  <!-- Tabs de categoría -->
+  <div class="gal-cats-wrap">
+    <div class="gal-cats-inner">
+      @for (cat of categorias; track cat.key) {
+        <button class="gal-cat-tab" [class.activo]="categoriaActiva() === cat.key"
+          (click)="seleccionarCategoria(cat.key)">
+          {{ cat.label }}
+        </button>
       }
     </div>
-  }
+  </div>
 
-  <!-- ERROR -->
-  @if (!cargando && error) {
-    <div class="gal-vacio">
-      <div class="gal-vacio-linea"></div>
-      <h2 class="gal-vacio-titulo">No se pudo cargar la galería</h2>
-      <p class="gal-vacio-texto">{{ error }}</p>
+  <!-- Cuerpo -->
+  <div class="gal-cuerpo">
+
+    <!-- Skeletons -->
+    @if (cargando()) {
+      <div class="gal-sk-grid">
+        @for (s of [1,2,3,4,5,6]; track s) {
+          <div class="gal-sk-card"></div>
+        }
+      </div>
+    }
+
+    <!-- Error -->
+    @if (!cargando() && error()) {
+      <div class="gal-empty">
+        <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.5" width="48">
+          <circle cx="32" cy="32" r="28"/><path d="M32 20v12M32 40v2"/>
+        </svg>
+        <p>{{ error() }}</p>
+      </div>
+    }
+
+    <!-- Sin álbumes -->
+    @if (!cargando() && !error() && albums.length === 0) {
+      <div class="gal-empty">
+        <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.5" width="48">
+          <rect x="8" y="8" width="48" height="48" rx="4"/><circle cx="24" cy="24" r="5"/>
+          <polyline points="56 44 42 30 20 56"/>
+        </svg>
+        <h2>Sin álbumes aún</h2>
+        <p>Pronto se añadirán contenidos en esta categoría.</p>
+      </div>
+    }
+
+    <!-- Grid de álbumes -->
+    @if (!cargando() && !error() && albums.length > 0) {
+      <div class="gal-albums-grid">
+        @for (album of albums; track album.id; let i = $index) {
+          <article class="gal-album-card" [style.--i]="i" (click)="abrirAlbum(album)">
+            <div class="gal-album-cover">
+              @if (album.portada_url) {
+                <img [src]="album.portada_url" [alt]="album.nombre" loading="lazy">
+              } @else {
+                <div class="gal-album-no-cover">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" width="40">
+                    <rect x="3" y="3" width="18" height="18" rx="2"/>
+                    <circle cx="8.5" cy="8.5" r="1.5"/>
+                    <polyline points="21 15 16 10 5 21"/>
+                  </svg>
+                </div>
+              }
+              <div class="gal-album-lomo"></div>
+              <div class="gal-album-hover-cta">
+                <span>Ver álbum</span>
+              </div>
+              <div class="gal-album-count">{{ album.total_fotos ?? 0 }} fotos</div>
+            </div>
+            <div class="gal-album-info">
+              <h3 class="gal-album-nombre">{{ album.nombre }}</h3>
+              @if (album.subtitulo) {
+                <p class="gal-album-sub">{{ album.subtitulo }}</p>
+              }
+              <div class="gal-album-footer">
+                <span class="gal-album-year">{{ albumAnio(album) }}</span>
+                <span class="gal-album-caps">{{ album.total_capitulos ?? 0 }} cap.</span>
+              </div>
+            </div>
+          </article>
+        }
+      </div>
+    }
+
+  </div>
+}
+
+<!-- ═══════════════════════════ VISTA 2: TOC ══════════════════ -->
+@if (vista() === 'toc') {
+  @if (albumActivo(); as album) {
+
+    <div class="gal-toc-wrap">
+      <button class="gal-back-btn" (click)="volverAlbums()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="15"><polyline points="15 18 9 12 15 6"/></svg>
+        Todos los álbumes
+      </button>
+
+      <div class="gal-toc-layout">
+
+        <!-- Portada izquierda -->
+        <div class="gal-toc-portada">
+          <div class="gal-toc-portada-inner">
+            @if (album.portada_url) {
+              <img class="gal-toc-portada-img" [src]="album.portada_url" [alt]="album.nombre">
+            } @else {
+              <div class="gal-toc-portada-placeholder">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" width="60">
+                  <rect x="3" y="3" width="18" height="18" rx="2"/>
+                  <circle cx="8.5" cy="8.5" r="1.5"/>
+                  <polyline points="21 15 16 10 5 21"/>
+                </svg>
+              </div>
+            }
+            <div class="gal-toc-aurora"></div>
+            <div class="gal-toc-portada-meta">
+              <p class="gal-toc-portada-cat">{{ album.categoria | uppercase }}</p>
+              <h1 class="gal-toc-portada-titulo">{{ album.nombre }}</h1>
+              @if (album.subtitulo) {
+                <p class="gal-toc-portada-sub">{{ album.subtitulo }}</p>
+              }
+              <span class="gal-toc-portada-year">{{ albumAnio(album) }}</span>
+            </div>
+            <div class="gal-toc-lomo"></div>
+          </div>
+        </div>
+
+        <!-- Tabla de contenido derecha -->
+        <div class="gal-toc-right">
+          <div class="gal-toc-header">
+            <span class="gal-toc-eyebrow">Tabla de contenido</span>
+            <h2 class="gal-toc-heading">¿Qué quieres ver?</h2>
+            @if (album.descripcion) {
+              <p class="gal-toc-desc">{{ album.descripcion }}</p>
+            }
+          </div>
+
+          @if (!album.capitulos || album.capitulos.length === 0) {
+            <div class="gal-empty" style="padding:2rem 0">
+              <p>Este álbum aún no tiene capítulos publicados.</p>
+            </div>
+          }
+
+          <div class="gal-toc-list">
+            @for (cap of album.capitulos ?? []; track cap.id; let i = $index) {
+              <button class="gal-toc-entry" [style.--i]="i" (click)="abrirCapitulo(cap)">
+                <span class="gal-toc-num">{{ (i + 1).toString().padStart(2, '0') }}</span>
+                <span class="gal-toc-ico">{{ cap.icono }}</span>
+                <div class="gal-toc-body">
+                  <span class="gal-toc-titulo">{{ cap.titulo }}</span>
+                  <span class="gal-toc-count">{{ capFotosCount(cap) }} fotos</span>
+                </div>
+                <svg class="gal-toc-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16">
+                  <polyline points="9 18 15 12 9 6"/>
+                </svg>
+              </button>
+            }
+          </div>
+        </div>
+
+      </div>
     </div>
+
   }
+}
 
-  <!-- CONTENIDO -->
-  @if (!cargando && !error) {
+<!-- ═══════════════════════════ VISTA 3: FOTOS ═══════════════ -->
+@if (vista() === 'fotos') {
+  @if (capituloActivo(); as cap) {
 
-    <!-- GRID DE FOTOS -->
-    @if (tabActiva !== 'videos') {
-      @if (imagenesVisibles.length > 0) {
-        <div class="gal-grid">
-          @for (img of imagenesVisibles; track img.id; let i = $index) {
-            <button class="gal-item"
-                    [class.gal-item--portada]="esPortada(img)"
-                    [style.--i]="i"
-                    (click)="abrirLightbox(i)">
-              <img class="gal-item-img" [src]="img.url" [alt]="img.altText ?? 'Imagen galería'">
-              <div class="gal-item-overlay">
-                @if (img.altText) {
-                  <p class="gal-item-alt">{{ img.altText }}</p>
+    <div class="gal-fotos-wrap">
+
+      <!-- Cabecera -->
+      <div class="gal-fotos-header">
+        <button class="gal-back-btn" (click)="volverToc()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="15"><polyline points="15 18 9 12 15 6"/></svg>
+          {{ albumActivo()?.nombre }}
+        </button>
+        <div class="gal-fotos-title-row">
+          <span class="gal-fotos-ico">{{ cap.icono }}</span>
+          <h1 class="gal-fotos-titulo">{{ cap.titulo }}</h1>
+          <span class="gal-fotos-badge">{{ fotosVisibles().length }} fotos</span>
+        </div>
+      </div>
+
+      <!-- Sin fotos -->
+      @if (fotosVisibles().length === 0) {
+        <div class="gal-empty">
+          <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.5" width="48">
+            <rect x="8" y="8" width="48" height="48" rx="4"/><circle cx="24" cy="24" r="5"/>
+            <polyline points="56 44 42 30 20 56"/>
+          </svg>
+          <p>Aún no hay fotos en este capítulo.</p>
+        </div>
+      }
+
+      <!-- Masonry grid -->
+      @if (fotosVisibles().length > 0) {
+        <div class="gal-masonry">
+          @for (foto of fotosVisibles(); track foto.id; let i = $index) {
+            <button class="gal-masonry-item" [style.--i]="i" (click)="abrirLightbox(i)">
+              <img [src]="foto.url" [alt]="foto.descripcion || cap.titulo" loading="lazy">
+              <div class="gal-masonry-overlay">
+                @if (foto.descripcion) {
+                  <p class="gal-masonry-desc">{{ foto.descripcion }}</p>
                 }
+                <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" width="22" class="gal-masonry-zoom">
+                  <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                  <line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/>
+                </svg>
               </div>
             </button>
           }
         </div>
-      } @else if (tabActiva === 'fotos') {
-        <div class="gal-vacio">
-          <div class="gal-vacio-linea"></div>
-          <h2 class="gal-vacio-titulo">Sin fotos disponibles</h2>
-          <p class="gal-vacio-texto">Aún no hay imágenes publicadas en la galería.</p>
-        </div>
       }
-    }
 
-    <!-- SECCIÓN DE VIDEOS -->
-    @if (tabActiva !== 'fotos') {
-      @if (videosVisibles.length > 0) {
-        <section class="gal-videos-seccion">
-          @if (tabActiva === 'todas') {
-            <div class="gal-seccion-eyebrow">Multimedia</div>
-            <h2 class="gal-seccion-titulo">Videos institucionales</h2>
-          }
-          <div class="gal-videos-grid">
-            @for (v of videosVisibles; track v.id; let i = $index) {
-              <div class="gal-video-card" [style.--i]="i">
-                <div class="gal-video-thumb-wrap">
-                  <img class="gal-video-thumb"
-                       [src]="thumbnailYoutube(v.videoId)"
-                       [alt]="v.titulo ?? 'Video institucional'">
-                  <div class="gal-video-play-icon"></div>
-                </div>
-                <div class="gal-video-body">
-                  @if (v.titulo) {
-                    <div class="gal-video-titulo">{{ v.titulo }}</div>
-                  }
-                  <a class="gal-video-btn"
-                     [href]="urlYoutube(v.videoId)"
-                     target="_blank"
-                     rel="noopener noreferrer">Ver video</a>
-                </div>
-              </div>
-            }
-          </div>
-        </section>
-      } @else if (tabActiva === 'videos') {
-        <div class="gal-vacio">
-          <div class="gal-vacio-linea"></div>
-          <h2 class="gal-vacio-titulo">Sin videos disponibles</h2>
-          <p class="gal-vacio-texto">Aún no hay videos publicados.</p>
-        </div>
-      }
-    }
-
-    <!-- VACÍO GLOBAL (tab = todas sin contenido) -->
-    @if (tabActiva === 'todas' && imagenesVisibles.length === 0 && videosVisibles.length === 0) {
-      <div class="gal-vacio">
-        <div class="gal-vacio-linea"></div>
-        <h2 class="gal-vacio-titulo">Galería sin contenido</h2>
-        <p class="gal-vacio-texto">Aún no hay fotos ni videos publicados.</p>
-      </div>
-    }
+    </div>
 
   }
+}
 
-</div>
+<!-- ══════════════════════════ LIGHTBOX ════════════════════════ -->
+@if (lightboxVisible && fotoLightbox()) {
+  <div class="gal-lightbox" (click)="cerrarLightbox()">
+    <div class="gal-lb-inner" (click)="$event.stopPropagation()">
 
-<!-- LIGHTBOX -->
-@if (lightboxVisible && imagenLightbox) {
-  <div class="gal-lightbox" (click)="onLightboxClick($event)">
-    <div class="gal-lightbox-inner">
-      <button class="gal-lightbox-cerrar" (click)="cerrarLightbox()">&#x2715;</button>
-      <img class="gal-lightbox-img"
-           [src]="imagenLightbox.url"
-           [alt]="imagenLightbox.altText ?? 'Imagen galería'">
-      @if (imagenLightbox.altText) {
-        <p class="gal-lightbox-caption">{{ imagenLightbox.altText }}</p>
-      }
-      <div class="gal-lightbox-nav">
-        <button class="gal-lightbox-nav-btn"
-                (click)="anterior()"
-                [disabled]="lightboxIndex === 0">&#x2190; Anterior</button>
-        <span class="gal-lightbox-counter">{{ lightboxIndex + 1 }} / {{ imagenes.length }}</span>
-        <button class="gal-lightbox-nav-btn"
-                (click)="siguiente()"
-                [disabled]="lightboxIndex === imagenes.length - 1">Siguiente &#x2192;</button>
+      <button class="gal-lb-cerrar" (click)="cerrarLightbox()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="20">
+          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+
+      <button class="gal-lb-nav gal-lb-prev" (click)="anteriorFoto()" [disabled]="lightboxIndex === 0">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="24"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+
+      <img class="gal-lb-img" [src]="fotoLightbox()!.url" [alt]="fotoLightbox()!.descripcion || ''">
+
+      <button class="gal-lb-nav gal-lb-next" (click)="siguienteFoto()" [disabled]="lightboxIndex === fotosVisibles().length - 1">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="24"><polyline points="9 18 15 12 9 6"/></svg>
+      </button>
+
+      <div class="gal-lb-footer">
+        @if (fotoLightbox()!.descripcion) {
+          <p class="gal-lb-caption">{{ fotoLightbox()!.descripcion }}</p>
+        }
+        <span class="gal-lb-counter">{{ lightboxIndex + 1 }} / {{ fotosVisibles().length }}</span>
       </div>
+
     </div>
   </div>
 }

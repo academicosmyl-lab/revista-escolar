@@ -1,125 +1,162 @@
-import { Component, OnInit, inject, HostListener, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
+import {
+  Component, OnInit, signal, inject,
+  ChangeDetectionStrategy, ChangeDetectorRef, HostListener,
+} from '@angular/core';
+import { UpperCasePipe } from '@angular/common';
 import { ApiService } from '../../services/api.service';
-import { Imagen, VideoYoutube } from '../../models';
 
-type Tab = 'todas' | 'fotos' | 'videos';
-type ImagenConTipo = Imagen & { tipo?: string };
+type Vista = 'albums' | 'toc' | 'fotos';
+
+interface Album {
+  id: string; nombre: string; categoria: string;
+  subtitulo?: string; descripcion?: string;
+  portada_url?: string; activo: boolean;
+  total_fotos?: number; total_capitulos?: number;
+  capitulos?: Capitulo[];
+}
+interface Capitulo {
+  id: string; titulo: string; icono: string; orden: number;
+  fotos?: Foto[];
+}
+interface Foto {
+  id: string; url: string; descripcion?: string;
+  orden: number; eliminada: boolean;
+}
 
 @Component({
   selector: 'app-galeria',
-  imports: [],
+  imports: [UpperCasePipe],
   templateUrl: './galeria.html',
-  styleUrl: './galeria.scss',
+  styleUrl:    './galeria.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Galeria implements OnInit {
   private api = inject(ApiService);
   private cdr = inject(ChangeDetectorRef);
 
-  cargando  = true;
-  error     = '';
-  skeletons = Array(6);
+  vista            = signal<Vista>('albums');
+  categoriaActiva  = signal<string>('cursos');
+  cargando         = signal(false);
+  error            = signal('');
 
-  imagenes: ImagenConTipo[] = [];
-  videos:   VideoYoutube[]  = [];
+  albums: Album[]  = [];
+  albumActivo      = signal<Album | null>(null);
+  capituloActivo   = signal<Capitulo | null>(null);
 
-  lightboxVisible = false;
-  lightboxIndex   = 0;
-  tabActiva: Tab  = 'todas';
+  lightboxVisible  = false;
+  lightboxIndex    = 0;
 
-  ngOnInit() { this.cargar(); }
+  readonly categorias = [
+    { key: 'cursos',      label: 'Cursos' },
+    { key: 'sedes',       label: 'Sedes' },
+    { key: 'obras',       label: 'Obras' },
+    { key: 'graduandos',  label: 'Graduandos' },
+  ];
 
-  private cargar() {
-    this.cargando = true;
-    this.error    = '';
+  ngOnInit() { this.cargarAlbums(); }
 
-    this.api.get<any>('/galeria').subscribe({
+  cargarAlbums() {
+    this.cargando.set(true);
+    this.error.set('');
+    this.api.get<any>('/galeria/albums', { categoria: this.categoriaActiva() }).subscribe({
       next: r => {
-        const data = r.galeria ?? r.data ?? r;
-        if (Array.isArray(data)) {
-          this.imagenes = data;
-        } else {
-          const mapItem = (item: any, tipo: string): ImagenConTipo => ({
-            id:      item.imagen?.id    ?? item.id,
-            url:     item.imagen?.url   ?? item.url   ?? '',
-            altText: item.imagen?.alt_text ?? item.imagen?.altText ?? item.altText,
-            score:   item.imagen?.score_visual ?? item.score,
-            tipo,
-          });
-          this.imagenes = [
-            ...(data.portada    ?? []).map((i: any) => mapItem(i, 'portada')),
-            ...(data.destacados ?? []).map((i: any) => mapItem(i, 'destacados')),
-            ...(data.recientes  ?? []).map((i: any) => mapItem(i, 'recientes')),
-          ];
-          this.videos = data.videos ?? [];
-        }
-        this.cargando = false;
+        this.albums = (r.albums ?? []).filter((a: Album) => a.activo);
+        this.cargando.set(false);
         this.cdr.markForCheck();
       },
       error: e => {
-        this.error    = e.mensaje || 'No se pudo cargar la galería.';
-        this.cargando = false;
+        this.error.set(e.mensaje ?? 'Error al cargar la galería');
+        this.cargando.set(false);
         this.cdr.markForCheck();
       },
     });
   }
 
-  get imagenHero(): Imagen | null {
-    return this.imagenes.find(i => i.tipo === 'portada') ?? this.imagenes[0] ?? null;
+  seleccionarCategoria(cat: string) {
+    this.categoriaActiva.set(cat);
+    this.cargarAlbums();
   }
 
-  get imagenesVisibles(): ImagenConTipo[] {
-    return this.tabActiva === 'videos' ? [] : this.imagenes;
+  abrirAlbum(album: Album) {
+    this.cargando.set(true);
+    this.api.get<any>(`/galeria/albums/${album.id}`).subscribe({
+      next: r => {
+        this.albumActivo.set(r.album);
+        this.vista.set('toc');
+        this.cargando.set(false);
+        this.cdr.markForCheck();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      },
+      error: e => {
+        this.error.set(e.mensaje ?? 'Error');
+        this.cargando.set(false);
+        this.cdr.markForCheck();
+      },
+    });
   }
 
-  get videosVisibles(): VideoYoutube[] {
-    return this.tabActiva === 'fotos' ? [] : this.videos;
+  abrirCapitulo(cap: Capitulo) {
+    this.capituloActivo.set(cap);
+    this.vista.set('fotos');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
-  esPortada(img: ImagenConTipo): boolean { return img.tipo === 'portada'; }
+  volverAlbums() {
+    this.vista.set('albums');
+    this.albumActivo.set(null);
+    this.capituloActivo.set(null);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
 
-  cambiarTab(tab: Tab) { this.tabActiva = tab; }
+  volverToc() {
+    this.vista.set('toc');
+    this.capituloActivo.set(null);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  fotosVisibles(): Foto[] {
+    return (this.capituloActivo()?.fotos ?? []).filter(f => !f.eliminada);
+  }
+
+  capFotosCount(cap: Capitulo): number {
+    return (cap.fotos ?? []).filter(f => !f.eliminada).length;
+  }
+
+  albumAnio(album: Album): number {
+    return (album as any)['año'] ?? 0;
+  }
 
   abrirLightbox(index: number) {
-    this.lightboxIndex   = index;
+    this.lightboxIndex = index;
     this.lightboxVisible = true;
     document.body.style.overflow = 'hidden';
+    this.cdr.markForCheck();
   }
 
   cerrarLightbox() {
     this.lightboxVisible = false;
     document.body.style.overflow = '';
+    this.cdr.markForCheck();
   }
 
-  anterior() { if (this.lightboxIndex > 0) this.lightboxIndex--; }
-
-  siguiente() {
-    if (this.lightboxIndex < this.imagenes.length - 1) this.lightboxIndex++;
+  anteriorFoto() {
+    if (this.lightboxIndex > 0) { this.lightboxIndex--; this.cdr.markForCheck(); }
   }
 
-  get imagenLightbox(): ImagenConTipo | null {
-    return this.imagenes[this.lightboxIndex] ?? null;
+  siguienteFoto() {
+    const fotos = this.fotosVisibles();
+    if (this.lightboxIndex < fotos.length - 1) { this.lightboxIndex++; this.cdr.markForCheck(); }
   }
 
-  onLightboxClick(event: MouseEvent) {
-    if ((event.target as HTMLElement).classList.contains('gal-lightbox')) {
-      this.cerrarLightbox();
-    }
-  }
-
-  thumbnailYoutube(videoId: string): string {
-    return `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
-  }
-
-  urlYoutube(videoId: string): string {
-    return `https://www.youtube.com/watch?v=${videoId}`;
+  fotoLightbox(): Foto | null {
+    return this.fotosVisibles()[this.lightboxIndex] ?? null;
   }
 
   @HostListener('document:keydown', ['$event'])
-  onKeydown(event: KeyboardEvent) {
+  onKeydown(e: KeyboardEvent) {
     if (!this.lightboxVisible) return;
-    if (event.key === 'Escape')     this.cerrarLightbox();
-    if (event.key === 'ArrowLeft')  this.anterior();
-    if (event.key === 'ArrowRight') this.siguiente();
+    if (e.key === 'Escape')     this.cerrarLightbox();
+    if (e.key === 'ArrowLeft')  this.anteriorFoto();
+    if (e.key === 'ArrowRight') this.siguienteFoto();
   }
 }
