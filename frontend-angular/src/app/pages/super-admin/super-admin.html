@@ -40,6 +40,10 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
         Historial
       </button>
+      <button class="sa-nav-item" [class.active]="tabActiva() === 'galeria'" (click)="irA('galeria')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+        Galería
+      </button>
     </nav>
 
     <div class="sa-sidebar-footer">
@@ -532,6 +536,185 @@
       </div>
     }
 
+    <!-- ══════════════════════════════════════ TAB: GALERÍA -->
+    @if (tabActiva() === 'galeria') {
+      <div class="sa-page">
+        <header class="sa-page-header">
+          <h1 class="sa-page-title">Galería institucional</h1>
+          <p class="sa-page-sub">Gestiona álbumes, capítulos y fotos del sitio</p>
+        </header>
+
+        <!-- Mensajes de galería -->
+        @if (errorGal()) {
+          <div class="sa-alert sa-alert-err" style="margin-bottom:1rem">
+            {{ errorGal() }}
+            <button (click)="errorGal.set('')" class="sa-alert-close">✕</button>
+          </div>
+        }
+        @if (exitoGal()) {
+          <div class="sa-alert sa-alert-ok" style="margin-bottom:1rem">
+            {{ exitoGal() }}
+            <button (click)="exitoGal.set('')" class="sa-alert-close">✕</button>
+          </div>
+        }
+
+        <!-- ── Vista 1: Listado de álbumes ── -->
+        @if (!albumSeleccionado()) {
+          <!-- Toolbar: filtros + crear álbum -->
+          <div class="sa-toolbar">
+            <div class="sa-filter-tabs">
+              @for (cat of ['cursos','sedes','obras','graduandos']; track cat) {
+                <button class="sa-filter-tab" [class.active]="filtroCategoria() === cat"
+                  (click)="filtroCategoria.set(cat); cargarAlbums()">
+                  {{ cat | titlecase }}
+                </button>
+              }
+            </div>
+            <button class="sa-btn sa-btn-primary" (click)="abrirNuevoAlbum()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              Nuevo álbum
+            </button>
+          </div>
+
+          @if (cargandoGal()) {
+            <div class="sa-loading"><div class="sa-spinner"></div> Cargando álbumes…</div>
+          }
+
+          @if (!cargandoGal() && albumsFiltrados().length === 0) {
+            <div class="sa-empty-state">
+              <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.5" width="48"><rect x="8" y="8" width="48" height="48" rx="4"/><circle cx="24" cy="24" r="5"/><polyline points="56 44 42 30 20 56"/></svg>
+              <p>No hay álbumes en la categoría {{ filtroCategoria() }}</p>
+            </div>
+          }
+
+          <div class="gal-albums-grid">
+            @for (album of albumsFiltrados(); track album.id) {
+              <article class="gal-album-card" (click)="seleccionarAlbum(album)">
+                <div class="gal-album-cover">
+                  @if (album.portada_url) {
+                    <img [src]="album.portada_url" [alt]="album.nombre" loading="lazy">
+                  } @else {
+                    <div class="gal-album-cover-placeholder">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="32"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                    </div>
+                  }
+                  <div class="gal-album-lomo"></div>
+                  <div class="gal-album-overlay">
+                    <span class="gal-album-fotos-count">{{ album.total_fotos ?? 0 }} fotos</span>
+                  </div>
+                </div>
+                <div class="gal-album-info">
+                  <h3 class="gal-album-nombre">{{ album.nombre }}</h3>
+                  <span class="gal-album-meta">{{ albumAnio(album) }} · {{ album.total_capitulos ?? 0 }} capítulos</span>
+                  <span class="gal-album-estado" [class.activo]="album.activo" [class.inactivo]="!album.activo">
+                    {{ album.activo ? 'Visible' : 'Oculto' }}
+                  </span>
+                </div>
+              </article>
+            }
+          </div>
+        }
+
+        <!-- ── Vista 2: Álbum seleccionado ── -->
+        @if (albumSeleccionado(); as album) {
+          <!-- Breadcrumb -->
+          <div class="gal-breadcrumb">
+            <button class="sa-link-btn" (click)="volverAlbums()">← Álbumes</button>
+            <span class="gal-breadcrumb-sep">/</span>
+            <span>{{ album.nombre }}</span>
+            @if (capituloSeleccionado()) {
+              <span class="gal-breadcrumb-sep">/</span>
+              <span>{{ capituloSeleccionado()!.icono }} {{ capituloSeleccionado()!.titulo }}</span>
+            }
+          </div>
+
+          <!-- Toggle visible + botón nuevo capítulo -->
+          <div class="sa-toolbar" style="margin-bottom:1.25rem">
+            <div style="display:flex;align-items:center;gap:0.75rem">
+              <span style="font-size:0.85rem;color:#666">Álbum:</span>
+              <button class="sa-btn" [class.sa-btn-ok]="!album.activo" [class.sa-btn-ghost]="album.activo"
+                style="font-size:0.78rem;padding:5px 12px" (click)="toggleAlbumActivo(album)">
+                {{ album.activo ? 'Ocultar del sitio' : 'Publicar en sitio' }}
+              </button>
+            </div>
+            <button class="sa-btn sa-btn-primary" (click)="abrirNuevoCapitulo()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              Nuevo capítulo
+            </button>
+          </div>
+
+          <!-- Lista de capítulos -->
+          @if (!album.capitulos || album.capitulos.length === 0) {
+            <div class="sa-empty-state">
+              <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.5" width="40"><path d="M12 20h40M12 32h40M12 44h24"/></svg>
+              <p>Sin capítulos. Crea el primero.</p>
+            </div>
+          }
+
+          <div class="gal-capitulos-list">
+            @for (cap of album.capitulos ?? []; track cap.id) {
+              <div class="gal-cap-row" [class.selected]="capituloSeleccionado()?.id === cap.id"
+                (click)="seleccionarCapitulo(cap)">
+                <span class="gal-cap-icono">{{ cap.icono }}</span>
+                <div class="gal-cap-body">
+                  <span class="gal-cap-titulo">{{ cap.titulo }}</span>
+                  <span class="gal-cap-count">{{ cap.fotos?.length ?? 0 }} fotos</span>
+                </div>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" class="gal-cap-arrow"><polyline points="9 18 15 12 9 6"/></svg>
+              </div>
+            }
+          </div>
+
+          <!-- ── Vista 3: Capítulo seleccionado — zona de fotos ── -->
+          @if (capituloSeleccionado(); as cap) {
+            <div class="gal-fotos-section">
+              <h3 class="gal-fotos-title">{{ cap.icono }} {{ cap.titulo }}</h3>
+
+              <!-- Zona drag & drop -->
+              <div class="gal-dropzone" [class.drag-over]="dragOver()"
+                (dragover)="onDragOver($event)" (dragleave)="onDragLeave()" (drop)="onDrop($event)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="36"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                <p class="gal-dropzone-text">Arrastra fotos aquí o</p>
+                <label class="sa-btn sa-btn-primary" style="cursor:pointer">
+                  Seleccionar fotos
+                  <input type="file" accept="image/*" multiple style="display:none" (change)="onFileInput($event)">
+                </label>
+                <p class="gal-dropzone-hint">JPG, PNG, WEBP · Hasta 20 fotos · 20 MB c/u</p>
+              </div>
+
+              <!-- Progreso de subida -->
+              @if (subiendoFotos()) {
+                <div class="gal-upload-progress">
+                  <div class="sa-spinner"></div>
+                  <span>Subiendo fotos a Cloudinary…</span>
+                </div>
+              }
+
+              <!-- Grid de fotos -->
+              @if ((cap.fotos ?? []).length === 0 && !subiendoFotos()) {
+                <p class="gal-fotos-empty">Aún no hay fotos en este capítulo.</p>
+              }
+
+              <div class="gal-fotos-grid">
+                @for (foto of cap.fotos ?? []; track foto.id) {
+                  @if (!foto.eliminada) {
+                    <div class="gal-foto-item">
+                      <img [src]="foto.url" [alt]="foto.descripcion || 'Foto'" loading="lazy">
+                      <button class="gal-foto-delete" (click)="eliminarFoto(foto); $event.stopPropagation()"
+                        title="Eliminar foto">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="12"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                      </button>
+                    </div>
+                  }
+                }
+              </div>
+            </div>
+          }
+        }
+
+      </div>
+    }
+
   </main><!-- /sa-main -->
 </div><!-- /sa-shell -->
 
@@ -850,6 +1033,115 @@
         <button class="sa-btn sa-btn-primary" (click)="crearDocente()" [disabled]="cargando()">
           @if (cargando()) { <span class="sa-btn-spinner"></span> }
           Crear usuario
+        </button>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- Modal: Nuevo álbum -->
+@if (modal() === 'nuevo-album') {
+  <div class="sa-modal-backdrop" (click)="cerrarModal()">
+    <div class="sa-modal sa-modal-wide" (click)="$event.stopPropagation()">
+      <div class="sa-modal-header sa-modal-header-neutral">
+        <h2>📚 Nuevo álbum</h2>
+        <button class="sa-modal-close" (click)="cerrarModal()">✕</button>
+      </div>
+      <div class="sa-modal-body">
+        <div class="sa-form-grid">
+          <div class="sa-field sa-field-full">
+            <label class="sa-label">Nombre del álbum <span class="sa-required">*</span></label>
+            <input class="sa-input" type="text" placeholder="Ej: Grado 11-01 — 2026"
+              [value]="galNombre()" (input)="galNombre.set($any($event.target).value)">
+          </div>
+          <div class="sa-field">
+            <label class="sa-label">Categoría <span class="sa-required">*</span></label>
+            <select class="sa-input sa-select" [value]="galCategoria()"
+              (change)="galCategoria.set($any($event.target).value)">
+              <option value="cursos">Cursos</option>
+              <option value="sedes">Sedes</option>
+              <option value="obras">Obras</option>
+              <option value="graduandos">Graduandos</option>
+            </select>
+          </div>
+          <div class="sa-field">
+            <label class="sa-label">Año</label>
+            <input class="sa-input" type="number" min="2020" max="2035"
+              [value]="galAnio()" (input)="galAnio.set(+$any($event.target).value)">
+          </div>
+          <div class="sa-field sa-field-full">
+            <label class="sa-label">Subtítulo</label>
+            <input class="sa-input" type="text" placeholder="Ej: Jornada mañana"
+              [value]="galSubtitulo()" (input)="galSubtitulo.set($any($event.target).value)">
+          </div>
+          <div class="sa-field sa-field-full">
+            <label class="sa-label">Descripción</label>
+            <textarea class="sa-textarea" rows="2" placeholder="Descripción breve del álbum…"
+              [value]="galDesc()" (input)="galDesc.set($any($event.target).value)"></textarea>
+          </div>
+          <div class="sa-field sa-field-full">
+            <label class="sa-label">Foto de portada (opcional)</label>
+            <label class="gal-portada-label" [class.has-preview]="galPortadaPreview()">
+              @if (galPortadaPreview()) {
+                <img [src]="galPortadaPreview()" alt="Portada" class="gal-portada-preview-img">
+              } @else {
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="28"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                <span>Clic para seleccionar portada</span>
+              }
+              <input type="file" accept="image/*" style="display:none" (change)="onPortadaChange($event)">
+            </label>
+          </div>
+        </div>
+        @if (galFormErr()) { <p class="sa-field-err">{{ galFormErr() }}</p> }
+      </div>
+      <div class="sa-modal-footer">
+        <button class="sa-btn sa-btn-ghost" (click)="cerrarModal()" [disabled]="cargandoGal()">Cancelar</button>
+        <button class="sa-btn sa-btn-primary" (click)="crearAlbum()" [disabled]="cargandoGal()">
+          @if (cargandoGal()) { <span class="sa-btn-spinner"></span> }
+          Crear álbum
+        </button>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- Modal: Nuevo capítulo -->
+@if (modal() === 'nuevo-capitulo') {
+  <div class="sa-modal-backdrop" (click)="cerrarModal()">
+    <div class="sa-modal" (click)="$event.stopPropagation()">
+      <div class="sa-modal-header sa-modal-header-neutral">
+        <h2>📑 Nuevo capítulo</h2>
+        <button class="sa-modal-close" (click)="cerrarModal()">✕</button>
+      </div>
+      <div class="sa-modal-body">
+        <div class="sa-form-grid">
+          <div class="sa-field sa-field-full">
+            <label class="sa-label">Título <span class="sa-required">*</span></label>
+            <input class="sa-input" type="text" placeholder="Ej: Actividades deportivas"
+              [value]="capTitulo()" (input)="capTitulo.set($any($event.target).value)">
+          </div>
+          <div class="sa-field sa-field-full">
+            <label class="sa-label">Ícono</label>
+            <div class="gal-iconos-grid">
+              @for (ic of iconosCapitulo; track ic) {
+                <button type="button" class="gal-icono-btn" [class.selected]="capIcono() === ic"
+                  (click)="capIcono.set(ic)">{{ ic }}</button>
+              }
+            </div>
+          </div>
+          <div class="sa-field sa-field-full">
+            <label class="sa-label">Descripción breve</label>
+            <textarea class="sa-textarea" rows="2" placeholder="(opcional)"
+              [value]="capDesc()" (input)="capDesc.set($any($event.target).value)"></textarea>
+          </div>
+        </div>
+        @if (capErr()) { <p class="sa-field-err">{{ capErr() }}</p> }
+      </div>
+      <div class="sa-modal-footer">
+        <button class="sa-btn sa-btn-ghost" (click)="cerrarModal()" [disabled]="cargandoGal()">Cancelar</button>
+        <button class="sa-btn sa-btn-primary" (click)="crearCapitulo()" [disabled]="cargandoGal()">
+          @if (cargandoGal()) { <span class="sa-btn-spinner"></span> }
+          Crear capítulo
         </button>
       </div>
     </div>

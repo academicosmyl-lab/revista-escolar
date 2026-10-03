@@ -1338,3 +1338,243 @@ $radius-lg:  16px;
   opacity: 0.5;
   pointer-events: none;
 }
+
+/* ═══════════════════════════════════════════
+   GALERÍA INSTITUCIONAL
+═══════════════════════════════════════════ */
+
+// Grid de álbumes (cuadrícula de libros)
+.gal-albums-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 1.25rem;
+  margin-top: 1.25rem;
+}
+
+.gal-album-card {
+  cursor: pointer;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+  transition: transform 0.18s, box-shadow 0.18s;
+  background: #fff;
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.14);
+  }
+}
+
+.gal-album-cover {
+  position: relative;
+  height: 160px;
+  overflow: hidden;
+  background: #F3F4F6;
+  img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+}
+
+.gal-album-cover-placeholder {
+  width: 100%; height: 100%;
+  display: flex; align-items: center; justify-content: center;
+  color: #9CA3AF;
+}
+
+.gal-album-lomo {
+  position: absolute; left: 0; top: 0; bottom: 0;
+  width: 8px;
+  background: linear-gradient(180deg, #A94455 0%, #7B2D3E 100%);
+  opacity: 0.85;
+}
+
+.gal-album-overlay {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  padding: 4px 10px;
+  background: linear-gradient(transparent, rgba(0,0,0,0.55));
+  .gal-album-fotos-count { color: #fff; font-size: 0.72rem; font-family: 'Source Sans 3', sans-serif; }
+}
+
+.gal-album-info {
+  padding: 0.65rem 0.75rem;
+  display: flex; flex-direction: column; gap: 0.2rem;
+}
+
+.gal-album-nombre {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 0.88rem; font-weight: 700;
+  color: #2C3E50; margin: 0;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+
+.gal-album-meta {
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.72rem; color: #9CA3AF;
+}
+
+.gal-album-estado {
+  font-size: 0.7rem; font-family: 'Source Sans 3', sans-serif;
+  font-weight: 600; padding: 1px 7px; border-radius: 10px;
+  align-self: flex-start; margin-top: 2px;
+  &.activo   { background: #DCFCE7; color: #166534; }
+  &.inactivo { background: #FEF3C7; color: #92400E; }
+}
+
+// Breadcrumb
+.gal-breadcrumb {
+  display: flex; align-items: center; gap: 0.5rem;
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.85rem; color: #6B7280;
+  margin-bottom: 1rem;
+}
+.gal-breadcrumb-sep { color: #D1D5DB; }
+
+// Lista de capítulos
+.gal-capitulos-list {
+  display: flex; flex-direction: column; gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+
+.gal-cap-row {
+  display: flex; align-items: center; gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  border: 1px solid #E5E7EB;
+  background: #fff;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+  &:hover { background: #F9FAFB; border-color: #D1D5DB; }
+  &.selected { background: #FFF5F6; border-color: #A94455; }
+}
+
+.gal-cap-icono  { font-size: 1.3rem; }
+.gal-cap-body   { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
+.gal-cap-titulo { font-family: 'Source Sans 3', sans-serif; font-size: 0.9rem; font-weight: 600; color: #2C3E50; }
+.gal-cap-count  { font-size: 0.75rem; color: #9CA3AF; font-family: 'Source Sans 3', sans-serif; }
+.gal-cap-arrow  { color: #C4C9D4; flex-shrink: 0; }
+
+// Sección de fotos
+.gal-fotos-section {
+  margin-top: 1.5rem;
+  padding: 1.25rem;
+  border-radius: 12px;
+  background: #F9FAFB;
+  border: 1px solid #E5E7EB;
+}
+
+.gal-fotos-title {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 1rem; font-weight: 700;
+  color: #2C3E50; margin: 0 0 1rem;
+}
+
+// Zona drag & drop
+.gal-dropzone {
+  border: 2px dashed #D1D5DB;
+  border-radius: 10px;
+  padding: 2rem 1rem;
+  text-align: center;
+  background: #fff;
+  transition: border-color 0.2s, background 0.2s;
+  display: flex; flex-direction: column; align-items: center; gap: 0.6rem;
+  svg { color: #9CA3AF; }
+  &.drag-over {
+    border-color: #A94455;
+    background: #FFF5F6;
+    svg { color: #A94455; }
+  }
+}
+
+.gal-dropzone-text  { font-family: 'Source Sans 3', sans-serif; font-size: 0.9rem; color: #6B7280; margin: 0; }
+.gal-dropzone-hint  { font-size: 0.75rem; color: #9CA3AF; margin: 0; font-family: 'Source Sans 3', sans-serif; }
+
+.gal-upload-progress {
+  display: flex; align-items: center; gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  background: #EFF6FF;
+  border-radius: 8px; margin-top: 1rem;
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.85rem; color: #1D4ED8;
+}
+
+.gal-fotos-empty {
+  text-align: center;
+  color: #9CA3AF;
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.85rem;
+  margin: 1.5rem 0 0;
+}
+
+// Grid de fotos
+.gal-fotos-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.gal-foto-item {
+  position: relative;
+  border-radius: 6px;
+  overflow: hidden;
+  aspect-ratio: 1;
+  background: #F3F4F6;
+  img {
+    width: 100%; height: 100%;
+    object-fit: cover; display: block;
+  }
+  &:hover .gal-foto-delete { opacity: 1; }
+}
+
+.gal-foto-delete {
+  position: absolute; top: 4px; right: 4px;
+  background: rgba(220,38,38,0.85);
+  border: none; border-radius: 50%;
+  width: 22px; height: 22px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; opacity: 0;
+  transition: opacity 0.15s;
+  color: #fff;
+  &:hover { background: #b91c1c; }
+}
+
+// Portada preview en modal
+.gal-portada-label {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 0.5rem;
+  border: 2px dashed #D1D5DB;
+  border-radius: 8px;
+  padding: 1.5rem;
+  cursor: pointer;
+  color: #9CA3AF;
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.85rem;
+  transition: border-color 0.15s;
+  &:hover { border-color: #A94455; }
+  &.has-preview { padding: 0; border: none; }
+}
+
+.gal-portada-preview-img {
+  width: 100%; max-height: 180px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+// Grid de íconos para capítulo
+.gal-iconos-grid {
+  display: flex; flex-wrap: wrap; gap: 0.4rem;
+}
+
+.gal-icono-btn {
+  width: 36px; height: 36px;
+  border: 2px solid #E5E7EB;
+  border-radius: 6px;
+  background: #fff;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+  display: flex; align-items: center; justify-content: center;
+  &:hover { border-color: #A94455; }
+  &.selected { border-color: #A94455; background: #FFF5F6; }
+}

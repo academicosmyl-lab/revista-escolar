@@ -7,8 +7,8 @@ import { FormsModule } from '@angular/forms';
 import { TitleCasePipe } from '@angular/common';
 import { ApiService } from '../../services/api.service';
 
-type Tab = 'dashboard' | 'cola' | 'docentes' | 'historial' | 'publicaciones';
-type ModalTipo = 'aprobar' | 'rechazar' | 'crear' | 'editar' | 'aprobar-pub' | 'rechazar-pub' | null;
+type Tab = 'dashboard' | 'cola' | 'docentes' | 'historial' | 'publicaciones' | 'galeria';
+type ModalTipo = 'aprobar' | 'rechazar' | 'crear' | 'editar' | 'aprobar-pub' | 'rechazar-pub' | 'nuevo-album' | 'nuevo-capitulo' | null;
 
 interface Solicitud {
   id: string;
@@ -52,6 +52,23 @@ interface Publicacion {
   createdAt: string;
   autor?: { nombre: string; rol: string; };
   imagenes?: { id: string; url: string; es_portada: boolean; }[];
+}
+
+interface GaleriaAlbum {
+  id: string; nombre: string; categoria: string; subtitulo?: string;
+  descripcion?: string; anio?: number; orden: number;
+  portada_url?: string; activo: boolean; eliminado: boolean;
+  total_fotos?: number; total_capitulos?: number;
+  capitulos?: GaleriaCapitulo[];
+}
+interface GaleriaCapitulo {
+  id: string; album_id: string; titulo: string; descripcion?: string;
+  icono: string; orden: number; activo: boolean;
+  fotos?: GaleriaFoto[];
+}
+interface GaleriaFoto {
+  id: string; url: string; public_id: string; descripcion?: string;
+  orden: number; eliminada: boolean;
 }
 
 interface Stats {
@@ -142,6 +159,35 @@ export class SuperAdmin implements OnInit {
   cargandoImg      = signal(false);
   errorImg         = signal('');
 
+  /* ── Galería institucional ───────────────────────────── */
+  albums              : GaleriaAlbum[]    = [];
+  albumSeleccionado   = signal<GaleriaAlbum | null>(null);
+  capituloSeleccionado= signal<GaleriaCapitulo | null>(null);
+  filtroCategoria     = signal<string>('cursos');
+  cargandoGal         = signal(false);
+  errorGal            = signal('');
+  exitoGal            = signal('');
+  subiendoFotos       = signal(false);
+  dragOver            = signal(false);
+  fotosSubidas        = signal(0);
+  fotosTotales        = signal(0);
+
+  // Formulario nuevo álbum
+  galNombre    = signal('');
+  galCategoria = signal<'cursos'|'sedes'|'obras'|'graduandos'>('cursos');
+  galSubtitulo = signal('');
+  galDesc      = signal('');
+  galAnio       = signal(new Date().getFullYear());
+  galPortada   : File | null = null;
+  galPortadaPreview = signal<string>('');
+  galFormErr   = signal('');
+
+  // Formulario nuevo capítulo
+  capTitulo = signal('');
+  capIcono  = signal('📷');
+  capDesc   = signal('');
+  capErr    = signal('');
+
   readonly LIMIT = 12;
 
   /* Iconos de tipo acción */
@@ -189,6 +235,7 @@ export class SuperAdmin implements OnInit {
     if (tab === 'docentes')                          this.cargarDocentes();
     if (tab === 'historial')                         this.cargarHistorial();
     if (tab === 'publicaciones')                     this.cargarPublicaciones();
+    if (tab === 'galeria')                           this.cargarAlbums();
   }
 
   /* ── Cola de solicitudes ──────────────────────────────────── */
@@ -423,6 +470,183 @@ export class SuperAdmin implements OnInit {
   get totalPagesPublicaciones() { return Math.ceil(this.totalPublicaciones / this.LIMIT); }
   prevPublicaciones() { if (this.pagPublicaciones() > 1) { this.pagPublicaciones.update(p => p - 1); this.cargarPublicaciones(); } }
   nextPublicaciones() { if (this.pagPublicaciones() < this.totalPagesPublicaciones) { this.pagPublicaciones.update(p => p + 1); this.cargarPublicaciones(); } }
+
+  /* ── Galería ─────────────────────────────────────────────── */
+  cargarAlbums() {
+    this.cargandoGal.set(true);
+    this.api.get<any>('/galeria/albums').subscribe({
+      next: r => {
+        this.albums = r.albums;
+        this.cargandoGal.set(false);
+        this.cdr.markForCheck();
+      },
+      error: e => { this.errorGal.set(e.mensaje ?? 'Error al cargar galería'); this.cargandoGal.set(false); this.cdr.markForCheck(); },
+    });
+  }
+
+  albumsFiltrados(): GaleriaAlbum[] {
+    return this.albums.filter(a => a.categoria === this.filtroCategoria() && !a.eliminado);
+  }
+
+  abrirNuevoAlbum() {
+    this.galNombre.set(''); this.galCategoria.set('cursos');
+    this.galSubtitulo.set(''); this.galDesc.set('');
+    this.galAnio.set(new Date().getFullYear());
+    this.galPortada = null; this.galPortadaPreview.set('');
+    this.galFormErr.set('');
+    this.modal.set('nuevo-album');
+  }
+
+  onPortadaChange(e: Event) {
+    const file = (e.target as HTMLInputElement).files?.[0];
+    if (!file) return;
+    this.galPortada = file;
+    const reader = new FileReader();
+    reader.onload = ev => { this.galPortadaPreview.set(ev.target?.result as string); this.cdr.markForCheck(); };
+    reader.readAsDataURL(file);
+  }
+
+  crearAlbum() {
+    if (!this.galNombre().trim()) { this.galFormErr.set('El nombre es obligatorio'); return; }
+    const fd = new FormData();
+    fd.append('nombre',    this.galNombre());
+    fd.append('categoria', this.galCategoria());
+    fd.append('subtitulo', this.galSubtitulo());
+    fd.append('descripcion', this.galDesc());
+    fd.append('año',       String(this.galAnio()));
+    if (this.galPortada) fd.append('portada', this.galPortada);
+
+    this.cargandoGal.set(true);
+    this.api.postFormData<any>('/galeria/albums', fd).subscribe({
+      next: r => {
+        this.exitoGal.set('Álbum creado correctamente');
+        this.cerrarModal();
+        this.cargarAlbums();
+        this.cdr.markForCheck();
+      },
+      error: e => { this.galFormErr.set(e.mensaje ?? 'Error al crear'); this.cargandoGal.set(false); this.cdr.markForCheck(); },
+    });
+  }
+
+  seleccionarAlbum(album: GaleriaAlbum) {
+    this.cargandoGal.set(true);
+    this.capituloSeleccionado.set(null);
+    this.exitoGal.set(''); this.errorGal.set('');
+    this.api.get<any>(`/galeria/albums/${album.id}`).subscribe({
+      next: r => {
+        this.albumSeleccionado.set(r.album);
+        this.cargandoGal.set(false);
+        this.cdr.markForCheck();
+      },
+      error: e => { this.errorGal.set(e.mensaje ?? 'Error'); this.cargandoGal.set(false); this.cdr.markForCheck(); },
+    });
+  }
+
+  volverAlbums() {
+    this.albumSeleccionado.set(null);
+    this.capituloSeleccionado.set(null);
+  }
+
+  abrirNuevoCapitulo() {
+    this.capTitulo.set(''); this.capIcono.set('📷');
+    this.capDesc.set('');   this.capErr.set('');
+    this.modal.set('nuevo-capitulo');
+  }
+
+  crearCapitulo() {
+    const album = this.albumSeleccionado();
+    if (!album) return;
+    if (!this.capTitulo().trim()) { this.capErr.set('El título es obligatorio'); return; }
+    this.cargandoGal.set(true);
+    this.api.post<any>(`/galeria/albums/${album.id}/capitulos`, {
+      titulo:      this.capTitulo(),
+      icono:       this.capIcono(),
+      descripcion: this.capDesc(),
+    }).subscribe({
+      next: () => {
+        this.exitoGal.set('Capítulo creado');
+        this.cerrarModal();
+        this.seleccionarAlbum(album);
+        this.cdr.markForCheck();
+      },
+      error: e => { this.capErr.set(e.mensaje ?? 'Error'); this.cargandoGal.set(false); this.cdr.markForCheck(); },
+    });
+  }
+
+  seleccionarCapitulo(cap: GaleriaCapitulo) {
+    this.capituloSeleccionado.set(cap);
+    this.exitoGal.set(''); this.errorGal.set('');
+  }
+
+  onDragOver(e: DragEvent) { e.preventDefault(); this.dragOver.set(true); }
+  onDragLeave()             { this.dragOver.set(false); }
+
+  onDrop(e: DragEvent) {
+    e.preventDefault();
+    this.dragOver.set(false);
+    const files = Array.from(e.dataTransfer?.files ?? []);
+    if (files.length) this.subirFotos(files);
+  }
+
+  onFileInput(e: Event) {
+    const files = Array.from((e.target as HTMLInputElement).files ?? []);
+    if (files.length) this.subirFotos(files);
+    (e.target as HTMLInputElement).value = '';
+  }
+
+  subirFotos(files: File[]) {
+    const cap = this.capituloSeleccionado();
+    if (!cap) return;
+    const imagenes = files.filter(f => f.type.startsWith('image/'));
+    if (!imagenes.length) { this.errorGal.set('Solo se permiten imágenes'); return; }
+
+    this.subiendoFotos.set(true);
+    this.fotosTotales.set(imagenes.length);
+    this.fotosSubidas.set(0);
+    this.errorGal.set('');
+
+    const fd = new FormData();
+    imagenes.forEach(f => fd.append('fotos', f));
+
+    this.api.postFormData<any>(`/galeria/capitulos/${cap.id}/fotos`, fd).subscribe({
+      next: r => {
+        this.exitoGal.set(`${r.guardadas} foto${r.guardadas !== 1 ? 's subidas' : ' subida'} correctamente`);
+        this.subiendoFotos.set(false);
+        const album = this.albumSeleccionado();
+        if (album) this.seleccionarAlbum(album);
+        this.cdr.markForCheck();
+      },
+      error: e => {
+        this.errorGal.set(e.mensaje ?? 'Error al subir fotos');
+        this.subiendoFotos.set(false);
+        this.cdr.markForCheck();
+      },
+    });
+  }
+
+  eliminarFoto(foto: GaleriaFoto) {
+    if (!confirm('¿Eliminar esta foto de la galería? Se puede restaurar después.')) return;
+    this.api.delete<any>(`/galeria/fotos/${foto.id}`).subscribe({
+      next: () => {
+        const album = this.albumSeleccionado();
+        if (album) this.seleccionarAlbum(album);
+        this.exitoGal.set('Foto eliminada (se puede restaurar)');
+        this.cdr.markForCheck();
+      },
+      error: e => { this.errorGal.set(e.mensaje ?? 'Error'); this.cdr.markForCheck(); },
+    });
+  }
+
+  toggleAlbumActivo(album: GaleriaAlbum) {
+    this.api.put<any>(`/galeria/albums/${album.id}`, { activo: String(!album.activo) }).subscribe({
+      next: () => { this.cargarAlbums(); this.cdr.markForCheck(); },
+      error: e => { this.errorGal.set(e.mensaje ?? 'Error'); this.cdr.markForCheck(); },
+    });
+  }
+
+  albumAnio(album: GaleriaAlbum): number { return (album as any)['año'] ?? 0; }
+
+  readonly iconosCapitulo = ['📷','🏫','🎓','🏆','🎭','⚽','🔬','🎨','🌿','🎉','📚','💛','✨'];
 
   /* ── Helpers ──────────────────────────────────────────────── */
   cerrarModal() {
