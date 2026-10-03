@@ -35,7 +35,7 @@ export class Galeria implements OnInit {
   private cdr = inject(ChangeDetectorRef);
 
   vista            = signal<Vista>('albums');
-  categoriaActiva  = signal<string>('cursos');
+  categoriaActiva  = signal<string>('todos');
   cargando         = signal(false);
   error            = signal('');
 
@@ -46,21 +46,25 @@ export class Galeria implements OnInit {
   lightboxVisible  = false;
   lightboxIndex    = 0;
 
-  readonly categorias = [
-    { key: 'cursos',      label: 'Cursos' },
-    { key: 'sedes',       label: 'Sedes' },
-    { key: 'obras',       label: 'Obras' },
-    { key: 'graduandos',  label: 'Graduandos' },
-  ];
+  categorias: string[] = [];
 
-  ngOnInit() { this.cargarAlbums(); }
+  ngOnInit() { this.cargarTodo(); }
 
-  cargarAlbums() {
+  cargarTodo() {
     this.cargando.set(true);
     this.error.set('');
-    this.api.get<any>('/galeria/albums', { categoria: this.categoriaActiva() }).subscribe({
+    this.api.get<any>('/galeria/albums').subscribe({
       next: r => {
         this.albums = (r.albums ?? []).filter((a: Album) => a.activo);
+        // Categorías únicas en orden de aparición
+        const seen = new Set<string>();
+        this.categorias = [];
+        for (const a of this.albums) {
+          if (a.categoria && !seen.has(a.categoria)) {
+            seen.add(a.categoria);
+            this.categorias.push(a.categoria);
+          }
+        }
         this.cargando.set(false);
         this.cdr.markForCheck();
       },
@@ -72,9 +76,14 @@ export class Galeria implements OnInit {
     });
   }
 
+  albumsFiltrados(): Album[] {
+    if (this.categoriaActiva() === 'todos') return this.albums;
+    return this.albums.filter(a => a.categoria === this.categoriaActiva());
+  }
+
   seleccionarCategoria(cat: string) {
     this.categoriaActiva.set(cat);
-    this.cargarAlbums();
+    this.cdr.markForCheck();
   }
 
   abrirAlbum(album: Album) {

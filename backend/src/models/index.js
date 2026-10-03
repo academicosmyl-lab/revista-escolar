@@ -303,7 +303,7 @@ const SolicitudPerfil = sequelize.define('SolicitudPerfil', {
 const GaleriaAlbum = sequelize.define('GaleriaAlbum', {
   id:          { type: DataTypes.UUID, defaultValue: DataTypes.UUIDV4, primaryKey: true },
   nombre:      { type: DataTypes.STRING(150), allowNull: false },
-  categoria:   { type: DataTypes.ENUM('cursos','sedes','obras','graduandos'), allowNull: false },
+  categoria:   { type: DataTypes.STRING(100), allowNull: false },
   subtitulo:   { type: DataTypes.STRING(150) },   // ej: "Grado 11°", "Sede Principal"
   descripcion: { type: DataTypes.TEXT },
   año:         { type: DataTypes.INTEGER, defaultValue: new Date().getFullYear() },

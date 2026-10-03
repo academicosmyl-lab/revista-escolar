@@ -163,7 +163,8 @@ export class SuperAdmin implements OnInit {
   albums              : GaleriaAlbum[]    = [];
   albumSeleccionado   = signal<GaleriaAlbum | null>(null);
   capituloSeleccionado= signal<GaleriaCapitulo | null>(null);
-  filtroCategoria     = signal<string>('cursos');
+  filtroCategoria     = signal<string>('todos');
+  categoriasDisponibles: string[] = [];
   cargandoGal         = signal(false);
   errorGal            = signal('');
   exitoGal            = signal('');
@@ -174,7 +175,8 @@ export class SuperAdmin implements OnInit {
 
   // Formulario nuevo álbum
   galNombre    = signal('');
-  galCategoria = signal<'cursos'|'sedes'|'obras'|'graduandos'>('cursos');
+  galCategoria     = signal<string>('Por Cursos');
+  galCategoriaOtra = signal<string>('');
   galSubtitulo = signal('');
   galDesc      = signal('');
   galAnio       = signal(new Date().getFullYear());
@@ -477,6 +479,9 @@ export class SuperAdmin implements OnInit {
     this.api.get<any>('/galeria/albums').subscribe({
       next: r => {
         this.albums = r.albums;
+        // Derivar categorías únicas disponibles
+        const cats = [...new Set(this.albums.map((a: GaleriaAlbum) => a.categoria).filter(Boolean))];
+        this.categoriasDisponibles = cats as string[];
         this.cargandoGal.set(false);
         this.cdr.markForCheck();
       },
@@ -485,11 +490,17 @@ export class SuperAdmin implements OnInit {
   }
 
   albumsFiltrados(): GaleriaAlbum[] {
+    if (this.filtroCategoria() === 'todos') return this.albums.filter(a => !a.eliminado);
     return this.albums.filter(a => a.categoria === this.filtroCategoria() && !a.eliminado);
   }
 
+  readonly categoriasGal = [
+    'Por Cursos', 'Por Sede', 'Embellecimiento', 'Graduandos 2026',
+  ];
+
   abrirNuevoAlbum() {
-    this.galNombre.set(''); this.galCategoria.set('cursos');
+    this.galNombre.set(''); this.galCategoria.set('Por Cursos');
+    this.galCategoriaOtra.set('');
     this.galSubtitulo.set(''); this.galDesc.set('');
     this.galAnio.set(new Date().getFullYear());
     this.galPortada = null; this.galPortadaPreview.set('');
@@ -508,9 +519,13 @@ export class SuperAdmin implements OnInit {
 
   crearAlbum() {
     if (!this.galNombre().trim()) { this.galFormErr.set('El nombre es obligatorio'); return; }
+    const cat = this.galCategoria() === '__otra__'
+      ? this.galCategoriaOtra().trim()
+      : this.galCategoria();
+    if (!cat) { this.galFormErr.set('Escribe el nombre de la nueva categoría'); return; }
     const fd = new FormData();
     fd.append('nombre',    this.galNombre());
-    fd.append('categoria', this.galCategoria());
+    fd.append('categoria', cat);
     fd.append('subtitulo', this.galSubtitulo());
     fd.append('descripcion', this.galDesc());
     fd.append('año',       String(this.galAnio()));

@@ -563,11 +563,11 @@
           <!-- Toolbar: filtros + crear álbum -->
           <div class="sa-toolbar">
             <div class="sa-filter-tabs">
-              @for (cat of ['cursos','sedes','obras','graduandos']; track cat) {
+              <button class="sa-filter-tab" [class.active]="filtroCategoria() === 'todos'"
+                (click)="filtroCategoria.set('todos')">Todos</button>
+              @for (cat of categoriasDisponibles; track cat) {
                 <button class="sa-filter-tab" [class.active]="filtroCategoria() === cat"
-                  (click)="filtroCategoria.set(cat); cargarAlbums()">
-                  {{ cat | titlecase }}
-                </button>
+                  (click)="filtroCategoria.set(cat)">{{ cat }}</button>
               }
             </div>
             <button class="sa-btn sa-btn-primary" (click)="abrirNuevoAlbum()">
@@ -1058,11 +1058,17 @@
             <label class="sa-label">Categoría <span class="sa-required">*</span></label>
             <select class="sa-input sa-select" [value]="galCategoria()"
               (change)="galCategoria.set($any($event.target).value)">
-              <option value="cursos">Cursos</option>
-              <option value="sedes">Sedes</option>
-              <option value="obras">Obras</option>
-              <option value="graduandos">Graduandos</option>
+              @for (c of categoriasGal; track c) {
+                <option [value]="c">{{ c }}</option>
+              }
+              <option value="__otra__">+ Crear nueva categoría…</option>
             </select>
+            @if (galCategoria() === '__otra__') {
+              <input class="sa-input" style="margin-top:0.5rem" type="text"
+                placeholder="Nombre de la nueva categoría"
+                [value]="galCategoriaOtra()"
+                (input)="galCategoriaOtra.set($any($event.target).value)">
+            }
           </div>
           <div class="sa-field">
             <label class="sa-label">Año</label>

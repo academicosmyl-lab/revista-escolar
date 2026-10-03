@@ -24,11 +24,11 @@
   <!-- Tabs de categoría -->
   <div class="gal-cats-wrap">
     <div class="gal-cats-inner">
-      @for (cat of categorias; track cat.key) {
-        <button class="gal-cat-tab" [class.activo]="categoriaActiva() === cat.key"
-          (click)="seleccionarCategoria(cat.key)">
-          {{ cat.label }}
-        </button>
+      <button class="gal-cat-tab" [class.activo]="categoriaActiva() === 'todos'"
+        (click)="seleccionarCategoria('todos')">Todos</button>
+      @for (cat of categorias; track cat) {
+        <button class="gal-cat-tab" [class.activo]="categoriaActiva() === cat"
+          (click)="seleccionarCategoria(cat)">{{ cat }}</button>
       }
     </div>
   </div>
@@ -56,7 +56,7 @@
     }
 
     <!-- Sin álbumes -->
-    @if (!cargando() && !error() && albums.length === 0) {
+    @if (!cargando() && !error() && albumsFiltrados().length === 0) {
       <div class="gal-empty">
         <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.5" width="48">
           <rect x="8" y="8" width="48" height="48" rx="4"/><circle cx="24" cy="24" r="5"/>
@@ -68,9 +68,9 @@
     }
 
     <!-- Grid de álbumes -->
-    @if (!cargando() && !error() && albums.length > 0) {
+    @if (!cargando() && !error() && albumsFiltrados().length > 0) {
       <div class="gal-albums-grid">
-        @for (album of albums; track album.id; let i = $index) {
+        @for (album of albumsFiltrados(); track album.id; let i = $index) {
           <article class="gal-album-card" [style.--i]="i" (click)="abrirAlbum(album)">
             <div class="gal-album-cover">
               @if (album.portada_url) {

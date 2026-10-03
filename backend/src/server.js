@@ -23,6 +23,26 @@ process.on('unhandledRejection', (reason) => {
 
 async function iniciar() {
   try {
+    // Migración: galeria_albums.categoria ENUM → VARCHAR(100)
+    try {
+      await sequelize.query(`
+        DO $$ BEGIN
+          IF EXISTS (
+            SELECT 1 FROM information_schema.columns
+            WHERE table_name = 'galeria_albums'
+              AND column_name = 'categoria'
+              AND data_type = 'USER-DEFINED'
+          ) THEN
+            ALTER TABLE galeria_albums
+              ALTER COLUMN categoria TYPE VARCHAR(100) USING categoria::VARCHAR;
+            DROP TYPE IF EXISTS "enum_galeria_albums_categoria";
+          END IF;
+        END $$;
+      `);
+    } catch (migErr) {
+      console.error('⚠️  Migración galeria_albums.categoria (no crítico):', migErr.message);
+    }
+
     // Sincronizar base de datos — solo crea tablas que no existen, nunca borra datos
     await sequelize.sync();
     console.log('✅ Base de datos sincronizada');

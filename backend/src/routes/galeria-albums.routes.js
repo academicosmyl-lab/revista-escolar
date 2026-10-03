@@ -30,6 +30,20 @@ const upload = multer({
 //  ÁLBUMES
 // ══════════════════════════════════════════════════════════
 
+// GET /categorias — devuelve categorías únicas que tienen álbumes activos (público)
+router.get('/categorias', async (req, res, next) => {
+  try {
+    const rows = await GaleriaAlbum.findAll({
+      where: { eliminado: false, activo: true },
+      attributes: [[sequelize.fn('DISTINCT', sequelize.col('categoria')), 'categoria']],
+      raw: true,
+      order: [['categoria', 'ASC']],
+    });
+    const categorias = rows.map(r => r.categoria).filter(Boolean);
+    res.json({ categorias });
+  } catch (err) { next(err); }
+});
+
 // GET /albums — listar álbumes activos (público)
 router.get('/albums', async (req, res, next) => {
   try {
