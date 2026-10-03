@@ -31,6 +31,7 @@ const formularioRoutes       = require('./routes/formulario.routes');
 const areasRoutes            = require('./routes/areas.routes');
 const indicadoresRoutes      = require('./routes/indicadores.routes');
 const publicarRoutes         = require('./routes/publicar.routes');
+const galeriaAlbumsRoutes    = require('./routes/galeria-albums.routes');
 
 const app = express();
 
@@ -121,6 +122,7 @@ app.use('/api/v1/formulario',       formularioRoutes);
 app.use('/api/v1/areas',           areasRoutes);
 app.use('/api/v1/indicadores',    indicadoresRoutes);
 app.use('/api/v1/publicar',       publicarRoutes);
+app.use('/api/v1/galeria',        galeriaAlbumsRoutes);
 
 // ── Errores ───────────────────────────────────────────────
 app.use(errorHandler);

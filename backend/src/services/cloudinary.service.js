@@ -108,6 +108,22 @@ async function subirDocumento(buffer, nombreOriginal) {
 }
 
 /**
+ * Sube foto de la galería institucional a Cloudinary.
+ * Carpeta separada: its-santander/galeria/
+ * Retorna respuesta completa para guardar en cloudinary_data.
+ */
+async function subirFotoGaleria(buffer, mimetype = 'image/jpeg') {
+  const bufferNorm = await normalizarImagen(buffer, 'noticias'); // max 1920px
+  return subirBuffer(bufferNorm, {
+    folder:  'its-santander/galeria',
+    format:  'webp',
+    transformation: [{ quality: 'auto', fetch_format: 'auto' }],
+    public_id: `gal-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+    _mimetype: 'image/jpeg',
+  });
+}
+
+/**
  * Eliminar imagen de Cloudinary por public_id
  */
 async function eliminarImagen(publicId) {
@@ -135,6 +151,7 @@ module.exports = {
   uploadPerfil,
   uploadDocumento,
   subirImagen,
+  subirFotoGaleria,
   subirDocumento,
   eliminarImagen,
   urlOptimizada,

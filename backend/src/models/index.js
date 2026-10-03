@@ -294,6 +294,52 @@ const SolicitudPerfil = sequelize.define('SolicitudPerfil', {
   ip_origen:      { type: DataTypes.STRING(50) },
 }, { tableName: 'solicitudes_perfil', underscored: true });
 
+// ─── GALERÍA INSTITUCIONAL — ÁLBUMES ─────────────────────
+// Política de protección:
+//   - NUNCA hard-delete: solo eliminada=true (soft delete)
+//   - cloudinary_data guarda la respuesta completa de Cloudinary como JSON
+//   - public_id + url son redundantes a propósito para máxima recuperabilidad
+
+const GaleriaAlbum = sequelize.define('GaleriaAlbum', {
+  id:          { type: DataTypes.UUID, defaultValue: DataTypes.UUIDV4, primaryKey: true },
+  nombre:      { type: DataTypes.STRING(150), allowNull: false },
+  categoria:   { type: DataTypes.ENUM('cursos','sedes','obras','graduandos'), allowNull: false },
+  subtitulo:   { type: DataTypes.STRING(150) },   // ej: "Grado 11°", "Sede Principal"
+  descripcion: { type: DataTypes.TEXT },
+  año:         { type: DataTypes.INTEGER, defaultValue: new Date().getFullYear() },
+  orden:       { type: DataTypes.INTEGER, defaultValue: 0 },
+  portada_url:            { type: DataTypes.STRING(500) },
+  portada_public_id:      { type: DataTypes.STRING(300) },
+  portada_cloudinary_data:{ type: DataTypes.TEXT },   // JSON completo de Cloudinary
+  activo:      { type: DataTypes.BOOLEAN, defaultValue: true },
+  eliminado:   { type: DataTypes.BOOLEAN, defaultValue: false }, // soft-delete
+  creado_por:  { type: DataTypes.UUID },
+}, { tableName: 'galeria_albums', underscored: true });
+
+const GaleriaCapitulo = sequelize.define('GaleriaCapitulo', {
+  id:          { type: DataTypes.UUID, defaultValue: DataTypes.UUIDV4, primaryKey: true },
+  album_id:    { type: DataTypes.UUID, allowNull: false },
+  titulo:      { type: DataTypes.STRING(200), allowNull: false },
+  descripcion: { type: DataTypes.TEXT },
+  icono:       { type: DataTypes.STRING(10), defaultValue: '📷' },
+  orden:       { type: DataTypes.INTEGER, defaultValue: 0 },
+  activo:      { type: DataTypes.BOOLEAN, defaultValue: true },
+}, { tableName: 'galeria_capitulos', underscored: true });
+
+const GaleriaFoto = sequelize.define('GaleriaFoto', {
+  id:             { type: DataTypes.UUID, defaultValue: DataTypes.UUIDV4, primaryKey: true },
+  capitulo_id:    { type: DataTypes.UUID, allowNull: false },
+  // ── Campos de recuperación — los tres se guardan siempre ──
+  url:            { type: DataTypes.STRING(500), allowNull: false },   // URL pública Cloudinary
+  public_id:      { type: DataTypes.STRING(300), allowNull: false },   // ID Cloudinary para operaciones
+  cloudinary_data:{ type: DataTypes.TEXT, allowNull: false },          // respuesta JSON completa
+  // ─────────────────────────────────────────────────────────
+  descripcion:    { type: DataTypes.STRING(300) },
+  orden:          { type: DataTypes.INTEGER, defaultValue: 0 },
+  eliminada:      { type: DataTypes.BOOLEAN, defaultValue: false },    // SOFT DELETE — nunca borrar
+  subida_por:     { type: DataTypes.UUID },
+}, { tableName: 'galeria_fotos', underscored: true });
+
 // ─── HISTORIAL DE ACCIONES ADMIN ─────────────────────────
 // Auditoría completa: quién hizo qué y cuándo en el panel de super admin
 const AccionAdmin = sequelize.define('AccionAdmin', {
@@ -363,6 +409,14 @@ GaleriaItem.belongsTo(Sede,        { foreignKey: 'sede_id',   as: 'sede' });
 AccionAdmin.belongsTo(Usuario, { foreignKey: 'admin_id', as: 'admin' });
 Usuario.hasMany(AccionAdmin,   { foreignKey: 'admin_id', as: 'acciones' });
 
+// Galería institucional
+GaleriaAlbum.hasMany(GaleriaCapitulo, { foreignKey: 'album_id',    as: 'capitulos', onDelete: 'RESTRICT' });
+GaleriaCapitulo.belongsTo(GaleriaAlbum, { foreignKey: 'album_id', as: 'album' });
+GaleriaCapitulo.hasMany(GaleriaFoto,  { foreignKey: 'capitulo_id', as: 'fotos',     onDelete: 'RESTRICT' });
+GaleriaFoto.belongsTo(GaleriaCapitulo,{ foreignKey: 'capitulo_id', as: 'capitulo' });
+GaleriaAlbum.belongsTo(Usuario,       { foreignKey: 'creado_por',  as: 'creador' });
+GaleriaFoto.belongsTo(Usuario,        { foreignKey: 'subida_por',  as: 'subidor' });
+
 module.exports = {
   sequelize,
   Sede, Area, Curso, CursoDocente, DocenteSede,
@@ -373,4 +427,5 @@ module.exports = {
   VideoYoutube, NoticiaExterna,
   GaleriaItem, KnowledgeBase, ErrorPattern,
   SolicitudPerfil, AccionAdmin,
+  GaleriaAlbum, GaleriaCapitulo, GaleriaFoto,
 };
