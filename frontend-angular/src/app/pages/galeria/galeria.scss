@@ -168,16 +168,6 @@
   @media (max-width: 640px) { min-height: 200px; flex-direction: column; }
 }
 
-// Imagen de fondo desenfocada
-.gal-dest-bg {
-  position: absolute; inset: 0;
-  width: 100%; height: 100%;
-  object-fit: cover;
-  opacity: .18;
-  filter: blur(4px);
-  pointer-events: none;
-}
-
 // Overlay gradiente
 .gal-dest-overlay {
   position: absolute; inset: 0;
@@ -302,33 +292,68 @@
   }
 }
 
+@keyframes dest-escudo-pulse {
+  0%,100% { filter: drop-shadow(0 0 8px rgba(212,175,55,.6)) drop-shadow(0 0 20px rgba(212,175,55,.25)); }
+  50%      { filter: drop-shadow(0 0 16px rgba(212,175,55,.9)) drop-shadow(0 0 36px rgba(212,175,55,.4)); }
+}
+
 // Portada "libro" a la derecha
 .gal-dest-libro {
   position: relative;
   z-index: 2;
-  margin: 1.5rem 2.5rem 1.5rem 0;
+  margin: 1.5rem 3rem 1.5rem 0;
   flex-shrink: 0;
   animation: dest-float 5s ease-in-out infinite;
 
   @media (max-width: 640px) {
     margin: 0 0 1.5rem 0;
-    width: 120px;
   }
 
-  img {
+  // imagen del libro
+  & > img {
     display: block;
-    width: 160px;
-    height: 220px;
+    width: 200px;
+    height: 280px;
     object-fit: cover;
-    border-radius: 3px 10px 10px 3px;
+    border-radius: 3px 12px 12px 3px;
     box-shadow:
-      0 20px 50px rgba(0,0,0,.6),
-      0 4px 12px rgba(0,0,0,.4),
-      4px 0 0 rgba(212,175,55,.3);
+      0 24px 60px rgba(0,0,0,.7),
+      0 6px 16px rgba(0,0,0,.5),
+      4px 0 0 rgba(212,175,55,.4);
     transition: transform .4s ease;
 
-    @media (max-width: 640px) { width: 120px; height: 165px; }
+    @media (max-width: 640px) { width: 130px; height: 180px; }
   }
+
+  &:hover > img { transform: rotate(-1.5deg) scale(1.04); }
+}
+
+// Escudo superpuesto sobre el libro
+.gal-dest-escudo-wrap {
+  position: absolute;
+  bottom: -18px;
+  right: -18px;
+  z-index: 3;
+}
+
+.gal-dest-escudo {
+  display: block;
+  width: 90px;
+  height: 90px;
+  object-fit: contain;
+  border-radius: 50%;
+  box-shadow:
+    0 4px 20px rgba(0,0,0,.5),
+    0 0 0 3px rgba(212,175,55,.5);
+  background: rgba(10,6,0,.6);
+  animation: dest-escudo-pulse 3s ease-in-out infinite;
+  transition: transform .3s;
+
+  @media (max-width: 640px) { width: 64px; height: 64px; bottom: -12px; right: -12px; }
+}
+
+.gal-dest-libro:hover .gal-dest-escudo {
+  transform: scale(1.08);
 }
 
 .gal-dest-lomo {

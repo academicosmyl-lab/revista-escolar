@@ -25,11 +25,7 @@
   @if (albumDestacado) {
     <div class="gal-dest-wrap">
       <div class="gal-dest-card" (click)="abrirAlbum(albumDestacado)">
-        <!-- Fondo portada con blur -->
-        @if (albumDestacado.portada_url) {
-          <img class="gal-dest-bg" [src]="albumDestacado.portada_url" alt="" aria-hidden="true">
-        }
-        <div class="gal-dest-overlay"></div>
+          <div class="gal-dest-overlay"></div>
 
         <!-- Destellos dorados -->
         <span class="gal-dest-shimmer" aria-hidden="true"></span>
@@ -52,11 +48,16 @@
           </button>
         </div>
 
-        <!-- Portada como "libro" -->
+        <!-- Portada como "libro" con escudo encima -->
         @if (albumDestacado.portada_url) {
           <div class="gal-dest-libro">
             <div class="gal-dest-lomo"></div>
             <img [src]="albumDestacado.portada_url" [alt]="albumDestacado.nombre">
+            <div class="gal-dest-escudo-wrap">
+              <img class="gal-dest-escudo"
+                src="https://res.cloudinary.com/div57iwsy/image/upload/v1790993416/its-santander/galeria/gal-1790993414928-j0f2uz.webp"
+                alt="Escudo 90 años ITI">
+            </div>
           </div>
         }
       </div>
