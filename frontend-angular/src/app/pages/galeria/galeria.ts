@@ -45,6 +45,7 @@ export class Galeria implements OnInit {
 
   lightboxVisible  = false;
   lightboxIndex    = 0;
+  flipClass        = '';
 
   categorias: string[] = [];
 
@@ -137,6 +138,7 @@ export class Galeria implements OnInit {
 
   abrirLightbox(index: number) {
     this.lightboxIndex = index;
+    this.flipClass     = '';
     this.lightboxVisible = true;
     document.body.style.overflow = 'hidden';
     this.cdr.markForCheck();
@@ -144,17 +146,34 @@ export class Galeria implements OnInit {
 
   cerrarLightbox() {
     this.lightboxVisible = false;
+    this.flipClass = '';
     document.body.style.overflow = '';
     this.cdr.markForCheck();
   }
 
   anteriorFoto() {
-    if (this.lightboxIndex > 0) { this.lightboxIndex--; this.cdr.markForCheck(); }
+    if (this.lightboxIndex <= 0 || this.flipClass) return;
+    this.flipClass = 'flip-out-prev';
+    this.cdr.markForCheck();
+    setTimeout(() => {
+      this.lightboxIndex--;
+      this.flipClass = 'flip-in-prev';
+      this.cdr.markForCheck();
+      setTimeout(() => { this.flipClass = ''; this.cdr.markForCheck(); }, 300);
+    }, 300);
   }
 
   siguienteFoto() {
     const fotos = this.fotosVisibles();
-    if (this.lightboxIndex < fotos.length - 1) { this.lightboxIndex++; this.cdr.markForCheck(); }
+    if (this.lightboxIndex >= fotos.length - 1 || this.flipClass) return;
+    this.flipClass = 'flip-out-next';
+    this.cdr.markForCheck();
+    setTimeout(() => {
+      this.lightboxIndex++;
+      this.flipClass = 'flip-in-next';
+      this.cdr.markForCheck();
+      setTimeout(() => { this.flipClass = ''; this.cdr.markForCheck(); }, 300);
+    }, 300);
   }
 
   fotoLightbox(): Foto | null {
