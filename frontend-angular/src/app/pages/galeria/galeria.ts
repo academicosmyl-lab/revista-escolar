@@ -5,7 +5,7 @@ import {
 import { UpperCasePipe } from '@angular/common';
 import { ApiService } from '../../services/api.service';
 
-type Vista = 'albums' | 'toc' | 'fotos';
+type Vista = 'albums' | 'toc' | 'fotos' | 'libro';
 
 interface Album {
   id: string; nombre: string; categoria: string;
@@ -46,6 +46,10 @@ export class Galeria implements OnInit {
   lightboxVisible  = false;
   lightboxIndex    = 0;
   flipClass        = '';
+
+  paginaLibro   = signal(0);
+  bookFlipClass  = '';
+  bookEntrando   = false;
 
   categorias: string[] = [];
 
@@ -107,21 +111,76 @@ export class Galeria implements OnInit {
 
   abrirCapitulo(cap: Capitulo) {
     this.capituloActivo.set(cap);
-    this.vista.set('fotos');
+    this.paginaLibro.set(0);
+    this.bookFlipClass = '';
+    this.bookEntrando  = true;
+    this.vista.set('libro');
+    document.body.style.overflow = 'hidden';
     window.scrollTo({ top: 0, behavior: 'smooth' });
+    setTimeout(() => { this.bookEntrando = false; this.cdr.markForCheck(); }, 950);
   }
 
   volverAlbums() {
     this.vista.set('albums');
     this.albumActivo.set(null);
     this.capituloActivo.set(null);
+    document.body.style.overflow = '';
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   volverToc() {
     this.vista.set('toc');
     this.capituloActivo.set(null);
+    document.body.style.overflow = '';
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  /* ── Libro helpers ───────────────────────────────── */
+
+  spreadsTotal(): number {
+    return Math.max(1, Math.ceil(this.fotosVisibles().length / 2));
+  }
+
+  spreadsArray(): number[] {
+    return Array.from({ length: this.spreadsTotal() }, (_, i) => i);
+  }
+
+  fotoIzq(): Foto | null {
+    return this.fotosVisibles()[this.paginaLibro() * 2] ?? null;
+  }
+
+  fotoDer(): Foto | null {
+    return this.fotosVisibles()[this.paginaLibro() * 2 + 1] ?? null;
+  }
+
+  fotoRot(idx: number): number {
+    return (((idx * 13 + 5) % 11) - 5) * 0.55;
+  }
+
+  paginaAnterior() {
+    const p = this.paginaLibro();
+    if (p <= 0 || this.bookFlipClass) return;
+    this.bookFlipClass = 'libro-fp-prev';
+    this.cdr.markForCheck();
+    setTimeout(() => {
+      this.paginaLibro.set(p - 1);
+      this.bookFlipClass = 'libro-fi-prev';
+      this.cdr.markForCheck();
+      setTimeout(() => { this.bookFlipClass = ''; this.cdr.markForCheck(); }, 400);
+    }, 400);
+  }
+
+  paginaSiguiente() {
+    const p = this.paginaLibro();
+    if (p >= this.spreadsTotal() - 1 || this.bookFlipClass) return;
+    this.bookFlipClass = 'libro-fp-next';
+    this.cdr.markForCheck();
+    setTimeout(() => {
+      this.paginaLibro.set(p + 1);
+      this.bookFlipClass = 'libro-fi-next';
+      this.cdr.markForCheck();
+      setTimeout(() => { this.bookFlipClass = ''; this.cdr.markForCheck(); }, 400);
+    }, 400);
   }
 
   fotosVisibles(): Foto[] {
@@ -182,9 +241,16 @@ export class Galeria implements OnInit {
 
   @HostListener('document:keydown', ['$event'])
   onKeydown(e: KeyboardEvent) {
-    if (!this.lightboxVisible) return;
-    if (e.key === 'Escape')     this.cerrarLightbox();
-    if (e.key === 'ArrowLeft')  this.anteriorFoto();
-    if (e.key === 'ArrowRight') this.siguienteFoto();
+    if (this.lightboxVisible) {
+      if (e.key === 'Escape')     this.cerrarLightbox();
+      if (e.key === 'ArrowLeft')  this.anteriorFoto();
+      if (e.key === 'ArrowRight') this.siguienteFoto();
+      return;
+    }
+    if (this.vista() === 'libro') {
+      if (e.key === 'ArrowLeft')  this.paginaAnterior();
+      if (e.key === 'ArrowRight') this.paginaSiguiente();
+      if (e.key === 'Escape')     this.volverToc();
+    }
   }
 }

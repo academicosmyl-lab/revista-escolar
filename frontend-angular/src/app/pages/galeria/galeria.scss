@@ -729,6 +729,500 @@
   box-shadow: 0 12px 50px rgba(0,0,0,0.7), 0 2px 10px rgba(0,0,0,0.5);
 }
 
+/* ══════════════════════════════════════════════════════
+   VISTA LIBRO — álbum digital de dos páginas
+   ══════════════════════════════════════════════════════ */
+
+/* ── Escena (overlay full-screen) ─────────────────── */
+
+.gal-libro-escena {
+  position: fixed;
+  inset: 0;
+  z-index: 5000;
+  background: #05050F;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow: hidden;
+}
+
+/* ── Animación de entrada ──────────────────────────── */
+
+@keyframes libro-entrada {
+  0%   { transform: perspective(1600px) rotateX(10deg) translateY(60px) scale(0.78);
+         opacity: 0; filter: blur(10px); }
+  60%  { transform: perspective(1600px) rotateX(-2deg) translateY(-8px) scale(1.03);
+         opacity: 1; filter: blur(0); }
+  100% { transform: perspective(1600px) rotateX(0) translateY(0) scale(1);
+         opacity: 1; }
+}
+
+.libro-entrando .gal-libro-book {
+  animation: libro-entrada 0.9s cubic-bezier(.15,.8,.25,1) both;
+}
+
+/* ── Orbs arco iris ────────────────────────────────── */
+
+.gal-libro-bg {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+@keyframes orb-1 {
+  0%,100% { transform: translate(0,0)    scale(1);    opacity:.22; }
+  50%     { transform: translate(40px,-50px) scale(1.2); opacity:.32; }
+}
+@keyframes orb-2 {
+  0%,100% { transform: translate(0,0)     scale(1);    opacity:.18; }
+  50%     { transform: translate(-35px,40px) scale(.88); opacity:.26; }
+}
+@keyframes orb-3 {
+  0%,100% { transform: translate(0,0)    scale(1.05); opacity:.14; }
+  50%     { transform: translate(25px,28px)  scale(.92); opacity:.22; }
+}
+
+.gal-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(90px);
+}
+
+.orb-1 {
+  width: 560px; height: 560px;
+  background: radial-gradient(circle, rgba(255,90,120,0.88), transparent 68%);
+  top: -160px; left: -140px;
+  animation: orb-1 10s ease-in-out infinite;
+}
+.orb-2 {
+  width: 480px; height: 480px;
+  background: radial-gradient(circle, rgba(60,140,255,0.85), transparent 68%);
+  bottom: -120px; right: -100px;
+  animation: orb-2 13s ease-in-out infinite;
+}
+.orb-3 {
+  width: 400px; height: 400px;
+  background: radial-gradient(circle, rgba(60,220,170,0.82), transparent 68%);
+  top: 35%; right: 5%;
+  animation: orb-3 9s ease-in-out infinite;
+}
+.orb-4 {
+  width: 340px; height: 340px;
+  background: radial-gradient(circle, rgba(255,200,60,0.78), transparent 68%);
+  top: 8%; right: 28%;
+  animation: orb-1 14s ease-in-out infinite reverse;
+}
+.orb-5 {
+  width: 420px; height: 420px;
+  background: radial-gradient(circle, rgba(190,80,240,0.80), transparent 68%);
+  bottom: 2%; left: 18%;
+  animation: orb-2 11s ease-in-out infinite 3s;
+}
+
+/* ── Escarchas / partículas doradas ───────────────── */
+
+@keyframes escarcha-drift {
+  0%   { transform: translate(0,0)     rotate(0deg)   scale(1);   opacity:0; }
+  15%  { opacity: 1; }
+  85%  { opacity: .8; }
+  100% { transform: translate(var(--dx),var(--dy)) rotate(var(--dr)) scale(.4); opacity:0; }
+}
+
+.gal-escarcha {
+  position: absolute;
+  border-radius: 1px;
+  background: linear-gradient(135deg, #FFE066, #FFD700, #FFA500, #FFE066);
+  box-shadow: 0 0 6px 1px rgba(255,215,0,0.7), 0 0 14px 2px rgba(255,200,40,0.4);
+  animation: escarcha-drift linear infinite;
+  pointer-events: none;
+}
+
+// Cada partícula tiene tamaño, posición y velocidad distintos
+.e1 { width:5px; height:5px; top:20%; left:10%; --dx:60px; --dy:-80px; --dr:180deg; animation-duration:4.5s; animation-delay:0s; }
+.e2 { width:4px; height:8px; top:70%; left:25%; --dx:-40px;--dy:-70px; --dr:-200deg; animation-duration:5.2s; animation-delay:0.8s; }
+.e3 { width:6px; height:4px; top:40%; left:80%; --dx:30px; --dy:-90px; --dr:240deg; animation-duration:4.8s; animation-delay:1.4s; }
+.e4 { width:3px; height:7px; top:80%; left:60%; --dx:-50px;--dy:-60px; --dr:-160deg; animation-duration:5.8s; animation-delay:0.3s; }
+.e5 { width:7px; height:5px; top:15%; left:55%; --dx:45px; --dy:-75px; --dr:200deg; animation-duration:4.2s; animation-delay:2.1s; }
+.e6 { width:4px; height:4px; top:55%; left:40%; --dx:-30px;--dy:-85px; --dr:-180deg; animation-duration:6.0s; animation-delay:1.0s; }
+.e7 { width:5px; height:6px; top:90%; left:75%; --dx:50px; --dy:-65px; --dr:220deg; animation-duration:4.6s; animation-delay:2.8s; }
+.e8 { width:3px; height:5px; top:30%; left:30%; --dx:-45px;--dy:-72px; --dr:-210deg; animation-duration:5.4s; animation-delay:1.7s; }
+
+/* ── Barra superior ────────────────────────────────── */
+
+.gal-libro-topbar {
+  width: 100%;
+  max-width: 1080px;
+  padding: .9rem 1.25rem .5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-shrink: 0;
+  z-index: 2;
+  animation: gal-fade-up 0.4s ease both 0.1s;
+}
+
+.gal-libro-btn-back {
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
+  background: rgba(255,255,255,.07);
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 20px;
+  padding: 6px 14px;
+  color: rgba(255,255,255,.7);
+  cursor: pointer;
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: .78rem;
+  font-weight: 600;
+  transition: all .15s;
+  white-space: nowrap;
+  &:hover { background: rgba(255,255,255,.14); color: #fff; }
+}
+
+.gal-libro-heading {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  text-align: center;
+}
+
+.gal-libro-cap-ico { font-size: 1.35rem; }
+
+.gal-libro-cap-titulo {
+  font-family: 'Dancing Script', cursive;
+  font-size: clamp(1.4rem, 3vw, 2.1rem);
+  font-weight: 700;
+  color: #fff;
+  margin: 0;
+  text-shadow: 0 0 30px rgba(255,200,80,.5), 0 2px 8px rgba(0,0,0,.4);
+}
+
+.gal-libro-prog-top {
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: .76rem;
+  color: rgba(255,255,255,.4);
+  min-width: 52px;
+  text-align: right;
+}
+
+/* ── Stage ─────────────────────────────────────────── */
+
+.gal-libro-stage {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 0 .75rem;
+  min-height: 0;
+  z-index: 2;
+}
+
+/* ── El libro (dos páginas) ────────────────────────── */
+
+.gal-libro-book {
+  position: relative;
+  display: flex;
+  align-items: stretch;
+  max-width: min(980px, 96vw);
+  width: 100%;
+  height: min(570px, 72vh);
+  border-radius: 5px 16px 16px 5px;
+  box-shadow:
+    0 50px 140px rgba(0,0,0,.85),
+    0 8px 28px rgba(0,0,0,.5),
+    0 0 0 1px rgba(255,255,255,.04),
+    0 0 60px rgba(255,200,60,.06);
+
+  @media (max-width:640px) { height: min(500px, 74vh); }
+}
+
+/* ── Brillo dorado sobre el libro (escarcha) ──────── */
+
+@keyframes shimmer-sweep {
+  0%   { transform: translateX(-120%) skewX(-18deg); opacity: 0; }
+  15%  { opacity: 1; }
+  85%  { opacity: .9; }
+  100% { transform: translateX(220%)  skewX(-18deg); opacity: 0; }
+}
+
+.gal-libro-shimmer {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 20;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0; bottom: 0;
+    left: 0;
+    width: 35%;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(255,230,80,.08) 20%,
+      rgba(255,215,0,.18) 40%,
+      rgba(255,240,120,.22) 50%,
+      rgba(255,215,0,.18) 60%,
+      rgba(255,220,80,.08) 80%,
+      transparent 100%
+    );
+    animation: shimmer-sweep 3.8s cubic-bezier(.4,0,.6,1) infinite 1.2s;
+  }
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0; bottom: 0; left: 0;
+    width: 20%;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255,255,255,.07),
+      transparent
+    );
+    animation: shimmer-sweep 3.8s cubic-bezier(.4,0,.6,1) infinite 2.6s;
+  }
+}
+
+/* ── Páginas ────────────────────────────────────────── */
+
+.gal-libro-pag {
+  flex: 1;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  padding: 1.5rem;
+
+  &::before {
+    content: '';
+    position: absolute; inset: 0;
+    background:
+      repeating-linear-gradient(0deg, transparent, transparent 30px,
+        rgba(0,0,0,.015) 30px, rgba(0,0,0,.015) 31px);
+    pointer-events: none;
+  }
+
+  &.pag-izq {
+    border-radius: 5px 0 0 5px;
+    background: linear-gradient(to right, #F0EBE0 0%, #FBF8F1 100%);
+    box-shadow: inset -16px 0 28px rgba(0,0,0,.10);
+  }
+
+  &.pag-der {
+    border-radius: 0 16px 16px 0;
+    background: linear-gradient(to left, #F0EBE0 0%, #FBF8F1 100%);
+    box-shadow: inset 16px 0 28px rgba(0,0,0,.10);
+  }
+}
+
+.gal-pag-num {
+  position: absolute;
+  bottom: .6rem; left: 1rem;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: .68rem;
+  color: #C8BAA0;
+  font-style: italic;
+  pointer-events: none;
+}
+
+.pag-num-der { left: auto; right: 1rem; }
+
+.gal-pag-vacia {
+  display: flex; align-items: center; justify-content: center;
+  width: 100%; height: 100%;
+  opacity: .10;
+  span { font-size: 4rem; }
+}
+
+/* ── Lomo central ──────────────────────────────────── */
+
+.gal-libro-lomo-c {
+  width: 24px;
+  flex-shrink: 0;
+  background: linear-gradient(180deg, #A07820 0%, #6B4C0A 30%, #3D2A05 60%, #9B7220 100%);
+  position: relative;
+  box-shadow:
+    -5px 0 15px rgba(0,0,0,.4),
+    5px 0 15px rgba(0,0,0,.4);
+
+  @media (max-width:640px) { width: 14px; }
+}
+
+.gal-lomo-luz {
+  position: absolute; inset: 0;
+  background: linear-gradient(to right,
+    transparent 0%,
+    rgba(255,230,100,.20) 50%,
+    transparent 100%);
+}
+
+/* ── Foto montada en la página ─────────────────────── */
+
+.gal-foto-mount {
+  position: relative;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  transform: rotate(var(--rot, 0deg));
+  transition: transform .3s cubic-bezier(.34,1.56,.64,1),
+              filter .2s;
+
+  &:hover {
+    transform: rotate(var(--rot, 0deg)) scale(1.05);
+    filter: brightness(1.06) drop-shadow(0 8px 20px rgba(0,0,0,.3));
+    z-index: 2;
+  }
+
+  img {
+    display: block;
+    max-width: 100%;
+    max-height: calc(min(570px, 72vh) - 110px);
+    object-fit: contain;
+    border: 9px solid #fff;
+    border-bottom-width: 26px;
+    box-shadow:
+      0 8px 28px rgba(0,0,0,.25),
+      0 2px 8px rgba(0,0,0,.15),
+      inset 0 0 0 1px rgba(0,0,0,.06);
+  }
+}
+
+/* ── Cinta adhesiva ─────────────────────────────────── */
+
+.gal-foto-cinta {
+  display: block;
+  position: absolute;
+  top: -13px;
+  left: 50%;
+  transform: translateX(-50%) rotate(-1deg);
+  width: 54px; height: 22px;
+  background: rgba(235,220,175,.62);
+  border: 1px solid rgba(205,185,135,.5);
+  border-radius: 2px;
+  z-index: 3;
+  box-shadow: 0 2px 6px rgba(0,0,0,.11);
+
+  &::before {
+    content: '';
+    position: absolute; inset: 3px;
+    background: repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 3px,
+      rgba(200,180,130,.3) 3px,
+      rgba(200,180,130,.3) 4px
+    );
+  }
+}
+
+/* ── Leyenda de foto ────────────────────────────────── */
+
+.gal-foto-leyenda {
+  font-family: 'Dancing Script', cursive;
+  font-size: .9rem;
+  color: #8A7558;
+  margin: 7px 0 0;
+  text-align: center;
+  max-width: 200px;
+  line-height: 1.3;
+}
+
+/* ── Controles ──────────────────────────────────────── */
+
+.gal-libro-controles {
+  width: 100%;
+  max-width: 620px;
+  padding: .7rem 1.25rem 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-shrink: 0;
+  z-index: 2;
+  animation: gal-fade-up 0.4s ease both 0.25s;
+}
+
+.gal-libro-btn-pag {
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
+  background: rgba(255,255,255,.08);
+  border: 1px solid rgba(255,255,255,.15);
+  border-radius: 24px;
+  padding: 8px 18px;
+  color: rgba(255,255,255,.75);
+  cursor: pointer;
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: .82rem;
+  font-weight: 600;
+  letter-spacing: .03em;
+  transition: all .2s cubic-bezier(.34,1.56,.64,1);
+
+  &:hover:not(:disabled) {
+    background: rgba(255,215,0,.15);
+    border-color: rgba(255,215,0,.3);
+    color: #FFE066;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 18px rgba(255,200,40,.2);
+  }
+
+  &:disabled { opacity: .2; cursor: not-allowed; }
+}
+
+.gal-libro-dots {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: center;
+  max-width: 200px;
+}
+
+.gal-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: rgba(255,255,255,.18);
+  transition: all .25s cubic-bezier(.34,1.56,.64,1);
+
+  &.activo {
+    background: #FFD700;
+    transform: scale(1.5);
+    box-shadow: 0 0 8px rgba(255,215,0,.6);
+  }
+}
+
+/* ── Flip del libro ─────────────────────────────────── */
+
+@keyframes libro-flip-out-next {
+  0%   { transform: perspective(1800px) rotateY(0deg);    filter: brightness(1); }
+  100% { transform: perspective(1800px) rotateY(-90deg);  filter: brightness(0.03); }
+}
+@keyframes libro-flip-in-next {
+  0%   { transform: perspective(1800px) rotateY(90deg);   filter: brightness(0.03); }
+  100% { transform: perspective(1800px) rotateY(0deg);    filter: brightness(1); }
+}
+@keyframes libro-flip-out-prev {
+  0%   { transform: perspective(1800px) rotateY(0deg);    filter: brightness(1); }
+  100% { transform: perspective(1800px) rotateY(90deg);   filter: brightness(0.03); }
+}
+@keyframes libro-flip-in-prev {
+  0%   { transform: perspective(1800px) rotateY(-90deg);  filter: brightness(0.03); }
+  100% { transform: perspective(1800px) rotateY(0deg);    filter: brightness(1); }
+}
+
+.libro-fp-next { animation: libro-flip-out-next 0.4s cubic-bezier(.4,0,1,1)  both; }
+.libro-fi-next { animation: libro-flip-in-next  0.4s cubic-bezier(0,.1,.3,1) both; }
+.libro-fp-prev { animation: libro-flip-out-prev 0.4s cubic-bezier(.4,0,1,1)  both; }
+.libro-fi-prev { animation: libro-flip-in-prev  0.4s cubic-bezier(0,.1,.3,1) both; }
+
 /* ── PAGE FLIP ─────────────────────────────────────── */
 
 @keyframes gal-flip-out-next {

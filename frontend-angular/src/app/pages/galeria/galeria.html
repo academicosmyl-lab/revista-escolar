@@ -241,6 +241,124 @@
   }
 }
 
+<!-- ═══════════════════════ VISTA LIBRO ════════════════════════ -->
+@if (vista() === 'libro') {
+  @if (capituloActivo(); as cap) {
+
+    <div class="gal-libro-escena" [class.libro-entrando]="bookEntrando">
+
+      <!-- Orbs arco iris flotantes -->
+      <div class="gal-libro-bg" aria-hidden="true">
+        <span class="gal-orb orb-1"></span>
+        <span class="gal-orb orb-2"></span>
+        <span class="gal-orb orb-3"></span>
+        <span class="gal-orb orb-4"></span>
+        <span class="gal-orb orb-5"></span>
+        <!-- Partículas de escarchas doradas -->
+        <span class="gal-escarcha e1"></span>
+        <span class="gal-escarcha e2"></span>
+        <span class="gal-escarcha e3"></span>
+        <span class="gal-escarcha e4"></span>
+        <span class="gal-escarcha e5"></span>
+        <span class="gal-escarcha e6"></span>
+        <span class="gal-escarcha e7"></span>
+        <span class="gal-escarcha e8"></span>
+      </div>
+
+      <!-- Barra superior -->
+      <div class="gal-libro-topbar">
+        <button class="gal-libro-btn-back" (click)="volverToc()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14"><polyline points="15 18 9 12 15 6"/></svg>
+          {{ albumActivo()?.nombre }}
+        </button>
+        <div class="gal-libro-heading">
+          <span class="gal-libro-cap-ico">{{ cap.icono }}</span>
+          <h1 class="gal-libro-cap-titulo">{{ cap.titulo }}</h1>
+        </div>
+        <span class="gal-libro-prog-top">
+          {{ paginaLibro() + 1 }}&thinsp;/&thinsp;{{ spreadsTotal() }}
+        </span>
+      </div>
+
+      <!-- Stage — el álbum -->
+      <div class="gal-libro-stage">
+        <div [class]="'gal-libro-book ' + bookFlipClass">
+
+          <!-- Brillo dorado sobre el libro -->
+          <div class="gal-libro-shimmer" aria-hidden="true"></div>
+
+          <!-- PÁGINA IZQUIERDA -->
+          <div class="gal-libro-pag pag-izq">
+            @if (fotoIzq(); as foto) {
+              <div class="gal-foto-mount"
+                   [style.--rot]="fotoRot(paginaLibro() * 2) + 'deg'"
+                   (click)="abrirLightbox(paginaLibro() * 2)">
+                <span class="gal-foto-cinta"></span>
+                <img [src]="foto.url" [alt]="foto.descripcion || cap.titulo" loading="lazy">
+                @if (foto.descripcion) {
+                  <p class="gal-foto-leyenda">{{ foto.descripcion }}</p>
+                }
+              </div>
+            } @else {
+              <div class="gal-pag-vacia"><span>{{ cap.icono }}</span></div>
+            }
+            <span class="gal-pag-num">{{ paginaLibro() * 2 + 1 }}</span>
+          </div>
+
+          <!-- LOMO CENTRAL -->
+          <div class="gal-libro-lomo-c" aria-hidden="true">
+            <div class="gal-lomo-luz"></div>
+          </div>
+
+          <!-- PÁGINA DERECHA -->
+          <div class="gal-libro-pag pag-der">
+            @if (fotoDer(); as foto) {
+              <div class="gal-foto-mount"
+                   [style.--rot]="fotoRot(paginaLibro() * 2 + 1) + 'deg'"
+                   (click)="abrirLightbox(paginaLibro() * 2 + 1)">
+                <span class="gal-foto-cinta"></span>
+                <img [src]="foto.url" [alt]="foto.descripcion || cap.titulo" loading="lazy">
+                @if (foto.descripcion) {
+                  <p class="gal-foto-leyenda">{{ foto.descripcion }}</p>
+                }
+              </div>
+            } @else {
+              <div class="gal-pag-vacia"><span>{{ cap.icono }}</span></div>
+            }
+            <span class="gal-pag-num pag-num-der">{{ paginaLibro() * 2 + 2 }}</span>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Controles de página -->
+      <div class="gal-libro-controles">
+        <button class="gal-libro-btn-pag"
+                (click)="paginaAnterior()"
+                [disabled]="paginaLibro() === 0 || !!bookFlipClass">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="16"><polyline points="15 18 9 12 15 6"/></svg>
+          Anterior
+        </button>
+
+        <div class="gal-libro-dots">
+          @for (i of spreadsArray(); track i) {
+            <span class="gal-dot" [class.activo]="i === paginaLibro()"></span>
+          }
+        </div>
+
+        <button class="gal-libro-btn-pag"
+                (click)="paginaSiguiente()"
+                [disabled]="paginaLibro() >= spreadsTotal() - 1 || !!bookFlipClass">
+          Siguiente
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="16"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>
+      </div>
+
+    </div>
+
+  }
+}
+
 <!-- ══════════════════════════ LIGHTBOX ════════════════════════ -->
 @if (lightboxVisible && fotoLightbox()) {
   <div class="gal-lightbox" (click)="cerrarLightbox()">
