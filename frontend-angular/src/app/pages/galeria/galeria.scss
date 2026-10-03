@@ -120,6 +120,226 @@
   svg { width: 100%; display: block; }
 }
 
+/* ── ÁLBUM DESTACADO (90 AÑOS) ─────────────────────────── */
+
+.gal-dest-wrap {
+  background: #F8F7F5;
+  padding: 2rem 1.5rem 0;
+  max-width: 1280px;
+  margin: 0 auto;
+}
+
+@keyframes dest-shimmer {
+  0%   { transform: translateX(-110%) skewX(-20deg); opacity:0; }
+  15%  { opacity: 1; }
+  85%  { opacity: .85; }
+  100% { transform: translateX(210%)  skewX(-20deg); opacity:0; }
+}
+@keyframes dest-float {
+  0%,100% { transform: translateY(0)   rotate(-1.5deg); }
+  50%     { transform: translateY(-8px) rotate(-1.5deg); }
+}
+
+.gal-dest-card {
+  position: relative;
+  border-radius: 18px;
+  overflow: hidden;
+  cursor: pointer;
+  min-height: 260px;
+  display: flex;
+  align-items: center;
+  background: linear-gradient(135deg, #1A0E00 0%, #2D1800 40%, #1A0B00 100%);
+  box-shadow:
+    0 20px 60px rgba(0,0,0,0.35),
+    0 0 0 1px rgba(212,175,55,0.25),
+    0 0 40px rgba(212,175,55,0.08);
+  transition: transform 0.3s cubic-bezier(.34,1.56,.64,1), box-shadow 0.3s;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow:
+      0 28px 80px rgba(0,0,0,0.4),
+      0 0 0 1.5px rgba(212,175,55,0.5),
+      0 0 60px rgba(212,175,55,0.15);
+
+    .gal-dest-libro img { transform: rotate(-1.5deg) scale(1.04); }
+  }
+
+  @media (max-width: 640px) { min-height: 200px; flex-direction: column; }
+}
+
+// Imagen de fondo desenfocada
+.gal-dest-bg {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  opacity: .18;
+  filter: blur(4px);
+  pointer-events: none;
+}
+
+// Overlay gradiente
+.gal-dest-overlay {
+  position: absolute; inset: 0;
+  background:
+    linear-gradient(to right, rgba(15,8,0,.95) 0%, rgba(15,8,0,.7) 55%, rgba(15,8,0,.3) 100%);
+  pointer-events: none;
+}
+
+// Shimmer dorado
+.gal-dest-shimmer {
+  position: absolute; inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  border-radius: inherit;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0; bottom: 0; left: 0;
+    width: 30%;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(212,175,55,.06) 20%,
+      rgba(255,215,0,.16) 50%,
+      rgba(212,175,55,.06) 80%,
+      transparent 100%
+    );
+    animation: dest-shimmer 4s cubic-bezier(.4,0,.6,1) infinite 0.5s;
+  }
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0; bottom: 0; left: 0;
+    width: 18%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,.06), transparent);
+    animation: dest-shimmer 4s cubic-bezier(.4,0,.6,1) infinite 2.2s;
+  }
+}
+
+// Contenido textual
+.gal-dest-content {
+  position: relative;
+  z-index: 2;
+  padding: 2.5rem 2rem 2.5rem 2.5rem;
+  flex: 1;
+  max-width: 520px;
+  animation: gal-fade-up 0.6s ease both;
+
+  @media (max-width: 640px) {
+    padding: 1.75rem 1.25rem 1rem;
+    text-align: center;
+  }
+}
+
+.gal-dest-badge {
+  display: inline-block;
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: .68rem;
+  font-weight: 700;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: #D4AF37;
+  background: rgba(212,175,55,.12);
+  border: 1px solid rgba(212,175,55,.3);
+  padding: 3px 12px;
+  border-radius: 12px;
+  margin-bottom: .9rem;
+}
+
+.gal-dest-nombre {
+  font-family: 'Dancing Script', cursive;
+  font-size: clamp(2rem, 5vw, 3.4rem);
+  font-weight: 700;
+  color: #fff;
+  margin: 0 0 .4rem;
+  line-height: 1.1;
+  text-shadow:
+    0 0 40px rgba(212,175,55,.5),
+    0 2px 10px rgba(0,0,0,.5);
+}
+
+.gal-dest-sub {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-style: italic;
+  font-size: 1.05rem;
+  color: rgba(255,255,255,.6);
+  margin: 0 0 .9rem;
+}
+
+.gal-dest-meta {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: .8rem;
+  color: rgba(255,255,255,.4);
+  margin-bottom: 1.5rem;
+}
+
+.gal-dest-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
+  background: linear-gradient(135deg, #D4AF37 0%, #B8942A 100%);
+  border: none;
+  border-radius: 24px;
+  padding: 10px 22px;
+  color: #1A0E00;
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: .82rem;
+  font-weight: 700;
+  letter-spacing: .04em;
+  cursor: pointer;
+  box-shadow: 0 4px 18px rgba(212,175,55,.35);
+  transition: all .2s;
+
+  &:hover {
+    background: linear-gradient(135deg, #E8C84A 0%, #C8A430 100%);
+    box-shadow: 0 6px 24px rgba(212,175,55,.5);
+    transform: translateY(-1px);
+  }
+}
+
+// Portada "libro" a la derecha
+.gal-dest-libro {
+  position: relative;
+  z-index: 2;
+  margin: 1.5rem 2.5rem 1.5rem 0;
+  flex-shrink: 0;
+  animation: dest-float 5s ease-in-out infinite;
+
+  @media (max-width: 640px) {
+    margin: 0 0 1.5rem 0;
+    width: 120px;
+  }
+
+  img {
+    display: block;
+    width: 160px;
+    height: 220px;
+    object-fit: cover;
+    border-radius: 3px 10px 10px 3px;
+    box-shadow:
+      0 20px 50px rgba(0,0,0,.6),
+      0 4px 12px rgba(0,0,0,.4),
+      4px 0 0 rgba(212,175,55,.3);
+    transition: transform .4s ease;
+
+    @media (max-width: 640px) { width: 120px; height: 165px; }
+  }
+}
+
+.gal-dest-lomo {
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 12px;
+  background: linear-gradient(180deg, #C8A430 0%, #7A5C10 50%, #C8A430 100%);
+  border-radius: 3px 0 0 3px;
+  box-shadow: 2px 0 8px rgba(0,0,0,.4);
+}
+
 /* ── TABS CATEGORÍA ────────────────────────────────────── */
 
 .gal-cats-wrap {

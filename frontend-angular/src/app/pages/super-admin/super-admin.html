@@ -589,7 +589,10 @@
 
           <div class="gal-albums-grid">
             @for (album of albumsFiltrados(); track album.id) {
-              <article class="gal-album-card" (click)="seleccionarAlbum(album)">
+              <article class="gal-album-card" [class.destacado]="album.destacado" (click)="seleccionarAlbum(album)">
+                @if (album.destacado) {
+                  <div class="gal-album-badge-dest">⭐ Destacado</div>
+                }
                 <div class="gal-album-cover">
                   @if (album.portada_url) {
                     <img [src]="album.portada_url" [alt]="album.nombre" loading="lazy">
@@ -630,11 +633,18 @@
 
           <!-- Toggle visible + botón nuevo capítulo -->
           <div class="sa-toolbar" style="margin-bottom:1.25rem">
-            <div style="display:flex;align-items:center;gap:0.75rem">
+            <div style="display:flex;align-items:center;gap:0.75rem;flex-wrap:wrap">
               <span style="font-size:0.85rem;color:#666">Álbum:</span>
               <button class="sa-btn" [class.sa-btn-ok]="!album.activo" [class.sa-btn-ghost]="album.activo"
                 style="font-size:0.78rem;padding:5px 12px" (click)="toggleAlbumActivo(album)">
                 {{ album.activo ? 'Ocultar del sitio' : 'Publicar en sitio' }}
+              </button>
+              <button class="sa-btn" style="font-size:0.78rem;padding:5px 12px"
+                [style.background]="album.destacado ? '#FFF3CD' : ''"
+                [style.border-color]="album.destacado ? '#FFC107' : ''"
+                [style.color]="album.destacado ? '#856404' : ''"
+                (click)="$event.stopPropagation(); toggleAlbumDestacado(album)">
+                {{ album.destacado ? '⭐ Quitar destacado' : '☆ Marcar como destacado' }}
               </button>
             </div>
             <button class="sa-btn sa-btn-primary" (click)="abrirNuevoCapitulo()">
@@ -1084,6 +1094,17 @@
             <label class="sa-label">Descripción</label>
             <textarea class="sa-textarea" rows="2" placeholder="Descripción breve del álbum…"
               [value]="galDesc()" (input)="galDesc.set($any($event.target).value)"></textarea>
+          </div>
+          <div class="sa-field sa-field-full">
+            <label class="sa-label">⭐ Álbum destacado (90 años, evento especial…)</label>
+            <label class="sa-toggle-wrap" style="display:flex;align-items:center;gap:.75rem;cursor:pointer;margin-top:.25rem">
+              <input type="checkbox" style="width:18px;height:18px;accent-color:#C0394A;cursor:pointer"
+                [checked]="galDestacado()" (change)="galDestacado.set($any($event.target).checked)">
+              <span style="font-size:.85rem;color:#4B5563">
+                @if (galDestacado()) { <strong style="color:#C0394A">Sí — aparecerá en grande al inicio de la galería</strong> }
+                @else { No — álbum normal }
+              </span>
+            </label>
           </div>
           <div class="sa-field sa-field-full">
             <label class="sa-label">Foto de portada (opcional)</label>

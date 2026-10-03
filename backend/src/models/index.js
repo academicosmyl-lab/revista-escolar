@@ -312,6 +312,7 @@ const GaleriaAlbum = sequelize.define('GaleriaAlbum', {
   portada_public_id:      { type: DataTypes.STRING(300) },
   portada_cloudinary_data:{ type: DataTypes.TEXT },   // JSON completo de Cloudinary
   activo:      { type: DataTypes.BOOLEAN, defaultValue: true },
+  destacado:   { type: DataTypes.BOOLEAN, defaultValue: false }, // álbum especial (90 años, etc.)
   eliminado:   { type: DataTypes.BOOLEAN, defaultValue: false }, // soft-delete
   creado_por:  { type: DataTypes.UUID },
 }, { tableName: 'galeria_albums', underscored: true });

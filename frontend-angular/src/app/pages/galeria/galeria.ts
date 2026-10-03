@@ -10,7 +10,7 @@ type Vista = 'albums' | 'toc' | 'fotos' | 'libro';
 interface Album {
   id: string; nombre: string; categoria: string;
   subtitulo?: string; descripcion?: string;
-  portada_url?: string; activo: boolean;
+  portada_url?: string; activo: boolean; destacado: boolean;
   total_fotos?: number; total_capitulos?: number;
   capitulos?: Capitulo[];
 }
@@ -39,7 +39,8 @@ export class Galeria implements OnInit {
   cargando         = signal(false);
   error            = signal('');
 
-  albums: Album[]  = [];
+  albums: Album[]         = [];
+  albumDestacado: Album | null = null;
   albumActivo      = signal<Album | null>(null);
   capituloActivo   = signal<Capitulo | null>(null);
 
@@ -62,7 +63,9 @@ export class Galeria implements OnInit {
     this.error.set('');
     this.api.get<any>('/galeria/albums').subscribe({
       next: r => {
-        this.albums = (r.albums ?? []).filter((a: Album) => a.activo);
+        const todos = (r.albums ?? []).filter((a: Album) => a.activo);
+        this.albumDestacado = todos.find((a: Album) => a.destacado) ?? null;
+        this.albums = todos.filter((a: Album) => !a.destacado);
         // Categorías únicas en orden de aparición
         const seen = new Set<string>();
         this.categorias = [];

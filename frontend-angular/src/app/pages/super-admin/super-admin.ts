@@ -57,7 +57,7 @@ interface Publicacion {
 interface GaleriaAlbum {
   id: string; nombre: string; categoria: string; subtitulo?: string;
   descripcion?: string; anio?: number; orden: number;
-  portada_url?: string; activo: boolean; eliminado: boolean;
+  portada_url?: string; activo: boolean; destacado: boolean; eliminado: boolean;
   total_fotos?: number; total_capitulos?: number;
   capitulos?: GaleriaCapitulo[];
 }
@@ -180,6 +180,7 @@ export class SuperAdmin implements OnInit {
   galSubtitulo = signal('');
   galDesc      = signal('');
   galAnio       = signal(new Date().getFullYear());
+  galDestacado  = signal(false);
   galPortada   : File | null = null;
   galPortadaPreview = signal<string>('');
   galFormErr   = signal('');
@@ -503,6 +504,7 @@ export class SuperAdmin implements OnInit {
     this.galCategoriaOtra.set('');
     this.galSubtitulo.set(''); this.galDesc.set('');
     this.galAnio.set(new Date().getFullYear());
+    this.galDestacado.set(false);
     this.galPortada = null; this.galPortadaPreview.set('');
     this.galFormErr.set('');
     this.modal.set('nuevo-album');
@@ -529,6 +531,7 @@ export class SuperAdmin implements OnInit {
     fd.append('subtitulo', this.galSubtitulo());
     fd.append('descripcion', this.galDesc());
     fd.append('año',       String(this.galAnio()));
+    fd.append('destacado', String(this.galDestacado()));
     if (this.galPortada) fd.append('portada', this.galPortada);
 
     this.cargandoGal.set(true);
@@ -649,6 +652,13 @@ export class SuperAdmin implements OnInit {
         this.cdr.markForCheck();
       },
       error: e => { this.errorGal.set(e.mensaje ?? 'Error'); this.cdr.markForCheck(); },
+    });
+  }
+
+  toggleAlbumDestacado(album: GaleriaAlbum) {
+    this.api.put<any>(`/galeria/albums/${album.id}`, { destacado: String(!album.destacado) }).subscribe({
+      next: () => { this.cargarAlbums(); this.cdr.markForCheck(); },
+      error: () => {},
     });
   }
 

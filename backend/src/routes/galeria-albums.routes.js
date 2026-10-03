@@ -124,11 +124,17 @@ router.post('/albums', autenticar, requiereRol('ADMIN'), upload.single('portada'
       };
     }
 
+    const esDestacado = req.body.destacado === 'true' || req.body.destacado === true;
+    if (esDestacado) {
+      await GaleriaAlbum.update({ destacado: false }, { where: { eliminado: false } });
+    }
+
     const album = await GaleriaAlbum.create({
       nombre, categoria,
       subtitulo:   subtitulo  || null,
       descripcion: descripcion || null,
       año:         año ? parseInt(año) : new Date().getFullYear(),
+      destacado:   esDestacado,
       creado_por:  req.usuario.id,
       ...portadaData,
     });
@@ -150,14 +156,21 @@ router.put('/albums/:id', autenticar, requiereRol('ADMIN'), upload.single('porta
     const album = await GaleriaAlbum.findOne({ where: { id: req.params.id, eliminado: false } });
     if (!album) throw crearError('Álbum no encontrado', 404);
 
-    const { nombre, categoria, subtitulo, descripcion, año, activo } = req.body;
+    const { nombre, categoria, subtitulo, descripcion, año, activo, destacado } = req.body;
     const cambios = {};
     if (nombre)      cambios.nombre      = nombre;
     if (categoria)   cambios.categoria   = categoria;
     if (subtitulo  !== undefined) cambios.subtitulo   = subtitulo;
     if (descripcion !== undefined) cambios.descripcion = descripcion;
     if (año)         cambios.año         = parseInt(año);
-    if (activo !== undefined) cambios.activo = activo === 'true' || activo === true;
+    if (activo    !== undefined) cambios.activo    = activo    === 'true' || activo    === true;
+    if (destacado !== undefined) {
+      cambios.destacado = destacado === 'true' || destacado === true;
+      // Solo un álbum destacado a la vez
+      if (cambios.destacado) {
+        await GaleriaAlbum.update({ destacado: false }, { where: { eliminado: false } });
+      }
+    }
 
     if (req.file) {
       const result = await subirFotoGaleria(req.file.buffer, req.file.mimetype);

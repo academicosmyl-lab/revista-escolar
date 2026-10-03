@@ -21,6 +21,48 @@
     </div>
   </section>
 
+  <!-- Álbum destacado — 90 años -->
+  @if (albumDestacado) {
+    <div class="gal-dest-wrap">
+      <div class="gal-dest-card" (click)="abrirAlbum(albumDestacado)">
+        <!-- Fondo portada con blur -->
+        @if (albumDestacado.portada_url) {
+          <img class="gal-dest-bg" [src]="albumDestacado.portada_url" alt="" aria-hidden="true">
+        }
+        <div class="gal-dest-overlay"></div>
+
+        <!-- Destellos dorados -->
+        <span class="gal-dest-shimmer" aria-hidden="true"></span>
+
+        <!-- Contenido -->
+        <div class="gal-dest-content">
+          <span class="gal-dest-badge">✦ Edición Especial</span>
+          <h2 class="gal-dest-nombre">{{ albumDestacado.nombre }}</h2>
+          @if (albumDestacado.subtitulo) {
+            <p class="gal-dest-sub">{{ albumDestacado.subtitulo }}</p>
+          }
+          <div class="gal-dest-meta">
+            <span>{{ albumDestacado.total_fotos ?? 0 }} fotografías</span>
+            <span>·</span>
+            <span>{{ albumAnio(albumDestacado) }}</span>
+          </div>
+          <button class="gal-dest-cta">
+            Abrir álbum
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="15"><polyline points="9 18 15 12 9 6"/></svg>
+          </button>
+        </div>
+
+        <!-- Portada como "libro" -->
+        @if (albumDestacado.portada_url) {
+          <div class="gal-dest-libro">
+            <div class="gal-dest-lomo"></div>
+            <img [src]="albumDestacado.portada_url" [alt]="albumDestacado.nombre">
+          </div>
+        }
+      </div>
+    </div>
+  }
+
   <!-- Tabs de categoría -->
   <div class="gal-cats-wrap">
     <div class="gal-cats-inner">
