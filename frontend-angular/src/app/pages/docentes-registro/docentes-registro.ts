@@ -145,6 +145,23 @@ export class DocentesRegistro implements OnInit, AfterViewInit, OnDestroy {
 
   // ── Contadores ──────────────────────────────────────────
   bioShortLeft = computed(() => 500 - this.bioCorta().length);
+  bioCortaMin  = computed(() => this.bioCorta().trim().length);
+
+  formErrors = computed(() => {
+    const e: string[] = [];
+    if (!this.rol())                          e.push('Selecciona tu cargo');
+    if (this.nombre().trim().length < 3)      e.push('Escribe tu nombre completo');
+    if (!this.sede())                         e.push('Selecciona la sede donde trabajas');
+    if (!this.esPersonal()) {
+      if (this.titulo().trim().length < 3)    e.push('Escribe tu título académico');
+      if (this.bioCorta().trim().length < 20) e.push(`Presentación breve muy corta (${this.bioCorta().trim().length}/20 car. mínimos)`);
+    }
+    if (this.rol() === 'DOCENTE') {
+      if (!this.area())                       e.push('Selecciona tu área o materia principal');
+      if (this.area() === 'Otra' && !this.otraArea().trim()) e.push('Escribe el nombre de tu área');
+    }
+    return e;
+  });
 
 
   // ── Validación por rol ──────────────────────────────────
