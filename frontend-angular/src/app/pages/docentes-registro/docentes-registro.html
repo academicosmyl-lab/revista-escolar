@@ -440,9 +440,15 @@
                       : 'Ej: docente de electrónica con énfasis en robótica. Me apasiona conectar la teoría con proyectos reales.'"
                     [ngModel]="bioCorta()" (ngModelChange)="bioCorta.set($event)"
                     (blur)="onBlurBioCorta()" maxlength="500" [required]="!esPersonal()"></textarea>
-          <div class="reg-contador" [class.reg-contador-warn]="bioShortLeft() <= 30">
-            {{ bioShortLeft() }} caracteres restantes
-          </div>
+          @if (!esPersonal() && bioCortaMin() < 20) {
+            <div class="reg-contador reg-contador-min">
+              {{ bioCortaMin() }}/20 caracteres mínimos
+            </div>
+          } @else {
+            <div class="reg-contador" [class.reg-contador-warn]="bioShortLeft() <= 30">
+              {{ bioShortLeft() }} caracteres restantes
+            </div>
+          }
         </div>
 
         <div class="reg-campo reg-campo-full">
@@ -657,6 +663,13 @@
            y recibirás confirmación por email cuando esté publicado.</p>
         <p class="reg-submit-nota-req">Campos marcados con <span class="reg-req">*</span> son obligatorios.</p>
       </div>
+      @if (!formValido && rolSeleccionado()) {
+        <ul class="reg-pendiente">
+          @for (e of formErrors(); track e) {
+            <li class="reg-pendiente-item">{{ e }}</li>
+          }
+        </ul>
+      }
       <button type="button" class="reg-btn-submit" (click)="enviar()" [disabled]="!formValido || enviando()">
         @if (enviando()) {
           <span class="reg-btn-spinner"></span>
