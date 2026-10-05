@@ -826,6 +826,46 @@ $radius-lg:  16px;
 
 .sa-td-actions { text-align: right; }
 
+// ── Columna contraseña ────────────────────────────────────
+.sa-td-pass { white-space: nowrap; }
+
+.sa-pass-wrap {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.sa-pass-val {
+  font-family: 'Courier New', monospace;
+  font-size: 0.78rem;
+  color: $text;
+  background: $surface2;
+  border: 1px solid $border;
+  border-radius: 4px;
+  padding: 2px 6px;
+  letter-spacing: 0.04em;
+  min-width: 100px;
+  display: inline-block;
+}
+
+.sa-pass-eye { color: $blue; }
+.sa-pass-reset { color: $warn; }
+
+.sa-btn-pass-reset {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.72rem;
+  color: $warn;
+  background: rgba(217,119,6,0.08);
+  border: 1px solid rgba(217,119,6,0.25);
+  border-radius: 6px;
+  padding: 3px 8px;
+  cursor: pointer;
+  transition: background 0.15s;
+  &:hover { background: rgba(217,119,6,0.15); }
+}
+
 .sa-icon-btn {
   background: none;
   border: 1px solid $border;

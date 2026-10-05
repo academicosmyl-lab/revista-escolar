@@ -35,6 +35,7 @@ interface Solicitud {
 
 interface Docente {
   id: string; nombre: string; email: string; activo: boolean; rol: string;
+  passwordPlain?: string | null;
   perfil?: { tituloProfesional?: string; cargo?: string; fotoUrl?: string; bio?: string; perfil_publico?: boolean; id?: string; };
 }
 
@@ -459,6 +460,27 @@ export class SuperAdmin implements OnInit {
     this.api.delete<any>(`/super-admin/publicaciones/${pub.id}`).subscribe({
       next:  r => { this.exito.set(r.mensaje || 'Eliminada'); this.cargarPublicaciones(); this.cdr.markForCheck(); },
       error: e => { this.error.set(e.mensaje ?? 'Error al eliminar'); this.cdr.markForCheck(); },
+    });
+  }
+
+  passwordsVisibles = new Set<string>();
+
+  togglePasswordVisible(id: string) {
+    if (this.passwordsVisibles.has(id)) this.passwordsVisibles.delete(id);
+    else this.passwordsVisibles.add(id);
+    this.cdr.markForCheck();
+  }
+
+  resetPassword(doc: Docente) {
+    if (!confirm(`¿Generar nueva contraseña para "${doc.nombre}"?\nLa anterior dejará de funcionar.`)) return;
+    this.api.post<{ ok: boolean; passwordPlain: string }>(`/super-admin/docentes/${doc.id}/reset-password`, {}).subscribe({
+      next: r => {
+        doc.passwordPlain = r.passwordPlain;
+        this.passwordsVisibles.add(doc.id);
+        this.exito.set(`Nueva contraseña generada para "${doc.nombre}"`);
+        this.cdr.markForCheck();
+      },
+      error: e => { this.error.set(e.mensaje ?? 'Error al resetear'); this.cdr.markForCheck(); },
     });
   }
 

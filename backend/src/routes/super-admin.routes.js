@@ -135,11 +135,12 @@ router.put('/solicitudes/:id/aprobar', soloAdmin, async (req, res) => {
 
     // Crear usuario
     const usuario = await Usuario.create({
-      nombre:        sol.nombre,
-      email:         emailDocente,
-      password_hash: hash,
-      rol:           'DOCENTE',
-      activo:        true,
+      nombre:         sol.nombre,
+      email:          emailDocente,
+      password_hash:  hash,
+      password_plain: passTemp,
+      rol:            'DOCENTE',
+      activo:         true,
     });
 
     // Parsear especialidades seguro
@@ -273,11 +274,12 @@ router.get('/docentes', soloAdmin, async (req, res) => {
     });
 
     const data = rows.map(doc => ({
-      id:     doc.id,
-      nombre: doc.nombre,
-      email:  doc.email,
-      activo: doc.activo,
-      rol:    doc.rol,
+      id:            doc.id,
+      nombre:        doc.nombre,
+      email:         doc.email,
+      activo:        doc.activo,
+      rol:           doc.rol,
+      passwordPlain: doc.password_plain || null,
       perfil: doc.perfil ? {
         id:                doc.perfil.id,
         fotoUrl:           doc.perfil.foto_url,
@@ -314,7 +316,7 @@ router.post('/docentes', soloAdmin, upload.single('foto'), async (req, res) => {
       : Array.from({ length: 12 }, () => chars[Math.floor(Math.random() * chars.length)]).join('');
     const hash     = await bcrypt.hash(passTemp, 12);
 
-    const usuario = await Usuario.create({ nombre, email, password_hash: hash, rol: rolFinal, activo: true });
+    const usuario = await Usuario.create({ nombre, email, password_hash: hash, password_plain: passTemp, rol: rolFinal, activo: true });
 
     // Subir foto a Cloudinary si viene en el request
     let fotoUrl = null;
@@ -397,6 +399,32 @@ router.put('/docentes/:id', soloAdmin, async (req, res) => {
     });
 
     res.json({ ok: true, mensaje: 'Docente actualizado' });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+// Resetear contraseña de docente (genera nueva, guarda hash + plain, la devuelve al admin)
+router.post('/docentes/:id/reset-password', soloAdmin, async (req, res) => {
+  try {
+    const usuario = await Usuario.findByPk(req.params.id);
+    if (!usuario) return res.status(404).json({ error: 'Docente no encontrado' });
+
+    const chars    = 'ABCDEFGHJKMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789!@#$';
+    const newPass  = Array.from({ length: 12 }, () => chars[Math.floor(Math.random() * chars.length)]).join('');
+    const hash     = await bcrypt.hash(newPass, 12);
+
+    await usuario.update({ password_hash: hash, password_plain: newPass });
+
+    await AccionAdmin.create({
+      admin_id:     req.usuario.id,
+      tipo:         'reset_password',
+      descripcion:  `Contraseña de "${usuario.nombre}" restablecida por super-admin`,
+      entidad_tipo: 'Usuario',
+      entidad_id:   usuario.id,
+    });
+
+    res.json({ ok: true, passwordPlain: newPass });
   } catch (e) {
     res.status(500).json({ error: e.message });
   }

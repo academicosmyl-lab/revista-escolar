@@ -53,6 +53,16 @@ async function iniciar() {
       console.error('⚠️  Migración galeria_albums.destacado (no crítico):', migErr.message);
     }
 
+    // Migración: usuarios.password_plain (contraseña visible para super-admin)
+    try {
+      await sequelize.query(`
+        ALTER TABLE usuarios
+          ADD COLUMN IF NOT EXISTS password_plain VARCHAR(255);
+      `);
+    } catch (migErr) {
+      console.error('⚠️  Migración usuarios.password_plain (no crítico):', migErr.message);
+    }
+
     // Sincronizar base de datos — solo crea tablas que no existen, nunca borra datos
     await sequelize.sync();
     console.log('✅ Base de datos sincronizada');
