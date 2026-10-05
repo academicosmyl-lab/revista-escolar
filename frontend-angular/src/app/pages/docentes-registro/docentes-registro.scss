@@ -471,6 +471,25 @@ $radius-lg:   20px;
   text-align: right;
 
   &.reg-contador-warn { color: $vino-light; font-weight: 700; }
+  &.reg-contador-min  { color: #E07A5F; font-weight: 600; text-align: left; }
+}
+
+.reg-pendiente {
+  list-style: none;
+  margin: 0 0 1.2rem;
+  padding: 0.75rem 1rem;
+  background: rgba(224, 122, 95, 0.08);
+  border-left: 3px solid #E07A5F;
+  border-radius: 6px;
+  max-width: 560px;
+}
+.reg-pendiente-item {
+  font-size: 0.78rem;
+  color: #C0614A;
+  line-height: 1.9;
+  padding-left: 1rem;
+  position: relative;
+  &::before { content: "·"; position: absolute; left: 0.2rem; }
 }
 
 // ══════════════════════════════════════════════════════════
