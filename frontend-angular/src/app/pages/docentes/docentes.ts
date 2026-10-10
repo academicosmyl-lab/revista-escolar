@@ -1,6 +1,7 @@
 import { Component, OnInit, OnDestroy, inject, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
+import { TitleCasePipe } from '@angular/common';
 import { ApiService } from '../../services/api.service';
 import { PerfilDocente, Sede } from '../../models';
 
@@ -15,7 +16,7 @@ const ORDEN_ROL: Record<string, number> = {
 
 @Component({
   selector: 'app-docentes',
-  imports: [FormsModule, RouterLink],
+  imports: [FormsModule, RouterLink, TitleCasePipe],
   templateUrl: './docentes.html',
   styleUrl: './docentes.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -34,10 +35,13 @@ export class Docentes implements OnInit, OnDestroy {
   busqueda    = '';
   sedeActiva: string | null = null;
 
-  // ── Panel lateral ────────────────────────────────────────
+  // ── Modal perfil centrado ─────────────────────────────────
   panelDocente: PerfilDocente | null = null;
   panelNoticias: any[] = [];
   cargandoPanel = false;
+  tabModal: 'perfil' | 'pub' = 'perfil';
+  fichaEsp:  string | null = null;
+  fichaArea: string | null = null;
 
   // ── Modal publicar ────────────────────────────────────────
   modalPublicar = false;
@@ -115,6 +119,9 @@ export class Docentes implements OnInit, OnDestroy {
     this.panelDocente  = d;
     this.panelNoticias = [];
     this.cargandoPanel = true;
+    this.tabModal      = 'perfil';
+    this.fichaEsp      = null;
+    this.fichaArea     = null;
     document.body.style.overflow = 'hidden';
     this.cdr.markForCheck();
 
@@ -136,6 +143,8 @@ export class Docentes implements OnInit, OnDestroy {
     this.panelDocente  = null;
     this.panelNoticias = [];
     this.cargandoPanel = false;
+    this.fichaEsp      = null;
+    this.fichaArea     = null;
     document.body.style.overflow = '';
     this.cdr.markForCheck();
   }
@@ -144,6 +153,25 @@ export class Docentes implements OnInit, OnDestroy {
     if ((e.target as HTMLElement).classList.contains('doc-panel-overlay')) {
       this.cerrarPanel();
     }
+  }
+
+  setTabModal(tab: 'perfil' | 'pub') {
+    this.tabModal = tab;
+    this.fichaEsp  = null;
+    this.fichaArea = null;
+    this.cdr.markForCheck();
+  }
+
+  toggleFichaEsp(esp: string) {
+    this.fichaEsp  = this.fichaEsp === esp ? null : esp;
+    this.fichaArea = null;
+    this.cdr.markForCheck();
+  }
+
+  toggleFichaArea(area: string) {
+    this.fichaArea = this.fichaArea === area ? null : area;
+    this.fichaEsp  = null;
+    this.cdr.markForCheck();
   }
 
   abrirModal() { this.modalPublicar = true; this.cdr.markForCheck(); }

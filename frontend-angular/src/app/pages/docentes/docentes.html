@@ -207,145 +207,216 @@
 
 @if (panelDocente) {
   <div class="doc-panel-overlay" (click)="cerrarSiOverlay($event)">
-    <aside class="doc-panel">
+    <div class="doc-modal-perfil">
 
-      <!-- Botón cerrar -->
-      <button class="doc-panel-cerrar" (click)="cerrarPanel()" aria-label="Cerrar">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20">
-          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
-        </svg>
-      </button>
+      <!-- Cerrar -->
+      <button class="dmp-cerrar" (click)="cerrarPanel()" aria-label="Cerrar">✕</button>
 
-      <!-- Cabecera del perfil -->
-      <div class="doc-panel-header">
-        <div class="doc-panel-foto-wrap">
-          <div class="doc-panel-inicial">{{ inicial(panelDocente.usuario.nombre) }}</div>
-          @if (panelDocente.fotoUrl) {
-            <img class="doc-panel-foto" [src]="panelDocente.fotoUrl"
-                 [alt]="panelDocente.usuario.nombre"
-                 (load)="onFotoLoad($event)" (error)="onFotoError($event)">
-          }
+      <!-- ── HERO ── -->
+      <div class="dmp-hero">
+        <div class="dmp-hero-marca">ITI</div>
+        <div class="dmp-hero-orb"></div>
+
+        <div class="dmp-foto-wrap">
+          <div class="dmp-foto-anillo">
+            <div class="dmp-foto-inner">
+              <div class="dmp-inicial">{{ inicial(panelDocente.usuario.nombre) }}</div>
+              @if (panelDocente.fotoUrl) {
+                <img class="dmp-foto-img" [src]="panelDocente.fotoUrl"
+                     [alt]="panelDocente.usuario.nombre"
+                     (load)="onFotoLoad($event)" (error)="onFotoError($event)">
+              }
+            </div>
+          </div>
+          <div class="dmp-foto-star">✦</div>
         </div>
-        <div class="doc-panel-rol-badge">{{ panelDocente.usuario.rol }}</div>
-        <h2 class="doc-panel-nombre">{{ panelDocente.usuario.nombre }}</h2>
-        @if (panelDocente.titulo) {
-          <p class="doc-panel-titulo">{{ panelDocente.titulo }}</p>
-        }
-        @if (panelDocente.cargo) {
-          <p class="doc-panel-cargo">{{ panelDocente.cargo }}</p>
-        }
-        @if (sedeNombres(panelDocente)) {
-          <p class="doc-panel-sedes">{{ sedeNombres(panelDocente) }}</p>
-        }
-        <!-- Links externos -->
-        <div class="doc-panel-links">
-          @if (panelDocente.urlLinkedin) {
-            <a [href]="panelDocente.urlLinkedin" target="_blank" rel="noopener" class="doc-panel-link">
-              LinkedIn
-            </a>
+
+        <div class="dmp-info">
+          <div class="dmp-badge">
+            <span class="dmp-badge-dot"></span>
+            {{ panelDocente.usuario.rol | titlecase }} · ITI Santander
+          </div>
+          <h2 class="dmp-nombre">{{ panelDocente.usuario.nombre }}</h2>
+          @if (panelDocente.titulo) {
+            <p class="dmp-titulo">{{ panelDocente.titulo }}</p>
           }
-          @if (panelDocente.urlBlog) {
-            <a [href]="panelDocente.urlBlog" target="_blank" rel="noopener" class="doc-panel-link">
-              Blog
-            </a>
+          @if (panelDocente.cargo) {
+            <p class="dmp-cargo">{{ panelDocente.cargo }}</p>
           }
+          <div class="dmp-links">
+            @if (panelDocente.urlLinkedin) {
+              <a [href]="panelDocente.urlLinkedin" target="_blank" rel="noopener" class="dmp-link">
+                <svg viewBox="0 0 24 24" fill="currentColor" width="12" height="12"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg>
+                LinkedIn
+              </a>
+            }
+            @if (panelDocente.urlBlog) {
+              <a [href]="panelDocente.urlBlog" target="_blank" rel="noopener" class="dmp-link">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>
+                Blog
+              </a>
+            }
+          </div>
+        </div>
+
+        <div class="dmp-tabs">
+          <button class="dmp-tab" [class.activo]="tabModal === 'perfil'" (click)="setTabModal('perfil')">Perfil</button>
+          <button class="dmp-tab" [class.activo]="tabModal === 'pub'" (click)="setTabModal('pub')">Publicaciones</button>
         </div>
       </div>
 
-      <!-- Cuerpo del perfil -->
-      <div class="doc-panel-body">
+      <!-- ── CUERPO ── -->
+      <div class="dmp-cuerpo">
 
-        @if (panelDocente.bio) {
-          <div class="doc-panel-seccion">
-            <div class="doc-panel-sec-titulo">Acerca de</div>
-            <p class="doc-panel-bio">{{ panelDocente.bio }}</p>
-          </div>
-        }
+        <!-- TAB PERFIL -->
+        @if (tabModal === 'perfil') {
+          <div class="dmp-tab-pane">
 
-        @if (panelDocente.areas && panelDocente.areas.length > 0) {
-          <div class="doc-panel-seccion">
-            <div class="doc-panel-sec-titulo">Áreas de enseñanza</div>
-            <div class="doc-panel-chips">
-              @for (area of panelDocente.areas; track area) {
-                <span class="doc-chip-area">{{ area }}</span>
-              }
-            </div>
-          </div>
-        }
+            @if (panelDocente.bio) {
+              <div class="dmp-sec">
+                <div class="dmp-sec-hd">
+                  <div class="dmp-sec-ico">👤</div>
+                  <div class="dmp-sec-tit">Acerca de</div>
+                  <div class="dmp-sec-ln"></div>
+                </div>
+                <div class="dmp-bio"><p>{{ panelDocente.bio }}</p></div>
+              </div>
+            }
 
-        @if (panelDocente.especialidades && panelDocente.especialidades.length > 0) {
-          <div class="doc-panel-seccion">
-            <div class="doc-panel-sec-titulo">Especialidades y habilidades</div>
-            <div class="doc-panel-chips">
-              @for (esp of panelDocente.especialidades; track esp) {
-                <span class="doc-chip-esp">{{ esp }}</span>
-              }
-            </div>
-          </div>
-        }
-
-        @if (panelDocente.logros && panelDocente.logros.length > 0) {
-          <div class="doc-panel-seccion">
-            <div class="doc-panel-sec-titulo">Logros y reconocimientos</div>
-            <ul class="doc-panel-logros">
-              @for (logro of panelDocente.logros; track $index) {
-                <li>
-                  {{ logroTexto(logro) }}
-                  @if (logroAnio(logro)) {
-                    <span class="doc-panel-logro-anio">· {{ logroAnio(logro) }}</span>
+            @if (panelDocente.areas && panelDocente.areas.length > 0) {
+              <div class="dmp-sec">
+                <div class="dmp-sec-hd">
+                  <div class="dmp-sec-ico">📚</div>
+                  <div class="dmp-sec-tit">Áreas de enseñanza</div>
+                  <div class="dmp-sec-ln"></div>
+                </div>
+                <div class="dmp-chips">
+                  @for (area of panelDocente.areas; track area) {
+                    <span class="dmp-chip dmp-chip--area" [class.activo]="fichaArea === area"
+                          (click)="toggleFichaArea(area)">
+                      <span class="dmp-chip-dot"></span>{{ area }}
+                    </span>
                   }
-                  @if (logroLink(logro)) {
-                    <a class="doc-panel-logro-link" [href]="logroLink(logro)" target="_blank" rel="noopener">↗</a>
-                  }
-                </li>
-              }
-            </ul>
-          </div>
-        }
-
-        <!-- Publicaciones — timeline últimos 3 meses -->
-        <div class="doc-panel-seccion">
-          <div class="doc-panel-sec-titulo">Publicaciones · últimos 3 meses</div>
-          @if (cargandoPanel) {
-            <div class="doc-panel-sk-list">
-              @for (s of [1,2,3]; track s) {
-                <div class="doc-panel-sk-item"></div>
-              }
-            </div>
-          } @else if (gruposTimeline.length > 0) {
-            <div class="doc-tl">
-              @for (grupo of gruposTimeline; track grupo.mes) {
-                <div class="doc-tl-grupo">
-                  <div class="doc-tl-mes">
-                    <span class="doc-tl-mes-dot"></span>
-                    {{ grupo.mes }}
+                </div>
+                @if (fichaArea) {
+                  <div class="dmp-ficha">
+                    <button class="dmp-ficha-x" (click)="fichaArea = null">✕</button>
+                    <div class="dmp-ficha-nombre">{{ fichaArea }}</div>
+                    <div class="dmp-ficha-desc">Área de enseñanza activa en el Instituto Técnico Industrial Santander.</div>
                   </div>
-                  <div class="doc-tl-items">
+                }
+              </div>
+            }
+
+            @if (panelDocente.especialidades && panelDocente.especialidades.length > 0) {
+              <div class="dmp-sec">
+                <div class="dmp-sec-hd">
+                  <div class="dmp-sec-ico">✨</div>
+                  <div class="dmp-sec-tit">Especialidades y habilidades</div>
+                  <div class="dmp-sec-ln"></div>
+                </div>
+                <div class="dmp-chips">
+                  @for (esp of panelDocente.especialidades; track esp) {
+                    <span class="dmp-chip dmp-chip--esp" [class.activo]="fichaEsp === esp"
+                          (click)="toggleFichaEsp(esp)">
+                      <span class="dmp-chip-dot"></span>{{ esp }}
+                    </span>
+                  }
+                </div>
+                @if (fichaEsp) {
+                  <div class="dmp-ficha dmp-ficha--esp">
+                    <button class="dmp-ficha-x" (click)="fichaEsp = null">✕</button>
+                    <div class="dmp-ficha-nombre">{{ fichaEsp }}</div>
+                    <div class="dmp-ficha-desc">Especialidad y habilidad destacada de este docente del ITI Santander.</div>
+                  </div>
+                }
+              </div>
+            }
+
+            @if (panelDocente.logros && panelDocente.logros.length > 0) {
+              <div class="dmp-sec">
+                <div class="dmp-sec-hd">
+                  <div class="dmp-sec-ico">🏆</div>
+                  <div class="dmp-sec-tit">Publicaciones y logros</div>
+                  <div class="dmp-sec-ln"></div>
+                </div>
+                <ul class="dmp-logros">
+                  @for (logro of panelDocente.logros; track $index) {
+                    <li class="dmp-logro">
+                      <div class="dmp-logro-ico">📄</div>
+                      <div>
+                        <div class="dmp-logro-tit">{{ logroTexto(logro) }}</div>
+                        <div class="dmp-logro-meta">
+                          @if (logroAnio(logro)) {
+                            <span class="dmp-logro-yr">📅 {{ logroAnio(logro) }}</span>
+                          }
+                          @if (logroLink(logro)) {
+                            <a class="dmp-logro-ver" [href]="logroLink(logro)" target="_blank" rel="noopener">Ver ↗</a>
+                          }
+                        </div>
+                      </div>
+                    </li>
+                  }
+                </ul>
+              </div>
+            }
+
+          </div>
+        }
+
+        <!-- TAB PUBLICACIONES -->
+        @if (tabModal === 'pub') {
+          <div class="dmp-tab-pane">
+            <div class="dmp-sec">
+              <div class="dmp-sec-hd">
+                <div class="dmp-sec-ico">📰</div>
+                <div class="dmp-sec-tit">Artículos recientes</div>
+                <div class="dmp-sec-ln"></div>
+              </div>
+              @if (cargandoPanel) {
+                <div class="dmp-sk-list">
+                  @for (s of [1,2,3]; track s) { <div class="dmp-sk-item"></div> }
+                </div>
+              } @else if (gruposTimeline.length > 0) {
+                <div class="dmp-tl">
+                  @for (grupo of gruposTimeline; track grupo.mes) {
+                    <div class="dmp-tl-mes-label">{{ grupo.mes }}</div>
                     @for (n of grupo.items; track n.id) {
-                      <div class="doc-tl-item">
-                        <span class="doc-tl-tipo">NOTICIA</span>
-                        <div class="doc-tl-info">
-                          <span class="doc-tl-titulo">{{ n.titulo }}</span>
-                          <span class="doc-tl-fecha">
-                            {{ formatFecha(n.fecha_publicacion ?? n.createdAt) }}
-                            &nbsp;·&nbsp;
-                            <span [class]="'doc-tl-estado doc-tl-estado--' + (n.estado ?? 'publicada')">
+                      <div class="dmp-tl-item">
+                        <div class="dmp-tl-dot"><div class="dmp-tl-dot-in"></div></div>
+                        <div class="dmp-tl-card">
+                          <div class="dmp-tl-tit">{{ n.titulo }}</div>
+                          <div class="dmp-tl-meta">
+                            <span class="dmp-tl-fecha">{{ formatFecha(n.fecha_publicacion ?? n.createdAt) }}</span>
+                            <span [class]="'dmp-tl-estado dmp-tl-estado--' + (n.estado ?? 'publicada')">
                               {{ n.estado === 'pendiente' ? '⏳ En revisión' : '✓ Publicada' }}
                             </span>
-                          </span>
+                          </div>
                         </div>
                       </div>
                     }
-                  </div>
+                  }
                 </div>
+              } @else {
+                <p class="dmp-sin-pub">Sin publicaciones en los últimos 3 meses.</p>
               }
             </div>
-          } @else {
-            <p class="doc-panel-sin-noticias">Sin publicaciones en los últimos 3 meses.</p>
-          }
-        </div>
+          </div>
+        }
 
       </div>
-    </aside>
+
+      <!-- ── FOOTER ── -->
+      <div class="dmp-footer">
+        <div class="dmp-footer-sedes">
+          @if (sedeNombres(panelDocente)) {
+            @for (s of panelDocente.sedes ?? []; track s.id) {
+              <span class="dmp-sede-chip"><span class="dmp-sede-dot"></span>{{ s.nombre }}</span>
+            }
+          }
+        </div>
+      </div>
+
+    </div>
   </div>
 }
