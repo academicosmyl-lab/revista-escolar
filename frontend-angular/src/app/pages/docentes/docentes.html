@@ -118,6 +118,16 @@
                   }
                 </div>
               }
+              @if (d.especialidades && d.especialidades.length > 0) {
+                <div class="doc-card-especialidades">
+                  @for (esp of d.especialidades.slice(0, 3); track esp) {
+                    <span class="doc-chip-esp">{{ esp }}</span>
+                  }
+                  @if (d.especialidades.length > 3) {
+                    <span class="doc-chip-esp doc-chip-esp--mas">+{{ d.especialidades.length - 3 }}</span>
+                  }
+                </div>
+              }
               @if (d.bio) {
                 <p class="doc-card-bio">{{ d.bio }}</p>
               }
@@ -258,6 +268,17 @@
             <div class="doc-panel-chips">
               @for (area of panelDocente.areas; track area) {
                 <span class="doc-chip-area">{{ area }}</span>
+              }
+            </div>
+          </div>
+        }
+
+        @if (panelDocente.especialidades && panelDocente.especialidades.length > 0) {
+          <div class="doc-panel-seccion">
+            <div class="doc-panel-sec-titulo">Especialidades y habilidades</div>
+            <div class="doc-panel-chips">
+              @for (esp of panelDocente.especialidades; track esp) {
+                <span class="doc-chip-esp">{{ esp }}</span>
               }
             </div>
           </div>

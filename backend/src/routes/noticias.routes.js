@@ -129,6 +129,72 @@ router.post('/', autenticar, requiereRol('DOCENTE', 'ADMIN'), async (req, res, n
   } catch (err) { next(err); }
 });
 
+// PUT /api/v1/noticias/:id — editar noticia (autor o admin/rector)
+router.put('/:id', autenticar, async (req, res, next) => {
+  try {
+    const noticia = await Noticia.findByPk(req.params.id);
+    if (!noticia) throw crearError('Noticia no encontrada', 404);
+
+    const esAdmin = ['ADMIN', 'RECTOR'].includes(req.usuario.rol);
+    if (!esAdmin && noticia.autor_id !== req.usuario.id)
+      throw crearError('No tienes permiso para editar esta noticia', 403);
+
+    const schema = Joi.object({
+      titulo:       Joi.string().min(5).max(200).optional(),
+      contenido:    Joi.string().min(50).optional(),
+      categoria_id: Joi.string().uuid().allow(null, '').optional(),
+      sede_id:      Joi.string().uuid().allow(null, '').optional(),
+      destacada:    Joi.boolean().optional(),
+      usar_ia:      Joi.boolean().optional(),
+    });
+    const { error, value } = schema.validate(req.body);
+    if (error) throw crearError(error.details[0].message, 400);
+
+    const upd = {};
+    if (value.titulo !== undefined)    upd.titulo       = value.titulo;
+    if (value.contenido !== undefined) upd.contenido    = value.contenido;
+    if (value.categoria_id !== undefined) upd.categoria_id = value.categoria_id || null;
+    if (value.sede_id !== undefined)   upd.sede_id      = value.sede_id || null;
+    if (esAdmin && value.destacada !== undefined) upd.destacada = value.destacada;
+
+    // Mejorar con IA si se solicita y hay nuevo contenido
+    if (value.usar_ia && (value.titulo || value.contenido)) {
+      const mejora = await coordinador({
+        tipo: 'noticia',
+        datos: {
+          titulo:          value.titulo    ?? noticia.titulo,
+          contenido:       value.contenido ?? noticia.contenido,
+          categoria:       value.categoria_id ?? noticia.categoria_id,
+          docente_nombre:  req.usuario.nombre,
+        },
+        usuario: req.usuario,
+      }).catch(() => null);
+      if (mejora) {
+        upd.titulo    = mejora.titulo_mejorado;
+        upd.contenido = mejora.contenido_mejorado;
+        upd.resumen   = mejora.resumen;
+      }
+    }
+
+    // Docente edita una rechazada → vuelve a pendiente
+    if (!esAdmin && noticia.estado === 'rechazada' && Object.keys(upd).length > 0) {
+      upd.estado          = 'pendiente';
+      upd.motivo_rechazo  = null;
+    }
+
+    await noticia.update(upd);
+
+    const actualizada = await Noticia.findByPk(noticia.id, {
+      include: [
+        { model: Categoria, as: 'categoria', attributes: ['nombre', 'color'] },
+        { model: Imagen,    as: 'imagenes',  attributes: ['id', 'url', 'alt_text', 'es_portada'] },
+      ],
+    });
+
+    res.json({ noticia: actualizada, mensaje: 'Noticia actualizada' });
+  } catch (err) { next(err); }
+});
+
 // POST /api/v1/noticias/:id/fotos — subir fotos (máx 2) → Cloudinary
 router.post('/:id/fotos', autenticar, uploadNoticias.array('fotos', 2), async (req, res, next) => {
   try {

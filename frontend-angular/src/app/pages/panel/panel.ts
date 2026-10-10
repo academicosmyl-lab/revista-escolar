@@ -76,6 +76,11 @@ export class Panel implements OnInit {
 
   nueva = { titulo: '', contenido: '', categoria_id: '', usar_ia: true };
 
+  // ── Modal editar noticia ────────────────────────────────
+  editNoticia: { id: string; titulo: string; contenido: string; categoria_id: string; usar_ia: boolean } | null = null;
+  editNoticiaGuardando = signal(false);
+  editNoticiaError     = signal('');
+
   get perfilFotoUrl(): string | null { return (this.perfil as any)?.foto_url ?? (this.perfil as any)?.fotoUrl ?? null; }
   get publicadas()  { return this.noticias.filter(n => n.estado === 'publicada'); }
   get pendientes()  { return this.noticias.filter(n => n.estado === 'pendiente'); }
@@ -419,6 +424,59 @@ export class Panel implements OnInit {
   categoriaColor(n: Noticia): string { return (n.categoria as any)?.color ?? '#7B1D2C'; }
   categoriaNombre(n: Noticia): string { return (n.categoria as any)?.nombre ?? ''; }
   tituloNoticia(id: string): string { return this.noticias.find(n => n.id === id)?.titulo ?? ''; }
+
+  abrirEditarNoticia(n: Noticia) {
+    this.editNoticia = {
+      id:           n.id,
+      titulo:       n.titulo,
+      contenido:    n.contenido,
+      categoria_id: (n.categoria as any)?.id ?? '',
+      usar_ia:      false,
+    };
+    this.editNoticiaError.set('');
+    this.mostrarFormNoticia  = false;
+    this.mostrarSubidaFotos  = false;
+    this.epModal             = false;
+    setTimeout(() => document.getElementById('edit-noticia-modal')?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 80);
+  }
+
+  cerrarEditarNoticia() {
+    this.editNoticia = null;
+    this.editNoticiaError.set('');
+  }
+
+  guardarEdicionNoticia() {
+    if (!this.editNoticia) return;
+    if (!this.editNoticia.titulo.trim() || !this.editNoticia.contenido.trim()) {
+      this.editNoticiaError.set('El título y el contenido son obligatorios.');
+      return;
+    }
+    this.editNoticiaGuardando.set(true);
+    this.editNoticiaError.set('');
+    const body: any = {
+      titulo:    this.editNoticia.titulo,
+      contenido: this.editNoticia.contenido,
+      usar_ia:   this.editNoticia.usar_ia,
+    };
+    if (this.editNoticia.categoria_id) body['categoria_id'] = this.editNoticia.categoria_id;
+
+    this.api.put<any>(`/noticias/${this.editNoticia.id}`, body).subscribe({
+      next: r => {
+        this.editNoticiaGuardando.set(false);
+        this.editNoticia = null;
+        this.cargar();
+        const msg = r.noticia?.estado === 'pendiente' && r.noticia?.motivo_rechazo === null
+          ? 'Noticia actualizada y enviada a revisión nuevamente.'
+          : 'Noticia actualizada correctamente.';
+        this.exito.set(msg);
+        setTimeout(() => this.exito.set(''), 5000);
+      },
+      error: e => {
+        this.editNoticiaError.set(e.mensaje || 'No se pudo guardar la edición.');
+        this.editNoticiaGuardando.set(false);
+      },
+    });
+  }
 
   eliminarFoto(n: Noticia, imgId: string) {
     if (!confirm('¿Eliminar esta foto de la noticia?')) return;

@@ -12,7 +12,7 @@ const router  = express.Router();
 const { autenticar, requiereRol } = require('../middlewares/auth.middleware');
 const {
   Usuario, PerfilDocente, SolicitudPerfil,
-  AccionAdmin, Sede, Noticia, Imagen,
+  AccionAdmin, Sede, Noticia, Imagen, Categoria,
   DocenteSede, CursoDocente, VideoYoutube,
   SeguimientoMateria, DocumentoDocente, SeguimientoInclusion,
 } = require('../models');
@@ -521,8 +521,9 @@ router.get('/publicaciones', soloAdmin, async (req, res) => {
     const { count, rows } = await Noticia.findAndCountAll({
       where: { estado },
       include: [
-        { model: Usuario, as: 'autor', attributes: ['nombre', 'rol'] },
-        { model: Imagen,  as: 'imagenes', attributes: ['id', 'url', 'es_portada'] },
+        { model: Usuario,   as: 'autor',     attributes: ['nombre', 'rol'] },
+        { model: Imagen,    as: 'imagenes',  attributes: ['id', 'url', 'es_portada'] },
+        { model: Categoria, as: 'categoria', attributes: ['id', 'nombre', 'color'], required: false },
       ],
       order: [['createdAt', 'DESC']],
       limit:  parseInt(limit),

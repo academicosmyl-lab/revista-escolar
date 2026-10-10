@@ -86,6 +86,7 @@ export interface PerfilDocente {
   fotoUrl?: string;
   titulo?: string;
   areas?: string[];
+  especialidades?: string[];
   logros?: string[];
   urlBlog?: string | null;
   urlLinkedin?: string | null;

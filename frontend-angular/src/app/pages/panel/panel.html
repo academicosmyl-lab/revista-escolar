@@ -342,11 +342,14 @@
                     · <span class="pan-motivo">Motivo: {{ motivoRechazoDe(n) }}</span>
                   }
                 </span>
-                @if (fotosPendientesEn(n) > 0) {
-                  <button class="pan-btn-agregar-foto" (click)="abrirSubidaParaNoticia(n.id)">
-                    + Agregar foto
-                  </button>
-                }
+                <div class="pan-noticia-acciones">
+                  <button class="pan-btn-editar-noticia" (click)="abrirEditarNoticia(n)">✏ Editar</button>
+                  @if (fotosPendientesEn(n) > 0) {
+                    <button class="pan-btn-agregar-foto" (click)="abrirSubidaParaNoticia(n.id)">
+                      + Agregar foto
+                    </button>
+                  }
+                </div>
               </div>
             </div>
 
@@ -357,6 +360,93 @@
   </section>
 
 </main>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- MODAL — EDITAR NOTICIA                                   -->
+<!-- ═══════════════════════════════════════════════════════ -->
+@if (editNoticia) {
+  <div class="ep-overlay" (click)="cerrarEditarNoticia()">
+    <div class="ep-modal" id="edit-noticia-modal" (click)="$event.stopPropagation()">
+
+      <div class="ep-modal-header">
+        <div>
+          <div class="ep-modal-eyebrow">Mi noticia</div>
+          <h2 class="ep-modal-titulo">Editar publicación</h2>
+        </div>
+        <button class="ep-cerrar" (click)="cerrarEditarNoticia()" title="Cerrar">✕</button>
+      </div>
+
+      <div class="ep-campos-seccion">
+        <div class="ep-seccion-label">
+          <span class="ep-seccion-num">01</span>
+          <span class="ep-seccion-txt">Contenido</span>
+        </div>
+
+        <div class="ep-campo ep-campo--bloque">
+          <div class="ep-campo-info">
+            <div class="ep-campo-label">Título <span class="pan-req">*</span></div>
+            <input class="ep-input" type="text" [(ngModel)]="editNoticia.titulo"
+                   placeholder="Título de la noticia" maxlength="200">
+            <div class="ep-contador">{{ 200 - editNoticia.titulo.length }} caracteres restantes</div>
+          </div>
+        </div>
+
+        <div class="ep-campo ep-campo--bloque">
+          <div class="ep-campo-info">
+            <div class="ep-campo-label">Contenido <span class="pan-req">*</span></div>
+            <textarea class="ep-textarea" rows="8" [(ngModel)]="editNoticia.contenido"
+                      placeholder="Escribe aquí el contenido de tu noticia..."></textarea>
+            <div class="ep-contador">{{ editNoticia.contenido.length }} caracteres (mín. 50)</div>
+          </div>
+        </div>
+
+        <div class="ep-campo">
+          <div class="ep-campo-info">
+            <div class="ep-campo-label">Categoría (opcional)</div>
+            <select class="ep-input" [(ngModel)]="editNoticia.categoria_id">
+              <option value="">Sin categoría</option>
+              @for (c of categorias; track c.id) {
+                <option [value]="c.id">{{ c.nombre }}</option>
+              }
+            </select>
+          </div>
+        </div>
+
+        <div class="ep-campo">
+          <div class="ep-campo-info">
+            <label class="pan-label-toggle">
+              <div class="pan-toggle-wrap">
+                <input type="checkbox" [(ngModel)]="editNoticia.usar_ia" class="pan-checkbox">
+                <div class="pan-toggle-slider"></div>
+              </div>
+              <div>
+                <span class="pan-toggle-label">Mejorar con IA</span>
+                <span class="pan-toggle-desc">Claude mejorará el título y redacción al guardar</span>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        @if (editNoticiaError()) {
+          <div class="pan-alerta-error" style="margin:0.5rem 0">{{ editNoticiaError() }}</div>
+        }
+      </div>
+
+      <div class="ep-modal-footer">
+        <button class="ep-btn-guardar" (click)="guardarEdicionNoticia()"
+                [disabled]="editNoticiaGuardando() || editNoticia.titulo.length < 5 || editNoticia.contenido.length < 50">
+          @if (editNoticiaGuardando()) {
+            <span class="pan-spinner"></span> Guardando...
+          } @else {
+            Guardar cambios
+          }
+        </button>
+        <button class="ep-btn-modal-cerrar" (click)="cerrarEditarNoticia()">Cancelar</button>
+      </div>
+
+    </div>
+  </div>
+}
 
 <!-- ═══════════════════════════════════════════════════════ -->
 <!-- MODAL GLASSMORPHISM — EDITAR PERFIL                     -->

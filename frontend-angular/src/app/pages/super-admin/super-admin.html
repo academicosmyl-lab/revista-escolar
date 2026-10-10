@@ -495,6 +495,7 @@
                         <button class="sa-btn sa-btn-ok" style="margin-right:6px;font-size:0.78rem;padding:5px 10px" (click)="abrirRevisionPub(pub, 'aprobar-pub')">Aprobar</button>
                         <button class="sa-btn sa-btn-err" style="margin-right:6px;font-size:0.78rem;padding:5px 10px" (click)="abrirRevisionPub(pub, 'rechazar-pub')">Rechazar</button>
                       }
+                      <button class="sa-btn" style="font-size:0.78rem;padding:5px 10px;background:#f0fff4;color:#1a7340;border:1px solid #b2dfdb;margin-right:6px" title="Editar publicación" (click)="abrirEditarPub(pub)">✏️ Editar</button>
                       <button class="sa-btn" style="font-size:0.78rem;padding:5px 10px;background:#f0f4ff;color:#3B5BDB;border:1px solid #c5d0ff;margin-right:6px" title="Gestionar imágenes" (click)="abrirGestionImagenes(pub)">🖼️ Imágenes</button>
                       <button class="sa-btn sa-btn-err" style="font-size:0.78rem;padding:5px 10px;opacity:0.75" title="Eliminar permanentemente" (click)="eliminarPublicacion(pub)">🗑️ Eliminar</button>
                     </td>
@@ -1195,6 +1196,87 @@
           Crear capítulo
         </button>
       </div>
+    </div>
+  </div>
+}
+
+<!-- Modal: Editar publicación completa -->
+@if (modal() === 'editar-pub') {
+  <div class="sa-modal-backdrop" (click)="cerrarModal()">
+    <div class="sa-modal sa-modal-wide" (click)="$event.stopPropagation()">
+      <div class="sa-modal-header sa-modal-header-neutral">
+        <h2>✏️ Editar publicación</h2>
+        <button class="sa-modal-close" (click)="cerrarModal()">✕</button>
+      </div>
+
+      @if (modalPublicacion(); as pub) {
+        <div class="sa-modal-body">
+          <div class="sa-form-grid">
+
+            <div class="sa-field sa-field-full">
+              <label class="sa-label">Título <span class="sa-required">*</span></label>
+              <input class="sa-input" type="text" maxlength="200"
+                [value]="editPubTitulo()"
+                (input)="editPubTitulo.set($any($event.target).value)">
+              <span style="font-size:0.75rem;color:#888">{{ 200 - editPubTitulo().length }} caracteres restantes</span>
+            </div>
+
+            <div class="sa-field sa-field-full">
+              <label class="sa-label">Contenido <span class="sa-required">*</span></label>
+              <textarea class="sa-textarea" rows="9"
+                [value]="editPubContenido()"
+                (input)="editPubContenido.set($any($event.target).value)"
+                placeholder="Contenido de la publicación..."></textarea>
+              <span style="font-size:0.75rem;color:#888">{{ editPubContenido().length }} caracteres (mín. 50)</span>
+            </div>
+
+            <div class="sa-field">
+              <label class="sa-label">Categoría</label>
+              <select class="sa-input sa-select"
+                [value]="editPubCatId()"
+                (change)="editPubCatId.set($any($event.target).value)">
+                <option value="">Sin categoría</option>
+                @for (c of categorias; track c.id) {
+                  <option [value]="c.id">{{ c.nombre }}</option>
+                }
+              </select>
+            </div>
+
+            <div class="sa-field" style="align-self:end">
+              <label class="sa-toggle-wrap" style="display:flex;align-items:center;gap:.75rem;cursor:pointer">
+                <input type="checkbox" style="width:18px;height:18px;accent-color:#C0394A;cursor:pointer"
+                  [checked]="editPubDestacada()" (change)="editPubDestacada.set($any($event.target).checked)">
+                <span style="font-size:0.85rem;color:#4B5563;font-family:'Source Sans 3',sans-serif">
+                  Destacar en portada
+                </span>
+              </label>
+            </div>
+
+            <div class="sa-field sa-field-full">
+              <label class="sa-toggle-wrap" style="display:flex;align-items:center;gap:.75rem;cursor:pointer">
+                <input type="checkbox" style="width:18px;height:18px;accent-color:#C0394A;cursor:pointer"
+                  [checked]="editPubUsarIa()" (change)="editPubUsarIa.set($any($event.target).checked)">
+                <span style="font-size:0.85rem;color:#4B5563;font-family:'Source Sans 3',sans-serif">
+                  Mejorar con IA al guardar (Claude mejorará el título y redacción)
+                </span>
+              </label>
+            </div>
+
+          </div>
+
+          @if (editPubErr()) {
+            <p class="sa-field-err" style="margin-top:0.5rem">{{ editPubErr() }}</p>
+          }
+        </div>
+
+        <div class="sa-modal-footer">
+          <button class="sa-btn sa-btn-ghost" (click)="cerrarModal()" [disabled]="editPubGuardando()">Cancelar</button>
+          <button class="sa-btn sa-btn-primary" (click)="guardarEdicionPub()" [disabled]="editPubGuardando()">
+            @if (editPubGuardando()) { <span class="sa-btn-spinner"></span> }
+            Guardar cambios
+          </button>
+        </div>
+      }
     </div>
   </div>
 }

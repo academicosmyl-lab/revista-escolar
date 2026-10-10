@@ -8,7 +8,7 @@ import { TitleCasePipe } from '@angular/common';
 import { ApiService } from '../../services/api.service';
 
 type Tab = 'dashboard' | 'cola' | 'docentes' | 'historial' | 'publicaciones' | 'galeria';
-type ModalTipo = 'aprobar' | 'rechazar' | 'crear' | 'editar' | 'aprobar-pub' | 'rechazar-pub' | 'nuevo-album' | 'nuevo-capitulo' | null;
+type ModalTipo = 'aprobar' | 'rechazar' | 'crear' | 'editar' | 'aprobar-pub' | 'rechazar-pub' | 'editar-pub' | 'nuevo-album' | 'nuevo-capitulo' | null;
 
 interface Solicitud {
   id: string;
@@ -48,11 +48,19 @@ interface Publicacion {
   id: string;
   titulo: string;
   resumen?: string;
+  contenido?: string;
   estado: 'pendiente' | 'publicada' | 'rechazada';
   destacada: boolean;
   createdAt: string;
   autor?: { nombre: string; rol: string; };
+  categoria?: { id: string; nombre: string; };
   imagenes?: { id: string; url: string; es_portada: boolean; }[];
+}
+
+interface Categoria {
+  id: string;
+  nombre: string;
+  color?: string;
 }
 
 interface GaleriaAlbum {
@@ -155,6 +163,18 @@ export class SuperAdmin implements OnInit {
   motivoPub        = signal('');
   motivoPubErr     = signal('');
 
+  /* ── Categorías ─────────────────────────────────────── */
+  categorias: Categoria[] = [];
+
+  /* ── Edición completa de publicación ────────────────── */
+  editPubTitulo    = signal('');
+  editPubContenido = signal('');
+  editPubCatId     = signal('');
+  editPubDestacada = signal(false);
+  editPubUsarIa    = signal(false);
+  editPubErr       = signal('');
+  editPubGuardando = signal(false);
+
   /* ── Gestión de imágenes de una publicación ─────────── */
   modalImagenes    = signal<Publicacion | null>(null);
   cargandoImg      = signal(false);
@@ -238,7 +258,7 @@ export class SuperAdmin implements OnInit {
     if (tab === 'cola')                              this.cargarCola();
     if (tab === 'docentes')                          this.cargarDocentes();
     if (tab === 'historial')                         this.cargarHistorial();
-    if (tab === 'publicaciones')                     this.cargarPublicaciones();
+    if (tab === 'publicaciones')                     { this.cargarPublicaciones(); if (!this.categorias.length) this.cargarCategorias(); }
     if (tab === 'galeria')                           this.cargarAlbums();
   }
 
@@ -408,6 +428,14 @@ export class SuperAdmin implements OnInit {
     });
   }
 
+  /* ── Categorías ────────────────────────────────────────── */
+  cargarCategorias() {
+    this.api.get<any>('/categorias').subscribe({
+      next:  r => { this.categorias = r.data ?? []; this.cdr.markForCheck(); },
+      error: () => {},
+    });
+  }
+
   /* ── Publicaciones ────────────────────────────────────────── */
   cargarPublicaciones() {
     this.cargando.set(true);
@@ -450,6 +478,52 @@ export class SuperAdmin implements OnInit {
       error: e => {
         this.motivoPubErr.set(e.mensaje ?? 'Error al procesar');
         this.cargando.set(false);
+        this.cdr.markForCheck();
+      },
+    });
+  }
+
+  abrirEditarPub(pub: Publicacion) {
+    this.editPubTitulo.set(pub.titulo);
+    this.editPubContenido.set((pub as any).contenido ?? '');
+    this.editPubCatId.set((pub as any).categoria?.id ?? '');
+    this.editPubDestacada.set(pub.destacada);
+    this.editPubUsarIa.set(false);
+    this.editPubErr.set('');
+    this.editPubGuardando.set(false);
+    this.modalPublicacion.set(pub);
+    this.modal.set('editar-pub');
+    this.cdr.markForCheck();
+  }
+
+  guardarEdicionPub() {
+    const pub = this.modalPublicacion();
+    if (!pub) return;
+    if (!this.editPubTitulo().trim()) { this.editPubErr.set('El título es obligatorio'); return; }
+    if (!this.editPubContenido().trim() || this.editPubContenido().length < 50) {
+      this.editPubErr.set('El contenido debe tener al menos 50 caracteres');
+      return;
+    }
+    this.editPubGuardando.set(true);
+    this.editPubErr.set('');
+    const body: any = {
+      titulo:    this.editPubTitulo(),
+      contenido: this.editPubContenido(),
+      destacada: this.editPubDestacada(),
+      usar_ia:   this.editPubUsarIa(),
+    };
+    if (this.editPubCatId()) body['categoria_id'] = this.editPubCatId();
+
+    this.api.put<any>(`/noticias/${pub.id}`, body).subscribe({
+      next: r => {
+        this.exito.set(r.mensaje || 'Publicación actualizada');
+        this.cerrarModal();
+        this.cargarPublicaciones();
+        this.cdr.markForCheck();
+      },
+      error: e => {
+        this.editPubErr.set(e.mensaje ?? 'Error al guardar');
+        this.editPubGuardando.set(false);
         this.cdr.markForCheck();
       },
     });

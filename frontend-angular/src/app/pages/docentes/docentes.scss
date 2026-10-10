@@ -377,6 +377,27 @@
   line-height: 1.4;
 }
 
+.doc-card-especialidades {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-bottom: 8px;
+}
+
+.doc-chip-esp {
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #6B5B2E;
+  background: #FEF9E7;
+  border: 1px solid #F5D88A;
+  border-radius: 4px;
+  padding: 2px 7px;
+  white-space: nowrap;
+  line-height: 1.4;
+  &--mas { background: #F5F5F5; border-color: #D1D5DB; color: #6B7280; }
+}
+
 .doc-card-sedes {
   font-family: 'Source Sans 3', sans-serif;
   font-size: 0.75rem;

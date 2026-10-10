@@ -553,6 +553,20 @@
   margin-top: 0.3rem;
 }
 .pan-noticia-meta { font-size: 0.78rem; color: #9ca3af; }
+.pan-noticia-acciones { display: flex; align-items: center; gap: 0.4rem; flex-wrap: wrap; }
+.pan-btn-editar-noticia {
+  background: none;
+  border: 1px solid #c5d0ff;
+  color: #3B5BDB;
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 0.2rem 0.65rem;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: all 0.2s;
+  white-space: nowrap;
+  &:hover { background: #e8eeff; }
+}
 .pan-btn-agregar-foto {
   background: none;
   border: 1px solid var(--dorado);
