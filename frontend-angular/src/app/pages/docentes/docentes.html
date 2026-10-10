@@ -288,8 +288,14 @@
           <div class="doc-panel-seccion">
             <div class="doc-panel-sec-titulo">Logros y reconocimientos</div>
             <ul class="doc-panel-logros">
-              @for (logro of panelDocente.logros; track logro) {
-                <li>{{ logro }}</li>
+              @for (logro of panelDocente.logros; track $index) {
+                <li>
+                  {{ logro?.titulo ?? logro?.texto ?? logro }}
+                  @if (logro?.anio) { <span class="doc-panel-logro-anio">· {{ logro.anio }}</span> }
+                  @if (logro?.link) {
+                    <a class="doc-panel-logro-link" [href]="logro.link" target="_blank" rel="noopener">↗</a>
+                  }
+                </li>
               }
             </ul>
           </div>
