@@ -179,6 +179,9 @@ export class SuperAdmin implements OnInit {
   modalImagenes    = signal<Publicacion | null>(null);
   cargandoImg      = signal(false);
   errorImg         = signal('');
+  subiendoImg      = signal(false);
+  exitoImg         = signal('');
+  nuevasFotosPreview: { file: File; preview: string }[] = [];
 
   /* ── Galería institucional ───────────────────────────── */
   albums              : GaleriaAlbum[]    = [];
@@ -809,10 +812,73 @@ export class SuperAdmin implements OnInit {
   /* ── Gestión imágenes publicación ───────────────────── */
   abrirGestionImagenes(pub: Publicacion) {
     this.errorImg.set('');
+    this.exitoImg.set('');
+    this.nuevasFotosPreview = [];
     this.modalImagenes.set(pub);
   }
 
-  cerrarImagenes() { this.modalImagenes.set(null); }
+  cerrarImagenes() {
+    this.modalImagenes.set(null);
+    this.nuevasFotosPreview = [];
+    this.errorImg.set('');
+    this.exitoImg.set('');
+  }
+
+  onNuevasFotosInput(e: Event) {
+    const files = Array.from((e.target as HTMLInputElement).files ?? []);
+    (e.target as HTMLInputElement).value = '';
+    if (!files.length) return;
+    const pub = this.modalImagenes();
+    const existentes = pub?.imagenes?.length ?? 0;
+    const espacio = Math.max(0, 2 - existentes - this.nuevasFotosPreview.length);
+    if (espacio <= 0) { this.errorImg.set('Ya se alcanzó el máximo de 2 fotos por publicación.'); return; }
+    const seleccionadas = files.filter(f => f.type.startsWith('image/')).slice(0, espacio);
+    seleccionadas.forEach(file => {
+      const reader = new FileReader();
+      reader.onload = ev => {
+        this.nuevasFotosPreview.push({ file, preview: ev.target?.result as string });
+        this.cdr.markForCheck();
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+
+  quitarNuevaFoto(i: number) {
+    this.nuevasFotosPreview.splice(i, 1);
+    this.cdr.markForCheck();
+  }
+
+  subirNuevasFotos() {
+    const pub = this.modalImagenes();
+    if (!pub || !this.nuevasFotosPreview.length) return;
+    this.subiendoImg.set(true);
+    this.errorImg.set('');
+    this.exitoImg.set('');
+    const fd = new FormData();
+    this.nuevasFotosPreview.forEach(f => fd.append('fotos', f.file));
+    this.api.postFormData<any>(`/noticias/${pub.id}/fotos`, fd).subscribe({
+      next: r => {
+        const nuevas = r.imagenes ?? [];
+        const pubActual = this.modalImagenes();
+        if (pubActual) {
+          const actualizada = { ...pubActual, imagenes: [...(pubActual.imagenes ?? []), ...nuevas] };
+          this.modalImagenes.set(actualizada);
+          // Actualizar también en la lista
+          const idx = this.publicaciones.findIndex(p => p.id === pub.id);
+          if (idx !== -1) this.publicaciones[idx] = { ...this.publicaciones[idx], imagenes: actualizada.imagenes };
+        }
+        this.nuevasFotosPreview = [];
+        this.subiendoImg.set(false);
+        this.exitoImg.set(`${nuevas.length} foto${nuevas.length > 1 ? 's subidas' : ' subida'} correctamente.`);
+        this.cdr.markForCheck();
+      },
+      error: e => {
+        this.errorImg.set(e.mensaje ?? 'Error al subir las fotos');
+        this.subiendoImg.set(false);
+        this.cdr.markForCheck();
+      },
+    });
+  }
 
   eliminarImagenPub(pub: Publicacion, imagenId: string) {
     if (!confirm('¿Eliminar esta imagen? La acción no se puede deshacer.')) return;

@@ -1296,47 +1296,113 @@
             {{ errorImg() }}
           </div>
         }
+        @if (exitoImg()) {
+          <div style="margin-bottom:1rem;padding:0.75rem 1rem;background:#f0fff4;border:1px solid #86efac;border-radius:6px;font-size:0.88rem;color:#166534;font-family:'Source Sans 3',sans-serif">
+            ✅ {{ exitoImg() }}
+          </div>
+        }
 
+        <!-- Imágenes existentes -->
         @if (!pub.imagenes || pub.imagenes.length === 0) {
-          <p style="color:#888;font-family:'Source Sans 3',sans-serif;font-size:0.9rem;text-align:center;padding:2rem 0">
-            Esta publicación no tiene imágenes.
+          <p style="color:#888;font-family:'Source Sans 3',sans-serif;font-size:0.9rem;text-align:center;padding:1.5rem 0 0.5rem">
+            Esta publicación aún no tiene imágenes.
+          </p>
+        } @else {
+          <p style="font-family:'Source Sans 3',sans-serif;font-size:0.82rem;font-weight:600;color:#374151;margin-bottom:0.75rem">
+            Imágenes actuales ({{ pub.imagenes.length }}/2)
+          </p>
+          <div class="sa-img-grid">
+            @for (img of pub.imagenes; track img.id) {
+              <div class="sa-img-item">
+                <div class="sa-img-preview-wrap">
+                  <img class="sa-img-preview" [src]="img.url" [alt]="pub.titulo">
+                  @if (img.es_portada) {
+                    <span class="sa-img-badge">Portada</span>
+                  } @else {
+                    <span class="sa-img-badge sa-img-badge-gal">Galería</span>
+                  }
+                </div>
+                <div class="sa-img-actions">
+                  <label class="sa-btn sa-btn-primary" style="font-size:0.75rem;padding:5px 10px;cursor:pointer;margin-right:6px"
+                         [class.sa-btn-disabled]="cargandoImg()"
+                         title="Reemplazar con otra imagen">
+                    📷 Reemplazar
+                    <input type="file" accept="image/*" style="display:none"
+                           [disabled]="cargandoImg()"
+                           (change)="reemplazarImagenPub(pub, img.id, $event)">
+                  </label>
+                  <button class="sa-btn sa-btn-err" style="font-size:0.75rem;padding:5px 10px"
+                          [disabled]="cargandoImg()"
+                          (click)="eliminarImagenPub(pub, img.id)">
+                    🗑️ Eliminar
+                  </button>
+                </div>
+              </div>
+            }
+          </div>
+        }
+
+        @if (cargandoImg()) {
+          <p style="text-align:center;font-family:'Source Sans 3',sans-serif;font-size:0.85rem;color:#888;margin:0.5rem 0">
+            Procesando imagen…
           </p>
         }
 
-        <div class="sa-img-grid">
-          @for (img of pub.imagenes; track img.id) {
-            <div class="sa-img-item">
-              <div class="sa-img-preview-wrap">
-                <img class="sa-img-preview" [src]="img.url" [alt]="pub.titulo">
-                @if (img.es_portada) {
-                  <span class="sa-img-badge">Portada</span>
-                } @else {
-                  <span class="sa-img-badge sa-img-badge-gal">Galería</span>
+        <!-- Zona para agregar nuevas fotos -->
+        @if ((pub.imagenes?.length ?? 0) < 2) {
+          <div style="margin-top:1.5rem;padding-top:1.25rem;border-top:1px solid #e5e7eb">
+            <p style="font-family:'Source Sans 3',sans-serif;font-size:0.82rem;font-weight:600;color:#374151;margin-bottom:0.75rem">
+              Agregar fotos ({{ 2 - (pub.imagenes?.length ?? 0) - nuevasFotosPreview.length }} espacio{{ (2 - (pub.imagenes?.length ?? 0) - nuevasFotosPreview.length) !== 1 ? 's' : '' }} disponible{{ (2 - (pub.imagenes?.length ?? 0) - nuevasFotosPreview.length) !== 1 ? 's' : '' }})
+            </p>
+
+            @if (!nuevasFotosPreview.length) {
+              <label style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0.5rem;border:2px dashed #d1d5db;border-radius:8px;padding:2rem 1rem;cursor:pointer;transition:border-color 0.2s;font-family:'Source Sans 3',sans-serif;color:#6b7280;font-size:0.88rem"
+                     [style.pointer-events]="subiendoImg() ? 'none' : 'auto'">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="32" style="opacity:0.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                <span>Haz clic para seleccionar fotos</span>
+                <span style="font-size:0.75rem;opacity:0.7">JPG, PNG o WEBP · máx. 5 MB cada una</span>
+                <input type="file" accept="image/jpeg,image/png,image/webp"
+                       [multiple]="(pub.imagenes?.length ?? 0) === 0"
+                       style="display:none"
+                       [disabled]="subiendoImg()"
+                       (change)="onNuevasFotosInput($event)">
+              </label>
+            } @else {
+              <div style="display:flex;flex-wrap:wrap;gap:0.75rem;margin-bottom:0.75rem">
+                @for (f of nuevasFotosPreview; track f.preview; let i = $index) {
+                  <div style="position:relative;width:90px;height:90px;border-radius:6px;overflow:hidden;border:2px solid #e5e7eb">
+                    <img [src]="f.preview" style="width:100%;height:100%;object-fit:cover">
+                    <button (click)="quitarNuevaFoto(i)"
+                            style="position:absolute;top:3px;right:3px;background:rgba(0,0,0,0.55);color:#fff;border:none;border-radius:50%;width:20px;height:20px;cursor:pointer;font-size:0.7rem;display:flex;align-items:center;justify-content:center">
+                      ✕
+                    </button>
+                    <span style="position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,0.4);color:#fff;font-size:0.62rem;text-align:center;padding:2px;font-family:'Source Sans 3',sans-serif">
+                      {{ i === 0 && !(pub.imagenes?.length) ? 'Portada' : 'Galería' }}
+                    </span>
+                  </div>
+                }
+                @if (nuevasFotosPreview.length < (2 - (pub.imagenes?.length ?? 0))) {
+                  <label style="width:90px;height:90px;border:2px dashed #d1d5db;border-radius:6px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;color:#9ca3af;font-size:0.7rem;gap:4px;font-family:'Source Sans 3',sans-serif">
+                    <span style="font-size:1.4rem">+</span>
+                    <span>Agregar</span>
+                    <input type="file" accept="image/jpeg,image/png,image/webp" style="display:none"
+                           (change)="onNuevasFotosInput($event)">
+                  </label>
                 }
               </div>
-              <div class="sa-img-actions">
-                <label class="sa-btn sa-btn-primary" style="font-size:0.75rem;padding:5px 10px;cursor:pointer;margin-right:6px"
-                       [class.sa-btn-disabled]="cargandoImg()"
-                       title="Reemplazar con otra imagen">
-                  📷 Reemplazar
-                  <input type="file" accept="image/*" style="display:none"
-                         [disabled]="cargandoImg()"
-                         (change)="reemplazarImagenPub(pub, img.id, $event)">
-                </label>
-                <button class="sa-btn sa-btn-err" style="font-size:0.75rem;padding:5px 10px"
-                        [disabled]="cargandoImg()"
-                        (click)="eliminarImagenPub(pub, img.id)">
-                  🗑️ Eliminar
-                </button>
-              </div>
-            </div>
-          }
-        </div>
-
-        @if (cargandoImg()) {
-          <p style="text-align:center;font-family:'Source Sans 3',sans-serif;font-size:0.85rem;color:#888;margin-top:1rem">
-            Procesando imagen…
-          </p>
+              <button class="sa-btn sa-btn-primary"
+                      [disabled]="subiendoImg()"
+                      (click)="subirNuevasFotos()">
+                @if (subiendoImg()) { <span class="sa-btn-spinner"></span> Subiendo... }
+                @else { 📤 Subir {{ nuevasFotosPreview.length }} foto{{ nuevasFotosPreview.length > 1 ? 's' : '' }} }
+              </button>
+              <button class="sa-btn sa-btn-ghost" style="margin-left:0.5rem"
+                      [disabled]="subiendoImg()"
+                      (click)="nuevasFotosPreview = []">
+                Limpiar
+              </button>
+            }
+          </div>
         }
 
       </div>
