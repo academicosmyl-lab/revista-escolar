@@ -159,6 +159,21 @@ export class Docentes implements OnInit, OnDestroy {
     this.cerrarModal();
   }
 
+  logroTexto(logro: any): string {
+    if (!logro) return '';
+    if (typeof logro === 'string') return logro;
+    return logro.titulo ?? logro.texto ?? logro.nombre ?? JSON.stringify(logro);
+  }
+  logroAnio(logro: any): string | null {
+    if (!logro || typeof logro !== 'object') return null;
+    return logro.anio ? String(logro.anio) : null;
+  }
+  logroLink(logro: any): string | null {
+    if (!logro || typeof logro !== 'object') return null;
+    const l = logro.link ?? logro.url ?? '';
+    return l && l.startsWith('http') ? l : null;
+  }
+
   get gruposTimeline(): { mes: string; items: any[] }[] {
     const hace3meses = new Date();
     hace3meses.setMonth(hace3meses.getMonth() - 3);
