@@ -161,6 +161,14 @@ const SeguimientoInclusion = sequelize.define('SeguimientoInclusion', {
   requiere_atencion: { type: DataTypes.BOOLEAN, defaultValue: false },
 }, { tableName: 'seguimiento_inclusion', underscored: true });
 
+// ─── LIKE ─────────────────────────────────────────────────
+// Tabla nueva: sync() la crea automáticamente. Un like por IP por noticia.
+const Like = sequelize.define('Like', {
+  id:         { type: DataTypes.UUID, defaultValue: DataTypes.UUIDV4, primaryKey: true },
+  noticia_id: { type: DataTypes.UUID, allowNull: false },
+  ip_hash:    { type: DataTypes.STRING(64), allowNull: false },
+}, { tableName: 'likes', underscored: true, updatedAt: false });
+
 // ─── CATEGORÍA ────────────────────────────────────────────
 const Categoria = sequelize.define('Categoria', {
   id:          { type: DataTypes.UUID, defaultValue: DataTypes.UUIDV4, primaryKey: true },
@@ -397,6 +405,8 @@ SeguimientoInclusion.belongsTo(Usuario, { foreignKey: 'registrado_por', as: 'reg
 
 Noticia.hasMany(Imagen,      { foreignKey: 'noticia_id', as: 'imagenes' });
 Imagen.belongsTo(Noticia,    { foreignKey: 'noticia_id' });
+Noticia.hasMany(Like,        { foreignKey: 'noticia_id', as: 'likes' });
+Like.belongsTo(Noticia,      { foreignKey: 'noticia_id' });
 Noticia.hasMany(VideoYoutube,{ foreignKey: 'noticia_id', as: 'videos' });
 VideoYoutube.belongsTo(Noticia, { foreignKey: 'noticia_id' });
 Noticia.belongsTo(Usuario,   { foreignKey: 'autor_id',    as: 'autor' });
@@ -425,7 +435,7 @@ module.exports = {
   Usuario, PerfilDocente,
   SeguimientoMateria, DocumentoDocente,
   EstudianteInclusion, SeguimientoInclusion,
-  Categoria, Noticia, Imagen,
+  Categoria, Noticia, Imagen, Like,
   VideoYoutube, NoticiaExterna,
   GaleriaItem, KnowledgeBase, ErrorPattern,
   SolicitudPerfil, AccionAdmin,

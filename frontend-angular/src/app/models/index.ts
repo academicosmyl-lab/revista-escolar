@@ -58,6 +58,7 @@ export interface Noticia {
   categoria?: Categoria;
   sede?: Sede;
   imagenes?: Imagen[];
+  likes?: number;
 }
 
 export interface NoticiaCreate {

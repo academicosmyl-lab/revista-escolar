@@ -372,3 +372,19 @@
   from { opacity: 0; transform: translateY(20px); }
   to   { opacity: 1; transform: translateY(0); }
 }
+
+/* ── LIKE ──────────────────────────────────────────────── */
+.det-like-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: none; border: 1.5px solid rgba(255,255,255,0.25); border-radius: 20px;
+  padding: 5px 14px; cursor: pointer; color: rgba(255,255,255,0.7);
+  font-size: 0.82rem; font-family: 'Source Sans 3', sans-serif;
+  transition: background 0.15s, border-color 0.15s, color 0.15s, transform 0.1s;
+  svg { transition: transform 0.2s; }
+  &:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.5); color: #fff; }
+  &.liked {
+    background: rgba(169,68,85,0.35); border-color: #f09aaa; color: #f09aaa;
+    svg { transform: scale(1.2); }
+  }
+  &:active { transform: scale(0.93); }
+}

@@ -319,3 +319,31 @@
   from { opacity: 0; transform: translateY(20px); }
   to   { opacity: 1; transform: translateY(0); }
 }
+
+/* ── LIKES ──────────────────────────────────────────────── */
+.not-meta-acciones {
+  display: flex; align-items: center; gap: 12px;
+}
+.not-card-footer {
+  display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: auto;
+}
+.not-like-btn {
+  display: inline-flex; align-items: center; gap: 5px;
+  background: none; border: 1.5px solid rgba(169,68,85,0.25); border-radius: 20px;
+  padding: 4px 10px; cursor: pointer; color: #a94455; font-size: 0.78rem; font-family: 'Source Sans 3', sans-serif;
+  transition: background 0.15s, border-color 0.15s, color 0.15s, transform 0.1s;
+  svg { transition: transform 0.2s; }
+  &:hover { background: rgba(169,68,85,0.08); border-color: #a94455; }
+  &.liked {
+    background: rgba(169,68,85,0.12); border-color: #a94455; color: #a94455;
+    svg { transform: scale(1.2); }
+  }
+  &:active { transform: scale(0.92); }
+  &--sm { padding: 3px 7px; font-size: 0.72rem; }
+}
+@keyframes not-like-pop {
+  0%   { transform: scale(1); }
+  40%  { transform: scale(1.4); }
+  70%  { transform: scale(0.9); }
+  100% { transform: scale(1); }
+}

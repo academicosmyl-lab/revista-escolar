@@ -124,6 +124,36 @@ export class NoticiaDetalle implements OnInit, OnDestroy {
     return (n.categoria as any)?.color ?? '#7B1D2C';
   }
 
+  private static readonly LIKES_KEY = 'iti_likes_v1';
+  private likedSet(): Set<string> {
+    try { return new Set(JSON.parse(localStorage.getItem(NoticiaDetalle.LIKES_KEY) || '[]')); }
+    catch { return new Set(); }
+  }
+  private saveLiked(s: Set<string>) {
+    localStorage.setItem(NoticiaDetalle.LIKES_KEY, JSON.stringify([...s]));
+  }
+
+  get isLiked(): boolean {
+    const n = this.noticia();
+    return n ? this.likedSet().has(n.id) : false;
+  }
+
+  toggleLike() {
+    const n = this.noticia();
+    if (!n) return;
+    this.api.post<{ likes: number; liked: boolean }>(`/noticias/${n.id}/like`, {}).subscribe({
+      next: r => {
+        const data = (r as any).data ?? r as any;
+        this.noticia.update(prev => prev ? { ...prev, likes: data.likes ?? data.data?.likes ?? prev.likes } : prev);
+        const set = this.likedSet();
+        if (data.liked ?? data.data?.liked) { set.add(n.id); } else { set.delete(n.id); }
+        this.saveLiked(set);
+        this.cdr.markForCheck();
+      },
+      error: () => {},
+    });
+  }
+
   compartir(via: 'copiar' | 'whatsapp') {
     const url   = window.location.href;
     const texto = this.noticia()?.titulo ?? '';

@@ -1,9 +1,11 @@
-import { Component, OnInit, OnDestroy, inject, signal, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, signal, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { ApiService } from '../../services/api.service';
 import { Noticia, Categoria, Sede } from '../../models';
 import { environment } from '../../../environments/environment';
+
+const LIKES_KEY = 'iti_likes_v1';
 
 @Component({
   selector: 'app-noticias',
@@ -14,6 +16,7 @@ import { environment } from '../../../environments/environment';
 })
 export class Noticias implements OnInit, OnDestroy {
   private api = inject(ApiService);
+  private cdr = inject(ChangeDetectorRef);
   cargando   = signal(true);
   error      = signal('');
   nuevaNoticia = signal(false);
@@ -162,5 +165,31 @@ export class Noticias implements OnInit, OnDestroy {
 
   colorCategoria(n: Noticia): string {
     return (n.categoria as any)?.color ?? '#7B1D2C';
+  }
+
+  private likedSet(): Set<string> {
+    try { return new Set(JSON.parse(localStorage.getItem(LIKES_KEY) || '[]')); }
+    catch { return new Set(); }
+  }
+  private saveLiked(s: Set<string>) {
+    localStorage.setItem(LIKES_KEY, JSON.stringify([...s]));
+  }
+
+  isLiked(id: string): boolean { return this.likedSet().has(id); }
+
+  toggleLike(e: Event, n: Noticia) {
+    e.preventDefault();
+    e.stopPropagation();
+    this.api.post<{ likes: number; liked: boolean }>(`/noticias/${n.id}/like`, {}).subscribe({
+      next: r => {
+        const data = (r as any).data ?? r as any;
+        n.likes = data.likes ?? data.data?.likes ?? n.likes;
+        const set = this.likedSet();
+        if (data.liked ?? data.data?.liked) { set.add(n.id); } else { set.delete(n.id); }
+        this.saveLiked(set);
+        this.cdr.markForCheck();
+      },
+      error: () => {},
+    });
   }
 }

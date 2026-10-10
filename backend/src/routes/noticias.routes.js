@@ -3,7 +3,8 @@
  */
 const { Router } = require('express');
 const { Op } = require('sequelize');
-const { Noticia, Imagen, Categoria, Usuario, Sede, PerfilDocente } = require('../models');
+const { Noticia, Imagen, Categoria, Usuario, Sede, PerfilDocente, Like } = require('../models');
+const crypto = require('crypto');
 const { autenticar, requiereRol } = require('../middlewares/auth.middleware');
 const { uploadNoticias, subirImagen, eliminarImagen } = require('../services/cloudinary.service');
 const { coordinador } = require('../agents/coordinator.agent');
@@ -51,10 +52,21 @@ router.get('/', async (req, res, next) => {
       offset: (paginaFinal - 1) * limiteFinal,
     });
 
+    // Contar likes por noticia en una sola query
+    const ids = rows.map(n => n.id);
+    const likesCounts = await Like.findAll({
+      where: { noticia_id: ids },
+      attributes: ['noticia_id', [Like.sequelize.fn('COUNT', Like.sequelize.col('id')), 'total']],
+      group: ['noticia_id'],
+      raw: true,
+    });
+    const likesMap = Object.fromEntries(likesCounts.map(l => [l.noticia_id, parseInt(l.total)]));
+
     // Normalizar campos al contrato camelCase del frontend
     const noticias = rows.map(n => ({
       ...n.toJSON(),
       fechaPublicacion: n.fecha_publicacion,
+      likes: likesMap[n.id] ?? 0,
       imagenes: n.imagenes?.map(img => ({
         ...img.toJSON(),
         altText: img.alt_text,
@@ -80,9 +92,13 @@ router.get('/:id', async (req, res, next) => {
     });
     if (!noticia) throw crearError('Noticia no encontrada', 404);
 
-    // Registrar visita
-    await noticia.increment('visitas');
-    res.json({ noticia });
+    // Registrar visita y obtener total de likes
+    const [, likesCount] = await Promise.all([
+      noticia.increment('visitas'),
+      Like.count({ where: { noticia_id: noticia.id } }),
+    ]);
+
+    res.json({ noticia: { ...noticia.toJSON(), likes: likesCount } });
   } catch (err) { next(err); }
 });
 
@@ -279,6 +295,28 @@ router.put('/:id/fotos/:imagenId', autenticar, uploadNoticias.single('foto'), as
     await imagen.update({ url: result.secure_url, filename: result.public_id, tamaño_bytes: req.file.size });
 
     res.json({ ok: true, imagen: { id: imagen.id, url: result.secure_url, es_portada: imagen.es_portada } });
+  } catch (err) { next(err); }
+});
+
+// POST /api/v1/noticias/:id/like — toggle like (sin auth, IP-based)
+router.post('/:id/like', async (req, res, next) => {
+  try {
+    const noticia = await Noticia.findOne({ where: { id: req.params.id, estado: 'publicada' } });
+    if (!noticia) throw crearError('Noticia no encontrada', 404);
+
+    const ip = req.headers['x-forwarded-for']?.split(',')[0]?.trim() || req.ip || '0.0.0.0';
+    const salt = process.env.JWT_SECRET || 'iti-salt';
+    const ip_hash = crypto.createHmac('sha256', salt).update(ip).digest('hex');
+
+    const existente = await Like.findOne({ where: { noticia_id: noticia.id, ip_hash } });
+    if (existente) {
+      await existente.destroy();
+    } else {
+      await Like.create({ noticia_id: noticia.id, ip_hash });
+    }
+
+    const total = await Like.count({ where: { noticia_id: noticia.id } });
+    res.json({ likes: total, liked: !existente });
   } catch (err) { next(err); }
 });
 
