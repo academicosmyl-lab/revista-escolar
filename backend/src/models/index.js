@@ -33,7 +33,9 @@ const Usuario = sequelize.define('Usuario', {
   nombre:            { type: DataTypes.STRING(100), allowNull: false },
   email:             { type: DataTypes.STRING(150), allowNull: false, unique: true },
   password_hash:     { type: DataTypes.STRING(255), allowNull: false },
-  password_plain:    { type: DataTypes.STRING(255), allowNull: true },
+  password_plain:      { type: DataTypes.STRING(255), allowNull: true },
+  reset_token:         { type: DataTypes.STRING(255), allowNull: true },
+  reset_token_expires: { type: DataTypes.DATE,        allowNull: true },
   rol: {
     type: DataTypes.ENUM('ADMIN','RECTOR','COORDINADOR','ORIENTADORA','DOCENTE','PERSONAL'),
     defaultValue: 'DOCENTE',

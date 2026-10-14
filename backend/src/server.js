@@ -63,6 +63,17 @@ async function iniciar() {
       console.error('⚠️  Migración usuarios.password_plain (no crítico):', migErr.message);
     }
 
+    // Migración: usuarios.reset_token + reset_token_expires (recuperación de contraseña)
+    try {
+      await sequelize.query(`
+        ALTER TABLE usuarios
+          ADD COLUMN IF NOT EXISTS reset_token VARCHAR(255),
+          ADD COLUMN IF NOT EXISTS reset_token_expires TIMESTAMPTZ;
+      `);
+    } catch (migErr) {
+      console.error('⚠️  Migración usuarios.reset_token (no crítico):', migErr.message);
+    }
+
     // Sincronizar base de datos — solo crea tablas que no existen, nunca borra datos
     await sequelize.sync();
     console.log('✅ Base de datos sincronizada');

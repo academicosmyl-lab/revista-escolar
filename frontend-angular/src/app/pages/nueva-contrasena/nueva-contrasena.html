@@ -1,0 +1,44 @@
+<section class="nc-seccion">
+  <div class="nc-caja">
+    <img src="assets/images/logo-its.png" alt="Escudo ITI" class="nc-logo"
+         (error)="$any($event.target).style.display='none'">
+
+    @if (guardado()) {
+      <div class="nc-exito">
+        <div class="nc-exito-icono">✅</div>
+        <h2 class="nc-exito-titulo">¡Contraseña actualizada!</h2>
+        <p class="nc-exito-msg">Tu contraseña fue guardada correctamente. En unos segundos te redirigimos al inicio de sesión.</p>
+        <a routerLink="/login" class="ITI-btn-primario" style="display:inline-block;margin-top:1rem;">Ir al inicio de sesión</a>
+      </div>
+    } @else {
+      <h1 class="nc-titulo">Crea tu nueva contraseña</h1>
+      <p class="nc-sub">Elige una contraseña segura de mínimo 6 caracteres.</p>
+
+      @if (error()) {
+        <div class="nc-error">{{ error() }}</div>
+      }
+
+      @if (token && !error()) {
+        <form class="nc-form" (ngSubmit)="guardar()">
+          <div class="campo">
+            <label for="pass">Nueva contraseña</label>
+            <input id="pass" type="password" [(ngModel)]="password" name="password"
+                   placeholder="Mínimo 6 caracteres" class="input-its" autocomplete="new-password">
+          </div>
+          <div class="campo">
+            <label for="conf">Confirmar contraseña</label>
+            <input id="conf" type="password" [(ngModel)]="confirmar" name="confirmar"
+                   placeholder="Repite tu contraseña" class="input-its" autocomplete="new-password">
+          </div>
+          <button type="submit" class="ITI-btn-primario w-full" [disabled]="cargando()">
+            {{ cargando() ? 'Guardando...' : 'Guardar y acceder' }}
+          </button>
+        </form>
+      }
+    }
+
+    @if (!guardado()) {
+      <a routerLink="/recuperar-contrasena" class="nc-volver">← Solicitar nuevo enlace</a>
+    }
+  </div>
+</section>

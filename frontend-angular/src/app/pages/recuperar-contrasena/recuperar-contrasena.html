@@ -1,0 +1,38 @@
+<section class="rc-seccion">
+  <div class="rc-caja">
+    <img src="assets/images/logo-its.png" alt="Escudo ITI" class="rc-logo"
+         (error)="$any($event.target).style.display='none'">
+
+    @if (!enviado()) {
+      <h1 class="rc-titulo">Recuperar contraseña</h1>
+      <p class="rc-sub">Ingresa tu correo institucional y te enviaremos un enlace para crear tu nueva contraseña.</p>
+
+      @if (error()) {
+        <div class="rc-error">{{ error() }}</div>
+      }
+
+      <form class="rc-form" (ngSubmit)="enviar()">
+        <div class="campo">
+          <label for="email">Correo institucional</label>
+          <input id="email" type="email" [(ngModel)]="email" name="email"
+                 placeholder="usuario@colegioitifusagasuga.edu.co"
+                 class="input-its" autocomplete="email">
+        </div>
+        <button type="submit" class="ITI-btn-primario w-full" [disabled]="cargando()">
+          {{ cargando() ? 'Enviando...' : 'Enviar enlace de recuperación' }}
+        </button>
+      </form>
+    } @else {
+      <div class="rc-exito">
+        <div class="rc-exito-icono">✉️</div>
+        <h2 class="rc-exito-titulo">¡Revisa tu correo!</h2>
+        <p class="rc-exito-msg">
+          Si <strong>{{ email }}</strong> está registrado, recibirás un enlace para
+          crear tu nueva contraseña. El enlace es válido por <strong>48 horas</strong>.
+        </p>
+      </div>
+    }
+
+    <a routerLink="/login" class="rc-volver">← Volver al inicio de sesión</a>
+  </div>
+</section>

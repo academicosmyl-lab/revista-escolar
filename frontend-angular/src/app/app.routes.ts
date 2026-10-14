@@ -48,6 +48,14 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/login/login').then(m => m.Login),
   },
   {
+    path: 'recuperar-contrasena',
+    loadComponent: () => import('./pages/recuperar-contrasena/recuperar-contrasena').then(m => m.RecuperarContrasena),
+  },
+  {
+    path: 'nueva-contrasena',
+    loadComponent: () => import('./pages/nueva-contrasena/nueva-contrasena').then(m => m.NuevaContrasena),
+  },
+  {
     path: 'admin',
     canActivate: [roleGuard('ADMIN', 'RECTOR')],
     loadComponent: () => import('./pages/admin/admin').then(m => m.Admin),

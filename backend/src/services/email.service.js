@@ -271,6 +271,40 @@ const emailService = {
   },
 
   /**
+   * Enviar link de recuperación de contraseña al docente
+   */
+  async recuperarContrasena({ email, nombre, token }) {
+    if (!EMAIL_CONFIGURADO) return;
+    const link = `${FRONTEND}/nueva-contrasena?token=${token}`;
+    try {
+      await transporter.sendMail({
+        from: FROM,
+        to: email,
+        subject: `[ITI] Recuperación de contraseña — Revista Digital`,
+        html: plantillaBase(`
+          <h2>Recupera el acceso a tu cuenta</h2>
+          <p>Hola <strong>${nombre}</strong>,</p>
+          <p>Recibimos una solicitud para restablecer la contraseña de tu cuenta en la
+          Revista Digital del Instituto Técnico Industrial.</p>
+          <p>Haz clic en el botón para crear tu nueva contraseña:</p>
+          <a href="${link}" class="btn">Crear nueva contraseña</a>
+          <p style="font-size:12px;color:#9CA3AF;margin-top:16px;">
+            Este enlace es válido por <strong>48 horas</strong>.<br>
+            Si no solicitaste este cambio, ignora este correo.
+          </p>
+          <p style="font-size:12px;color:#9CA3AF;">
+            Si el botón no funciona, copia este enlace en tu navegador:<br>
+            <span style="color:#1E40AF;">${link}</span>
+          </p>
+        `),
+      });
+      console.log(`📧 Email recuperación enviado a: ${email}`);
+    } catch (err) {
+      console.error('Error enviando email recuperarContrasena:', err.message);
+    }
+  },
+
+  /**
    * Verificar que el servicio de email está configurado
    */
   async verificar() {
