@@ -9,7 +9,7 @@ const Joi = require('joi');
 const { Op } = require('sequelize');
 const { Usuario } = require('../models');
 const { crearError } = require('../middlewares/error.middleware');
-const emailService = require('../services/email.service');
+const { emailService } = require('../services/email.service');
 
 const router = Router();
 
