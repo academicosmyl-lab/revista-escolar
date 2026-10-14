@@ -736,6 +736,59 @@ router.put('/usuarios/reset-password', soloAdmin, async (req, res) => {
   }
 });
 
+// POST /api/v1/super-admin/enviar-credenciales — envío masivo de credenciales a todos los docentes
+router.post('/enviar-credenciales', soloAdmin, async (req, res) => {
+  try {
+    const { Resend } = require('resend');
+    const resendClient = new Resend(process.env.RESEND_API_KEY);
+    const FROM = process.env.EMAIL_FROM || 'Ronald Medina - ITI <ronald@institutotecnicoindustrial.com.co>';
+    const REPLY_TO = process.env.EMAIL_REPLY_TO;
+    const COPY_TO = req.body.copia || null;
+
+    const docentes = await Usuario.findAll({
+      where: { activo: true, rol: { [Op.ne]: 'ADMIN' } },
+      attributes: ['id', 'nombre', 'email', 'rol', 'password_plain'],
+    });
+
+    const enviados = [];
+    const errores  = [];
+
+    for (const doc of docentes) {
+      try {
+        await emailService.credencialesAcceso({
+          email:        doc.email,
+          nombre:       doc.nombre,
+          password:     doc.password_plain,
+          tienePassword: !!doc.password_plain,
+        });
+        enviados.push({ nombre: doc.nombre, email: doc.email });
+        await new Promise(r => setTimeout(r, 300)); // pausa entre envíos
+      } catch (e) {
+        errores.push({ nombre: doc.nombre, email: doc.email, error: e.message });
+      }
+    }
+
+    // Correo resumen al administrador
+    if (COPY_TO) {
+      const listaEnviados = enviados.map(d => `<li>${d.nombre} — ${d.email}</li>`).join('');
+      const listaErrores  = errores.map(d => `<li style="color:#DC2626">${d.nombre} — ${d.email}: ${d.error}</li>`).join('');
+      const payload = {
+        from: FROM, to: COPY_TO,
+        subject: `[Revista ITI] Resumen envío masivo de credenciales`,
+        html: `<h2>Resumen de envío masivo</h2>
+               <p><strong>✅ Enviados (${enviados.length}):</strong></p><ul>${listaEnviados}</ul>
+               ${errores.length ? `<p><strong>❌ Errores (${errores.length}):</strong></p><ul>${listaErrores}</ul>` : ''}`,
+      };
+      if (REPLY_TO) payload.reply_to = REPLY_TO;
+      await resendClient.emails.send(payload);
+    }
+
+    res.json({ ok: true, enviados: enviados.length, errores: errores.length, detalle: { enviados, errores } });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
 // POST /api/v1/super-admin/test-email — envío de prueba via Resend
 router.post('/test-email', soloAdmin, async (req, res) => {
   const { email } = req.body;

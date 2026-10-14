@@ -208,6 +208,60 @@ const emailService = {
     } catch (err) { console.error('recuperarContrasena:', err.message); throw err; }
   },
 
+  async credencialesAcceso({ email, nombre, password, tienePassword }) {
+    const credenciales = tienePassword
+      ? `<p style="background:#F0FDF4;border:1px solid #86EFAC;padding:16px;border-radius:8px;margin:16px 0;">
+          📧 <strong>Correo:</strong> ${email}<br>
+          🔑 <strong>Contraseña:</strong> <code style="background:#fff;padding:3px 8px;border-radius:4px;font-family:monospace;font-size:1rem;">${password}</code>
+        </p>`
+      : `<p style="background:#FFF7ED;border:1px solid #FED7AA;padding:16px;border-radius:8px;margin:16px 0;">
+          📧 <strong>Correo:</strong> ${email}<br>
+          🔑 <strong>Contraseña:</strong> Ingrese al link y haga clic en <em>"¿Olvidaste tu contraseña?"</em> para crear la suya.
+        </p>`;
+
+    await enviar({
+      to: email,
+      subject: `Revista Digital ITI — Sus credenciales de acceso`,
+      html: plantillaBase(`
+        <p>Apreciado(a) <strong>${nombre}</strong>,</p>
+        <p>Reciba un cordial saludo.</p>
+
+        <p>El Instituto Técnico Industrial da un paso más en su camino de excelencia técnica e innovación:
+        <strong>la Revista Digital Institucional</strong>, un espacio web propio que representa la identidad
+        del colegio y visibiliza todo lo que esta gran institución construye día a día.</p>
+
+        <p>Este proyecto nace con un propósito claro — dejar una huella digital a la altura de un colegio
+        que lidera en tecnología e innovación en la región. Un espacio donde la comunidad educativa puede
+        comunicar, compartir y hacer visible el trabajo que forja la identidad del ITI.</p>
+
+        <p><strong>Y cada uno de ustedes es parte fundamental de eso.</strong></p>
+
+        <p>Los invitamos a hacer parte activa de esta revista, publicando desde sus áreas todo aquello que
+        consideren valioso: logros de estudiantes, proyectos, eventos, reflexiones pedagógicas o cualquier
+        iniciativa que merezca ser contada. <strong>Este espacio es muy importante irlo alimentando</strong>,
+        pues será el rostro digital de la institución.</p>
+
+        <p>A continuación encontrará sus credenciales de acceso:</p>
+
+        ${credenciales}
+
+        <a href="${FRONTEND}/login" class="btn">Ingresar a la plataforma</a>
+
+        <p style="margin-top:24px;">Se agradece que motiven a sus colegas a publicar y colocar sus perfiles.
+        Todo lo que se publique en este medio podrá ser incluido en el crecimiento académico y profesional
+        de cada docente, pues vivimos una era de revolución digital y el Instituto Técnico Industrial
+        no es la excepción.</p>
+
+        <p>Cualquier duda o inquietud, con gusto será atendida.</p>
+
+        <p style="margin-top:24px;">
+          <strong>Ronald Medina</strong><br>
+          📱 WhatsApp: 318 904 0514
+        </p>
+      `),
+    });
+  },
+
   async verificar() {
     if (!EMAIL_CONFIGURADO) return { ok: false, error: 'RESEND_API_KEY no configurado' };
     try {
