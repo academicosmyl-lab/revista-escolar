@@ -736,20 +736,50 @@ router.put('/usuarios/reset-password', soloAdmin, async (req, res) => {
   }
 });
 
-// POST /api/v1/super-admin/test-email — enviar correo de prueba a cualquier dirección
+// POST /api/v1/super-admin/test-email — diagnóstico completo + envío de prueba
 router.post('/test-email', soloAdmin, async (req, res) => {
+  const nodemailer = require('nodemailer');
+  const { email } = req.body;
+  if (!email) return res.status(400).json({ error: 'email es requerido' });
+
+  const diagnostico = {
+    env_user:  process.env.EMAIL_USER || '(no definido)',
+    env_pass:  process.env.EMAIL_PASS ? `(definido, ${process.env.EMAIL_PASS.length} chars)` : '(no definido)',
+    env_from:  process.env.EMAIL_FROM || '(no definido)',
+    smtp_verify: null,
+    send_result: null,
+    error: null,
+  };
+
+  const transporter = nodemailer.createTransport({
+    host: 'smtp.gmail.com', port: 587, secure: false,
+    auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS },
+    tls: { rejectUnauthorized: false },
+    connectionTimeout: 10000, greetingTimeout: 10000, socketTimeout: 15000,
+  });
+
   try {
-    const { email } = req.body;
-    if (!email) return res.status(400).json({ error: 'email es requerido' });
-    await emailService.bienvenida({
-      email,
-      nombre: 'Prueba de Correo',
-      rol: 'DOCENTE',
-      password: 'Este es un correo de prueba — no es una contraseña real.',
-    });
-    res.json({ ok: true, mensaje: `Correo de prueba enviado a ${email}` });
+    await transporter.verify();
+    diagnostico.smtp_verify = 'OK — conexión SMTP exitosa';
   } catch (e) {
-    res.status(500).json({ error: e.message });
+    diagnostico.smtp_verify = 'ERROR: ' + e.message;
+    diagnostico.error = e.message;
+    return res.status(500).json(diagnostico);
+  }
+
+  try {
+    await transporter.sendMail({
+      from: process.env.EMAIL_FROM || `ITI <${process.env.EMAIL_USER}>`,
+      to: email,
+      subject: '[ITI] Correo de prueba — Revista Digital',
+      html: `<p>Hola, este es un correo de prueba del sistema de la <strong>Revista Digital ITI</strong>.</p><p>Si recibes este mensaje, el servicio de correo está funcionando correctamente.</p>`,
+    });
+    diagnostico.send_result = `OK — enviado a ${email}`;
+    res.json({ ok: true, diagnostico });
+  } catch (e) {
+    diagnostico.send_result = 'ERROR: ' + e.message;
+    diagnostico.error = e.message;
+    res.status(500).json(diagnostico);
   }
 });
 
