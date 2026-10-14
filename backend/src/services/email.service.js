@@ -119,11 +119,15 @@ const emailService = {
         html: plantillaBase(`
           <h2>¡Bienvenido al Instituto Técnico Industrial!</h2>
           <p>Hola <strong>${nombre}</strong>, tu cuenta ha sido creada exitosamente.</p>
-          <p><strong>Rol:</strong> ${rol}<br>
-          <strong>Correo:</strong> ${email}<br>
-          <strong>Contraseña temporal:</strong>
-          <code style="background:#F3F4F6;padding:3px 8px;border-radius:4px;font-family:monospace;">${password}</code></p>
-          <p style="color:#DC2626;font-size:13px;">Por seguridad, cambia tu contraseña al iniciar sesión por primera vez.</p>
+          <p style="background:#F0FDF4;border:1px solid #86EFAC;padding:16px;border-radius:8px;margin:16px 0;">
+            📧 <strong>Correo:</strong> ${email}<br>
+            🔑 <strong>Contraseña:</strong> <code style="background:#fff;padding:3px 8px;border-radius:4px;font-family:monospace;">${password}</code>
+          </p>
+          <p style="color:#374151;font-size:0.93rem;">
+            Si deseas cambiar la contraseña lo puedes hacer desde
+            <a href="${FRONTEND}/recuperar-contrasena" style="color:#A94455;">aquí</a>.
+            De lo contrario, estas son tus credenciales de acceso.
+          </p>
           <a href="${FRONTEND}/login" class="btn">Ingresar a la plataforma</a>
         `),
       });
@@ -200,7 +204,7 @@ const emailService = {
           <p>Haz clic en el botón para crear tu nueva contraseña:</p>
           <a href="${link}" class="btn">Crear nueva contraseña</a>
           <p style="font-size:12px;color:#9CA3AF;margin-top:16px;">
-            Enlace válido por <strong>48 horas</strong>. Si no solicitaste este cambio, ignora este correo.<br><br>
+            Si no solicitaste este cambio, ignora este correo.<br><br>
             Si el botón no funciona copia este enlace: <span style="color:#A94455;">${link}</span>
           </p>
         `),

@@ -184,15 +184,13 @@ router.put('/solicitudes/:id/aprobar', soloAdmin, async (req, res) => {
       entidad_id:   sol.id,
     });
 
-    // Email al docente (no bloqueante)
-    if (sol.email) {
-      emailService.perfilAprobado({
-        docenteEmail:  sol.email,
-        docenteNombre: sol.nombre,
-        motivo,
-        passwordTemp: passTemp,
-      }).catch(e => console.error('Email perfilAprobado error:', e.message));
-    }
+    // Email de bienvenida con credenciales (siempre, al email real de login)
+    emailService.bienvenida({
+      email:    emailDocente,
+      nombre:   sol.nombre,
+      password: passTemp,
+      rol:      'DOCENTE',
+    }).catch(e => console.error('Email bienvenida error:', e.message));
 
     res.json({
       ok: true,
