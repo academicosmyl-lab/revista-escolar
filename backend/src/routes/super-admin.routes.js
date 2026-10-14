@@ -736,4 +736,21 @@ router.put('/usuarios/reset-password', soloAdmin, async (req, res) => {
   }
 });
 
+// POST /api/v1/super-admin/test-email — enviar correo de prueba a cualquier dirección
+router.post('/test-email', soloAdmin, async (req, res) => {
+  try {
+    const { email } = req.body;
+    if (!email) return res.status(400).json({ error: 'email es requerido' });
+    await emailService.bienvenida({
+      email,
+      nombre: 'Prueba de Correo',
+      rol: 'DOCENTE',
+      password: 'Este es un correo de prueba — no es una contraseña real.',
+    });
+    res.json({ ok: true, mensaje: `Correo de prueba enviado a ${email}` });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
 module.exports = router;
