@@ -8,8 +8,9 @@ const RESEND_API_KEY  = process.env.RESEND_API_KEY;
 const EMAIL_CONFIGURADO = !!RESEND_API_KEY;
 const resend = EMAIL_CONFIGURADO ? new Resend(RESEND_API_KEY) : null;
 
-const FROM     = process.env.EMAIL_FROM || 'Instituto Técnico Industrial <onboarding@resend.dev>';
-const FRONTEND = process.env.FRONTEND_URL || 'https://www.institutotecnicoindustrial.com.co';
+const FROM     = process.env.EMAIL_FROM    || 'Instituto Técnico Industrial <onboarding@resend.dev>';
+const REPLY_TO = process.env.EMAIL_REPLY_TO || null;
+const FRONTEND = process.env.FRONTEND_URL   || 'https://www.institutotecnicoindustrial.com.co';
 
 // ── Plantilla HTML base ───────────────────────────────────
 function plantillaBase(contenido) {
@@ -48,7 +49,9 @@ async function enviar({ to, subject, html }) {
     console.warn('⚠️  Resend no configurado — RESEND_API_KEY faltante');
     return;
   }
-  const { data, error } = await resend.emails.send({ from: FROM, to, subject, html });
+  const payload = { from: FROM, to, subject, html };
+  if (REPLY_TO) payload.reply_to = REPLY_TO;
+  const { data, error } = await resend.emails.send(payload);
   if (error) throw new Error(error.message || JSON.stringify(error));
   console.log(`📧 Email enviado a ${to} — id: ${data?.id}`);
 }
