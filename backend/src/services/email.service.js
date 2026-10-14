@@ -22,7 +22,7 @@ const transporter = nodemailer.createTransport({
   socketTimeout:     8000,
 });
 
-const FROM = process.env.EMAIL_FROM || 'Instituto Técnico Industrial Santander <noreply@itssantander.edu.co>';
+const FROM = process.env.EMAIL_FROM || 'Instituto Técnico Industrial <noreply@colegioitifusagasuga.edu.co>';
 const FRONTEND = process.env.FRONTEND_URL || 'http://localhost:4200';
 
 // ── Plantilla HTML base ───────────────────────────────────
@@ -46,12 +46,12 @@ function plantillaBase(contenido) {
 </style></head><body>
 <div class="container">
   <div class="header">
-    <h1>Instituto Técnico Industrial Santander</h1>
+    <h1>Instituto Técnico Industrial</h1>
     <p>Revista Digital Institucional</p>
   </div>
   <div class="body">${contenido}</div>
   <div class="footer">
-    Este es un mensaje automático de la Revista Digital del Instituto Técnico Industrial Santander.<br>
+    Este es un mensaje automático de la Revista Digital del Instituto Técnico Industrial.<br>
     Por favor no responda a este correo.
   </div>
 </div></body></html>`;
@@ -154,7 +154,7 @@ const emailService = {
         to: email,
         subject: `[Revista ITS] Bienvenido a la plataforma`,
         html: plantillaBase(`
-          <h2>Bienvenido al Instituto Técnico Industrial Santander</h2>
+          <h2>Bienvenido al Instituto Técnico Industrial</h2>
           <p>Hola <strong>${nombre}</strong>, tu cuenta ha sido creada exitosamente.</p>
           <p><strong>Rol:</strong> ${rol}<br>
           <strong>Correo:</strong> ${email}<br>
@@ -213,7 +213,7 @@ const emailService = {
           <h2>¡Tu perfil ya está publicado!</h2>
           <p>Hola <strong>${docenteNombre}</strong>, el equipo directivo revisó tu perfil
           y ha sido aprobado y publicado en el directorio de docentes del
-          Instituto Técnico Industrial Santander.</p>
+          Instituto Técnico Industrial.</p>
           <span class="badge badge-aprobada">Perfil publicado</span>
           <br><br>
           ${motivo ? `<p><strong>Nota del administrador:</strong> ${motivo}</p>` : ''}

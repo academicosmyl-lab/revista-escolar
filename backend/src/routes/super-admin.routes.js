@@ -131,7 +131,7 @@ router.put('/solicitudes/:id/aprobar', soloAdmin, async (req, res) => {
     const hash      = await bcrypt.hash(passTemp, 12);
 
     const emailDocente = sol.email ||
-      `${sol.nombre.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/\s+/g,'-')}@itisantander.edu.co`;
+      `${sol.nombre.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/\s+/g,'-')}@colegioitifusagasuga.edu.co`;
 
     // Crear usuario
     const usuario = await Usuario.create({

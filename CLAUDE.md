@@ -1,4 +1,4 @@
-# CLAUDE.md — Instituto Técnico Industrial Santander
+# CLAUDE.md — Instituto Técnico Industrial
 # Revista Digital Institucional
 > Todo el código de este proyecto fue desarrollado por Claude (Anthropic).
 > Este archivo es la fuente de verdad. Leer COMPLETO antes de tocar cualquier archivo.
@@ -24,7 +24,7 @@
 
 ## 0. IDENTIDAD DEL PROYECTO
 
-**Institución:** Instituto Técnico Industrial Santander  
+**Institución:** Instituto Técnico Industrial  
 **Producto:** Revista Digital Institucional  
 **Repositorio:** https://github.com/academicosmyl-lab/revista-escolar  
 **Deploy:** Render.com (backend gratuito) + Vercel (frontend gratuito)
@@ -250,6 +250,6 @@ ng serve            # arranca en puerto 4200
 
 ---
 
-*Instituto Técnico Industrial Santander — Revista Digital*
+*Instituto Técnico Industrial — Revista Digital*
 *Código desarrollado por Claude (Anthropic) · Director: Ronald Medina*
 *Versión 4.0 · 2026-08-03*

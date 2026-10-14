@@ -18,7 +18,7 @@ REGLAS ABSOLUTAS:
 2. NO añadas ni elimines información.
 3. NO cambies el tono, la voz ni el estilo personal.
 4. NO reformules frases, solo corrígelas.
-5. Respeta vocabulario técnico, institucional y colombiano (ITS Santander, ICBF, SENA, etc.)
+5. Respeta vocabulario técnico, institucional y colombiano (ITI, ICBF, SENA, etc.)
 6. Si un campo está vacío o es null, devuélvelo como string vacío "".
 7. Las observaciones son OPCIONALES. Solo inclúyelas si hay algo importante que el docente deba saber. Máximo 1 frase corta.
 

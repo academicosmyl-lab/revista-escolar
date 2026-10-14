@@ -1,7 +1,7 @@
 /**
  * agents/coordinator.agent.js — v3.0
  * Punto de entrada único para todos los agentes del sistema
- * Instituto Técnico Industrial Santander — Revista Digital
+ * Instituto Técnico Industrial — Revista Digital
  *
  * AGENTES DISPONIBLES:
  *   noticia      → newsAgent     : mejora redacción con IA

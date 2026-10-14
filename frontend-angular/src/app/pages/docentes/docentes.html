@@ -10,7 +10,7 @@
 <!-- BANNER DOCENTE CTA -->
 <div class="doc-banner">
   <div class="doc-banner-inner">
-    <p class="doc-banner-pregunta">¿Eres parte del equipo docente del ITIS?</p>
+    <p class="doc-banner-pregunta">¿Eres parte del equipo docente del ITI?</p>
     <div class="doc-banner-acciones">
       <a routerLink="/docentes/registro" class="doc-banner-btn doc-banner-btn--primario">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
@@ -186,7 +186,7 @@
             </svg>
           </span>
           <span class="doc-modal-opcion-nombre">Historia</span>
-          <span class="doc-modal-opcion-desc">Tu experiencia personal en el ITIS</span>
+          <span class="doc-modal-opcion-desc">Tu experiencia personal en el ITI</span>
         </button>
 
         <button class="doc-modal-opcion" (click)="irAFormulario('fotos')">
@@ -234,7 +234,7 @@
         <div class="dmp-info">
           <div class="dmp-badge">
             <span class="dmp-badge-dot"></span>
-            {{ panelDocente.usuario.rol | titlecase }} · ITI Santander
+            {{ panelDocente.usuario.rol | titlecase }} · ITI
           </div>
           <h2 class="dmp-nombre">{{ panelDocente.usuario.nombre }}</h2>
           @if (panelDocente.titulo) {
@@ -302,7 +302,7 @@
                   <div class="dmp-ficha">
                     <button class="dmp-ficha-x" (click)="fichaArea = null">✕</button>
                     <div class="dmp-ficha-nombre">{{ fichaArea }}</div>
-                    <div class="dmp-ficha-desc">Área de enseñanza activa en el Instituto Técnico Industrial Santander.</div>
+                    <div class="dmp-ficha-desc">Área de enseñanza activa en el Instituto Técnico Industrial.</div>
                   </div>
                 }
               </div>
@@ -327,7 +327,7 @@
                   <div class="dmp-ficha dmp-ficha--esp">
                     <button class="dmp-ficha-x" (click)="fichaEsp = null">✕</button>
                     <div class="dmp-ficha-nombre">{{ fichaEsp }}</div>
-                    <div class="dmp-ficha-desc">Especialidad y habilidad destacada de este docente del ITI Santander.</div>
+                    <div class="dmp-ficha-desc">Especialidad y habilidad destacada de este docente del ITI.</div>
                   </div>
                 }
               </div>

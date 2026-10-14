@@ -1,5 +1,5 @@
 /**
- * server.js — Instituto Técnico Industrial Santander
+ * server.js — Instituto Técnico Industrial
  * Revista Digital v3.0 — Punto de entrada
  *
  * Responsabilidad: DB sync + seed + app.listen
@@ -121,7 +121,7 @@ async function iniciar() {
       if (!content) {
         const hash = await bcrypt.hash(CONTENT_PASS, 12);
         await Usuario.create({
-          nombre: 'Administradora Sistemas ITIS',
+          nombre: 'Administradora Sistemas ITI',
           email:  CONTENT_EMAIL,
           password_hash: hash,
           rol:    'ADMIN',
@@ -174,7 +174,7 @@ async function iniciar() {
     app.listen(PORT, () => {
       console.log(`
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-🏫  Instituto Técnico Industrial Santander
+🏫  Instituto Técnico Industrial
 📰  Revista Digital v4.0 — ${process.env.NODE_ENV}
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 🚀  Servidor: http://localhost:${PORT}
