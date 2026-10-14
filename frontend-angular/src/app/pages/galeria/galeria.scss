@@ -1144,22 +1144,30 @@
   width: 100%;
   break-inside: avoid;
   margin-bottom: 0.85rem;
-  border-radius: 8px;
-  overflow: hidden;
-  cursor: pointer;
+  border-radius: 3px;
   position: relative;
-  background: none;
-  border: none;
-  padding: 0;
   animation: gal-fade-up 0.45s ease both;
   animation-delay: calc(var(--i, 0) * 0.04s);
 
   img {
     width: 100%;
     display: block;
-    border-radius: 8px;
     transition: transform 0.35s ease;
   }
+
+  &:hover .gal-edit-lapiz { opacity: 1; }
+}
+
+.gal-masonry-click {
+  display: block;
+  width: 100%;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  position: relative;
+  border-radius: 2px;
+  overflow: hidden;
 
   &:hover {
     img { transform: scale(1.03); }
@@ -1169,7 +1177,7 @@
 
 .gal-masonry-overlay {
   position: absolute; inset: 0;
-  border-radius: 8px;
+  border-radius: 2px;
   background: linear-gradient(transparent 50%, rgba(0,0,0,0.6) 100%);
   opacity: 0;
   transition: opacity 0.25s;
@@ -1700,6 +1708,143 @@
   }
 }
 
+/* ══════════════════════════════════════════════════════
+   EDICIÓN INLINE DE LEYENDAS — solo visible para ADMIN
+   ══════════════════════════════════════════════════════ */
+
+/* Botón lápiz — aparece en hover */
+.gal-edit-lapiz {
+  position: absolute;
+  top: 8px; right: 8px;
+  width: 30px; height: 30px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(0,0,0,0.6);
+  color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.2s, transform 0.2s, background 0.2s;
+  z-index: 10;
+
+  &:hover {
+    background: #A94455;
+    transform: scale(1.12);
+  }
+}
+
+/* Panel de edición — cubre la foto mientras editas */
+.gal-edit-panel {
+  position: absolute; inset: 0;
+  background: rgba(10,10,10,0.91);
+  border-radius: 8px;
+  display: flex; flex-direction: column;
+  justify-content: center;
+  padding: 12px; gap: 10px;
+  z-index: 20;
+  animation: gal-fade-in 0.15s ease;
+}
+
+.gal-edit-hint {
+  font-size: 0.65rem;
+  color: rgba(255,255,255,0.35);
+  text-align: center;
+  margin: 0;
+  letter-spacing: 0.5px;
+}
+
+.gal-edit-textarea {
+  width: 100%;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.18);
+  border-radius: 6px;
+  color: #fff;
+  font-size: 0.78rem;
+  padding: 8px 10px;
+  resize: none;
+  font-family: 'Georgia', serif;
+  font-style: italic;
+  line-height: 1.5;
+  transition: border-color 0.2s;
+
+  &::placeholder { color: rgba(255,255,255,0.3); }
+  &:focus { outline: none; border-color: #A94455; background: rgba(255,255,255,0.12); }
+}
+
+.gal-edit-acciones {
+  display: flex; gap: 8px; justify-content: flex-end;
+}
+
+.gal-edit-cancel {
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.25);
+  color: rgba(255,255,255,0.6);
+  border-radius: 4px;
+  padding: 4px 12px;
+  font-size: 0.72rem;
+  cursor: pointer;
+  transition: all 0.15s;
+
+  &:hover { border-color: rgba(255,255,255,0.6); color: #fff; }
+}
+
+.gal-edit-save {
+  background: #A94455;
+  border: none; color: #fff;
+  border-radius: 4px;
+  padding: 4px 14px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+
+  &:hover:not(:disabled) { background: #c2526a; }
+  &:disabled { opacity: 0.45; cursor: not-allowed; }
+}
+
+/* Variante libro — lápiz debajo de la foto */
+.gal-edit-lapiz--libro {
+  position: absolute;
+  bottom: 32px; right: 4px;
+  top: auto;
+  opacity: 0;
+  width: 26px; height: 26px;
+}
+
+.gal-foto-mount:hover .gal-edit-lapiz--libro { opacity: 1; }
+
+.gal-edit-panel--libro {
+  position: absolute;
+  inset: auto 0 0 0;
+  top: auto;
+  border-radius: 0 0 4px 4px;
+  padding: 8px 10px;
+  background: rgba(10,10,10,0.88);
+  gap: 7px;
+}
+
+/* Variante lightbox — inline en el footer */
+.gal-edit-lapiz--lb {
+  position: static;
+  opacity: 1;
+  width: 28px; height: 28px;
+  flex-shrink: 0;
+  margin-left: 8px;
+  background: rgba(255,255,255,0.12);
+}
+
+.gal-edit-panel--lb {
+  position: relative;
+  inset: auto;
+  width: 100%;
+  border-radius: 8px;
+  padding: 10px 12px;
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.1);
+  gap: 8px;
+  animation: none;
+}
+
 /* ── Paso de página — efecto libro realista ─────────── */
 
 @keyframes pag-out-next {
@@ -1864,4 +2009,111 @@
   font-family: 'Source Sans 3', sans-serif;
   font-size: 0.75rem;
   color: rgba(255,255,255,0.45);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   MARCOS DORADO / VERDE — 90 Años ITI
+   .gal-marco-a = dorado histórico (ANTES)
+   .gal-marco-d = verde institucional (DESPUÉS/presente)
+   ═══════════════════════════════════════════════════════════ */
+
+@keyframes marco-glow-pulse {
+  0%, 100% {
+    box-shadow:
+      0 6px 22px rgba(0,0,0,.55),
+      inset 0 1px 2px rgba(80,200,120,.22);
+  }
+  50% {
+    box-shadow:
+      0 8px 30px rgba(0,0,0,.55),
+      0 0 18px rgba(45,122,80,.38),
+      inset 0 1px 2px rgba(80,200,120,.32);
+  }
+}
+
+/* ── Base compartido ─── */
+.gal-marco-a,
+.gal-marco-d {
+  padding: 6px;
+  border-radius: 3px;
+  transition: transform .4s ease, box-shadow .4s ease, background-position .8s ease;
+}
+
+/* ── Marco dorado ─── */
+.gal-marco-a {
+  background: linear-gradient(
+    105deg,
+    #8b6410 0%, #d4a843 20%, #f5d078 40%,
+    #c8922a 55%, #f0c85a 70%, #8b6410 100%
+  );
+  background-size: 200% auto;
+  box-shadow:
+    0 6px 22px rgba(0,0,0,.55),
+    0 2px 5px rgba(0,0,0,.3),
+    inset 0 1px 2px rgba(255,220,100,.4);
+}
+
+/* ── Marco verde ─── */
+.gal-marco-d {
+  background: linear-gradient(
+    105deg,
+    #0e2a1c 0%, #1a4a32 20%, #2d7a50 40%,
+    #163d28 55%, #245f40 70%, #0e2a1c 100%
+  );
+  background-size: 200% auto;
+  box-shadow:
+    0 6px 22px rgba(0,0,0,.55),
+    inset 0 1px 2px rgba(80,200,120,.22);
+}
+
+/* ── Masonry — hover con transform ─── */
+.gal-masonry-item.gal-marco-a:hover {
+  transform: scale(1.028) rotate(-0.4deg);
+  box-shadow:
+    0 14px 40px rgba(0,0,0,.65),
+    0 0 26px rgba(212,168,67,.45),
+    inset 0 1px 2px rgba(255,220,100,.5);
+  background-position: right center;
+}
+
+.gal-masonry-item.gal-marco-d {
+  animation:
+    gal-fade-up    0.45s ease calc(var(--i, 0) * 0.04s) both,
+    marco-glow-pulse 3s ease-in-out 1.2s infinite;
+}
+
+.gal-masonry-item.gal-marco-d:hover {
+  animation: none;
+  transform: scale(1.028) rotate(0.4deg);
+  box-shadow:
+    0 14px 40px rgba(0,0,0,.65),
+    0 0 30px rgba(45,122,80,.52),
+    inset 0 1px 2px rgba(80,200,120,.38);
+  background-position: right center;
+}
+
+/* ── Libro (foto-mount) — padding extra por la foto polaroid ─── */
+.gal-foto-mount.gal-marco-a,
+.gal-foto-mount.gal-marco-d {
+  padding: 9px;
+  border-radius: 3px;
+}
+
+.gal-foto-mount.gal-marco-a:hover {
+  box-shadow:
+    0 14px 40px rgba(0,0,0,.55),
+    0 0 26px rgba(212,168,67,.45);
+  background-position: right center;
+}
+
+.gal-foto-mount.gal-marco-d {
+  animation: marco-glow-pulse 3s ease-in-out infinite;
+}
+
+.gal-foto-mount.gal-marco-d:hover {
+  animation: none;
+  box-shadow:
+    0 14px 40px rgba(0,0,0,.55),
+    0 0 30px rgba(45,122,80,.52);
+  background-position: right center;
 }

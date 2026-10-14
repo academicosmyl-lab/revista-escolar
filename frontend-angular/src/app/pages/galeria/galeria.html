@@ -269,18 +269,48 @@
       @if (fotosVisibles().length > 0) {
         <div class="gal-masonry">
           @for (foto of fotosVisibles(); track foto.id; let i = $index) {
-            <button class="gal-masonry-item" [style.--i]="i" (click)="abrirLightbox(i)">
-              <img [src]="foto.url" [alt]="foto.descripcion || cap.titulo" loading="lazy">
-              <div class="gal-masonry-overlay">
-                @if (foto.descripcion) {
-                  <p class="gal-masonry-desc">{{ foto.descripcion }}</p>
+            <div [class]="'gal-masonry-item ' + (foto.orden % 2 === 1 ? 'gal-marco-a' : 'gal-marco-d')" [style.--i]="i">
+
+              <!-- Imagen clickeable → lightbox -->
+              <button class="gal-masonry-click" (click)="abrirLightbox(i)">
+                <img [src]="foto.url" [alt]="foto.descripcion || cap.titulo" loading="lazy">
+                <div class="gal-masonry-overlay">
+                  @if (foto.descripcion) {
+                    <p class="gal-masonry-desc">{{ foto.descripcion }}</p>
+                  }
+                  <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" width="22" class="gal-masonry-zoom">
+                    <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                    <line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/>
+                  </svg>
+                </div>
+              </button>
+
+              <!-- Admin: lápiz + editor inline -->
+              @if (esAdmin()) {
+                @if (editandoFotoId !== foto.id) {
+                  <button class="gal-edit-lapiz" (click)="iniciarEdicion(foto, $event)" title="Editar leyenda">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" width="13">
+                      <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                      <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                    </svg>
+                  </button>
                 }
-                <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" width="22" class="gal-masonry-zoom">
-                  <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
-                  <line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/>
-                </svg>
-              </div>
-            </button>
+                @if (editandoFotoId === foto.id) {
+                  <div class="gal-edit-panel" (click)="$event.stopPropagation()">
+                    <p class="gal-edit-hint">Leyenda visible solo en la galería</p>
+                    <textarea class="gal-edit-textarea" [(ngModel)]="editandoTexto"
+                              rows="3" placeholder="Escribe la leyenda de esta foto…"></textarea>
+                    <div class="gal-edit-acciones">
+                      <button class="gal-edit-cancel" (click)="cancelarEdicion()">Cancelar</button>
+                      <button class="gal-edit-save" (click)="guardarLeyenda(foto, $event)" [disabled]="guardandoLeyenda">
+                        {{ guardandoLeyenda ? 'Guardando…' : '✓ Guardar' }}
+                      </button>
+                    </div>
+                  </div>
+                }
+              }
+
+            </div>
           }
         </div>
       }
@@ -345,13 +375,33 @@
           <!-- PÁGINA IZQUIERDA -->
           <div [class]="'gal-libro-pag pag-izq ' + pagIzqClass">
             @if (fotoIzq(); as foto) {
-              <div class="gal-foto-mount"
+              <div [class]="'gal-foto-mount ' + (foto.orden % 2 === 1 ? 'gal-marco-a' : 'gal-marco-d')"
                    [style.--rot]="fotoRot(paginaLibro() * 2) + 'deg'"
-                   (click)="abrirLightbox(paginaLibro() * 2)">
+                   (click)="editandoFotoId !== foto.id && abrirLightbox(paginaLibro() * 2)">
                 <span class="gal-foto-cinta"></span>
                 <img [src]="foto.url" [alt]="foto.descripcion || cap.titulo" loading="lazy">
-                @if (foto.descripcion) {
+                @if (foto.descripcion && editandoFotoId !== foto.id) {
                   <p class="gal-foto-leyenda">{{ foto.descripcion }}</p>
+                }
+                @if (esAdmin() && editandoFotoId !== foto.id) {
+                  <button class="gal-edit-lapiz gal-edit-lapiz--libro" (click)="iniciarEdicion(foto, $event)" title="Editar leyenda">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" width="12">
+                      <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                      <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                    </svg>
+                  </button>
+                }
+                @if (esAdmin() && editandoFotoId === foto.id) {
+                  <div class="gal-edit-panel gal-edit-panel--libro" (click)="$event.stopPropagation()">
+                    <textarea class="gal-edit-textarea" [(ngModel)]="editandoTexto"
+                              rows="2" placeholder="Leyenda…"></textarea>
+                    <div class="gal-edit-acciones">
+                      <button class="gal-edit-cancel" (click)="cancelarEdicion()">✕</button>
+                      <button class="gal-edit-save" (click)="guardarLeyenda(foto, $event)" [disabled]="guardandoLeyenda">
+                        {{ guardandoLeyenda ? '…' : '✓' }}
+                      </button>
+                    </div>
+                  </div>
                 }
               </div>
             } @else {
@@ -368,13 +418,33 @@
           <!-- PÁGINA DERECHA -->
           <div [class]="'gal-libro-pag pag-der ' + pagDerClass">
             @if (fotoDer(); as foto) {
-              <div class="gal-foto-mount"
+              <div [class]="'gal-foto-mount ' + (foto.orden % 2 === 1 ? 'gal-marco-a' : 'gal-marco-d')"
                    [style.--rot]="fotoRot(paginaLibro() * 2 + 1) + 'deg'"
-                   (click)="abrirLightbox(paginaLibro() * 2 + 1)">
+                   (click)="editandoFotoId !== foto.id && abrirLightbox(paginaLibro() * 2 + 1)">
                 <span class="gal-foto-cinta"></span>
                 <img [src]="foto.url" [alt]="foto.descripcion || cap.titulo" loading="lazy">
-                @if (foto.descripcion) {
+                @if (foto.descripcion && editandoFotoId !== foto.id) {
                   <p class="gal-foto-leyenda">{{ foto.descripcion }}</p>
+                }
+                @if (esAdmin() && editandoFotoId !== foto.id) {
+                  <button class="gal-edit-lapiz gal-edit-lapiz--libro" (click)="iniciarEdicion(foto, $event)" title="Editar leyenda">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" width="12">
+                      <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                      <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                    </svg>
+                  </button>
+                }
+                @if (esAdmin() && editandoFotoId === foto.id) {
+                  <div class="gal-edit-panel gal-edit-panel--libro" (click)="$event.stopPropagation()">
+                    <textarea class="gal-edit-textarea" [(ngModel)]="editandoTexto"
+                              rows="2" placeholder="Leyenda…"></textarea>
+                    <div class="gal-edit-acciones">
+                      <button class="gal-edit-cancel" (click)="cancelarEdicion()">✕</button>
+                      <button class="gal-edit-save" (click)="guardarLeyenda(foto, $event)" [disabled]="guardandoLeyenda">
+                        {{ guardandoLeyenda ? '…' : '✓' }}
+                      </button>
+                    </div>
+                  </div>
                 }
               </div>
             } @else {
@@ -438,8 +508,35 @@
       </button>
 
       <div class="gal-lb-footer">
-        @if (fotoLightbox()!.descripcion) {
-          <p class="gal-lb-caption">{{ fotoLightbox()!.descripcion }}</p>
+        @if (esAdmin()) {
+          @if (editandoFotoId === fotoLightbox()!.id) {
+            <div class="gal-edit-panel gal-edit-panel--lb" (click)="$event.stopPropagation()">
+              <textarea class="gal-edit-textarea" [(ngModel)]="editandoTexto"
+                        rows="2" placeholder="Escribe la leyenda…"></textarea>
+              <div class="gal-edit-acciones">
+                <button class="gal-edit-cancel" (click)="cancelarEdicion()">Cancelar</button>
+                <button class="gal-edit-save" (click)="guardarLeyenda(fotoLightbox()!, $event)" [disabled]="guardandoLeyenda">
+                  {{ guardandoLeyenda ? 'Guardando…' : '✓ Guardar' }}
+                </button>
+              </div>
+            </div>
+          } @else {
+            @if (fotoLightbox()!.descripcion) {
+              <p class="gal-lb-caption">{{ fotoLightbox()!.descripcion }}</p>
+            }
+            <button class="gal-edit-lapiz gal-edit-lapiz--lb"
+                    (click)="$event.stopPropagation(); iniciarEdicion(fotoLightbox()!)"
+                    title="Editar leyenda">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" width="13">
+                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+              </svg>
+            </button>
+          }
+        } @else {
+          @if (fotoLightbox()!.descripcion) {
+            <p class="gal-lb-caption">{{ fotoLightbox()!.descripcion }}</p>
+          }
         }
         <span class="gal-lb-counter">{{ lightboxIndex + 1 }} / {{ fotosVisibles().length }}</span>
       </div>

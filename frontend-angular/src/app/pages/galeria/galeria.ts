@@ -3,7 +3,9 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef, HostListener,
 } from '@angular/core';
 import { UpperCasePipe } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { ApiService } from '../../services/api.service';
+import { AuthService } from '../../services/auth.service';
 
 type Vista = 'albums' | 'toc' | 'fotos' | 'libro';
 
@@ -25,14 +27,17 @@ interface Foto {
 
 @Component({
   selector: 'app-galeria',
-  imports: [UpperCasePipe],
+  imports: [UpperCasePipe, FormsModule],
   templateUrl: './galeria.html',
   styleUrl:    './galeria.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Galeria implements OnInit {
-  private api = inject(ApiService);
-  private cdr = inject(ChangeDetectorRef);
+  private api  = inject(ApiService);
+  private auth = inject(AuthService);
+  private cdr  = inject(ChangeDetectorRef);
+
+  readonly esAdmin = this.auth.esAdmin;
 
   vista            = signal<Vista>('albums');
   categoriaActiva  = signal<string>('todos');
@@ -57,6 +62,11 @@ export class Galeria implements OnInit {
   heroAbriendo  = false;
 
   categorias: string[] = [];
+
+  /* ── Edición inline de leyendas (solo ADMIN) ─────────── */
+  editandoFotoId: string | null = null;
+  editandoTexto  = '';
+  guardandoLeyenda = false;
 
   ngOnInit() { this.cargarTodo(); }
 
@@ -301,8 +311,49 @@ export class Galeria implements OnInit {
     return this.fotosVisibles()[this.lightboxIndex] ?? null;
   }
 
+  /* ── Edición inline de leyendas ──────────────────────── */
+
+  iniciarEdicion(foto: Foto, event?: Event) {
+    event?.stopPropagation();
+    this.editandoFotoId = foto.id;
+    this.editandoTexto  = foto.descripcion ?? '';
+    this.cdr.markForCheck();
+  }
+
+  cancelarEdicion() {
+    this.editandoFotoId  = null;
+    this.editandoTexto   = '';
+    this.guardandoLeyenda = false;
+    this.cdr.markForCheck();
+  }
+
+  guardarLeyenda(foto: Foto, event?: Event) {
+    event?.stopPropagation();
+    if (this.guardandoLeyenda) return;
+    this.guardandoLeyenda = true;
+    this.cdr.markForCheck();
+    const texto = this.editandoTexto.trim();
+    this.api.patch<any>(`/galeria/fotos/${foto.id}`, { descripcion: texto }).subscribe({
+      next: () => {
+        foto.descripcion  = texto || undefined;
+        this.editandoFotoId   = null;
+        this.editandoTexto    = '';
+        this.guardandoLeyenda = false;
+        this.cdr.markForCheck();
+      },
+      error: () => {
+        this.guardandoLeyenda = false;
+        this.cdr.markForCheck();
+      },
+    });
+  }
+
   @HostListener('document:keydown', ['$event'])
   onKeydown(e: KeyboardEvent) {
+    if (this.editandoFotoId) {
+      if (e.key === 'Escape') this.cancelarEdicion();
+      return;
+    }
     if (this.lightboxVisible) {
       if (e.key === 'Escape')     this.cerrarLightbox();
       if (e.key === 'ArrowLeft')  this.anteriorFoto();
