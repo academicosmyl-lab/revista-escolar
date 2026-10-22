@@ -1,7 +1,10 @@
 import { Component, OnInit, OnDestroy, HostListener, inject, signal, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
 import { RouterLink, ActivatedRoute } from '@angular/router';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { ApiService } from '../../services/api.service';
 import { Noticia } from '../../models';
+
+const YOUTUBE_URL_REGEX = /(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/i;
 
 @Component({
   selector: 'app-noticia-detalle',
@@ -11,9 +14,10 @@ import { Noticia } from '../../models';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NoticiaDetalle implements OnInit, OnDestroy {
-  private api   = inject(ApiService);
-  private route = inject(ActivatedRoute);
-  private cdr   = inject(ChangeDetectorRef);
+  private api       = inject(ApiService);
+  private route     = inject(ActivatedRoute);
+  private cdr       = inject(ChangeDetectorRef);
+  private sanitizer = inject(DomSanitizer);
 
   cargando      = signal(true);
   error         = signal('');
@@ -113,6 +117,20 @@ export class NoticiaDetalle implements OnInit, OnDestroy {
   }
   get imagenesExtra() {
     return this.noticia()?.imagenes?.slice(1) ?? [];
+  }
+
+  /** Noticias publicadas con "video YouTube" guardan el link como texto plano en el contenido */
+  get videoYoutubeId(): string | null {
+    const match = (this.noticia()?.contenido ?? '').match(YOUTUBE_URL_REGEX);
+    return match ? match[1] : null;
+  }
+  get videoEmbedUrl(): SafeResourceUrl | null {
+    const id = this.videoYoutubeId;
+    return id ? this.sanitizer.bypassSecurityTrustResourceUrl(`https://www.youtube.com/embed/${id}`) : null;
+  }
+  /** Contenido sin la línea "🎬 VIDEO: <url>" — ya se muestra como reproductor embebido */
+  get contenidoLimpio(): string {
+    return (this.noticia()?.contenido ?? '').replace(/\s*🎬?\s*VIDEO:\s*\S+/i, '');
   }
 
   formatFecha(fecha: string | undefined): string {

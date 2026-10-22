@@ -110,7 +110,7 @@
     </div>
   </section>
 
-  <!-- IMAGEN PRINCIPAL -->
+  <!-- IMAGEN PRINCIPAL / VIDEO -->
   @if (imagenPrincipal) {
     <div class="det-imagen-hero-wrap">
       <img class="det-imagen-hero" [src]="imagenPrincipal"
@@ -119,6 +119,12 @@
     @if (n.imagenes![0].altText) {
       <p class="det-imagen-alt">{{ n.imagenes![0].altText }}</p>
     }
+  } @else if (videoEmbedUrl) {
+    <div class="det-video-hero-wrap">
+      <iframe class="det-video-hero" [src]="videoEmbedUrl" title="Video de la noticia"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowfullscreen></iframe>
+    </div>
   } @else {
     <div class="det-imagen-hero-wrap">
       <div class="det-imagen-hero-placeholder"><span>{{ n.titulo }}</span></div>
@@ -130,7 +136,7 @@
 
     <!-- Contenido editorial (HTML del backend) -->
     <div class="det-contenido-wrap">
-      <div class="det-contenido-editorial" [innerHTML]="n.contenido"></div>
+      <div class="det-contenido-editorial" [innerHTML]="contenidoLimpio"></div>
     </div>
 
     <!-- Aside sticky -->
