@@ -84,10 +84,10 @@ export class WelcomeIntro implements AfterViewInit, OnDestroy {
     });
 
     this.sched(1000,  () => this.showSkip.set(true));
-    this.sched(5200,  () => { this.showText90.set(true); this.zone.run(() => this.tryAutoplay()); });
-    this.sched(6100,  () => this.showDivider.set(true));
-    this.sched(6600,  () => this.showTitle.set(true));
-    this.sched(7500,  () => this.showSub.set(true));
+    this.sched(2600,  () => { this.showText90.set(true); this.zone.run(() => this.tryAutoplay()); });
+    this.sched(3500,  () => this.showDivider.set(true));
+    this.sched(4000,  () => this.showTitle.set(true));
+    this.sched(4900,  () => this.showSub.set(true));
     this.sched(17000, () => this.dismiss());
   }
 
