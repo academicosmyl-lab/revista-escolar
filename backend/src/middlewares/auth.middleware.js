@@ -20,6 +20,23 @@ async function autenticar(req, res, next) {
   }
 }
 
+// Identifica al usuario si manda un token válido, pero nunca bloquea la petición.
+// Para endpoints públicos que deben ocultar datos sensibles (ej. nombres de
+// estudiantes) a quien no haya iniciado sesión.
+async function autenticarOpcional(req, res, next) {
+  try {
+    const header = req.headers.authorization;
+    if (!header?.startsWith('Bearer ')) return next();
+    const token = header.split(' ')[1];
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const usuario = await Usuario.findByPk(decoded.id);
+    if (usuario?.activo) req.usuario = usuario;
+    next();
+  } catch {
+    next();
+  }
+}
+
 // Verificar uno o más roles
 function requiereRol(...roles) {
   return (req, res, next) => {
@@ -58,6 +75,7 @@ function puedePublicar(req, res, next) {
 
 module.exports = {
   autenticar,
+  autenticarOpcional,
   requiereRol,
   puedeAprobarContenido,
   puedeGestionarCursos,

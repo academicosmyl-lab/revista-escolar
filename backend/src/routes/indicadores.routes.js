@@ -7,6 +7,12 @@
 const express = require('express');
 const router  = express.Router();
 const svc     = require('../services/indicadores.service');
+const { autenticar, autenticarOpcional } = require('../middlewares/auth.middleware');
+
+// Oculta nombres de estudiantes a quien no haya iniciado sesión (tratamiento de datos)
+function anonimizarRanking(lista) {
+  return lista.map((e, i) => ({ ...e, nombre: `Estudiante ${i + 1}` }));
+}
 
 // Helper respuesta estándar
 const ok  = (res, data)  => res.json({ ok: true,  data });
@@ -99,17 +105,20 @@ router.get('/comparacion', (req, res) => {
 });
 
 // ── GET /ranking ──────────────────────────────────────────────────────────────
-router.get('/ranking', (req, res) => {
+// Público, pero sin login se ocultan los nombres (tratamiento de datos)
+router.get('/ranking', autenticarOpcional, (req, res) => {
   try {
-    ok(res, svc.getRanking(parseFiltros(req.query)));
+    const { top10, bottom10 } = svc.getRanking(parseFiltros(req.query));
+    if (req.usuario) return ok(res, { top10, bottom10 });
+    ok(res, { top10: anonimizarRanking(top10), bottom10: anonimizarRanking(bottom10) });
   } catch (e) {
     err(res, e.message);
   }
 });
 
 // ── GET /estudiante ───────────────────────────────────────────────────────────
-// Query: nombre, sede, jornada, grado, grupo
-router.get('/estudiante', (req, res) => {
+// Query: nombre, sede, jornada, grado, grupo — requiere login (dato individual)
+router.get('/estudiante', autenticar, (req, res) => {
   try {
     const { nombre, ...rest } = req.query;
     if (!nombre) return err(res, 'Parámetro nombre requerido', 400);
@@ -122,8 +131,8 @@ router.get('/estudiante', (req, res) => {
 });
 
 // ── GET /buscar ───────────────────────────────────────────────────────────────
-// Query: q=nombre_parcial
-router.get('/buscar', (req, res) => {
+// Query: q=nombre_parcial — requiere login (revela nombres de estudiantes)
+router.get('/buscar', autenticar, (req, res) => {
   try {
     const q = req.query.q || '';
     ok(res, svc.getBuscadorEstudiantes(q));
