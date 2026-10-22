@@ -24,6 +24,7 @@ interface Particle {
 })
 export class WelcomeIntro implements AfterViewInit, OnDestroy {
   @ViewChild('particleCanvas') canvasRef!: ElementRef<HTMLCanvasElement>;
+  @ViewChild('shieldGlow') shieldGlowRef?: ElementRef<HTMLDivElement>;
 
   readonly visible     = signal(true);
   readonly showText90  = signal(false);
@@ -116,13 +117,34 @@ export class WelcomeIntro implements AfterViewInit, OnDestroy {
     this.canvas.style.width  = `${this.W}px`;
     this.canvas.style.height = `${this.H}px`;
     this.ctx.setTransform(this.dpr, 0, 0, this.dpr, 0, 0);
+    this.measureShield();
     this.buildShieldPoints();
   }
 
+  // Centro/radio reales del aro dorado (.wi-shield-glow) — medidos del DOM en
+  // vez de aproximar con porcentajes fijos, para que el anillo de partículas
+  // siempre coincida con el logo sin importar el tamaño de pantalla o si el
+  // nombre de la institución alcanza a pasar a una segunda línea.
+  private measuredCx = 0;
+  private measuredCy = 0;
+  private measuredR  = 0;
+
+  private measureShield(): void {
+    const el = this.shieldGlowRef?.nativeElement;
+    if (!el) return;
+    const rect  = el.getBoundingClientRect();
+    const baseW = parseFloat(getComputedStyle(el).width) || rect.width;
+    if (baseW > 0 && rect.width > 0) {
+      this.measuredCx = rect.left + rect.width  / 2;
+      this.measuredCy = rect.top  + rect.height / 2;
+      this.measuredR  = baseW / 2;
+    }
+  }
+
   private get mobile() { return this.W < 600; }
-  private get cx()     { return this.W / 2; }
-  private get cy()     { return this.mobile ? this.H * 0.42 : this.H * 0.45; }
-  private get sw()     { return this.mobile ? this.W * 0.88 : Math.min(this.W * 0.62, 380); }
+  private get cx()     { return this.measuredR > 0 ? this.measuredCx : this.W / 2; }
+  private get cy()     { return this.measuredR > 0 ? this.measuredCy : (this.mobile ? this.H * 0.42 : this.H * 0.45); }
+  private get sw()     { return this.measuredR > 0 ? this.measuredR * 2 : (this.mobile ? this.W * 0.88 : Math.min(this.W * 0.62, 380)); }
   private get sh()     { return this.mobile ? this.H * 0.74 : this.sw * 1.25; }
 
   // ── Shield points ─────────────────────────────────────────────────────────
