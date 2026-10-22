@@ -106,26 +106,19 @@
 
 /* ── IMAGEN HERO ───────────────────────────────────────── */
 .det-imagen-hero-wrap {
-  background: #111;
-  display: flex; align-items: center; justify-content: center;
-  max-height: 600px; overflow: hidden;
-  @media (max-width: 900px) { max-height: 480px; }
-  @media (max-width: 580px) { max-height: 320px; }
+  width: 100%; aspect-ratio: 16 / 9;
+  background: #111; overflow: hidden;
 }
 .det-imagen-hero {
-  /* contain: muestra la imagen completa sin recortar (QR, vertical, panorámica) */
-  max-width: 100%; max-height: 600px;
-  width: auto; height: auto; display: block;
-  object-fit: contain;
-  @media (max-width: 900px) { max-height: 480px; }
-  @media (max-width: 580px) { max-height: 320px; }
+  /* la portada ya llega recortada a 16:9 desde Cloudinary — cover llena el marco sin bandas negras */
+  width: 100%; height: 100%; display: block;
+  object-fit: cover;
 }
 .det-imagen-hero-placeholder {
-  width: 100%; height: 560px;
+  width: 100%; aspect-ratio: 16 / 9;
   background: linear-gradient(135deg, #1f0b10 0%, #0f3d25 100%);
   display: flex; align-items: center; justify-content: center;
   span { font-family: 'Playfair Display', serif; font-size: 1.2rem; color: rgba(255,255,255,0.2); letter-spacing: 0.1em; text-transform: uppercase; }
-  @media (max-width: 900px) { height: 400px; } @media (max-width: 580px) { height: 260px; }
 }
 .det-imagen-alt {
   max-width: 1200px; margin: 0 auto; padding: 8px 32px 0;
@@ -357,7 +350,7 @@
 .det-sk-titulo   { @extend %det-sh-dark; width: 90%; height: 48px; margin-bottom: 10px; @media (max-width: 580px) { height: 36px; } }
 .det-sk-titulo2  { @extend %det-sh-dark; width: 70%; height: 48px; margin-bottom: 24px; @media (max-width: 580px) { height: 36px; } }
 .det-sk-meta     { @extend %det-sh-dark; width: 80px; height: 36px; }
-.det-sk-imagen   { @extend %det-sh-light; width: 100%; height: 560px; @media (max-width: 900px) { height: 400px; } @media (max-width: 580px) { height: 260px; } }
+.det-sk-imagen   { @extend %det-sh-light; width: 100%; aspect-ratio: 16 / 9; }
 .det-sk-parrafo  { @extend %det-sh-light; width: 100%; height: 16px; margin-bottom: 8px; &:nth-child(3n) { width: 75%; } }
 .det-sk-meta-bar { display: flex; gap: 20px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.15); }
 
