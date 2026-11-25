@@ -74,6 +74,15 @@ async function iniciar() {
       console.error('⚠️  Migración usuarios.reset_token (no crítico):', migErr.message);
     }
 
+    // Migración: acciones_admin.tipo ENUM — agregar 'reset_password'
+    try {
+      await sequelize.query(`
+        ALTER TYPE enum_acciones_admin_tipo ADD VALUE IF NOT EXISTS 'reset_password';
+      `);
+    } catch (migErr) {
+      console.error('⚠️  Migración enum_acciones_admin_tipo (no crítico):', migErr.message);
+    }
+
     // Sincronizar base de datos — solo crea tablas que no existen, nunca borra datos
     await sequelize.sync();
     console.log('✅ Base de datos sincronizada');
